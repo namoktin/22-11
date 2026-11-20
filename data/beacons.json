@@ -1,0 +1,86 @@
+[
+  {
+    "id": "beacon_01",
+    "code": "001",
+    "name": "Trống Đồng Đông Sơn",
+    "mac": "AA:BB:CC:DD:EE:01",
+    "uuid": "FDA50693-A4E2-4FB1-AFCF-C6EB07647825",
+    "major": 1,
+    "minor": 1,
+    "rssi_threshold": -80,
+    "artifact_name": "Trống Đồng Đông Sơn",
+    "location": "Gian Trưng Bày Số 1 - Thời Đại Kim Khí",
+    "icon": "🥁",
+    "dialogue": {
+      "speaker": "Thuyết Minh Viên Lịch Sử",
+      "text": "Chào mừng bạn đến với không gian Trống đồng Đông Sơn. Đây là bảo vật quốc gia kiệt xuất, biểu tượng thiêng liêng cho nền văn minh sông Hồng rực rỡ từ thế kỷ thứ 7 trước Công nguyên. Trên mặt trống, hình tượng ngôi sao 14 cánh tỏa sáng tượng trưng cho mặt trời, bao quanh là các đoàn người hóa trang múa hát và chim Lạc tung cánh.",
+      "short_cue": "Mã 001: Trống Đồng Đông Sơn - Thời đại Hùng Vương dựng nước."
+    },
+    "audio_file": "trong_dong_dong_son.wav",
+    "audio_mp3": "trong_dong_dong_son.mp3",
+    "cooldown_seconds": 0
+  },
+  {
+    "id": "beacon_02",
+    "code": "002",
+    "name": "Cây Bàng Lịch Sử Hỏa Lò",
+    "mac": "AA:BB:CC:DD:EE:02",
+    "uuid": "FDA50693-A4E2-4FB1-AFCF-C6EB07647825",
+    "major": 1,
+    "minor": 2,
+    "rssi_threshold": -80,
+    "artifact_name": "Cây Bàng Lịch Sử Hỏa Lò",
+    "location": "Gian Trưng Bày Số 2 - Sân Trại Giam Hỏa Lò",
+    "icon": "🌳",
+    "dialogue": {
+      "speaker": "Hướng Dẫn Viên Tri Ân",
+      "text": "Trước mắt quý khách là Cây bàng cổ thụ lịch sử tại sân Trại giam Hỏa Lò. Cây bàng này đã gắn bó máu thịt với biết bao thế hệ chiến sĩ cách mạng kiên trung. Vỏ và lá bàng từng được các chiến sĩ dùng làm bài thuốc trị bệnh, còn búp bàng non được chắt chiu làm nguồn dinh dưỡng quý giá trong những ngày bị giam cầm khắc nghiệt.",
+      "short_cue": "Mã 002: Cây Bàng Cổ Thụ - Người bạn tâm tình của các tù nhân chính trị."
+    },
+    "audio_file": "cay_bang_hoa_lo.wav",
+    "audio_mp3": "cay_bang_hoa_lo.mp3",
+    "cooldown_seconds": 0
+  },
+  {
+    "id": "beacon_03",
+    "code": "003",
+    "name": "Đạt Hồng (Đại Hồng Chung Cố Đô)",
+    "mac": "AA:BB:CC:DD:EE:03",
+    "uuid": "FDA50693-A4E2-4FB1-AFCF-C6EB07647825",
+    "major": 1,
+    "minor": 3,
+    "rssi_threshold": -80,
+    "artifact_name": "Đạt Hồng (Đại Hồng Chung)",
+    "location": "Gian Trưng Bày Số 3 - Tháp Chuông Di Tích",
+    "icon": "🔔",
+    "dialogue": {
+      "speaker": "Thuyết Minh Viên Cố Đô",
+      "text": "Quý khách đang đứng cạnh Đạt Hồng - Đại Hồng Chung, chiếc chuông đồng cổ được đúc dưới triều Nguyễn. Chuông nặng hơn hai tấn, trên thân khắc tinh xảo các bài minh văn, hoa văn bát quái và rồng mây uyển chuyển. Mỗi hồi chuông ngân vang có thể vọng xa hàng chục dặm, mang lại sự an lành và tĩnh tại cho tâm hồn muôn phương.",
+      "short_cue": "Mã 003: Đạt Hồng (Đại Hồng Chung) - Tiếng chuông ngàn năm vang vọng."
+    },
+    "audio_file": "dai_hong_chung.wav",
+    "audio_mp3": "dai_hong_chung.mp3",
+    "cooldown_seconds": 0
+  },
+  {
+    "id": "beacon_04",
+    "code": "004",
+    "name": "Bảo Kiếm Hoàng Gia Triều Nguyễn",
+    "mac": "AA:BB:CC:DD:EE:04",
+    "uuid": "FDA50693-A4E2-4FB1-AFCF-C6EB07647825",
+    "major": 1,
+    "minor": 4,
+    "rssi_threshold": -80,
+    "artifact_name": "Bảo Kiếm Hoàng Gia",
+    "location": "Gian Trưng Bày Số 4 - Cổ Vật Hoàng Cung",
+    "icon": "🗡️",
+    "dialogue": {
+      "speaker": "Chuyên Viên Di Sản Cung Đình",
+      "text": "Đây là thanh Bảo kiếm hoàng gia triều Nguyễn, biểu trưng quyền uy tối thượng của đấng quân vương. Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật. Lưỡi kiếm bằng thép tôi gia truyền sắc bén, minh chứng cho tài hoa kim hoàn bậc thầy của các nghệ nhân cung đình xưa.",
+      "short_cue": "Mã 004: Bảo Kiếm Hoàng Gia - Uy quyền và tuyệt kỹ kim hoàn hoàng cung."
+    },
+    "audio_file": "bao_kiem_hoang_gia.wav",
+    "audio_mp3": "bao_kiem_hoang_gia.mp3",
+    "cooldown_seconds": 0
+  }
+]

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhà Tù Hỏa Lò • Bản Đồ Di Sản & AI Voice Guide</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="nav-brand-pill">
+        <span class="brand-icon">🏛️</span>
+        <span class="brand-name">Nhà Tù Hỏa Lò • Di Tích Lịch Sử</span>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <!-- CHIP TRẠNG THÁI ESP32 (GIỐNG HỆT ẢNH MẪU HL-18 100%) -->
+      <div class="device-status-chip" id="deviceChip">
+        <span class="status-dot"></span>
+        <span class="device-id-text" id="chipDeviceId">HL-18 • ESP32</span>
+        <span class="battery-text">🔋 100%</span>
+      </div>
+
+      <!-- CÁC NÚT ĐIỀU HƯỚNG -->
+      <button class="nav-btn btn-map" id="btnToggleLan">
+        <span class="btn-icon">📡</span> IP LAN: <span id="navLanIp" style="font-family: monospace; font-weight: 700; margin-left: 4px;">192.168.1.88</span>
+      </button>
+
+      <a href="/test.html" target="_blank" class="nav-btn btn-guide">
+        <span>📖 Trang Kiểm Thử</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN HERO SECTION -->
+  <main class="page-container">
+    
+    <div class="hero-section">
+      <div class="hero-tag">DẤU ẤN NƠI CHỐN</div>
+      <h1 class="hero-title">Mỗi tọa độ, một câu chuyện.</h1>
+      <p class="hero-subtitle">
+        Khám phá những câu chuyện về Nhà tù Hỏa Lò và di sản văn hóa. Tư liệu ưu tiên P0 trước P1; thuyết minh tự động khi ESP32 đến gần từng vị trí tọa độ BLE.
+      </p>
+
+      <!-- SEARCH BAR BO TRÒN DẠNG VIÊN THUỐC -->
+      <div class="search-wrapper">
+        <label class="search-label">Tìm câu chuyện hoặc địa điểm</label>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Ví dụ: bàn làm việc, cây bàng cổ thụ, trống đồng, đại hồng chung, bảo kiếm..." oninput="handleSearch(this.value)">
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNER ĐO ĐỘ TRỄ GIỌNG NÓI (VOICE LATENCY METER THEO PHONG CÁCH TẠP CHÍ) -->
+    <section class="latency-editorial-card">
+      <div class="lec-top">
+        <div class="lec-left">
+          <span class="lec-badge">⏱️ ĐO ĐỘ TRỄ PHẢN HỒI GIỌNG NÓI AI</span>
+          <h2 class="lec-title">Từ lúc hết nói (ESP32) đến khi AI trả về tai nghe</h2>
+        </div>
+        <div class="lec-right">
+          <div class="lec-number-wrap">
+            <span class="lec-number" id="latencyMs">--</span>
+            <span class="lec-unit">ms</span>
+          </div>
+          <span class="lec-status" id="latencyEval">Sẵn sàng nhận câu hỏi</span>
+        </div>
+      </div>
+
+      <div class="lec-breakdown">
+        <div class="lec-step">
+          <span class="step-label">1. Truyền mạng & STT:</span>
+          <b class="step-val" id="bdUpload">-- ms</b>
+        </div>
+        <div class="lec-step">
+          <span class="step-label">2. KiemThu AI Suy nghĩ:</span>
+          <b class="step-val" id="bdAi">-- ms</b>
+        </div>
+        <div class="lec-step">
+          <span class="step-label">3. Sinh file .WAV 16kHz:</span>
+          <b class="step-val" id="bdTts">-- ms</b>
+        </div>
+      </div>
+
+      <!-- KHUNG HỎI ĐÁP AI NHANH TRỰC TIẾP TRÊN TRANG -->
+      <div class="lec-interactive">
+        <div class="lec-input-group">
+          <select id="voiceCodeSelect" class="editorial-select">
+            <option value="002" selected>Vị trí: Mã 002 (Cây Bàng Hỏa Lò)</option>
+            <option value="001">Vị trí: Mã 001 (Trống Đồng Đông Sơn)</option>
+            <option value="003">Vị trí: Mã 003 (Đạt Hồng - Đại Hồng Chung)</option>
+            <option value="004">Vị trí: Mã 004 (Bảo Kiếm Hoàng Gia)</option>
+          </select>
+          <input type="text" id="voiceQuestionInput" class="editorial-input" placeholder="Hỏi AI về hiện vật (Ví dụ: Ý nghĩa lịch sử của cây bàng là gì?)..." value="Ý nghĩa lịch sử của cây bàng đối với tù nhân Hỏa Lò?">
+          <button class="editorial-btn" id="btnSendVoiceQuestion">
+            💬 Gửi Text
+          </button>
+          <button class="editorial-btn" id="btnRecordMicWav" style="background: #991B1B;">
+            🎙️ Bấm Nói (Gửi File .WAV)
+          </button>
+        </div>
+
+        <div id="voiceReplyBox" class="editorial-reply-box" style="display: none;">
+          <div class="erb-header">
+            <span class="erb-source" id="erbSource">🧠 2Guide KiemThu AI Engine v6.2 (C:\Users\Nam\Desktop\tp\kiemthu)</span>
+            <span class="erb-time" id="erbTimeTag">-- ms</span>
+          </div>
+          <p class="erb-text" id="voiceReplyText">Đang tải câu trả lời...</p>
+          <div class="erb-audio-row">
+            <label>🎵 ÂM THANH .WAV PHÁT VÀO TAI NGHE:</label>
+            <audio id="voiceAudioPlayer" controls></audio>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION TITLE -->
+    <div class="section-header">
+      <div class="sh-title">TỌA ĐỘ HIỆN VẬT & ĐIỂM DỪNG THUYẾT MINH</div>
+      <div class="sh-counter" id="exhibitCounter">4 hiện vật đang hoạt động</div>
+    </div>
+
+    <!-- CARDS GRID THEO PHONG CÁCH ẢNH MẪU (3-4 CỘT, ẢNH LỚN, BADGE VIÊN THUỐC) -->
+    <section class="cards-grid" id="exhibitGrid">
+      <!-- Render động từ CSDL beacons.json -->
+    </section>
+
+  </main>
+
+  <!-- MODAL CHỈNH SỬA MÃ & NỘI DUNG THEO PHONG CÁCH TẠP CHÍ -->
+  <div class="editorial-modal" id="editModal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <h3>Chỉnh Sửa Mã Hiện Vật & Lời Thuyết Minh</h3>
+        <button class="modal-close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="editForm">
+        <input type="hidden" id="editTargetId">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Mã Tọa Độ (Code):</label>
+            <input type="text" id="editCode" required class="editorial-input">
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ MAC Beacon:</label>
+            <input type="text" id="editMac" required class="editorial-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tên Hiện Vật / Không Gian:</label>
+          <input type="text" id="editName" required class="editorial-input">
+        </div>
+        <div class="form-group">
+          <label>Người thuyết minh (Speaker):</label>
+          <input type="text" id="editSpeaker" class="editorial-input">
+        </div>
+        <div class="form-group">
+          <label>Lời thuyết minh tự động khi đến gần:</label>
+          <textarea id="editText" rows="3" required class="editorial-textarea"></textarea>
+        </div>
+        <div class="modal-bottom">
+          <button type="button" class="btn-cancel" onclick="closeEditModal()">Hủy</button>
+          <button type="submit" class="btn-save">Lưu Lên Server</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUDIO PLAYER ẨN DÙNG PHÁT THUYẾT MINH .WAV -->
+  <audio id="mainAudioPlayer" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>

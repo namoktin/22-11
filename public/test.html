@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bộ Kiểm Thử ESP32 BLE Server & KiemThu AI Voice Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #FBF9F5;
+      --bg-card: #FFFFFF;
+      --border-light: #EBE5DC;
+      --border-active: #8D3B1B;
+      --text-primary: #1A1816;
+      --text-secondary: #6A655F;
+      --text-muted: #8E8880;
+      --accent-terra: #8D3B1B;
+      --accent-terra-light: #F7EDE8;
+      --accent-green: #22C55E;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --radius-pill: 9999px;
+      --radius-card: 20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 24px 32px 60px 32px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+
+    /* TOP BAR */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .device-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .status-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 6px rgba(34, 197, 94, 0.6); }
+
+    /* HERO */
+    .hero-tag { color: var(--accent-terra); font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+    .hero-title { font-family: var(--font-serif); font-size: 42px; font-weight: 700; color: var(--text-primary); line-height: 1.15; margin-bottom: 10px; }
+    .hero-desc { font-size: 15px; color: var(--text-secondary); max-width: 800px; line-height: 1.6; }
+
+    /* LATENCY BANNER */
+    .latency-banner {
+      background: #F4EFE6;
+      border: 1px solid #E2D9CB;
+      border-radius: var(--radius-card);
+      padding: 22px 26px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .lec-left { display: flex; flex-direction: column; gap: 4px; }
+    .lec-badge { font-size: 11px; font-weight: 800; color: var(--accent-terra); letter-spacing: 0.08em; text-transform: uppercase; }
+    .lec-title { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+
+    .lec-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .lec-num-wrap { display: flex; align-items: baseline; gap: 4px; }
+    .lec-number { font-family: 'Consolas', monospace; font-size: 40px; font-weight: 800; color: var(--text-primary); }
+    .lec-unit { font-size: 15px; color: var(--text-secondary); font-weight: 600; }
+    .lec-status { font-size: 11px; font-weight: 700; color: var(--accent-terra); background: var(--accent-terra-light); padding: 3px 10px; border-radius: var(--radius-pill); }
+
+    .lec-breakdown { display: flex; gap: 20px; font-size: 12px; color: var(--text-secondary); margin-top: 14px; width: 100%; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 12px; }
+    .lec-breakdown b { color: var(--text-primary); font-family: monospace; }
+
+    /* GRID 2 CỘT */
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 1.25fr; gap: 24px; }
+    @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 12px;
+    }
+
+    /* CODE BUTTONS */
+    .code-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .code-btn {
+      background: #FBF9F5;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .code-btn:hover { background: var(--accent-terra-light); border-color: var(--accent-terra); transform: translateY(-2px); }
+    .code-btn.active { background: var(--accent-terra-light); border: 2px solid var(--accent-terra); }
+    .cb-badge { font-size: 11px; font-weight: 800; color: var(--accent-terra); font-family: monospace; }
+    .cb-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+    .input-box, .select-box, .textarea-box {
+      background: #FDFDFD;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-box:focus, .select-box:focus, .textarea-box:focus { border-color: var(--accent-terra); box-shadow: 0 0 0 3px rgba(141, 59, 27, 0.08); }
+
+    .btn-terra {
+      background: var(--accent-terra);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-terra:hover { background: #732E14; }
+
+    .btn-save-code {
+      background: #F4EFE6;
+      border: 1px solid #E2D9CB;
+      color: var(--accent-terra);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-save-code:hover { background: var(--accent-terra); color: #fff; }
+
+    /* RESPONSE */
+    .dialogue-box {
+      background: #F9F7F2;
+      border-radius: 12px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--accent-terra);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+    .speaker-tag { font-size: 11px; font-weight: 800; color: var(--accent-terra); text-transform: uppercase; margin-bottom: 4px; }
+
+    .audio-box {
+      background: #F4EFE6;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .audio-box label { font-size: 11px; font-weight: 700; color: var(--accent-terra); text-transform: uppercase; }
+    audio { width: 100%; height: 36px; }
+
+    /* VOICE SECTION */
+    .voice-card { grid-column: 1 / -1; }
+    .voice-input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .preset-qs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .pq-chip {
+      background: #F3EFE9;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-pill);
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .pq-chip:hover { background: var(--accent-terra-light); color: var(--accent-terra); border-color: var(--accent-terra); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- TOP BAR -->
+    <header class="top-bar">
+      <div class="brand-pill">
+        <span>🏛️</span> Nhà Tù Hỏa Lò • Bộ Kiểm Thử
+      </div>
+      <div class="device-chip">
+        <span class="status-dot"></span>
+        <span>HL-18 • ESP32</span>
+        <span style="color: var(--text-muted); font-size: 12px;">🔋 100%</span>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">DẤU ẤN NƠI CHỐN</div>
+      <h1 class="hero-title">Mỗi tọa độ, một câu chuyện.</h1>
+      <p class="hero-desc">
+        Mô phỏng ESP32 gửi mã tọa độ hiện vật (001, 002, 003, 004), sửa mã trên server, nhận file .WAV thuyết minh và đo độ trễ câu hỏi giọng nói qua bộ não KiemThu AI.
+      </p>
+    </div>
+
+    <!-- LATENCY BANNER -->
+    <section class="latency-banner">
+      <div class="lec-left">
+        <span class="lec-badge">⏱️ ĐO ĐỘ TRỄ PHẢN HỒI TAI NGHE</span>
+        <h2 class="lec-title">Từ lúc hết nói (ESP32) đến khi AI trả về tai nghe</h2>
+      </div>
+      <div class="lec-right">
+        <div class="lec-num-wrap">
+          <span class="lec-number" id="testLatencyNumber">--</span>
+          <span class="lec-unit">ms</span>
+        </div>
+        <span class="lec-status" id="testLatencyBadge">Sẵn sàng nhận tín hiệu</span>
+      </div>
+      <div class="lec-breakdown">
+        <div>Truyền mạng / Upload: <b id="bdTestUpload">-- ms</b></div>
+        <div>KiemThu AI Xử lý: <b id="bdTestAi">-- ms</b></div>
+        <div>Sinh file .WAV 16kHz: <b id="bdTestTts">-- ms</b></div>
+      </div>
+    </section>
+
+    <!-- MAIN GRID 2 CỘT -->
+    <div class="grid-2">
+      
+      <!-- CỘT 1: CHỌN MÃ & SỬA MÃ -->
+      <div class="card">
+        <div class="card-title">
+          <span>🎯 CHỌN MÃ HIỆN VẬT</span>
+          <button class="btn-save-code" onclick="saveCustomCodeToServer()">💾 Lưu Mã Này Lên Server</button>
+        </div>
+
+        <div class="code-grid">
+          <button type="button" class="code-btn active" onclick="selectCode('001', 'Trống Đồng Đông Sơn', 'AA:BB:CC:DD:EE:01')">
+            <span class="cb-badge">P0 • MÃ 001</span>
+            <span class="cb-name">🥁 Trống Đồng</span>
+          </button>
+          <button type="button" class="code-btn" onclick="selectCode('002', 'Cây Bàng Hỏa Lò', 'AA:BB:CC:DD:EE:02')">
+            <span class="cb-badge">P0 • MÃ 002</span>
+            <span class="cb-name">🌳 Cây Bàng Hỏa Lò</span>
+          </button>
+          <button type="button" class="code-btn" onclick="selectCode('003', 'Đạt Hồng (Đại Hồng Chung)', 'AA:BB:CC:DD:EE:03')">
+            <span class="cb-badge">P1 • MÃ 003</span>
+            <span class="cb-name">🔔 Đạt Hồng</span>
+          </button>
+          <button type="button" class="code-btn" onclick="selectCode('004', 'Bảo Kiếm Hoàng Gia', 'AA:BB:CC:DD:EE:04')">
+            <span class="cb-badge">P0 • MÃ 004</span>
+            <span class="cb-name">🗡️ Bảo Kiếm</span>
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Mã Tọa Độ (Code):</label>
+            <input type="text" id="inputCode" class="input-box" value="001">
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ MAC Beacon:</label>
+            <input type="text" id="inputMac" class="input-box" value="AA:BB:CC:DD:EE:01">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tên Hiện Vật:</label>
+          <input type="text" id="inputName" class="input-box" value="Trống Đồng Đông Sơn">
+        </div>
+
+        <div class="form-group">
+          <label>Đoạn thuyết minh tự động:</label>
+          <textarea id="inputText" class="textarea-box" rows="2">Chào mừng bạn đến với không gian Trống đồng Đông Sơn. Đây là bảo vật quốc gia kiệt xuất...</textarea>
+        </div>
+
+        <button class="btn-terra" onclick="sendCodeRequest()">
+          ⚡ GỬI MÃ NÀY LÊN SERVER (LẤY ĐƯỢC LUÔN)
+        </button>
+      </div>
+
+      <!-- CỘT 2: KẾT QUẢ TRẢ VỀ -->
+      <div class="card">
+        <div class="card-title">
+          <span>📥 KẾT QUẢ SERVER TRẢ VỀ</span>
+          <span id="resBadge" style="font-size: 11px; font-weight: 700; color: var(--accent-green); background: rgba(34,197,94,0.1); padding: 3px 8px; border-radius: 999px;">200 OK</span>
+        </div>
+
+        <h3 id="resTitle" style="font-family: var(--font-serif); font-size: 20px; font-weight: 700;">
+          🥁 Trống Đồng Đông Sơn (Mã 001)
+        </h3>
+
+        <div class="dialogue-box">
+          <div class="speaker-tag" id="resSpeaker">👤 Thuyết Minh Viên</div>
+          <div id="resDialogue">Bấm "GỬI MÃ NÀY LÊN SERVER" để kiểm tra kết quả tức thì!</div>
+        </div>
+
+        <div class="audio-box">
+          <label>🎵 FILE ÂM THANH .WAV CHO TAI NGHE ESP32:</label>
+          <audio id="resAudio" controls preload="auto"></audio>
+          <div id="resAudioUrl" style="font-size: 11px; color: var(--text-muted); font-family: monospace; word-break: break-all;">
+            URL: http://localhost:5000/audio/trong_dong_dong_son.wav
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-secondary);">
+          * Luồng âm thanh chuẩn <b>.WAV 16kHz Mono PCM</b> giúp ESP32 giải mã DAC mượt mà, không giật lag.
+        </div>
+      </div>
+
+      <!-- CÂU HỎI GIỌNG NÓI TỪ CỤC HUB (ESP32) QUA KIEMTHU AI -->
+      <div class="card voice-card">
+        <div class="card-title">
+          <span>🎙️ TRẠM GIAO TIẾP CỤC HUB (ESP32 VOICE HUB • POST /api/hub/ask)</span>
+          <span style="font-size: 12px; color: var(--accent-terra); font-weight: 700;">API Hub: /api/hub/ask</span>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-secondary);">
+          <b>Quy trình cục Hub:</b> User hỏi vào Cục Hub (ESP32) ➔ Hub gửi request lên <code>POST /api/hub/ask</code> ➔ Server hỏi KiemThu AI ➔ Server trả file <code>.WAV</code> về cho Cục Hub ➔ Cục Hub phát ra tai nghe/loa tức thì (<1s)!
+        </p>
+
+        <div class="voice-input-row">
+          <select id="voiceCodeSelect" class="select-box" style="min-width: 200px;">
+            <option value="001">Vị trí: Mã 001 (Trống Đồng)</option>
+            <option value="002" selected>Vị trí: Mã 002 (Cây Bàng Hỏa Lò)</option>
+            <option value="003">Vị trí: Mã 003 (Đạt Hồng)</option>
+            <option value="004">Vị trí: Mã 004 (Bảo Kiếm)</option>
+          </select>
+          <input type="text" id="voiceQuestion" class="input-box" style="flex: 1;" value="Cây bàng này có ý nghĩa lịch sử gì đối với tù nhân Hỏa Lò?">
+          <button class="btn-terra" style="padding: 10px 18px;" onclick="sendVoiceQuery()">
+            💬 Gửi Text
+          </button>
+          <button class="btn-terra" id="btnRecordMicWav" style="padding: 10px 18px; background: #991B1B;" onclick="toggleRecordWav()">
+            🎙️ Bấm Nói (Gửi File .WAV)
+          </button>
+        </div>
+
+        <div class="preset-qs">
+          <span style="font-size: 12px; color: var(--text-muted); align-self: center;">Câu hỏi mẫu:</span>
+          <button class="pq-chip" onclick="setQuestion('Cây bàng này có ý nghĩa lịch sử gì đối với tù nhân Hỏa Lò?')">Ý nghĩa Cây Bàng Hỏa Lò?</button>
+          <button class="pq-chip" onclick="setQuestion('Lá bàng được các chiến sĩ dùng làm thuốc trị bệnh gì?')">Lá bàng chữa bệnh gì?</button>
+          <button class="pq-chip" onclick="setQuestion('Nhà tù Hỏa Lò do ai xây dựng và vào năm nào?')">Nhà tù Hỏa Lò xây năm nào?</button>
+          <button class="pq-chip" onclick="setQuestion('Trống đồng Đông Sơn đúc bằng chất liệu gì?')">Trống đồng làm bằng gì?</button>
+        </div>
+
+        <div id="voiceResultBox" style="display: none; background: #F9F7F2; border-radius: 12px; padding: 16px; margin-top: 10px; border-left: 3px solid var(--accent-terra);">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+            <b style="color: var(--accent-terra);" id="voiceSourceBadge">🧠 TRẢ LỜI TỪ KIEMTHU AI ENGINE:</b>
+            <span id="voiceLatencyTag" style="color: var(--accent-green); font-weight: 700;">-- ms</span>
+          </div>
+          <div id="voiceResultText" style="font-size: 14px; line-height: 1.6; color: var(--text-primary);"></div>
+          <div style="margin-top: 12px;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">🎵 ÂM THANH .WAV PHÁT VÀO TAI NGHE:</label>
+            <audio id="voiceResultAudio" controls style="margin-top: 4px; width: 100%; height: 34px;"></audio>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const baseUrl = 'http://localhost:5000';
+
+    function selectCode(code, name, mac) {
+      document.getElementById('inputCode').value = code;
+      document.getElementById('inputName').value = name;
+      document.getElementById('inputMac').value = mac;
+
+      document.querySelectorAll('.code-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      document.getElementById('voiceCodeSelect').value = code;
+    }
+
+    function setQuestion(q) {
+      document.getElementById('voiceQuestion').value = q;
+    }
+
+    async function sendCodeRequest() {
+      const code = document.getElementById('inputCode').value.trim();
+      const mac = document.getElementById('inputMac').value.trim();
+
+      const btn = event.currentTarget;
+      btn.innerText = '⏳ Đang lấy tín hiệu...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`${baseUrl}/api/ble-scan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, beacon_mac: mac, device_id: 'TEST_HTML_CLIENT' })
+        });
+        const data = await res.json();
+
+        document.getElementById('resBadge').innerText = '✓ LẤY ĐƯỢC LUÔN (200 OK)';
+        document.getElementById('resTitle').innerText = `${data.icon || '🏛️'} ${data.artifact_name} (Mã ${data.code})`;
+        document.getElementById('resSpeaker').innerText = `👤 ${data.dialogue?.speaker || 'Thuyết Minh'}`;
+        document.getElementById('resDialogue').innerText = data.dialogue?.text || '';
+
+        const audioUrl = data.audio?.wav_url || data.audio?.url;
+        if (audioUrl) {
+          const audioElem = document.getElementById('resAudio');
+          audioElem.src = audioUrl;
+          document.getElementById('resAudioUrl').innerText = `URL .WAV: ${audioUrl}`;
+          audioElem.play().catch(e => console.log('Autoplay audio:', e));
+        }
+
+      } catch (err) {
+        alert('Lỗi kết nối Server: ' + err.message);
+      } finally {
+        btn.innerText = '⚡ GỬI MÃ NÀY LÊN SERVER (LẤY ĐƯỢC LUÔN)';
+        btn.disabled = false;
+      }
+    }
+
+    async function saveCustomCodeToServer() {
+      const code = document.getElementById('inputCode').value.trim();
+      const mac = document.getElementById('inputMac').value.trim();
+      const name = document.getElementById('inputName').value.trim();
+      const text = document.getElementById('inputText').value.trim();
+
+      try {
+        const res = await fetch(`${baseUrl}/api/beacons/update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            target_code: code,
+            new_code: code,
+            mac: mac,
+            artifact_name: name,
+            text: text
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✓ Đã lưu thành công lên Server! Mã [${code}] giờ tương ứng với: "${name}"`);
+        }
+      } catch (err) {
+        alert('Lỗi lưu mã lên server: ' + err.message);
+      }
+    }
+
+    async function sendVoiceQuery() {
+      const code = document.getElementById('voiceCodeSelect').value;
+      const question = document.getElementById('voiceQuestion').value.trim();
+
+      const tEndSpeech = Date.now();
+
+      const box = document.getElementById('voiceResultBox');
+      box.style.display = 'block';
+      document.getElementById('voiceResultText').innerText = 'Đang chuyển tiếp câu hỏi qua KiemThu AI Engine...';
+
+      try {
+        const res = await fetch(`${baseUrl}/api/hub/ask`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            device_id: 'ESP32_HUB_01',
+            code: code,
+            voice_text: question,
+            end_speech_time: tEndSpeech
+          })
+        });
+        const data = await res.json();
+
+        handleVoiceQueryData(data);
+      } catch (err) {
+        document.getElementById('voiceResultText').innerText = 'Lỗi gửi Voice Query: ' + err.message;
+      }
+    }
+
+    // XỬ LÝ DỮ LIỆU PHẢN HỒI TỪ SERVER
+    function handleVoiceQueryData(data) {
+      const ms = data.latency_measurement?.time_to_first_sound_ms || 0;
+      document.getElementById('testLatencyNumber').innerText = ms;
+      const tag = document.getElementById('voiceLatencyTag');
+      if (ms < 1000) {
+        tag.innerText = `⚡ ${ms} ms (< 1s Siêu Tốc!)`;
+        tag.style.background = '#EBFDF2';
+        tag.style.color = '#15803D';
+      } else {
+        tag.innerText = `⏱️ ${ms} ms`;
+      }
+
+      const bd = data.latency_measurement?.breakdown || {};
+      document.getElementById('bdTestUpload').innerText = `${bd.upload_and_receive_ms || bd.upload_and_stt_ms || 0} ms`;
+      document.getElementById('bdTestAi').innerText = `${bd.ai_thinking_ms || 0} ms`;
+      document.getElementById('bdTestTts').innerText = `${bd.first_chunk_wav_ms || bd.tts_wav_synthesis_ms || 0} ms (Đoạn 1)`;
+
+      const qText = data.transcribed_question ? `🗣️ Câu hỏi bạn vừa nói: "${data.transcribed_question}"\n\n` : '';
+      document.getElementById('voiceSourceBadge').innerText = `🧠 ${data.ai_source || 'KiemThu AI'} [${data.input_mode || 'JSON'}]`;
+      document.getElementById('voiceResultText').innerText = qText + data.reply_text;
+
+      // Xử lý phát Progressive Chunks nối tiếp liền mạch
+      let chunks = data.chunks || [{ index: 1, wav_url: data.audio_wav_url }];
+      let currentIdx = 0;
+      const a = document.getElementById('voiceResultAudio');
+
+      function playChunk(idx) {
+        if (idx >= chunks.length) return;
+        currentIdx = idx;
+        a.src = chunks[idx].wav_url;
+        a.play().catch(e => console.log('Autoplay voice:', e));
+        a.onended = () => {
+          if (idx + 1 < chunks.length) {
+            playChunk(idx + 1);
+          }
+        };
+      }
+
+      if (data.audio_wav_url) {
+        playChunk(0);
+      }
+    }
+
+    // =========================================================================
+    // 🎙️ THU ÂM TỪ MICROPHONE MÁY TÍNH & GỬI FILE .WAV TRỰC TIẾP LÊN SERVER
+    // (Mô phỏng 100% y hệt Cục Hub ESP32 thu âm từ Micro gửi file .WAV lên)
+    // =========================================================================
+    let mediaRecorder = null;
+    let recordedAudioChunks = [];
+    let isMicRecording = false;
+
+    async function toggleRecordWav() {
+      const btn = document.getElementById('btnRecordMicWav');
+      if (!isMicRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          recordedAudioChunks = [];
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = e => recordedAudioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/wav' });
+            stream.getTracks().forEach(t => t.stop());
+            await sendWavBlobToServer(audioBlob);
+          };
+          mediaRecorder.start();
+          isMicRecording = true;
+          btn.innerText = '⏹ Đang Ghi... Bấm Để Dừng & Gửi .WAV!';
+          btn.style.background = '#DC2626';
+        } catch (err) {
+          alert('Không thể mở Microphone trình duyệt: ' + err.message);
+        }
+      } else {
+        mediaRecorder.stop();
+        isMicRecording = false;
+        btn.innerText = '🎙️ Bấm Nói (Gửi File .WAV)';
+        btn.style.background = '#991B1B';
+      }
+    }
+
+    async function sendWavBlobToServer(blob) {
+      const code = document.getElementById('voiceCodeSelect').value;
+      const t0 = Date.now();
+      const box = document.getElementById('voiceResultBox');
+      box.style.display = 'block';
+      document.getElementById('voiceResultText').innerText = '⏳ Đang tải file .WAV lên Server, Whisper AI đang chuyển giọng nói thành chữ và KiemThu AI đang suy nghĩ...';
+
+      try {
+        const res = await fetch(`${baseUrl}/api/hub/ask`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'audio/wav',
+            'X-Artifact-Code': code,
+            'X-Device-Id': 'BROWSER_MIC_TEST_HUB',
+            'X-End-Speech-Time': t0.toString()
+          },
+          body: blob
+        });
+        const data = await res.json();
+        handleVoiceQueryData(data);
+      } catch (err) {
+        document.getElementById('voiceResultText').innerText = 'Lỗi gửi file .WAV: ' + err.message;
+      }
+    }
+    }
+  </script>
+</body>
+</html>

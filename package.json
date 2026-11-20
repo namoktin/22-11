@@ -1,0 +1,23 @@
+{
+  "name": "esp32-ble-dialogue-server",
+  "version": "1.0.0",
+  "description": "Máy chủ điều hướng và cấp phát hội thoại / audio thuyết minh thông minh cho ESP32 dựa trên tín hiệu định vị BLE Beacons",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "generate-audio": "python scripts/generate_audio.py"
+  },
+  "keywords": [
+    "esp32",
+    "ble",
+    "beacon",
+    "ibeacon",
+    "tour-guide",
+    "audio-streaming",
+    "pcm5102a",
+    "max97220",
+    "smart-museum"
+  ],
+  "author": "Antigravity Agent",
+  "license": "MIT"
+}
