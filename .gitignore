@@ -1,0 +1,12 @@
+node_modules/
+.env
+*.env
+.DS_Store
+Thumbs.db
+
+# File âm thanh tạm sinh ra lúc chạy (giữ lại 4 file thuyết minh gốc)
+audio/reply_*.wav
+audio/reply_*.mp3
+audio/reply_*.tmp.mp3
+audio/hub_rec_*
+kiemthu/.env

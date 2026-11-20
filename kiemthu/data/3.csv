@@ -1,0 +1,501 @@
+﻿question_id,seed_id,variant,category,difficulty,question,knowledge_id,answerability
+HLQ001,F001,1,Địa lý & nhận diện,Dễ,Địa chỉ hiện nay của Di tích Nhà tù Hỏa Lò là ở đâu?,K001,Có
+HLQ002,F001,2,Địa lý & nhận diện,Dễ,"Khách tham quan hỏi: “Địa chỉ hiện nay của Di tích Nhà tù Hỏa Lò là ở đâu?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K001,Có
+HLQ003,F001,3,Địa lý & nhận diện,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Địa chỉ hiện nay của Di tích Nhà tù Hỏa Lò là ở đâu?”?,K001,Có
+HLQ004,F001,4,Địa lý & nhận diện,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Địa chỉ hiện nay của Di tích Nhà tù Hỏa Lò là ở đâu?”",K001,Có
+HLQ005,F001,5,Địa lý & nhận diện,Dễ,Hãy trả lời câu hỏi: “Địa chỉ hiện nay của Di tích Nhà tù Hỏa Lò là ở đâu?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K001,Có
+HLQ006,F002,1,Địa lý & nhận diện,Dễ,Tên tiếng Pháp Maison Centrale của Nhà tù Hỏa Lò có nghĩa là gì?,K002,Có
+HLQ007,F002,2,Địa lý & nhận diện,Dễ,"Khách tham quan hỏi: “Tên tiếng Pháp Maison Centrale của Nhà tù Hỏa Lò có nghĩa là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K002,Có
+HLQ008,F002,3,Địa lý & nhận diện,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tên tiếng Pháp Maison Centrale của Nhà tù Hỏa Lò có nghĩa là gì?”?,K002,Có
+HLQ009,F002,4,Địa lý & nhận diện,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tên tiếng Pháp Maison Centrale của Nhà tù Hỏa Lò có nghĩa là gì?”",K002,Có
+HLQ010,F002,5,Địa lý & nhận diện,Dễ,Hãy trả lời câu hỏi: “Tên tiếng Pháp Maison Centrale của Nhà tù Hỏa Lò có nghĩa là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K002,Có
+HLQ011,F003,1,Địa lý & nhận diện,Dễ,Vì sao địa danh Hỏa Lò còn được nhắc với tên gọi “Hilton Hà Nội”?,K003,Có
+HLQ012,F003,2,Địa lý & nhận diện,Dễ,"Khách tham quan hỏi: “Vì sao địa danh Hỏa Lò còn được nhắc với tên gọi “Hilton Hà Nội”?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K003,Có
+HLQ013,F003,3,Địa lý & nhận diện,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Vì sao địa danh Hỏa Lò còn được nhắc với tên gọi “Hilton Hà Nội”?”?,K003,Có
+HLQ014,F003,4,Địa lý & nhận diện,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Vì sao địa danh Hỏa Lò còn được nhắc với tên gọi “Hilton Hà Nội”?”",K003,Có
+HLQ015,F003,5,Địa lý & nhận diện,Dễ,Hãy trả lời câu hỏi: “Vì sao địa danh Hỏa Lò còn được nhắc với tên gọi “Hilton Hà Nội”?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K003,Có
+HLQ016,F004,1,Nguồn gốc địa danh,Dễ,Nhà tù Hỏa Lò được xây trên đất của làng nào và làng này hình thành từ hai thôn nào?,K004,Có
+HLQ017,F004,2,Nguồn gốc địa danh,Dễ,"Khách tham quan hỏi: “Nhà tù Hỏa Lò được xây trên đất của làng nào và làng này hình thành từ hai thôn nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K004,Có
+HLQ018,F004,3,Nguồn gốc địa danh,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nhà tù Hỏa Lò được xây trên đất của làng nào và làng này hình thành từ hai thôn nào?”?,K004,Có
+HLQ019,F004,4,Nguồn gốc địa danh,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nhà tù Hỏa Lò được xây trên đất của làng nào và làng này hình thành từ hai thôn nào?”",K004,Có
+HLQ020,F004,5,Nguồn gốc địa danh,Dễ,Hãy trả lời câu hỏi: “Nhà tù Hỏa Lò được xây trên đất của làng nào và làng này hình thành từ hai thôn nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K004,Có
+HLQ021,F005,1,Nguồn gốc địa danh,Dễ,Tên Nôm “làng Hỏa Lò” bắt nguồn từ nghề thủ công nào của làng Phụ Khánh?,K005,Có
+HLQ022,F005,2,Nguồn gốc địa danh,Dễ,"Khách tham quan hỏi: “Tên Nôm “làng Hỏa Lò” bắt nguồn từ nghề thủ công nào của làng Phụ Khánh?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K005,Có
+HLQ023,F005,3,Nguồn gốc địa danh,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tên Nôm “làng Hỏa Lò” bắt nguồn từ nghề thủ công nào của làng Phụ Khánh?”?,K005,Có
+HLQ024,F005,4,Nguồn gốc địa danh,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tên Nôm “làng Hỏa Lò” bắt nguồn từ nghề thủ công nào của làng Phụ Khánh?”",K005,Có
+HLQ025,F005,5,Nguồn gốc địa danh,Dễ,Hãy trả lời câu hỏi: “Tên Nôm “làng Hỏa Lò” bắt nguồn từ nghề thủ công nào của làng Phụ Khánh?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K005,Có
+HLQ026,F006,1,Lịch sử xây dựng,Dễ,Nhà tù Hỏa Lò được thực dân Pháp xây dựng vào năm nào?,K006,Có
+HLQ027,F006,2,Lịch sử xây dựng,Dễ,"Khách tham quan hỏi: “Nhà tù Hỏa Lò được thực dân Pháp xây dựng vào năm nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K006,Có
+HLQ028,F006,3,Lịch sử xây dựng,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nhà tù Hỏa Lò được thực dân Pháp xây dựng vào năm nào?”?,K006,Có
+HLQ029,F006,4,Lịch sử xây dựng,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nhà tù Hỏa Lò được thực dân Pháp xây dựng vào năm nào?”",K006,Có
+HLQ030,F006,5,Lịch sử xây dựng,Dễ,Hãy trả lời câu hỏi: “Nhà tù Hỏa Lò được thực dân Pháp xây dựng vào năm nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K006,Có
+HLQ031,F007,1,Kiến trúc & quy mô,Dễ,Diện tích nguyên thủy của Nhà tù Hỏa Lò được bài viết chính thức ghi là bao nhiêu?,K007,Có
+HLQ032,F007,2,Kiến trúc & quy mô,Dễ,"Khách tham quan hỏi: “Diện tích nguyên thủy của Nhà tù Hỏa Lò được bài viết chính thức ghi là bao nhiêu?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K007,Có
+HLQ033,F007,3,Kiến trúc & quy mô,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Diện tích nguyên thủy của Nhà tù Hỏa Lò được bài viết chính thức ghi là bao nhiêu?”?,K007,Có
+HLQ034,F007,4,Kiến trúc & quy mô,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Diện tích nguyên thủy của Nhà tù Hỏa Lò được bài viết chính thức ghi là bao nhiêu?”",K007,Có
+HLQ035,F007,5,Kiến trúc & quy mô,Dễ,Hãy trả lời câu hỏi: “Diện tích nguyên thủy của Nhà tù Hỏa Lò được bài viết chính thức ghi là bao nhiêu?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K007,Có
+HLQ036,F008,1,Kiến trúc & quy mô,Dễ,"Theo bài viết năm 2024, khuôn viên còn lại của di tích rộng khoảng bao nhiêu?",K008,Có
+HLQ037,F008,2,Kiến trúc & quy mô,Dễ,"Khách tham quan hỏi: “Theo bài viết năm 2024, khuôn viên còn lại của di tích rộng khoảng bao nhiêu?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K008,Có
+HLQ038,F008,3,Kiến trúc & quy mô,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Theo bài viết năm 2024, khuôn viên còn lại của di tích rộng khoảng bao nhiêu?”?",K008,Có
+HLQ039,F008,4,Kiến trúc & quy mô,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Theo bài viết năm 2024, khuôn viên còn lại của di tích rộng khoảng bao nhiêu?”",K008,Có
+HLQ040,F008,5,Kiến trúc & quy mô,Dễ,"Hãy trả lời câu hỏi: “Theo bài viết năm 2024, khuôn viên còn lại của di tích rộng khoảng bao nhiêu?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K008,Có
+HLQ041,F009,1,Kiến trúc & quy mô,Trung bình,Những hạng mục chính nào được liệt kê trong thiết kế ban đầu của nhà tù?,K009,Có
+HLQ042,F009,2,Kiến trúc & quy mô,Trung bình,"Khách tham quan hỏi: “Những hạng mục chính nào được liệt kê trong thiết kế ban đầu của nhà tù?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K009,Có
+HLQ043,F009,3,Kiến trúc & quy mô,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những hạng mục chính nào được liệt kê trong thiết kế ban đầu của nhà tù?”?,K009,Có
+HLQ044,F009,4,Kiến trúc & quy mô,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những hạng mục chính nào được liệt kê trong thiết kế ban đầu của nhà tù?”",K009,Có
+HLQ045,F009,5,Kiến trúc & quy mô,Trung bình,Hãy trả lời câu hỏi: “Những hạng mục chính nào được liệt kê trong thiết kế ban đầu của nhà tù?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K009,Có
+HLQ046,F010,1,Kiến trúc & quy mô,Trung bình,Hệ thống tường bao và tháp canh của Nhà tù Hỏa Lò được mô tả có những đặc điểm gì?,K010,Có
+HLQ047,F010,2,Kiến trúc & quy mô,Trung bình,"Khách tham quan hỏi: “Hệ thống tường bao và tháp canh của Nhà tù Hỏa Lò được mô tả có những đặc điểm gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K010,Có
+HLQ048,F010,3,Kiến trúc & quy mô,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hệ thống tường bao và tháp canh của Nhà tù Hỏa Lò được mô tả có những đặc điểm gì?”?,K010,Có
+HLQ049,F010,4,Kiến trúc & quy mô,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hệ thống tường bao và tháp canh của Nhà tù Hỏa Lò được mô tả có những đặc điểm gì?”",K010,Có
+HLQ050,F010,5,Kiến trúc & quy mô,Trung bình,Hãy trả lời câu hỏi: “Hệ thống tường bao và tháp canh của Nhà tù Hỏa Lò được mô tả có những đặc điểm gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K010,Có
+HLQ051,F011,1,Không gian & khu vực,Trung bình,Khu ngoài của nhà tù từng bố trí những phòng hoặc công năng phục vụ nào?,K011,Có
+HLQ052,F011,2,Không gian & khu vực,Trung bình,"Khách tham quan hỏi: “Khu ngoài của nhà tù từng bố trí những phòng hoặc công năng phục vụ nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K011,Có
+HLQ053,F011,3,Không gian & khu vực,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Khu ngoài của nhà tù từng bố trí những phòng hoặc công năng phục vụ nào?”?,K011,Có
+HLQ054,F011,4,Không gian & khu vực,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Khu ngoài của nhà tù từng bố trí những phòng hoặc công năng phục vụ nào?”",K011,Có
+HLQ055,F011,5,Không gian & khu vực,Trung bình,Hãy trả lời câu hỏi: “Khu ngoài của nhà tù từng bố trí những phòng hoặc công năng phục vụ nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K011,Có
+HLQ056,F012,1,Không gian & khu vực,Trung bình,"Theo hồ sơ giới thiệu, khu trong gồm những trại giam và khu biệt giam nào?",K012,Có
+HLQ057,F012,2,Không gian & khu vực,Trung bình,"Khách tham quan hỏi: “Theo hồ sơ giới thiệu, khu trong gồm những trại giam và khu biệt giam nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K012,Có
+HLQ058,F012,3,Không gian & khu vực,Trung bình,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Theo hồ sơ giới thiệu, khu trong gồm những trại giam và khu biệt giam nào?”?",K012,Có
+HLQ059,F012,4,Không gian & khu vực,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Theo hồ sơ giới thiệu, khu trong gồm những trại giam và khu biệt giam nào?”",K012,Có
+HLQ060,F012,5,Không gian & khu vực,Trung bình,"Hãy trả lời câu hỏi: “Theo hồ sơ giới thiệu, khu trong gồm những trại giam và khu biệt giam nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K012,Có
+HLQ061,F013,1,Không gian & khu vực,Dễ,Trại giam D được dùng để giam giữ đối tượng nào và từng có tên gọi gì trong giai đoạn 1930–1945?,K013,Có
+HLQ062,F013,2,Không gian & khu vực,Dễ,"Khách tham quan hỏi: “Trại giam D được dùng để giam giữ đối tượng nào và từng có tên gọi gì trong giai đoạn 1930–1945?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K013,Có
+HLQ063,F013,3,Không gian & khu vực,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trại giam D được dùng để giam giữ đối tượng nào và từng có tên gọi gì trong giai đoạn 1930–1945?”?,K013,Có
+HLQ064,F013,4,Không gian & khu vực,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trại giam D được dùng để giam giữ đối tượng nào và từng có tên gọi gì trong giai đoạn 1930–1945?”",K013,Có
+HLQ065,F013,5,Không gian & khu vực,Dễ,Hãy trả lời câu hỏi: “Trại giam D được dùng để giam giữ đối tượng nào và từng có tên gọi gì trong giai đoạn 1930–1945?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K013,Có
+HLQ066,F014,1,Không gian & khu vực,Dễ,Trại giam J/I liên quan đến sự kiện lịch sử nổi bật nào?,K014,Có
+HLQ067,F014,2,Không gian & khu vực,Dễ,"Khách tham quan hỏi: “Trại giam J/I liên quan đến sự kiện lịch sử nổi bật nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K014,Có
+HLQ068,F014,3,Không gian & khu vực,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trại giam J/I liên quan đến sự kiện lịch sử nổi bật nào?”?,K014,Có
+HLQ069,F014,4,Không gian & khu vực,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trại giam J/I liên quan đến sự kiện lịch sử nổi bật nào?”",K014,Có
+HLQ070,F014,5,Không gian & khu vực,Dễ,Hãy trả lời câu hỏi: “Trại giam J/I liên quan đến sự kiện lịch sử nổi bật nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K014,Có
+HLQ071,F015,1,Không gian & khu vực,Trung bình,"Trại giam nữ có diện tích, cấu trúc phòng và sức chứa từng được mô tả ra sao?",K015,Có
+HLQ072,F015,2,Không gian & khu vực,Trung bình,"Khách tham quan hỏi: “Trại giam nữ có diện tích, cấu trúc phòng và sức chứa từng được mô tả ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K015,Có
+HLQ073,F015,3,Không gian & khu vực,Trung bình,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trại giam nữ có diện tích, cấu trúc phòng và sức chứa từng được mô tả ra sao?”?",K015,Có
+HLQ074,F015,4,Không gian & khu vực,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trại giam nữ có diện tích, cấu trúc phòng và sức chứa từng được mô tả ra sao?”",K015,Có
+HLQ075,F015,5,Không gian & khu vực,Trung bình,"Hãy trả lời câu hỏi: “Trại giam nữ có diện tích, cấu trúc phòng và sức chứa từng được mô tả ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K015,Có
+HLQ076,F016,1,Mốc thời gian,Dễ,Điều gì xảy ra với Nhà tù Hỏa Lò vào ngày 10/10/1954?,K016,Có
+HLQ077,F016,2,Mốc thời gian,Dễ,"Khách tham quan hỏi: “Điều gì xảy ra với Nhà tù Hỏa Lò vào ngày 10/10/1954?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K016,Có
+HLQ078,F016,3,Mốc thời gian,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Điều gì xảy ra với Nhà tù Hỏa Lò vào ngày 10/10/1954?”?,K016,Có
+HLQ079,F016,4,Mốc thời gian,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Điều gì xảy ra với Nhà tù Hỏa Lò vào ngày 10/10/1954?”",K016,Có
+HLQ080,F016,5,Mốc thời gian,Dễ,Hãy trả lời câu hỏi: “Điều gì xảy ra với Nhà tù Hỏa Lò vào ngày 10/10/1954?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K016,Có
+HLQ081,F017,1,Mốc thời gian,Trung bình,Hệ thống trưng bày thường xuyên giới thiệu hai giai đoạn lịch sử chính nào?,K017,Có
+HLQ082,F017,2,Mốc thời gian,Trung bình,"Khách tham quan hỏi: “Hệ thống trưng bày thường xuyên giới thiệu hai giai đoạn lịch sử chính nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K017,Có
+HLQ083,F017,3,Mốc thời gian,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hệ thống trưng bày thường xuyên giới thiệu hai giai đoạn lịch sử chính nào?”?,K017,Có
+HLQ084,F017,4,Mốc thời gian,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hệ thống trưng bày thường xuyên giới thiệu hai giai đoạn lịch sử chính nào?”",K017,Có
+HLQ085,F017,5,Mốc thời gian,Trung bình,Hãy trả lời câu hỏi: “Hệ thống trưng bày thường xuyên giới thiệu hai giai đoạn lịch sử chính nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K017,Có
+HLQ086,F018,1,Đời sống trong tù,Dễ,Điều kiện vật chất trong các phòng giam tù chính trị được mô tả như thế nào?,K018,Có
+HLQ087,F018,2,Đời sống trong tù,Dễ,"Khách tham quan hỏi: “Điều kiện vật chất trong các phòng giam tù chính trị được mô tả như thế nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K018,Có
+HLQ088,F018,3,Đời sống trong tù,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Điều kiện vật chất trong các phòng giam tù chính trị được mô tả như thế nào?”?,K018,Có
+HLQ089,F018,4,Đời sống trong tù,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Điều kiện vật chất trong các phòng giam tù chính trị được mô tả như thế nào?”",K018,Có
+HLQ090,F018,5,Đời sống trong tù,Dễ,Hãy trả lời câu hỏi: “Điều kiện vật chất trong các phòng giam tù chính trị được mô tả như thế nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K018,Có
+HLQ091,F019,1,Đời sống trong tù,Dễ,Tù nhân ở Hỏa Lò bị buộc làm những loại lao dịch nào?,K019,Có
+HLQ092,F019,2,Đời sống trong tù,Dễ,"Khách tham quan hỏi: “Tù nhân ở Hỏa Lò bị buộc làm những loại lao dịch nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K019,Có
+HLQ093,F019,3,Đời sống trong tù,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tù nhân ở Hỏa Lò bị buộc làm những loại lao dịch nào?”?,K019,Có
+HLQ094,F019,4,Đời sống trong tù,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tù nhân ở Hỏa Lò bị buộc làm những loại lao dịch nào?”",K019,Có
+HLQ095,F019,5,Đời sống trong tù,Dễ,Hãy trả lời câu hỏi: “Tù nhân ở Hỏa Lò bị buộc làm những loại lao dịch nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K019,Có
+HLQ096,F020,1,Đời sống trong tù,Dễ,Những hình phạt nào được ghi nhận trong chế độ giam giữ tù chính trị?,K020,Có
+HLQ097,F020,2,Đời sống trong tù,Dễ,"Khách tham quan hỏi: “Những hình phạt nào được ghi nhận trong chế độ giam giữ tù chính trị?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K020,Có
+HLQ098,F020,3,Đời sống trong tù,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những hình phạt nào được ghi nhận trong chế độ giam giữ tù chính trị?”?,K020,Có
+HLQ099,F020,4,Đời sống trong tù,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những hình phạt nào được ghi nhận trong chế độ giam giữ tù chính trị?”",K020,Có
+HLQ100,F020,5,Đời sống trong tù,Dễ,Hãy trả lời câu hỏi: “Những hình phạt nào được ghi nhận trong chế độ giam giữ tù chính trị?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K020,Có
+HLQ101,F021,1,Đời sống trong tù,Dễ,Chế độ ăn của tù nhân được tổ chức ra sao và chất lượng thực tế được mô tả thế nào?,K021,Có
+HLQ102,F021,2,Đời sống trong tù,Dễ,"Khách tham quan hỏi: “Chế độ ăn của tù nhân được tổ chức ra sao và chất lượng thực tế được mô tả thế nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K021,Có
+HLQ103,F021,3,Đời sống trong tù,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Chế độ ăn của tù nhân được tổ chức ra sao và chất lượng thực tế được mô tả thế nào?”?,K021,Có
+HLQ104,F021,4,Đời sống trong tù,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Chế độ ăn của tù nhân được tổ chức ra sao và chất lượng thực tế được mô tả thế nào?”",K021,Có
+HLQ105,F021,5,Đời sống trong tù,Dễ,Hãy trả lời câu hỏi: “Chế độ ăn của tù nhân được tổ chức ra sao và chất lượng thực tế được mô tả thế nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K021,Có
+HLQ106,F022,1,Đời sống trong tù,Dễ,Mỗi năm tù nhân được cấp những vật dụng mặc và giữ ấm nào?,K022,Có
+HLQ107,F022,2,Đời sống trong tù,Dễ,"Khách tham quan hỏi: “Mỗi năm tù nhân được cấp những vật dụng mặc và giữ ấm nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K022,Có
+HLQ108,F022,3,Đời sống trong tù,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Mỗi năm tù nhân được cấp những vật dụng mặc và giữ ấm nào?”?,K022,Có
+HLQ109,F022,4,Đời sống trong tù,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Mỗi năm tù nhân được cấp những vật dụng mặc và giữ ấm nào?”",K022,Có
+HLQ110,F022,5,Đời sống trong tù,Dễ,Hãy trả lời câu hỏi: “Mỗi năm tù nhân được cấp những vật dụng mặc và giữ ấm nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K022,Có
+HLQ111,F023,1,Không gian & khu vực,Dễ,Cachot là khu vực gì và người bị giam ở đó phải chịu điều kiện ra sao?,K023,Có
+HLQ112,F023,2,Không gian & khu vực,Dễ,"Khách tham quan hỏi: “Cachot là khu vực gì và người bị giam ở đó phải chịu điều kiện ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K023,Có
+HLQ113,F023,3,Không gian & khu vực,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Cachot là khu vực gì và người bị giam ở đó phải chịu điều kiện ra sao?”?,K023,Có
+HLQ114,F023,4,Không gian & khu vực,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Cachot là khu vực gì và người bị giam ở đó phải chịu điều kiện ra sao?”",K023,Có
+HLQ115,F023,5,Không gian & khu vực,Dễ,Hãy trả lời câu hỏi: “Cachot là khu vực gì và người bị giam ở đó phải chịu điều kiện ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K023,Có
+HLQ116,F024,1,Nhân vật lịch sử,Dễ,Vì sao Trường Chinh từng bị giam tại Cachot vào năm 1932?,K024,Có
+HLQ117,F024,2,Nhân vật lịch sử,Dễ,"Khách tham quan hỏi: “Vì sao Trường Chinh từng bị giam tại Cachot vào năm 1932?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K024,Có
+HLQ118,F024,3,Nhân vật lịch sử,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Vì sao Trường Chinh từng bị giam tại Cachot vào năm 1932?”?,K024,Có
+HLQ119,F024,4,Nhân vật lịch sử,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Vì sao Trường Chinh từng bị giam tại Cachot vào năm 1932?”",K024,Có
+HLQ120,F024,5,Nhân vật lịch sử,Dễ,Hãy trả lời câu hỏi: “Vì sao Trường Chinh từng bị giam tại Cachot vào năm 1932?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K024,Có
+HLQ121,F025,1,Hiện vật & tư liệu,Dễ,Cùm sắt trưng bày tại Hỏa Lò có cấu tạo ra sao và được dùng ở khu vực nào?,K025,Có
+HLQ122,F025,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Cùm sắt trưng bày tại Hỏa Lò có cấu tạo ra sao và được dùng ở khu vực nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K025,Có
+HLQ123,F025,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Cùm sắt trưng bày tại Hỏa Lò có cấu tạo ra sao và được dùng ở khu vực nào?”?,K025,Có
+HLQ124,F025,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Cùm sắt trưng bày tại Hỏa Lò có cấu tạo ra sao và được dùng ở khu vực nào?”",K025,Có
+HLQ125,F025,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Cùm sắt trưng bày tại Hỏa Lò có cấu tạo ra sao và được dùng ở khu vực nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K025,Có
+HLQ126,F026,1,Hiện vật & tư liệu,Dễ,Bộ quần áo tù nhân có dấu M.C có những đặc điểm nhận dạng nào?,K026,Có
+HLQ127,F026,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Bộ quần áo tù nhân có dấu M.C có những đặc điểm nhận dạng nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K026,Có
+HLQ128,F026,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Bộ quần áo tù nhân có dấu M.C có những đặc điểm nhận dạng nào?”?,K026,Có
+HLQ129,F026,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Bộ quần áo tù nhân có dấu M.C có những đặc điểm nhận dạng nào?”",K026,Có
+HLQ130,F026,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Bộ quần áo tù nhân có dấu M.C có những đặc điểm nhận dạng nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K026,Có
+HLQ131,F027,1,Hiện vật & tư liệu,Dễ,Những đồ dùng ăn uống nào của tù chính trị được giới thiệu trong trưng bày?,K027,Có
+HLQ132,F027,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Những đồ dùng ăn uống nào của tù chính trị được giới thiệu trong trưng bày?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K027,Có
+HLQ133,F027,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những đồ dùng ăn uống nào của tù chính trị được giới thiệu trong trưng bày?”?,K027,Có
+HLQ134,F027,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những đồ dùng ăn uống nào của tù chính trị được giới thiệu trong trưng bày?”",K027,Có
+HLQ135,F027,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Những đồ dùng ăn uống nào của tù chính trị được giới thiệu trong trưng bày?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K027,Có
+HLQ136,F028,1,Hiện vật & tư liệu,Dễ,Tù nhân đã tận dụng cành bàng như thế nào để có đũa ăn cơm?,K028,Có
+HLQ137,F028,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Tù nhân đã tận dụng cành bàng như thế nào để có đũa ăn cơm?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K028,Có
+HLQ138,F028,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tù nhân đã tận dụng cành bàng như thế nào để có đũa ăn cơm?”?,K028,Có
+HLQ139,F028,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tù nhân đã tận dụng cành bàng như thế nào để có đũa ăn cơm?”",K028,Có
+HLQ140,F028,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Tù nhân đã tận dụng cành bàng như thế nào để có đũa ăn cơm?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K028,Có
+HLQ141,F029,1,Hiện vật & tư liệu,Dễ,“Lập là” trong câu chuyện ăn uống tại Hỏa Lò là gì?,K029,Có
+HLQ142,F029,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: ““Lập là” trong câu chuyện ăn uống tại Hỏa Lò là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K029,Có
+HLQ143,F029,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: ““Lập là” trong câu chuyện ăn uống tại Hỏa Lò là gì?”?,K029,Có
+HLQ144,F029,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: ““Lập là” trong câu chuyện ăn uống tại Hỏa Lò là gì?”",K029,Có
+HLQ145,F029,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: ““Lập là” trong câu chuyện ăn uống tại Hỏa Lò là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K029,Có
+HLQ146,F030,1,Hiện vật & tư liệu,Dễ,Găng tay đấm bốc được chú thích là công cụ gì trong nhà tù?,K030,Có
+HLQ147,F030,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Găng tay đấm bốc được chú thích là công cụ gì trong nhà tù?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K030,Có
+HLQ148,F030,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Găng tay đấm bốc được chú thích là công cụ gì trong nhà tù?”?,K030,Có
+HLQ149,F030,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Găng tay đấm bốc được chú thích là công cụ gì trong nhà tù?”",K030,Có
+HLQ150,F030,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Găng tay đấm bốc được chú thích là công cụ gì trong nhà tù?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K030,Có
+HLQ151,F031,1,Hiện vật & tư liệu,Dễ,Can xăng được liệt kê trong nhóm hiện vật nào?,K031,Có
+HLQ152,F031,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Can xăng được liệt kê trong nhóm hiện vật nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K031,Có
+HLQ153,F031,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Can xăng được liệt kê trong nhóm hiện vật nào?”?,K031,Có
+HLQ154,F031,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Can xăng được liệt kê trong nhóm hiện vật nào?”",K031,Có
+HLQ155,F031,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Can xăng được liệt kê trong nhóm hiện vật nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K031,Có
+HLQ156,F032,1,Hiện vật & tư liệu,Dễ,Máy quay điện được chú thích có liên quan đến việc tra tấn đối tượng nào?,K032,Có
+HLQ157,F032,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Máy quay điện được chú thích có liên quan đến việc tra tấn đối tượng nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K032,Có
+HLQ158,F032,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Máy quay điện được chú thích có liên quan đến việc tra tấn đối tượng nào?”?,K032,Có
+HLQ159,F032,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Máy quay điện được chú thích có liên quan đến việc tra tấn đối tượng nào?”",K032,Có
+HLQ160,F032,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Máy quay điện được chú thích có liên quan đến việc tra tấn đối tượng nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K032,Có
+HLQ161,F033,1,Hiện vật & tư liệu,Dễ,Máy chém được trưng bày có những bộ phận chính và đặc điểm kích thước ra sao?,K033,Có
+HLQ162,F033,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Máy chém được trưng bày có những bộ phận chính và đặc điểm kích thước ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K033,Có
+HLQ163,F033,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Máy chém được trưng bày có những bộ phận chính và đặc điểm kích thước ra sao?”?,K033,Có
+HLQ164,F033,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Máy chém được trưng bày có những bộ phận chính và đặc điểm kích thước ra sao?”",K033,Có
+HLQ165,F033,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Máy chém được trưng bày có những bộ phận chính và đặc điểm kích thước ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K033,Có
+HLQ166,F034,1,Hiện vật & tư liệu,Dễ,Trang trưng bày mô tả cơ chế thả lưỡi máy chém và lực rơi như thế nào?,K034,Có
+HLQ167,F034,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Trang trưng bày mô tả cơ chế thả lưỡi máy chém và lực rơi như thế nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K034,Có
+HLQ168,F034,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trang trưng bày mô tả cơ chế thả lưỡi máy chém và lực rơi như thế nào?”?,K034,Có
+HLQ169,F034,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trang trưng bày mô tả cơ chế thả lưỡi máy chém và lực rơi như thế nào?”",K034,Có
+HLQ170,F034,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Trang trưng bày mô tả cơ chế thả lưỡi máy chém và lực rơi như thế nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K034,Có
+HLQ171,F035,1,Sự kiện lịch sử,Trung bình,Những người bị xử tử được bài viết về máy chém nhắc tên là ai và vào những năm nào?,K035,Có
+HLQ172,F035,2,Sự kiện lịch sử,Trung bình,"Khách tham quan hỏi: “Những người bị xử tử được bài viết về máy chém nhắc tên là ai và vào những năm nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K035,Có
+HLQ173,F035,3,Sự kiện lịch sử,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những người bị xử tử được bài viết về máy chém nhắc tên là ai và vào những năm nào?”?,K035,Có
+HLQ174,F035,4,Sự kiện lịch sử,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những người bị xử tử được bài viết về máy chém nhắc tên là ai và vào những năm nào?”",K035,Có
+HLQ175,F035,5,Sự kiện lịch sử,Trung bình,Hãy trả lời câu hỏi: “Những người bị xử tử được bài viết về máy chém nhắc tên là ai và vào những năm nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K035,Có
+HLQ176,F036,1,Nhân vật lịch sử,Dễ,"Nguyễn Hoàng Tôn tên thật là gì, sinh năm nào và bị xử chém ở đâu?",K036,Có
+HLQ177,F036,2,Nhân vật lịch sử,Dễ,"Khách tham quan hỏi: “Nguyễn Hoàng Tôn tên thật là gì, sinh năm nào và bị xử chém ở đâu?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K036,Có
+HLQ178,F036,3,Nhân vật lịch sử,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nguyễn Hoàng Tôn tên thật là gì, sinh năm nào và bị xử chém ở đâu?”?",K036,Có
+HLQ179,F036,4,Nhân vật lịch sử,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nguyễn Hoàng Tôn tên thật là gì, sinh năm nào và bị xử chém ở đâu?”",K036,Có
+HLQ180,F036,5,Nhân vật lịch sử,Dễ,"Hãy trả lời câu hỏi: “Nguyễn Hoàng Tôn tên thật là gì, sinh năm nào và bị xử chém ở đâu?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K036,Có
+HLQ181,F037,1,Nhân vật lịch sử,Dễ,"Nguyễn Đức Cảnh bị giam ở Hỏa Lò vào giai đoạn nào và bị xử chém ở đâu, ngày nào?",K037,Có
+HLQ182,F037,2,Nhân vật lịch sử,Dễ,"Khách tham quan hỏi: “Nguyễn Đức Cảnh bị giam ở Hỏa Lò vào giai đoạn nào và bị xử chém ở đâu, ngày nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K037,Có
+HLQ183,F037,3,Nhân vật lịch sử,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nguyễn Đức Cảnh bị giam ở Hỏa Lò vào giai đoạn nào và bị xử chém ở đâu, ngày nào?”?",K037,Có
+HLQ184,F037,4,Nhân vật lịch sử,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nguyễn Đức Cảnh bị giam ở Hỏa Lò vào giai đoạn nào và bị xử chém ở đâu, ngày nào?”",K037,Có
+HLQ185,F037,5,Nhân vật lịch sử,Dễ,"Hãy trả lời câu hỏi: “Nguyễn Đức Cảnh bị giam ở Hỏa Lò vào giai đoạn nào và bị xử chém ở đâu, ngày nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K037,Có
+HLQ186,F038,1,Cây bàng & liên lạc,Dễ,"Theo lời kể cựu tù chính trị, cây bàng được đưa vào sân trại Hỏa Lò từ khoảng thời gian nào và bằng cách nào?",K038,Có
+HLQ187,F038,2,Cây bàng & liên lạc,Dễ,"Khách tham quan hỏi: “Theo lời kể cựu tù chính trị, cây bàng được đưa vào sân trại Hỏa Lò từ khoảng thời gian nào và bằng cách nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K038,Có
+HLQ188,F038,3,Cây bàng & liên lạc,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Theo lời kể cựu tù chính trị, cây bàng được đưa vào sân trại Hỏa Lò từ khoảng thời gian nào và bằng cách nào?”?",K038,Có
+HLQ189,F038,4,Cây bàng & liên lạc,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Theo lời kể cựu tù chính trị, cây bàng được đưa vào sân trại Hỏa Lò từ khoảng thời gian nào và bằng cách nào?”",K038,Có
+HLQ190,F038,5,Cây bàng & liên lạc,Dễ,"Hãy trả lời câu hỏi: “Theo lời kể cựu tù chính trị, cây bàng được đưa vào sân trại Hỏa Lò từ khoảng thời gian nào và bằng cách nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K038,Có
+HLQ191,F039,1,Cây bàng & liên lạc,Dễ,Gốc cây bàng được sử dụng làm gì trong hoạt động liên lạc bí mật của tù chính trị?,K039,Có
+HLQ192,F039,2,Cây bàng & liên lạc,Dễ,"Khách tham quan hỏi: “Gốc cây bàng được sử dụng làm gì trong hoạt động liên lạc bí mật của tù chính trị?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K039,Có
+HLQ193,F039,3,Cây bàng & liên lạc,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Gốc cây bàng được sử dụng làm gì trong hoạt động liên lạc bí mật của tù chính trị?”?,K039,Có
+HLQ194,F039,4,Cây bàng & liên lạc,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Gốc cây bàng được sử dụng làm gì trong hoạt động liên lạc bí mật của tù chính trị?”",K039,Có
+HLQ195,F039,5,Cây bàng & liên lạc,Dễ,Hãy trả lời câu hỏi: “Gốc cây bàng được sử dụng làm gì trong hoạt động liên lạc bí mật của tù chính trị?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K039,Có
+HLQ196,F040,1,Cây bàng & liên lạc,Dễ,Tù nhân đã chế tác những vật dụng nào từ cành bàng?,K040,Có
+HLQ197,F040,2,Cây bàng & liên lạc,Dễ,"Khách tham quan hỏi: “Tù nhân đã chế tác những vật dụng nào từ cành bàng?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K040,Có
+HLQ198,F040,3,Cây bàng & liên lạc,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tù nhân đã chế tác những vật dụng nào từ cành bàng?”?,K040,Có
+HLQ199,F040,4,Cây bàng & liên lạc,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tù nhân đã chế tác những vật dụng nào từ cành bàng?”",K040,Có
+HLQ200,F040,5,Cây bàng & liên lạc,Dễ,Hãy trả lời câu hỏi: “Tù nhân đã chế tác những vật dụng nào từ cành bàng?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K040,Có
+HLQ201,F041,1,Cây bàng & liên lạc,Dễ,Bài viết của di tích kể rằng lá và quả bàng được tù nhân sử dụng ra sao?,K041,Có
+HLQ202,F041,2,Cây bàng & liên lạc,Dễ,"Khách tham quan hỏi: “Bài viết của di tích kể rằng lá và quả bàng được tù nhân sử dụng ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K041,Có
+HLQ203,F041,3,Cây bàng & liên lạc,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Bài viết của di tích kể rằng lá và quả bàng được tù nhân sử dụng ra sao?”?,K041,Có
+HLQ204,F041,4,Cây bàng & liên lạc,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Bài viết của di tích kể rằng lá và quả bàng được tù nhân sử dụng ra sao?”",K041,Có
+HLQ205,F041,5,Cây bàng & liên lạc,Dễ,Hãy trả lời câu hỏi: “Bài viết của di tích kể rằng lá và quả bàng được tù nhân sử dụng ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K041,Có
+HLQ206,F042,1,Trưng bày & giáo dục,Dễ,Trưng bày chuyên đề “Bàng ơi...!” diễn ra trong khoảng thời gian nào của năm 2024?,K042,Có
+HLQ207,F042,2,Trưng bày & giáo dục,Dễ,"Khách tham quan hỏi: “Trưng bày chuyên đề “Bàng ơi...!” diễn ra trong khoảng thời gian nào của năm 2024?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K042,Có
+HLQ208,F042,3,Trưng bày & giáo dục,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trưng bày chuyên đề “Bàng ơi...!” diễn ra trong khoảng thời gian nào của năm 2024?”?,K042,Có
+HLQ209,F042,4,Trưng bày & giáo dục,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trưng bày chuyên đề “Bàng ơi...!” diễn ra trong khoảng thời gian nào của năm 2024?”",K042,Có
+HLQ210,F042,5,Trưng bày & giáo dục,Dễ,Hãy trả lời câu hỏi: “Trưng bày chuyên đề “Bàng ơi...!” diễn ra trong khoảng thời gian nào của năm 2024?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K042,Có
+HLQ211,F043,1,Trưng bày & giáo dục,Trung bình,Hai phần nội dung chính của trưng bày “Bàng ơi!” là gì?,K043,Có
+HLQ212,F043,2,Trưng bày & giáo dục,Trung bình,"Khách tham quan hỏi: “Hai phần nội dung chính của trưng bày “Bàng ơi!” là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K043,Có
+HLQ213,F043,3,Trưng bày & giáo dục,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hai phần nội dung chính của trưng bày “Bàng ơi!” là gì?”?,K043,Có
+HLQ214,F043,4,Trưng bày & giáo dục,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hai phần nội dung chính của trưng bày “Bàng ơi!” là gì?”",K043,Có
+HLQ215,F043,5,Trưng bày & giáo dục,Trung bình,Hãy trả lời câu hỏi: “Hai phần nội dung chính của trưng bày “Bàng ơi!” là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K043,Có
+HLQ216,F044,1,Cây bàng & liên lạc,Dễ,Cây bàng ở sân trại nữ được trồng vào thời điểm nào và trong dịp nào?,K044,Có
+HLQ217,F044,2,Cây bàng & liên lạc,Dễ,"Khách tham quan hỏi: “Cây bàng ở sân trại nữ được trồng vào thời điểm nào và trong dịp nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K044,Có
+HLQ218,F044,3,Cây bàng & liên lạc,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Cây bàng ở sân trại nữ được trồng vào thời điểm nào và trong dịp nào?”?,K044,Có
+HLQ219,F044,4,Cây bàng & liên lạc,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Cây bàng ở sân trại nữ được trồng vào thời điểm nào và trong dịp nào?”",K044,Có
+HLQ220,F044,5,Cây bàng & liên lạc,Dễ,Hãy trả lời câu hỏi: “Cây bàng ở sân trại nữ được trồng vào thời điểm nào và trong dịp nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K044,Có
+HLQ221,F045,1,Trường học cách mạng,Dễ,Vì sao Nhà tù Hỏa Lò được gọi là “trường học yêu nước - cách mạng”?,K045,Có
+HLQ222,F045,2,Trường học cách mạng,Dễ,"Khách tham quan hỏi: “Vì sao Nhà tù Hỏa Lò được gọi là “trường học yêu nước - cách mạng”?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K045,Có
+HLQ223,F045,3,Trường học cách mạng,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Vì sao Nhà tù Hỏa Lò được gọi là “trường học yêu nước - cách mạng”?”?,K045,Có
+HLQ224,F045,4,Trường học cách mạng,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Vì sao Nhà tù Hỏa Lò được gọi là “trường học yêu nước - cách mạng”?”",K045,Có
+HLQ225,F045,5,Trường học cách mạng,Dễ,Hãy trả lời câu hỏi: “Vì sao Nhà tù Hỏa Lò được gọi là “trường học yêu nước - cách mạng”?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K045,Có
+HLQ226,F046,1,Trường học cách mạng,Dễ,Tù nhân đã tạo ra những dụng cụ viết và học tập nào từ vật liệu sẵn có?,K046,Có
+HLQ227,F046,2,Trường học cách mạng,Dễ,"Khách tham quan hỏi: “Tù nhân đã tạo ra những dụng cụ viết và học tập nào từ vật liệu sẵn có?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K046,Có
+HLQ228,F046,3,Trường học cách mạng,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tù nhân đã tạo ra những dụng cụ viết và học tập nào từ vật liệu sẵn có?”?,K046,Có
+HLQ229,F046,4,Trường học cách mạng,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tù nhân đã tạo ra những dụng cụ viết và học tập nào từ vật liệu sẵn có?”",K046,Có
+HLQ230,F046,5,Trường học cách mạng,Dễ,Hãy trả lời câu hỏi: “Tù nhân đã tạo ra những dụng cụ viết và học tập nào từ vật liệu sẵn có?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K046,Có
+HLQ231,F047,1,Trường học cách mạng,Trung bình,Hội Lao tù đỏ và chi bộ trong tù được hình thành như thế nào theo bài viết của di tích?,K047,Có
+HLQ232,F047,2,Trường học cách mạng,Trung bình,"Khách tham quan hỏi: “Hội Lao tù đỏ và chi bộ trong tù được hình thành như thế nào theo bài viết của di tích?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K047,Có
+HLQ233,F047,3,Trường học cách mạng,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hội Lao tù đỏ và chi bộ trong tù được hình thành như thế nào theo bài viết của di tích?”?,K047,Có
+HLQ234,F047,4,Trường học cách mạng,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hội Lao tù đỏ và chi bộ trong tù được hình thành như thế nào theo bài viết của di tích?”",K047,Có
+HLQ235,F047,5,Trường học cách mạng,Trung bình,Hãy trả lời câu hỏi: “Hội Lao tù đỏ và chi bộ trong tù được hình thành như thế nào theo bài viết của di tích?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K047,Có
+HLQ236,F048,1,Trường học cách mạng,Dễ,Những nhân vật nào được bài “Trường học trong lao tù” nêu là từng bị giam tại Hỏa Lò?,K048,Có
+HLQ237,F048,2,Trường học cách mạng,Dễ,"Khách tham quan hỏi: “Những nhân vật nào được bài “Trường học trong lao tù” nêu là từng bị giam tại Hỏa Lò?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K048,Có
+HLQ238,F048,3,Trường học cách mạng,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những nhân vật nào được bài “Trường học trong lao tù” nêu là từng bị giam tại Hỏa Lò?”?,K048,Có
+HLQ239,F048,4,Trường học cách mạng,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những nhân vật nào được bài “Trường học trong lao tù” nêu là từng bị giam tại Hỏa Lò?”",K048,Có
+HLQ240,F048,5,Trường học cách mạng,Dễ,Hãy trả lời câu hỏi: “Những nhân vật nào được bài “Trường học trong lao tù” nêu là từng bị giam tại Hỏa Lò?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K048,Có
+HLQ241,F049,1,Trường học cách mạng,Dễ,Tù nhân đã bí mật ghi chép và lưu giữ tài liệu học tập chính trị bằng cách nào?,K049,Có
+HLQ242,F049,2,Trường học cách mạng,Dễ,"Khách tham quan hỏi: “Tù nhân đã bí mật ghi chép và lưu giữ tài liệu học tập chính trị bằng cách nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K049,Có
+HLQ243,F049,3,Trường học cách mạng,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tù nhân đã bí mật ghi chép và lưu giữ tài liệu học tập chính trị bằng cách nào?”?,K049,Có
+HLQ244,F049,4,Trường học cách mạng,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tù nhân đã bí mật ghi chép và lưu giữ tài liệu học tập chính trị bằng cách nào?”",K049,Có
+HLQ245,F049,5,Trường học cách mạng,Dễ,Hãy trả lời câu hỏi: “Tù nhân đã bí mật ghi chép và lưu giữ tài liệu học tập chính trị bằng cách nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K049,Có
+HLQ246,F050,1,Vượt ngục 1945,Dễ,Cuộc vượt ngục qua cống ngầm tháng 3/1945 bắt đầu vào thời điểm chính xác nào?,K050,Có
+HLQ247,F050,2,Vượt ngục 1945,Dễ,"Khách tham quan hỏi: “Cuộc vượt ngục qua cống ngầm tháng 3/1945 bắt đầu vào thời điểm chính xác nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K050,Có
+HLQ248,F050,3,Vượt ngục 1945,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Cuộc vượt ngục qua cống ngầm tháng 3/1945 bắt đầu vào thời điểm chính xác nào?”?,K050,Có
+HLQ249,F050,4,Vượt ngục 1945,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Cuộc vượt ngục qua cống ngầm tháng 3/1945 bắt đầu vào thời điểm chính xác nào?”",K050,Có
+HLQ250,F050,5,Vượt ngục 1945,Dễ,Hãy trả lời câu hỏi: “Cuộc vượt ngục qua cống ngầm tháng 3/1945 bắt đầu vào thời điểm chính xác nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K050,Có
+HLQ251,F051,1,Vượt ngục 1945,Dễ,Trần Tử Bình phát hiện dấu hiệu của cửa cống ngầm tại khu vực nào và đó là vật gì?,K051,Có
+HLQ252,F051,2,Vượt ngục 1945,Dễ,"Khách tham quan hỏi: “Trần Tử Bình phát hiện dấu hiệu của cửa cống ngầm tại khu vực nào và đó là vật gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K051,Có
+HLQ253,F051,3,Vượt ngục 1945,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trần Tử Bình phát hiện dấu hiệu của cửa cống ngầm tại khu vực nào và đó là vật gì?”?,K051,Có
+HLQ254,F051,4,Vượt ngục 1945,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trần Tử Bình phát hiện dấu hiệu của cửa cống ngầm tại khu vực nào và đó là vật gì?”",K051,Có
+HLQ255,F051,5,Vượt ngục 1945,Dễ,Hãy trả lời câu hỏi: “Trần Tử Bình phát hiện dấu hiệu của cửa cống ngầm tại khu vực nào và đó là vật gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K051,Có
+HLQ256,F052,1,Vượt ngục 1945,Trung bình,Những ai thuộc nhóm đầu tiên vượt ngục và ai được bài viết nhắc là người đi đầu trong đường cống?,K052,Có
+HLQ257,F052,2,Vượt ngục 1945,Trung bình,"Khách tham quan hỏi: “Những ai thuộc nhóm đầu tiên vượt ngục và ai được bài viết nhắc là người đi đầu trong đường cống?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K052,Có
+HLQ258,F052,3,Vượt ngục 1945,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những ai thuộc nhóm đầu tiên vượt ngục và ai được bài viết nhắc là người đi đầu trong đường cống?”?,K052,Có
+HLQ259,F052,4,Vượt ngục 1945,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những ai thuộc nhóm đầu tiên vượt ngục và ai được bài viết nhắc là người đi đầu trong đường cống?”",K052,Có
+HLQ260,F052,5,Vượt ngục 1945,Trung bình,Hãy trả lời câu hỏi: “Những ai thuộc nhóm đầu tiên vượt ngục và ai được bài viết nhắc là người đi đầu trong đường cống?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K052,Có
+HLQ261,F053,1,Vượt ngục 1945,Trung bình,Có bao nhiêu người vượt ngục trong đợt đầu được kể và tổng số ước tính là bao nhiêu?,K053,Có
+HLQ262,F053,2,Vượt ngục 1945,Trung bình,"Khách tham quan hỏi: “Có bao nhiêu người vượt ngục trong đợt đầu được kể và tổng số ước tính là bao nhiêu?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K053,Có
+HLQ263,F053,3,Vượt ngục 1945,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Có bao nhiêu người vượt ngục trong đợt đầu được kể và tổng số ước tính là bao nhiêu?”?,K053,Có
+HLQ264,F053,4,Vượt ngục 1945,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Có bao nhiêu người vượt ngục trong đợt đầu được kể và tổng số ước tính là bao nhiêu?”",K053,Có
+HLQ265,F053,5,Vượt ngục 1945,Trung bình,Hãy trả lời câu hỏi: “Có bao nhiêu người vượt ngục trong đợt đầu được kể và tổng số ước tính là bao nhiêu?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K053,Có
+HLQ266,F054,1,Nhân vật lịch sử,Dễ,"Trần Tử Bình tên thật là gì, bị bắt khi nào và giữ vai trò gì tại Hỏa Lò?",K054,Có
+HLQ267,F054,2,Nhân vật lịch sử,Dễ,"Khách tham quan hỏi: “Trần Tử Bình tên thật là gì, bị bắt khi nào và giữ vai trò gì tại Hỏa Lò?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K054,Có
+HLQ268,F054,3,Nhân vật lịch sử,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trần Tử Bình tên thật là gì, bị bắt khi nào và giữ vai trò gì tại Hỏa Lò?”?",K054,Có
+HLQ269,F054,4,Nhân vật lịch sử,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trần Tử Bình tên thật là gì, bị bắt khi nào và giữ vai trò gì tại Hỏa Lò?”",K054,Có
+HLQ270,F054,5,Nhân vật lịch sử,Dễ,"Hãy trả lời câu hỏi: “Trần Tử Bình tên thật là gì, bị bắt khi nào và giữ vai trò gì tại Hỏa Lò?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K054,Có
+HLQ271,F055,1,Nữ tù chính trị,Dễ,Điều kiện sống và cách nữ tù chính trị đoàn kết đấu tranh tại Hỏa Lò được mô tả ra sao?,K055,Có
+HLQ272,F055,2,Nữ tù chính trị,Dễ,"Khách tham quan hỏi: “Điều kiện sống và cách nữ tù chính trị đoàn kết đấu tranh tại Hỏa Lò được mô tả ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K055,Có
+HLQ273,F055,3,Nữ tù chính trị,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Điều kiện sống và cách nữ tù chính trị đoàn kết đấu tranh tại Hỏa Lò được mô tả ra sao?”?,K055,Có
+HLQ274,F055,4,Nữ tù chính trị,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Điều kiện sống và cách nữ tù chính trị đoàn kết đấu tranh tại Hỏa Lò được mô tả ra sao?”",K055,Có
+HLQ275,F055,5,Nữ tù chính trị,Dễ,Hãy trả lời câu hỏi: “Điều kiện sống và cách nữ tù chính trị đoàn kết đấu tranh tại Hỏa Lò được mô tả ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K055,Có
+HLQ276,F056,1,Nhân vật lịch sử,Dễ,Website di tích có bài riêng nào về Nguyễn Thị Quang Thái và mốc năm nào được ghi trong tiêu đề?,K056,Có
+HLQ277,F056,2,Nhân vật lịch sử,Dễ,"Khách tham quan hỏi: “Website di tích có bài riêng nào về Nguyễn Thị Quang Thái và mốc năm nào được ghi trong tiêu đề?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K056,Có
+HLQ278,F056,3,Nhân vật lịch sử,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Website di tích có bài riêng nào về Nguyễn Thị Quang Thái và mốc năm nào được ghi trong tiêu đề?”?,K056,Có
+HLQ279,F056,4,Nhân vật lịch sử,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Website di tích có bài riêng nào về Nguyễn Thị Quang Thái và mốc năm nào được ghi trong tiêu đề?”",K056,Có
+HLQ280,F056,5,Nhân vật lịch sử,Dễ,Hãy trả lời câu hỏi: “Website di tích có bài riêng nào về Nguyễn Thị Quang Thái và mốc năm nào được ghi trong tiêu đề?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K056,Có
+HLQ281,F057,1,Phi công Mỹ,Dễ,Giai đoạn nào một bộ phận Nhà tù Hỏa Lò được dùng tạm giam phi công Mỹ?,K057,Có
+HLQ282,F057,2,Phi công Mỹ,Dễ,"Khách tham quan hỏi: “Giai đoạn nào một bộ phận Nhà tù Hỏa Lò được dùng tạm giam phi công Mỹ?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K057,Có
+HLQ283,F057,3,Phi công Mỹ,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Giai đoạn nào một bộ phận Nhà tù Hỏa Lò được dùng tạm giam phi công Mỹ?”?,K057,Có
+HLQ284,F057,4,Phi công Mỹ,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Giai đoạn nào một bộ phận Nhà tù Hỏa Lò được dùng tạm giam phi công Mỹ?”",K057,Có
+HLQ285,F057,5,Phi công Mỹ,Dễ,Hãy trả lời câu hỏi: “Giai đoạn nào một bộ phận Nhà tù Hỏa Lò được dùng tạm giam phi công Mỹ?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K057,Có
+HLQ286,F058,1,Phi công Mỹ,Dễ,"Sau Hiệp định Paris, tù binh phi công Mỹ được trao trả vào thời gian nào?",K058,Có
+HLQ287,F058,2,Phi công Mỹ,Dễ,"Khách tham quan hỏi: “Sau Hiệp định Paris, tù binh phi công Mỹ được trao trả vào thời gian nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K058,Có
+HLQ288,F058,3,Phi công Mỹ,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Sau Hiệp định Paris, tù binh phi công Mỹ được trao trả vào thời gian nào?”?",K058,Có
+HLQ289,F058,4,Phi công Mỹ,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Sau Hiệp định Paris, tù binh phi công Mỹ được trao trả vào thời gian nào?”",K058,Có
+HLQ290,F058,5,Phi công Mỹ,Dễ,"Hãy trả lời câu hỏi: “Sau Hiệp định Paris, tù binh phi công Mỹ được trao trả vào thời gian nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K058,Có
+HLQ291,F059,1,Phi công Mỹ,Dễ,"John McCain bị bắt ở đâu, vào ngày nào và tư liệu Hỏa Lò cho thấy hoạt động gì sau đó?",K059,Có
+HLQ292,F059,2,Phi công Mỹ,Dễ,"Khách tham quan hỏi: “John McCain bị bắt ở đâu, vào ngày nào và tư liệu Hỏa Lò cho thấy hoạt động gì sau đó?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K059,Có
+HLQ293,F059,3,Phi công Mỹ,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “John McCain bị bắt ở đâu, vào ngày nào và tư liệu Hỏa Lò cho thấy hoạt động gì sau đó?”?",K059,Có
+HLQ294,F059,4,Phi công Mỹ,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “John McCain bị bắt ở đâu, vào ngày nào và tư liệu Hỏa Lò cho thấy hoạt động gì sau đó?”",K059,Có
+HLQ295,F059,5,Phi công Mỹ,Dễ,"Hãy trả lời câu hỏi: “John McCain bị bắt ở đâu, vào ngày nào và tư liệu Hỏa Lò cho thấy hoạt động gì sau đó?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K059,Có
+HLQ296,F060,1,Phi công Mỹ,Dễ,Những hoạt động sinh hoạt nào của phi công Mỹ được thể hiện qua ảnh trưng bày?,K060,Có
+HLQ297,F060,2,Phi công Mỹ,Dễ,"Khách tham quan hỏi: “Những hoạt động sinh hoạt nào của phi công Mỹ được thể hiện qua ảnh trưng bày?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K060,Có
+HLQ298,F060,3,Phi công Mỹ,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những hoạt động sinh hoạt nào của phi công Mỹ được thể hiện qua ảnh trưng bày?”?,K060,Có
+HLQ299,F060,4,Phi công Mỹ,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những hoạt động sinh hoạt nào của phi công Mỹ được thể hiện qua ảnh trưng bày?”",K060,Có
+HLQ300,F060,5,Phi công Mỹ,Dễ,Hãy trả lời câu hỏi: “Những hoạt động sinh hoạt nào của phi công Mỹ được thể hiện qua ảnh trưng bày?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K060,Có
+HLQ301,F061,1,Hiện vật & tư liệu,Dễ,Những kỷ vật nào của Walter Eugene Wilber được gia đình hiến tặng cho di tích?,K061,Có
+HLQ302,F061,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Những kỷ vật nào của Walter Eugene Wilber được gia đình hiến tặng cho di tích?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K061,Có
+HLQ303,F061,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những kỷ vật nào của Walter Eugene Wilber được gia đình hiến tặng cho di tích?”?,K061,Có
+HLQ304,F061,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những kỷ vật nào của Walter Eugene Wilber được gia đình hiến tặng cho di tích?”",K061,Có
+HLQ305,F061,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Những kỷ vật nào của Walter Eugene Wilber được gia đình hiến tặng cho di tích?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K061,Có
+HLQ306,F062,1,Phi công Mỹ,Dễ,"Robert P. Chenoweth bị bắt ở đâu, khi nào và trở lại Hỏa Lò vào dịp nào?",K062,Có
+HLQ307,F062,2,Phi công Mỹ,Dễ,"Khách tham quan hỏi: “Robert P. Chenoweth bị bắt ở đâu, khi nào và trở lại Hỏa Lò vào dịp nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K062,Có
+HLQ308,F062,3,Phi công Mỹ,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Robert P. Chenoweth bị bắt ở đâu, khi nào và trở lại Hỏa Lò vào dịp nào?”?",K062,Có
+HLQ309,F062,4,Phi công Mỹ,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Robert P. Chenoweth bị bắt ở đâu, khi nào và trở lại Hỏa Lò vào dịp nào?”",K062,Có
+HLQ310,F062,5,Phi công Mỹ,Dễ,"Hãy trả lời câu hỏi: “Robert P. Chenoweth bị bắt ở đâu, khi nào và trở lại Hỏa Lò vào dịp nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K062,Có
+HLQ311,F063,1,Trưng bày & giáo dục,Trung bình,Năm chủ đề của hệ thống trưng bày thường xuyên tại Hỏa Lò là gì?,K063,Có
+HLQ312,F063,2,Trưng bày & giáo dục,Trung bình,"Khách tham quan hỏi: “Năm chủ đề của hệ thống trưng bày thường xuyên tại Hỏa Lò là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K063,Có
+HLQ313,F063,3,Trưng bày & giáo dục,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Năm chủ đề của hệ thống trưng bày thường xuyên tại Hỏa Lò là gì?”?,K063,Có
+HLQ314,F063,4,Trưng bày & giáo dục,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Năm chủ đề của hệ thống trưng bày thường xuyên tại Hỏa Lò là gì?”",K063,Có
+HLQ315,F063,5,Trưng bày & giáo dục,Trung bình,Hãy trả lời câu hỏi: “Năm chủ đề của hệ thống trưng bày thường xuyên tại Hỏa Lò là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K063,Có
+HLQ316,F064,1,Dịch vụ tham quan,Dễ,Hệ thống audioguide được bài viết năm 2024 giới thiệu có bao nhiêu câu chuyện lịch sử?,K064,Có
+HLQ317,F064,2,Dịch vụ tham quan,Dễ,"Khách tham quan hỏi: “Hệ thống audioguide được bài viết năm 2024 giới thiệu có bao nhiêu câu chuyện lịch sử?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K064,Có
+HLQ318,F064,3,Dịch vụ tham quan,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hệ thống audioguide được bài viết năm 2024 giới thiệu có bao nhiêu câu chuyện lịch sử?”?,K064,Có
+HLQ319,F064,4,Dịch vụ tham quan,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hệ thống audioguide được bài viết năm 2024 giới thiệu có bao nhiêu câu chuyện lịch sử?”",K064,Có
+HLQ320,F064,5,Dịch vụ tham quan,Dễ,Hãy trả lời câu hỏi: “Hệ thống audioguide được bài viết năm 2024 giới thiệu có bao nhiêu câu chuyện lịch sử?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K064,Có
+HLQ321,F065,1,Dịch vụ tham quan,Dễ,Ba chương trình trưng bày trực tuyến được Báo Điện tử Chính phủ nêu tên là gì?,K065,Có
+HLQ322,F065,2,Dịch vụ tham quan,Dễ,"Khách tham quan hỏi: “Ba chương trình trưng bày trực tuyến được Báo Điện tử Chính phủ nêu tên là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K065,Có
+HLQ323,F065,3,Dịch vụ tham quan,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Ba chương trình trưng bày trực tuyến được Báo Điện tử Chính phủ nêu tên là gì?”?,K065,Có
+HLQ324,F065,4,Dịch vụ tham quan,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Ba chương trình trưng bày trực tuyến được Báo Điện tử Chính phủ nêu tên là gì?”",K065,Có
+HLQ325,F065,5,Dịch vụ tham quan,Dễ,Hãy trả lời câu hỏi: “Ba chương trình trưng bày trực tuyến được Báo Điện tử Chính phủ nêu tên là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K065,Có
+HLQ326,F066,1,Tour & trải nghiệm,Dễ,“Đêm thiêng liêng 1 – Sáng ngời tinh thần Việt” tập trung tái hiện những câu chuyện nào?,K066,Có
+HLQ327,F066,2,Tour & trải nghiệm,Dễ,"Khách tham quan hỏi: ““Đêm thiêng liêng 1 – Sáng ngời tinh thần Việt” tập trung tái hiện những câu chuyện nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K066,Có
+HLQ328,F066,3,Tour & trải nghiệm,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: ““Đêm thiêng liêng 1 – Sáng ngời tinh thần Việt” tập trung tái hiện những câu chuyện nào?”?,K066,Có
+HLQ329,F066,4,Tour & trải nghiệm,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: ““Đêm thiêng liêng 1 – Sáng ngời tinh thần Việt” tập trung tái hiện những câu chuyện nào?”",K066,Có
+HLQ330,F066,5,Tour & trải nghiệm,Dễ,Hãy trả lời câu hỏi: ““Đêm thiêng liêng 1 – Sáng ngời tinh thần Việt” tập trung tái hiện những câu chuyện nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K066,Có
+HLQ331,F067,1,Tour & trải nghiệm,Dễ,“Đêm thiêng liêng 2 – Sống như những đóa hoa” tri ân đối tượng nào?,K067,Có
+HLQ332,F067,2,Tour & trải nghiệm,Dễ,"Khách tham quan hỏi: ““Đêm thiêng liêng 2 – Sống như những đóa hoa” tri ân đối tượng nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K067,Có
+HLQ333,F067,3,Tour & trải nghiệm,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: ““Đêm thiêng liêng 2 – Sống như những đóa hoa” tri ân đối tượng nào?”?,K067,Có
+HLQ334,F067,4,Tour & trải nghiệm,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: ““Đêm thiêng liêng 2 – Sống như những đóa hoa” tri ân đối tượng nào?”",K067,Có
+HLQ335,F067,5,Tour & trải nghiệm,Dễ,Hãy trả lời câu hỏi: ““Đêm thiêng liêng 2 – Sống như những đóa hoa” tri ân đối tượng nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K067,Có
+HLQ336,F068,1,Tour & trải nghiệm,Dễ,“Đêm thiêng liêng 3 – Lửa thanh xuân” có hình thức trải nghiệm chính nào?,K068,Có
+HLQ337,F068,2,Tour & trải nghiệm,Dễ,"Khách tham quan hỏi: ““Đêm thiêng liêng 3 – Lửa thanh xuân” có hình thức trải nghiệm chính nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K068,Có
+HLQ338,F068,3,Tour & trải nghiệm,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: ““Đêm thiêng liêng 3 – Lửa thanh xuân” có hình thức trải nghiệm chính nào?”?,K068,Có
+HLQ339,F068,4,Tour & trải nghiệm,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: ““Đêm thiêng liêng 3 – Lửa thanh xuân” có hình thức trải nghiệm chính nào?”",K068,Có
+HLQ340,F068,5,Tour & trải nghiệm,Dễ,Hãy trả lời câu hỏi: ““Đêm thiêng liêng 3 – Lửa thanh xuân” có hình thức trải nghiệm chính nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K068,Có
+HLQ341,F069,1,Tour & trải nghiệm,Trung bình,Những hoạt cảnh lịch sử nào được bài viết năm 2024 nêu là tiêu biểu trong các tour đêm?,K069,Có
+HLQ342,F069,2,Tour & trải nghiệm,Trung bình,"Khách tham quan hỏi: “Những hoạt cảnh lịch sử nào được bài viết năm 2024 nêu là tiêu biểu trong các tour đêm?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K069,Có
+HLQ343,F069,3,Tour & trải nghiệm,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những hoạt cảnh lịch sử nào được bài viết năm 2024 nêu là tiêu biểu trong các tour đêm?”?,K069,Có
+HLQ344,F069,4,Tour & trải nghiệm,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những hoạt cảnh lịch sử nào được bài viết năm 2024 nêu là tiêu biểu trong các tour đêm?”",K069,Có
+HLQ345,F069,5,Tour & trải nghiệm,Trung bình,Hãy trả lời câu hỏi: “Những hoạt cảnh lịch sử nào được bài viết năm 2024 nêu là tiêu biểu trong các tour đêm?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K069,Có
+HLQ346,F070,1,Quản lý & bảo tồn,Khó,Bài viết của Sở Văn hóa năm 2018 công bố đã sưu tầm bao nhiêu hiện vật và xây dựng cơ sở dữ liệu cho những giai đoạn nào?,K070,Có
+HLQ347,F070,2,Quản lý & bảo tồn,Khó,"Khách tham quan hỏi: “Bài viết của Sở Văn hóa năm 2018 công bố đã sưu tầm bao nhiêu hiện vật và xây dựng cơ sở dữ liệu cho những giai đoạn nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K070,Có
+HLQ348,F070,3,Quản lý & bảo tồn,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Bài viết của Sở Văn hóa năm 2018 công bố đã sưu tầm bao nhiêu hiện vật và xây dựng cơ sở dữ liệu cho những giai đoạn nào?”?,K070,Có
+HLQ349,F070,4,Quản lý & bảo tồn,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Bài viết của Sở Văn hóa năm 2018 công bố đã sưu tầm bao nhiêu hiện vật và xây dựng cơ sở dữ liệu cho những giai đoạn nào?”",K070,Có
+HLQ350,F070,5,Quản lý & bảo tồn,Khó,Hãy trả lời câu hỏi: “Bài viết của Sở Văn hóa năm 2018 công bố đã sưu tầm bao nhiêu hiện vật và xây dựng cơ sở dữ liệu cho những giai đoạn nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K070,Có
+HLQ351,F071,1,Quản lý & bảo tồn,Dễ,Di tích đã xây dựng bao nhiêu hồ sơ nhân chứng theo bài viết của Sở Văn hóa năm 2018?,K071,Có
+HLQ352,F071,2,Quản lý & bảo tồn,Dễ,"Khách tham quan hỏi: “Di tích đã xây dựng bao nhiêu hồ sơ nhân chứng theo bài viết của Sở Văn hóa năm 2018?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K071,Có
+HLQ353,F071,3,Quản lý & bảo tồn,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Di tích đã xây dựng bao nhiêu hồ sơ nhân chứng theo bài viết của Sở Văn hóa năm 2018?”?,K071,Có
+HLQ354,F071,4,Quản lý & bảo tồn,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Di tích đã xây dựng bao nhiêu hồ sơ nhân chứng theo bài viết của Sở Văn hóa năm 2018?”",K071,Có
+HLQ355,F071,5,Quản lý & bảo tồn,Dễ,Hãy trả lời câu hỏi: “Di tích đã xây dựng bao nhiêu hồ sơ nhân chứng theo bài viết của Sở Văn hóa năm 2018?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K071,Có
+HLQ356,F072,1,Quản lý & bảo tồn,Khó,"Giai đoạn 2022–2024, di tích đã thực hiện bao nhiêu trưng bày chuyên đề và những hoạt động bảo quản nào?",K072,Có
+HLQ357,F072,2,Quản lý & bảo tồn,Khó,"Khách tham quan hỏi: “Giai đoạn 2022–2024, di tích đã thực hiện bao nhiêu trưng bày chuyên đề và những hoạt động bảo quản nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K072,Có
+HLQ358,F072,3,Quản lý & bảo tồn,Khó,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Giai đoạn 2022–2024, di tích đã thực hiện bao nhiêu trưng bày chuyên đề và những hoạt động bảo quản nào?”?",K072,Có
+HLQ359,F072,4,Quản lý & bảo tồn,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Giai đoạn 2022–2024, di tích đã thực hiện bao nhiêu trưng bày chuyên đề và những hoạt động bảo quản nào?”",K072,Có
+HLQ360,F072,5,Quản lý & bảo tồn,Khó,"Hãy trả lời câu hỏi: “Giai đoạn 2022–2024, di tích đã thực hiện bao nhiêu trưng bày chuyên đề và những hoạt động bảo quản nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K072,Có
+HLQ361,F073,1,Quản lý & bảo tồn,Dễ,Phim 3D “Hành quyết tử tù” được nghiên cứu để chiếu tại khu vực nào?,K073,Có
+HLQ362,F073,2,Quản lý & bảo tồn,Dễ,"Khách tham quan hỏi: “Phim 3D “Hành quyết tử tù” được nghiên cứu để chiếu tại khu vực nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K073,Có
+HLQ363,F073,3,Quản lý & bảo tồn,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Phim 3D “Hành quyết tử tù” được nghiên cứu để chiếu tại khu vực nào?”?,K073,Có
+HLQ364,F073,4,Quản lý & bảo tồn,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Phim 3D “Hành quyết tử tù” được nghiên cứu để chiếu tại khu vực nào?”",K073,Có
+HLQ365,F073,5,Quản lý & bảo tồn,Dễ,Hãy trả lời câu hỏi: “Phim 3D “Hành quyết tử tù” được nghiên cứu để chiếu tại khu vực nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K073,Có
+HLQ366,F074,1,Hiện vật & tư liệu,Dễ,Trang “Hiện vật tiêu biểu” của website chính thức đang liệt kê những mục nào?,K074,Có
+HLQ367,F074,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Trang “Hiện vật tiêu biểu” của website chính thức đang liệt kê những mục nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K074,Có
+HLQ368,F074,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trang “Hiện vật tiêu biểu” của website chính thức đang liệt kê những mục nào?”?,K074,Có
+HLQ369,F074,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trang “Hiện vật tiêu biểu” của website chính thức đang liệt kê những mục nào?”",K074,Có
+HLQ370,F074,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Trang “Hiện vật tiêu biểu” của website chính thức đang liệt kê những mục nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K074,Có
+HLQ371,F075,1,Hiện vật & tư liệu,Dễ,Những sản phẩm gốm truyền thống nào gắn với làng Phụ Khánh được mô tả?,K075,Có
+HLQ372,F075,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Những sản phẩm gốm truyền thống nào gắn với làng Phụ Khánh được mô tả?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K075,Có
+HLQ373,F075,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Những sản phẩm gốm truyền thống nào gắn với làng Phụ Khánh được mô tả?”?,K075,Có
+HLQ374,F075,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Những sản phẩm gốm truyền thống nào gắn với làng Phụ Khánh được mô tả?”",K075,Có
+HLQ375,F075,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Những sản phẩm gốm truyền thống nào gắn với làng Phụ Khánh được mô tả?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K075,Có
+HLQ376,F076,1,Hiện vật & tư liệu,Dễ,Tẩu hút thuốc được giới thiệu trên trang chủ cũ có đặc điểm nguồn gốc gì?,K076,Có
+HLQ377,F076,2,Hiện vật & tư liệu,Dễ,"Khách tham quan hỏi: “Tẩu hút thuốc được giới thiệu trên trang chủ cũ có đặc điểm nguồn gốc gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K076,Có
+HLQ378,F076,3,Hiện vật & tư liệu,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tẩu hút thuốc được giới thiệu trên trang chủ cũ có đặc điểm nguồn gốc gì?”?,K076,Có
+HLQ379,F076,4,Hiện vật & tư liệu,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tẩu hút thuốc được giới thiệu trên trang chủ cũ có đặc điểm nguồn gốc gì?”",K076,Có
+HLQ380,F076,5,Hiện vật & tư liệu,Dễ,Hãy trả lời câu hỏi: “Tẩu hút thuốc được giới thiệu trên trang chủ cũ có đặc điểm nguồn gốc gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K076,Có
+HLQ381,F077,1,Tổng hợp,Dễ,"Trưng bày “Tâm son, chí thép” khai mạc khi nào, nói về ai và dự kiến kéo dài đến ngày nào?",K077,Có
+HLQ382,F077,2,Tổng hợp,Dễ,"Khách tham quan hỏi: “Trưng bày “Tâm son, chí thép” khai mạc khi nào, nói về ai và dự kiến kéo dài đến ngày nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K077,Có
+HLQ383,F077,3,Tổng hợp,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trưng bày “Tâm son, chí thép” khai mạc khi nào, nói về ai và dự kiến kéo dài đến ngày nào?”?",K077,Có
+HLQ384,F077,4,Tổng hợp,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trưng bày “Tâm son, chí thép” khai mạc khi nào, nói về ai và dự kiến kéo dài đến ngày nào?”",K077,Có
+HLQ385,F077,5,Tổng hợp,Dễ,"Hãy trả lời câu hỏi: “Trưng bày “Tâm son, chí thép” khai mạc khi nào, nói về ai và dự kiến kéo dài đến ngày nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K077,Có
+HLQ386,F078,1,Tổng hợp,Dễ,"Trưng bày “Bút thép, lòng son” gồm những nội dung chính nào và podcast được tích hợp ra sao?",K078,Có
+HLQ387,F078,2,Tổng hợp,Dễ,"Khách tham quan hỏi: “Trưng bày “Bút thép, lòng son” gồm những nội dung chính nào và podcast được tích hợp ra sao?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K078,Có
+HLQ388,F078,3,Tổng hợp,Dễ,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trưng bày “Bút thép, lòng son” gồm những nội dung chính nào và podcast được tích hợp ra sao?”?",K078,Có
+HLQ389,F078,4,Tổng hợp,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trưng bày “Bút thép, lòng son” gồm những nội dung chính nào và podcast được tích hợp ra sao?”",K078,Có
+HLQ390,F078,5,Tổng hợp,Dễ,"Hãy trả lời câu hỏi: “Trưng bày “Bút thép, lòng son” gồm những nội dung chính nào và podcast được tích hợp ra sao?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K078,Có
+HLQ391,F079,1,Thông tin tham quan,Dễ,Giờ mở cửa được website chính thức công bố là mấy giờ đến mấy giờ?,K079,Có
+HLQ392,F079,2,Thông tin tham quan,Dễ,"Khách tham quan hỏi: “Giờ mở cửa được website chính thức công bố là mấy giờ đến mấy giờ?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K079,Có
+HLQ393,F079,3,Thông tin tham quan,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Giờ mở cửa được website chính thức công bố là mấy giờ đến mấy giờ?”?,K079,Có
+HLQ394,F079,4,Thông tin tham quan,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Giờ mở cửa được website chính thức công bố là mấy giờ đến mấy giờ?”",K079,Có
+HLQ395,F079,5,Thông tin tham quan,Dễ,Hãy trả lời câu hỏi: “Giờ mở cửa được website chính thức công bố là mấy giờ đến mấy giờ?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K079,Có
+HLQ396,F080,1,Thông tin tham quan,Trung bình,"Theo bảng vé công khai tại thời điểm kiểm tra, giá vé và các nhóm giảm/miễn phí là gì?",K080,Có
+HLQ397,F080,2,Thông tin tham quan,Trung bình,"Khách tham quan hỏi: “Theo bảng vé công khai tại thời điểm kiểm tra, giá vé và các nhóm giảm/miễn phí là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K080,Có
+HLQ398,F080,3,Thông tin tham quan,Trung bình,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Theo bảng vé công khai tại thời điểm kiểm tra, giá vé và các nhóm giảm/miễn phí là gì?”?",K080,Có
+HLQ399,F080,4,Thông tin tham quan,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Theo bảng vé công khai tại thời điểm kiểm tra, giá vé và các nhóm giảm/miễn phí là gì?”",K080,Có
+HLQ400,F080,5,Thông tin tham quan,Trung bình,"Hãy trả lời câu hỏi: “Theo bảng vé công khai tại thời điểm kiểm tra, giá vé và các nhóm giảm/miễn phí là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",K080,Có
+HLQ401,F081,1,Thông tin tham quan,Dễ,Website chính thức công bố những số điện thoại và email liên hệ nào?,K081,Có
+HLQ402,F081,2,Thông tin tham quan,Dễ,"Khách tham quan hỏi: “Website chính thức công bố những số điện thoại và email liên hệ nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K081,Có
+HLQ403,F081,3,Thông tin tham quan,Dễ,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Website chính thức công bố những số điện thoại và email liên hệ nào?”?,K081,Có
+HLQ404,F081,4,Thông tin tham quan,Dễ,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Website chính thức công bố những số điện thoại và email liên hệ nào?”",K081,Có
+HLQ405,F081,5,Thông tin tham quan,Dễ,Hãy trả lời câu hỏi: “Website chính thức công bố những số điện thoại và email liên hệ nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K081,Có
+HLQ406,F082,1,Quản lý & bảo tồn,Trung bình,Ban Quản lý Di tích Nhà tù Hỏa Lò có những nhiệm vụ chính nào liên quan đến tư liệu và hiện vật?,K082,Có
+HLQ407,F082,2,Quản lý & bảo tồn,Trung bình,"Khách tham quan hỏi: “Ban Quản lý Di tích Nhà tù Hỏa Lò có những nhiệm vụ chính nào liên quan đến tư liệu và hiện vật?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K082,Có
+HLQ408,F082,3,Quản lý & bảo tồn,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Ban Quản lý Di tích Nhà tù Hỏa Lò có những nhiệm vụ chính nào liên quan đến tư liệu và hiện vật?”?,K082,Có
+HLQ409,F082,4,Quản lý & bảo tồn,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Ban Quản lý Di tích Nhà tù Hỏa Lò có những nhiệm vụ chính nào liên quan đến tư liệu và hiện vật?”",K082,Có
+HLQ410,F082,5,Quản lý & bảo tồn,Trung bình,Hãy trả lời câu hỏi: “Ban Quản lý Di tích Nhà tù Hỏa Lò có những nhiệm vụ chính nào liên quan đến tư liệu và hiện vật?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K082,Có
+HLQ411,F083,1,Độ tin cậy & giới hạn dữ liệu,Khó,Các nguồn chính thức có thống nhất về chiều cao tường bao hay không?,K083,Có khác biệt nguồn
+HLQ412,F083,2,Độ tin cậy & giới hạn dữ liệu,Khó,"Khách tham quan hỏi: “Các nguồn chính thức có thống nhất về chiều cao tường bao hay không?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K083,Có khác biệt nguồn
+HLQ413,F083,3,Độ tin cậy & giới hạn dữ liệu,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Các nguồn chính thức có thống nhất về chiều cao tường bao hay không?”?,K083,Có khác biệt nguồn
+HLQ414,F083,4,Độ tin cậy & giới hạn dữ liệu,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Các nguồn chính thức có thống nhất về chiều cao tường bao hay không?”",K083,Có khác biệt nguồn
+HLQ415,F083,5,Độ tin cậy & giới hạn dữ liệu,Khó,Hãy trả lời câu hỏi: “Các nguồn chính thức có thống nhất về chiều cao tường bao hay không?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K083,Có khác biệt nguồn
+HLQ416,F084,1,Độ tin cậy & giới hạn dữ liệu,Khó,Các nguồn công khai có thống nhất một ngày duyệt bản thiết kế ban đầu hay không?,K084,Có khác biệt nguồn
+HLQ417,F084,2,Độ tin cậy & giới hạn dữ liệu,Khó,"Khách tham quan hỏi: “Các nguồn công khai có thống nhất một ngày duyệt bản thiết kế ban đầu hay không?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K084,Có khác biệt nguồn
+HLQ418,F084,3,Độ tin cậy & giới hạn dữ liệu,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Các nguồn công khai có thống nhất một ngày duyệt bản thiết kế ban đầu hay không?”?,K084,Có khác biệt nguồn
+HLQ419,F084,4,Độ tin cậy & giới hạn dữ liệu,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Các nguồn công khai có thống nhất một ngày duyệt bản thiết kế ban đầu hay không?”",K084,Có khác biệt nguồn
+HLQ420,F084,5,Độ tin cậy & giới hạn dữ liệu,Khó,Hãy trả lời câu hỏi: “Các nguồn công khai có thống nhất một ngày duyệt bản thiết kế ban đầu hay không?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K084,Có khác biệt nguồn
+HLQ421,F085,1,Độ tin cậy & giới hạn dữ liệu,Khó,Có thể khẳng định danh mục hiện vật công khai hiện nay là toàn bộ hiện vật của Hỏa Lò không?,K085,Không đủ dữ liệu công khai
+HLQ422,F085,2,Độ tin cậy & giới hạn dữ liệu,Khó,"Khách tham quan hỏi: “Có thể khẳng định danh mục hiện vật công khai hiện nay là toàn bộ hiện vật của Hỏa Lò không?” Bạn hãy trả lời rõ ràng, dễ hiểu.",K085,Không đủ dữ liệu công khai
+HLQ423,F085,3,Độ tin cậy & giới hạn dữ liệu,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Có thể khẳng định danh mục hiện vật công khai hiện nay là toàn bộ hiện vật của Hỏa Lò không?”?,K085,Không đủ dữ liệu công khai
+HLQ424,F085,4,Độ tin cậy & giới hạn dữ liệu,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Có thể khẳng định danh mục hiện vật công khai hiện nay là toàn bộ hiện vật của Hỏa Lò không?”",K085,Không đủ dữ liệu công khai
+HLQ425,F085,5,Độ tin cậy & giới hạn dữ liệu,Khó,Hãy trả lời câu hỏi: “Có thể khẳng định danh mục hiện vật công khai hiện nay là toàn bộ hiện vật của Hỏa Lò không?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,K085,Không đủ dữ liệu công khai
+HLQ426,F086,1,Lịch sử & quy mô,Khó,So sánh diện tích nguyên thủy của nhà tù với khuôn viên còn lại hiện nay; hai con số này mô tả điều gì khác nhau?,MULTI_86,Có
+HLQ427,F086,2,Lịch sử & quy mô,Khó,"Khách tham quan hỏi: “So sánh diện tích nguyên thủy của nhà tù với khuôn viên còn lại hiện nay; hai con số này mô tả điều gì khác nhau?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_86,Có
+HLQ428,F086,3,Lịch sử & quy mô,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “So sánh diện tích nguyên thủy của nhà tù với khuôn viên còn lại hiện nay; hai con số này mô tả điều gì khác nhau?”?,MULTI_86,Có
+HLQ429,F086,4,Lịch sử & quy mô,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “So sánh diện tích nguyên thủy của nhà tù với khuôn viên còn lại hiện nay; hai con số này mô tả điều gì khác nhau?”",MULTI_86,Có
+HLQ430,F086,5,Lịch sử & quy mô,Khó,Hãy trả lời câu hỏi: “So sánh diện tích nguyên thủy của nhà tù với khuôn viên còn lại hiện nay; hai con số này mô tả điều gì khác nhau?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_86,Có
+HLQ431,F087,1,Mốc lịch sử,Trung bình,"Hãy dựng dòng thời gian khái quát gồm lúc xây dựng, lúc chuyển giao năm 1954 và giai đoạn tạm giam phi công Mỹ.",MULTI_87,Có
+HLQ432,F087,2,Mốc lịch sử,Trung bình,"Khách tham quan hỏi: “Hãy dựng dòng thời gian khái quát gồm lúc xây dựng, lúc chuyển giao năm 1954 và giai đoạn tạm giam phi công Mỹ.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_87,Có
+HLQ433,F087,3,Mốc lịch sử,Trung bình,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Hãy dựng dòng thời gian khái quát gồm lúc xây dựng, lúc chuyển giao năm 1954 và giai đoạn tạm giam phi công Mỹ.”?",MULTI_87,Có
+HLQ434,F087,4,Mốc lịch sử,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Hãy dựng dòng thời gian khái quát gồm lúc xây dựng, lúc chuyển giao năm 1954 và giai đoạn tạm giam phi công Mỹ.”",MULTI_87,Có
+HLQ435,F087,5,Mốc lịch sử,Trung bình,"Hãy trả lời câu hỏi: “Hãy dựng dòng thời gian khái quát gồm lúc xây dựng, lúc chuyển giao năm 1954 và giai đoạn tạm giam phi công Mỹ.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",MULTI_87,Có
+HLQ436,F088,1,Định danh,Trung bình,Phân biệt tên Maison Centrale với biệt danh Hilton Hà Nội.,MULTI_88,Có
+HLQ437,F088,2,Định danh,Trung bình,"Khách tham quan hỏi: “Phân biệt tên Maison Centrale với biệt danh Hilton Hà Nội.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_88,Có
+HLQ438,F088,3,Định danh,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Phân biệt tên Maison Centrale với biệt danh Hilton Hà Nội.”?,MULTI_88,Có
+HLQ439,F088,4,Định danh,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Phân biệt tên Maison Centrale với biệt danh Hilton Hà Nội.”",MULTI_88,Có
+HLQ440,F088,5,Định danh,Trung bình,Hãy trả lời câu hỏi: “Phân biệt tên Maison Centrale với biệt danh Hilton Hà Nội.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_88,Có
+HLQ441,F089,1,Hiện vật & kiến trúc,Khó,Nêu ba loại bằng chứng vật chất giúp khách hiểu chế độ giam giữ tù chính trị tại Hỏa Lò.,MULTI_89,Có
+HLQ442,F089,2,Hiện vật & kiến trúc,Khó,"Khách tham quan hỏi: “Nêu ba loại bằng chứng vật chất giúp khách hiểu chế độ giam giữ tù chính trị tại Hỏa Lò.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_89,Có
+HLQ443,F089,3,Hiện vật & kiến trúc,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nêu ba loại bằng chứng vật chất giúp khách hiểu chế độ giam giữ tù chính trị tại Hỏa Lò.”?,MULTI_89,Có
+HLQ444,F089,4,Hiện vật & kiến trúc,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nêu ba loại bằng chứng vật chất giúp khách hiểu chế độ giam giữ tù chính trị tại Hỏa Lò.”",MULTI_89,Có
+HLQ445,F089,5,Hiện vật & kiến trúc,Khó,Hãy trả lời câu hỏi: “Nêu ba loại bằng chứng vật chất giúp khách hiểu chế độ giam giữ tù chính trị tại Hỏa Lò.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_89,Có
+HLQ446,F090,1,Cây bàng & giáo dục,Khó,Kết nối vai trò của cây bàng với hoạt động liên lạc và học tập trong nhà tù.,MULTI_90,Có
+HLQ447,F090,2,Cây bàng & giáo dục,Khó,"Khách tham quan hỏi: “Kết nối vai trò của cây bàng với hoạt động liên lạc và học tập trong nhà tù.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_90,Có
+HLQ448,F090,3,Cây bàng & giáo dục,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Kết nối vai trò của cây bàng với hoạt động liên lạc và học tập trong nhà tù.”?,MULTI_90,Có
+HLQ449,F090,4,Cây bàng & giáo dục,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Kết nối vai trò của cây bàng với hoạt động liên lạc và học tập trong nhà tù.”",MULTI_90,Có
+HLQ450,F090,5,Cây bàng & giáo dục,Khó,Hãy trả lời câu hỏi: “Kết nối vai trò của cây bàng với hoạt động liên lạc và học tập trong nhà tù.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_90,Có
+HLQ451,F091,1,Vượt ngục 1945,Khó,Giải thích sự khác nhau giữa con số 29 và hơn 100 trong câu chuyện vượt ngục tháng 3/1945.,MULTI_91,Có
+HLQ452,F091,2,Vượt ngục 1945,Khó,"Khách tham quan hỏi: “Giải thích sự khác nhau giữa con số 29 và hơn 100 trong câu chuyện vượt ngục tháng 3/1945.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_91,Có
+HLQ453,F091,3,Vượt ngục 1945,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Giải thích sự khác nhau giữa con số 29 và hơn 100 trong câu chuyện vượt ngục tháng 3/1945.”?,MULTI_91,Có
+HLQ454,F091,4,Vượt ngục 1945,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Giải thích sự khác nhau giữa con số 29 và hơn 100 trong câu chuyện vượt ngục tháng 3/1945.”",MULTI_91,Có
+HLQ455,F091,5,Vượt ngục 1945,Khó,Hãy trả lời câu hỏi: “Giải thích sự khác nhau giữa con số 29 và hơn 100 trong câu chuyện vượt ngục tháng 3/1945.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_91,Có
+HLQ456,F092,1,Vượt ngục 1945,Khó,"Mô tả chuỗi vai trò của Trần Tử Bình, Phan Lang, Nguyễn Huy Hòa và Trần Văn Cử trong cuộc vượt ngục.",MULTI_92,Có
+HLQ457,F092,2,Vượt ngục 1945,Khó,"Khách tham quan hỏi: “Mô tả chuỗi vai trò của Trần Tử Bình, Phan Lang, Nguyễn Huy Hòa và Trần Văn Cử trong cuộc vượt ngục.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_92,Có
+HLQ458,F092,3,Vượt ngục 1945,Khó,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Mô tả chuỗi vai trò của Trần Tử Bình, Phan Lang, Nguyễn Huy Hòa và Trần Văn Cử trong cuộc vượt ngục.”?",MULTI_92,Có
+HLQ459,F092,4,Vượt ngục 1945,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Mô tả chuỗi vai trò của Trần Tử Bình, Phan Lang, Nguyễn Huy Hòa và Trần Văn Cử trong cuộc vượt ngục.”",MULTI_92,Có
+HLQ460,F092,5,Vượt ngục 1945,Khó,"Hãy trả lời câu hỏi: “Mô tả chuỗi vai trò của Trần Tử Bình, Phan Lang, Nguyễn Huy Hòa và Trần Văn Cử trong cuộc vượt ngục.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",MULTI_92,Có
+HLQ461,F093,1,Nữ tù chính trị,Trung bình,Trại giam nữ khác với mô tả khu biệt giam Cachot ở điểm nào?,MULTI_93,Có
+HLQ462,F093,2,Nữ tù chính trị,Trung bình,"Khách tham quan hỏi: “Trại giam nữ khác với mô tả khu biệt giam Cachot ở điểm nào?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_93,Có
+HLQ463,F093,3,Nữ tù chính trị,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Trại giam nữ khác với mô tả khu biệt giam Cachot ở điểm nào?”?,MULTI_93,Có
+HLQ464,F093,4,Nữ tù chính trị,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Trại giam nữ khác với mô tả khu biệt giam Cachot ở điểm nào?”",MULTI_93,Có
+HLQ465,F093,5,Nữ tù chính trị,Trung bình,Hãy trả lời câu hỏi: “Trại giam nữ khác với mô tả khu biệt giam Cachot ở điểm nào?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_93,Có
+HLQ466,F094,1,Máy chém,Khó,"Khi trả lời khách về các vụ hành quyết, vì sao AI cần phân biệt nơi giam giữ và nơi hành quyết?",MULTI_94,Có
+HLQ467,F094,2,Máy chém,Khó,"Khách tham quan hỏi: “Khi trả lời khách về các vụ hành quyết, vì sao AI cần phân biệt nơi giam giữ và nơi hành quyết?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_94,Có
+HLQ468,F094,3,Máy chém,Khó,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Khi trả lời khách về các vụ hành quyết, vì sao AI cần phân biệt nơi giam giữ và nơi hành quyết?”?",MULTI_94,Có
+HLQ469,F094,4,Máy chém,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Khi trả lời khách về các vụ hành quyết, vì sao AI cần phân biệt nơi giam giữ và nơi hành quyết?”",MULTI_94,Có
+HLQ470,F094,5,Máy chém,Khó,"Hãy trả lời câu hỏi: “Khi trả lời khách về các vụ hành quyết, vì sao AI cần phân biệt nơi giam giữ và nơi hành quyết?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",MULTI_94,Có
+HLQ471,F095,1,Phi công Mỹ,Khó,So sánh bằng chứng về John McCain và Walter Eugene Wilber được giới thiệu tại di tích.,MULTI_95,Có
+HLQ472,F095,2,Phi công Mỹ,Khó,"Khách tham quan hỏi: “So sánh bằng chứng về John McCain và Walter Eugene Wilber được giới thiệu tại di tích.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_95,Có
+HLQ473,F095,3,Phi công Mỹ,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “So sánh bằng chứng về John McCain và Walter Eugene Wilber được giới thiệu tại di tích.”?,MULTI_95,Có
+HLQ474,F095,4,Phi công Mỹ,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “So sánh bằng chứng về John McCain và Walter Eugene Wilber được giới thiệu tại di tích.”",MULTI_95,Có
+HLQ475,F095,5,Phi công Mỹ,Khó,Hãy trả lời câu hỏi: “So sánh bằng chứng về John McCain và Walter Eugene Wilber được giới thiệu tại di tích.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_95,Có
+HLQ476,F096,1,Nguồn dữ liệu,Khó,Tại sao số 80 hiện vật trong bài năm 2018 không thể được dùng làm tổng số hiện vật hiện có?,MULTI_96,Có
+HLQ477,F096,2,Nguồn dữ liệu,Khó,"Khách tham quan hỏi: “Tại sao số 80 hiện vật trong bài năm 2018 không thể được dùng làm tổng số hiện vật hiện có?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_96,Có
+HLQ478,F096,3,Nguồn dữ liệu,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tại sao số 80 hiện vật trong bài năm 2018 không thể được dùng làm tổng số hiện vật hiện có?”?,MULTI_96,Có
+HLQ479,F096,4,Nguồn dữ liệu,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tại sao số 80 hiện vật trong bài năm 2018 không thể được dùng làm tổng số hiện vật hiện có?”",MULTI_96,Có
+HLQ480,F096,5,Nguồn dữ liệu,Khó,Hãy trả lời câu hỏi: “Tại sao số 80 hiện vật trong bài năm 2018 không thể được dùng làm tổng số hiện vật hiện có?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_96,Có
+HLQ481,F097,1,Trưng bày,Trung bình,Phân biệt trưng bày thường xuyên với các trưng bày chuyên đề năm 2026 được nêu trong dữ liệu.,MULTI_97,Có
+HLQ482,F097,2,Trưng bày,Trung bình,"Khách tham quan hỏi: “Phân biệt trưng bày thường xuyên với các trưng bày chuyên đề năm 2026 được nêu trong dữ liệu.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_97,Có
+HLQ483,F097,3,Trưng bày,Trung bình,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Phân biệt trưng bày thường xuyên với các trưng bày chuyên đề năm 2026 được nêu trong dữ liệu.”?,MULTI_97,Có
+HLQ484,F097,4,Trưng bày,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Phân biệt trưng bày thường xuyên với các trưng bày chuyên đề năm 2026 được nêu trong dữ liệu.”",MULTI_97,Có
+HLQ485,F097,5,Trưng bày,Trung bình,Hãy trả lời câu hỏi: “Phân biệt trưng bày thường xuyên với các trưng bày chuyên đề năm 2026 được nêu trong dữ liệu.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_97,Có
+HLQ486,F098,1,Nguồn lịch sử,Khó,"Nếu một khách hỏi chính xác chiều cao tường bao hoặc ngày duyệt thiết kế, AI nên trả lời thế nào khi các trang nguồn không thống nhất?",MULTI_98,Có khác biệt nguồn
+HLQ487,F098,2,Nguồn lịch sử,Khó,"Khách tham quan hỏi: “Nếu một khách hỏi chính xác chiều cao tường bao hoặc ngày duyệt thiết kế, AI nên trả lời thế nào khi các trang nguồn không thống nhất?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_98,Có khác biệt nguồn
+HLQ488,F098,3,Nguồn lịch sử,Khó,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Nếu một khách hỏi chính xác chiều cao tường bao hoặc ngày duyệt thiết kế, AI nên trả lời thế nào khi các trang nguồn không thống nhất?”?",MULTI_98,Có khác biệt nguồn
+HLQ489,F098,4,Nguồn lịch sử,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Nếu một khách hỏi chính xác chiều cao tường bao hoặc ngày duyệt thiết kế, AI nên trả lời thế nào khi các trang nguồn không thống nhất?”",MULTI_98,Có khác biệt nguồn
+HLQ490,F098,5,Nguồn lịch sử,Khó,"Hãy trả lời câu hỏi: “Nếu một khách hỏi chính xác chiều cao tường bao hoặc ngày duyệt thiết kế, AI nên trả lời thế nào khi các trang nguồn không thống nhất?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",MULTI_98,Có khác biệt nguồn
+HLQ491,F099,1,Bảo tồn hiện vật,Khó,Tóm tắt những hoạt động bảo tồn được công bố cho giai đoạn 2022–2024.,MULTI_99,Có
+HLQ492,F099,2,Bảo tồn hiện vật,Khó,"Khách tham quan hỏi: “Tóm tắt những hoạt động bảo tồn được công bố cho giai đoạn 2022–2024.” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_99,Có
+HLQ493,F099,3,Bảo tồn hiện vật,Khó,Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Tóm tắt những hoạt động bảo tồn được công bố cho giai đoạn 2022–2024.”?,MULTI_99,Có
+HLQ494,F099,4,Bảo tồn hiện vật,Khó,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Tóm tắt những hoạt động bảo tồn được công bố cho giai đoạn 2022–2024.”",MULTI_99,Có
+HLQ495,F099,5,Bảo tồn hiện vật,Khó,Hãy trả lời câu hỏi: “Tóm tắt những hoạt động bảo tồn được công bố cho giai đoạn 2022–2024.” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.,MULTI_99,Có
+HLQ496,F100,1,Thông tin tham quan,Trung bình,"Một khách cần biết trước khi tới: giờ mở cửa, địa chỉ và giá vé snapshot trong dữ liệu là gì?",MULTI_100,Có
+HLQ497,F100,2,Thông tin tham quan,Trung bình,"Khách tham quan hỏi: “Một khách cần biết trước khi tới: giờ mở cửa, địa chỉ và giá vé snapshot trong dữ liệu là gì?” Bạn hãy trả lời rõ ràng, dễ hiểu.",MULTI_100,Có
+HLQ498,F100,3,Thông tin tham quan,Trung bình,"Một hướng dẫn viên tại Hỏa Lò cần giải đáp thế nào cho câu hỏi: “Một khách cần biết trước khi tới: giờ mở cửa, địa chỉ và giá vé snapshot trong dữ liệu là gì?”?",MULTI_100,Có
+HLQ499,F100,4,Thông tin tham quan,Trung bình,"Theo những nguồn đã đưa vào bộ tri thức, câu trả lời cho vấn đề sau là gì: “Một khách cần biết trước khi tới: giờ mở cửa, địa chỉ và giá vé snapshot trong dữ liệu là gì?”",MULTI_100,Có
+HLQ500,F100,5,Thông tin tham quan,Trung bình,"Hãy trả lời câu hỏi: “Một khách cần biết trước khi tới: giờ mở cửa, địa chỉ và giá vé snapshot trong dữ liệu là gì?” và nêu rõ nếu dữ liệu nguồn chưa đủ hoặc còn mâu thuẫn.",MULTI_100,Có

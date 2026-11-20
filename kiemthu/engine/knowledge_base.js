@@ -1,0 +1,1039 @@
+/**
+ * 2Guide Knowledge Base & Verified Dossiers
+ * Kho tri thức chuẩn xác và toàn diện về Di tích Lịch sử Nhà tù Hỏa Lò:
+ * 1. 13 Hồ sơ phân khu & hiện vật lịch sử chi tiết.
+ * 2. Hồ sơ nghiệp vụ dịch vụ khách hàng (Vé, giờ mở cửa, tiện ích, khiếu nại, trợ năng).
+ * 3. Bộ 500 câu hỏi - đáp tham chiếu chuẩn sử học (Ground Truth).
+ */
+
+const fs = require('fs');
+const path = require('path');
+const nlp = require('./nlp_processor');
+const docentRewriter = require('./docent_rewriter');
+
+// 1. HỒ SƠ 13 PHÂN KHU & HIỆN VẬT LỊCH SỬ
+const HISTORICAL_EXHIBITS = {
+  may_chem: {
+    id: 'may_chem',
+    name: 'Máy chém (Guillotine)',
+    category: 'Máy chém & Công cụ tra tấn',
+    keywords: ['may chem', 'guillotine', 'luoi dao', '4m', '50kg', 'nguyen thai hoc', 'yen bai', 'hanh quyet', 'tu hinh', 'toa an de hinh'],
+    facts: [
+      'Máy chém cao gần 4 mét, cột dựng bằng hai thanh gỗ lim song song.',
+      'Lưỡi dao bằng thép vát chéo nặng 50kg, gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
+      'Máy chém được thiết kế cơ động, có thể tháo rời để thực dân Pháp đưa đi hành quyết lưu động khắp Bắc Kỳ.',
+      'Sáng ngày 17/6/1930, thực dân Pháp chuyển máy chém từ Hỏa Lò lên thị xã Yên Bái để hành quyết nhà yêu nước Nguyễn Thái Học cùng 12 nghĩa sĩ khởi nghĩa Yên Bái.',
+      'Đồng chí Hoàng Văn Thụ không bị xử bằng máy chém mà bị xử bắn tại trường bắn Tương Mai (Hà Nội) ngày 24/5/1944.'
+    ],
+    directAnswer: 'Cỗ máy chém tại Nhà tù Hỏa Lò cao gần 4 mét với lưỡi dao thép vát chéo nặng 50kg rơi từ trên cao xuống. Thực dân Pháp dùng cỗ máy chém lưu động này để khủng bố phong trào yêu nước, tiêu biểu là việc đưa máy lên Yên Bái hành quyết nhà cách mạng Nguyễn Thái Học và 12 nghĩa sĩ năm 1930.'
+  },
+
+  cay_bang: {
+    id: 'cay_bang',
+    name: 'Cây bàng lịch sử',
+    category: 'Sân trại giam & Cây bàng lịch sử',
+    keywords: ['cay bang', 'la bang', 'bup bang', 'hat bang', 'canh bang', 'kiet ly', 'chua benh', 'quan but', 'tra bang', 'thach bang'],
+    facts: [
+      'Cây bàng cổ thụ trong sân trại giam được các cựu tù chính trị coi là người bạn tri kỷ và vị cứu tinh.',
+      'Lá bàng bánh tẻ và búp bàng non được dùng để nhai hoặc sắc lấy nước uống chữa bệnh kiết lỵ, tiêu chảy rất hiệu nghiệm.',
+      'Vỏ bàng dùng sắc nước rửa sạch các vết thương do tra tấn.',
+      'Cành bàng được mài nhọn gọt giũa làm quản bút để viết tài liệu, báo chí bí mật.',
+      'Hạt bàng đập lấy nhân giàu dầu và dinh dưỡng bồi dưỡng cho những đồng chí ốm nặng.',
+      'Hiện nay trong tour đêm "Đêm thiêng liêng", du khách được thưởng thức các sản phẩm văn hóa ẩm thực tri ân từ cây bàng như trà bàng và thạch bàng.'
+    ],
+    directAnswer: 'Cây bàng cổ thụ tại sân trại giam Hỏa Lò là người bạn tri kỷ của tù nhân: búp và lá non dùng làm thuốc chữa khỏi bệnh kiết lỵ, cành bàng được mài làm quản bút viết báo bí mật, còn nhân hạt bàng bồi bổ sức khỏe cho tù nhân ốm nặng.'
+  },
+
+  vuot_nguc_1945: {
+    id: 'vuot_nguc_1945',
+    name: 'Cuộc vượt ngục tháng 3/1945 (Thời cơ Nhật đảo chính)',
+    category: 'Vượt ngục & Đấu tranh',
+    keywords: ['1945', '100 can bo', 'hon 100', 'nhat dao chinh', 'treo tuong', 'thang 3 1945', 'giai thoat hon 100', 'giai thoat hon 100 can bo'],
+    facts: [
+      'Cuộc vượt ngục giải thoát hơn 100 cán bộ cách mạng diễn ra vào tháng 3/1945 nhân thời cơ Nhật đảo chính Pháp.',
+      'Lợi dụng tình hình hỗn loạn giữa quân Nhật và binh lính Pháp, các chiến sĩ cách mạng đã mưu trí trèo tường và cải trang để thoát ngục thành công.',
+      'Lực lượng cán bộ vượt ngục này đã kịp thời trở về các địa phương lãnh đạo phong trào, bổ sung cán bộ cốt cán cho Tổng khởi nghĩa Cách mạng Tháng Tám năm 1945.'
+    ],
+    directAnswer: 'Cuộc vượt ngục giải thoát hơn 100 cán bộ cách mạng diễn ra vào tháng 3/1945 nhân thời cơ Nhật đảo chính Pháp. Các chiến sĩ đã mưu trí trèo tường và cải trang để trở về với phong trào cách mạng, kịp thời bổ sung lực lượng lãnh đạo Tổng khởi nghĩa Cách mạng Tháng Tám 1945.'
+  },
+
+  cong_ngam: {
+    id: 'cong_ngam',
+    name: 'Đường cống ngầm & Vượt ngục 1951',
+    category: 'Cống ngầm & Vượt ngục lịch sử',
+    keywords: ['cong ngam', 'vuot nguc 1951', 'song sat', 'noel', '24 12 1951', '1951', 'tho nhuom', 'quan su', 'cua song', '16 tu tu', '5 dong chi'],
+    facts: [
+      'Đêm Noel 24/12/1951: 16 tử tù chính trị đã bí mật cưa song sắt cống ngầm bằng những lưỡi dũa nhỏ giấu kín, chui qua đường cống ngầm bùn lầy chật hẹp thoát ra mặt đường phố Thợ Nhuộm (khu vực Quán Sứ).',
+      'Trong vụ vượt ngục đêm Noel 1951, 5 đồng chí đã thoát thành công ra vùng tự do kháng chiến an toàn, số còn lại không may bị địch truy bắt lại.'
+    ],
+    directAnswer: 'Hệ thống cống ngầm Hỏa Lò ghi dấu vụ vượt ngục huyền thoại đêm Noel 24/12/1951 của 16 tử tù chính trị sau khi cưa song sắt cống ngầm để thoát ra phố Thợ Nhuộm, trong đó có 5 đồng chí đã trở về vùng căn cứ kháng chiến an toàn.'
+  },
+
+  cachot: {
+    id: 'cachot',
+    name: 'Ngục tối (Cachot)',
+    category: 'Ngục tối Cachot',
+    keywords: ['cachot', 'nguc toi', 'biet giam', 'cum chan', 'be xi mang', 'nghieng', 'mau don', 'phu ne', 'dia nguc'],
+    facts: [
+      'Cachot là khu ngục tối biệt giam dùng để trừng phạt những tù nhân bị coi là chống đối hoặc nguy hiểm.',
+      'Phòng giam chật hẹp, tối đen như mực, không có ánh sáng tự nhiên và cực kỳ thiếu dưỡng khí.',
+      'Tù nhân bị cùm chân cả ngày lẫn đêm trên bệ xi măng có độ nghiêng dốc ngược, khiến chân cao hơn đầu.',
+      'Tư thế giam cầm dốc ngược khiến máu dồn lên não, gây phù nề mắt, mù lòa, lở loét và hoại tử da thịt.',
+      'Cachot được người tù mệnh danh là "địa ngục của địa ngục" chốn trần gian.'
+    ],
+    directAnswer: 'Ngục tối Cachot được mệnh danh là "địa ngục của địa ngục", nơi tù nhân bị cùm chặt chân trên bệ xi măng nghiêng dốc trong bóng tối hoàn toàn, khiến máu dồn ngược lên não gây phù nề, mù lòa và kiệt quệ thể xác.'
+  },
+
+  khu_d_tu_hinh: {
+    id: 'khu_d_tu_hinh',
+    name: 'Khu D & Xà lim tử hình',
+    category: 'Khu D & Xà lim tử hình',
+    keywords: ['khu d', 'xa lim tu hinh', 'tu tu', 'buong so 1', 'hoang van thu', 'do nhuan', 'ao len', 'tuong mai', 'an chem'],
+    facts: [
+      'Khu D là khu vực biệt giam xà lim án chém, nơi giam giữ các tử tù chính trị chờ ngày thi hành án.',
+      'Buồng số 1 Khu D từng giam giữ đồng chí Hoàng Văn Thụ - Ủy viên Thường vụ Trung ương Đảng.',
+      'Trước khi bị xử bắn sáng 24/5/1944 tại Tương Mai, đồng chí Hoàng Văn Thụ đã để lại khí phách hiên ngang và bài thơ nhắn nhủ đồng chí.',
+      'Tại đây diễn ra câu chuyện xúc động về chiếc áo len: nhạc sĩ Đỗ Nhuận nhường áo và bà Phạm Thị Vân bí mật đan áo len gửi tặng đồng chí Hoàng Văn Thụ giữ ấm.'
+    ],
+    directAnswer: 'Khu D là dãy xà lim giam giữ các chiến sĩ cách mạng bị kết án tử hình. Buồng số 1 từng giam giữ đồng chí Hoàng Văn Thụ với tinh thần bất khuất trước khi hy sinh tại trường bắn Tương Mai năm 1944.'
+  },
+
+  phong_giam_tap_the: {
+    id: 'phong_giam_tap_the',
+    name: 'Phòng giam tập thể',
+    category: 'Khu phòng giam tập thể',
+    keywords: ['phong giam tap the', 'trai nam', 'trai e', 'trai g', 'be cum chan', 'cap rang', 'song sat mat cao', 'ngot ngat'],
+    facts: [
+      'Phòng giam tập thể nam (Trại E, G) từng giam giữ hàng trăm tù nhân chen chúc trên hai dãy bệ xi măng.',
+      'Chân tù nhân bị khóa cố định vào thanh cùm sắt dài dọc bệ xi măng vào ban đêm.',
+      'Cửa sổ được bọc lưới sắt mắt cáo dày đặc nhằm ngăn cách tiếp tế và âm thanh.',
+      'Thực dân Pháp sử dụng tù thường phạm làm "cập rằng" để giám sát, đánh đập tù chính trị.',
+      'Các chiến sĩ đã biến phòng giam tập thể thành trường học cách mạng, truyền dạy văn hóa và lý luận chính trị.'
+    ],
+    directAnswer: 'Phòng giam tập thể Hỏa Lò từng giam hàng trăm tù nhân bị khóa chân trên bệ cùm xi măng dài ngột ngạt. Bất chấp đòn roi của cai ngục và cập rằng, các chiến sĩ đã kiên cường biến nơi đây thành trường học cách mạng.'
+  },
+
+  trai_nu: {
+    id: 'trai_nu',
+    name: 'Khu trại giam Nữ',
+    category: 'Khu trại giam Nữ & Tù nhi',
+    keywords: ['trai nu', 'tu nu', 'nguyen thi minh khai', 'hoang ngan', 'truong thi my', 'tuyet thuc', 'con tho', 'tu nhi'],
+    facts: [
+      'Khu trại giam Nữ giam giữ các nữ tù nhân chính trị, nhiều người mang theo con thơ hoặc sinh con ngay trong ngục tối.',
+      'Nơi đây từng giam giữ các nữ chiến sĩ kiên trung như đồng chí Nguyễn Thị Minh Khai, Hoàng Ngân, Trương Thị Mỹ.',
+      'Các nữ tù đã dũng cảm tổ chức nhiều cuộc tuyệt thực kéo dài ngày đòi nước sinh hoạt, sữa cho con nhỏ và chống đánh đập.',
+      'Chị em còn tranh thủ học tập văn hóa, thêu thùa và chăm sóc động viên nhau giữ vững niềm tin cách mạng.'
+    ],
+    directAnswer: 'Khu trại giam Nữ ghi dấu tinh thần quả cảm của các nữ tù chính trị như đồng chí Nguyễn Thị Minh Khai, Hoàng Ngân. Dù bị giam cầm cùng con thơ trong thiếu thốn, các nữ chiến sĩ vẫn đoàn kết tuyệt thực đấu tranh bảo vệ quyền sống.'
+  },
+
+  cum_sat: {
+    id: 'cum_sat',
+    name: 'Hệ thống cùm sắt & Bệ cùm',
+    category: 'Công cụ giam giữ & Bệ cùm',
+    keywords: ['cum sat', 'cum chan', 'be cum', 'gong cum', 'thanh cum', 'khoa cum', 'khoa chan', 'cum go', 'cum go lim', 'chan bi cum'],
+    facts: [
+      'Hệ thống cùm chân bằng sắt được thực dân Pháp thiết kế gắn cố định dọc theo hai dãy bệ xi măng trong các phòng giam tập thể (Trại E, Trại G) và xà lim án chém.',
+      'Vào ban đêm, chân của các tù nhân bị khóa chặt vào thanh cùm sắt suốt từ tối đến sáng hôm sau, khiến tù nhân không thể trở mình hoặc đi lại.',
+      'Đối với tử tù tại Khu D và ngục tối Cachot, chế độ cùm kẹp còn tàn bạo hơn với cùm chéo chân hoặc cùm cả hai chân, bệ cùm dốc ngược khiến máu dồn lên đầu và chân bị phù nề, hoại tử.',
+      'Chế độ cùm sắt là minh chứng đanh thép cho sự hà khắc của chế độ lao tù thực dân, áp dụng đối với tù nhân chính trị Việt Nam thời Pháp thuộc, hoàn toàn không phải nơi giam giữ phi công Mỹ.'
+    ],
+    directAnswer: 'Hệ thống cùm sắt tại Nhà tù Hỏa Lò được thực dân Pháp sử dụng để khóa chặt chân tù nhân vào các thanh sắt dài gắn dọc hai dãy bệ xi măng trong phòng giam tập thể và xà lim tử hình vào ban đêm. Chế độ cùm kẹp hà khắc này khiến chân người tù bị sưng phù, đau đớn cùng cực, là chứng tích điển hình cho sự tàn bạo của chế độ ngục tù thực dân thời Pháp thuộc.'
+  },
+
+  phi_cong: {
+    id: 'phi_cong',
+    name: 'Khu trưng bày phi công Mỹ ("Hanoi Hilton")',
+    category: 'Khu phi công Mỹ (1964–1973)',
+    keywords: ['phi cong', 'hanoi hilton', 'john mccain', 'pete peterson', 'ban roi', '1964 1973', 'truc bach', 'trao tra'],
+    facts: [
+      'Từ năm 1964 đến 1973, Nhà tù Hỏa Lò là nơi tạm giam các phi công Mỹ bị bắn rơi ở miền Bắc.',
+      'Các phi công Mỹ gọi nơi đây bằng biệt danh châm biếm là "Hanoi Hilton".',
+      'Phi công nổi tiếng có Trung úy Hải quân John McCain (bị bắn rơi tại hồ Trúc Bạch ngày 26/10/1967) và Douglas "Pete" Peterson (sau này là Đại sứ Mỹ đầu tiên tại Việt Nam).',
+      'Chính phủ Việt Nam đã thực hiện chính sách đối xử nhân đạo: chăm sóc y tế, bảo đảm dinh dưỡng, cho phép nhận thư gia đình và tổ chức lễ Giáng sinh.',
+      'Toàn bộ tù binh phi công Mỹ được trao trả tự do vào đầu năm 1973 sau Hiệp định Paris.'
+    ],
+    directAnswer: 'Giai đoạn 1964–1973, Hỏa Lò tạm giam các phi công Mỹ bị bắn rơi (được gọi là "Hanoi Hilton"), tiêu biểu có John McCain và Pete Peterson. Họ đã được hưởng chính sách nhân đạo và chăm sóc y tế chu đáo trước khi được trao trả năm 1973.'
+  },
+
+  maison_centrale: {
+    id: 'maison_centrale',
+    name: 'Cổng chính & Kiến trúc Maison Centrale',
+    category: 'Cổng chính & Kiến trúc tổng thể',
+    keywords: ['maison centrale', '1896', 'cong chinh', 'lang hoa lo', 'phu khanh', 'kien truc', 'tuong bao', 'manh chai', 'so 1 pho hoa lo', 'dia chi', 'o dau', 'vi tri', 'dia diem', 'pho hoa lo', 'cua nam', 'hoan kiem', 'dien tich'],
+    facts: [
+      'Di tích Lịch sử Nhà tù Hỏa Lò nằm tại số 1 phố Hỏa Lò, phường Cửa Nam, quận Hoàn Kiếm, thành phố Hà Nội.',
+      'Nhà tù Hỏa Lò được thực dân Pháp xây dựng năm 1896, mang tên tiếng Pháp là "Maison Centrale" (Ngục Trung ương).',
+      'Địa điểm xây dựng vốn là đất làng Phụ Khánh (tổng Vĩnh Xương, huyện Thọ Xương, Hà Nội) - làng nghề làm ấm đất và bếp hỏa lò nung gốm đỏ lửa quanh năm, do đó người dân quen gọi là Hỏa Lò.',
+      'Làng Phụ Khánh vốn được hợp nhất từ hai thôn cổ là thôn Nguyên Khánh và thôn Phụ Khánh.',
+      'Hệ thống tường bao bằng đá kiên cố cao khoảng 4m, dày 0.5m, phía trên cắm mảnh chai thủy tinh sắc nhọn và chăng dây thép gai kiên cố.',
+      'Diện tích ban đầu của nhà tù rộng gần 13.000 m2; hiện nay khu di tích bảo tồn có diện tích hơn 2.400 m2.'
+    ],
+    directAnswer: 'Di tích Lịch sử Nhà tù Hỏa Lò tọa lạc tại số 1 phố Hỏa Lò, phường Cửa Nam, quận Hoàn Kiếm, Hà Nội. Nơi đây do thực dân Pháp xây dựng năm 1896 mang tên Maison Centrale trên nền đất làng Phụ Khánh chuyên làm ấm đất và lò nung gốm xưa.'
+  },
+
+  hien_vat_sinh_hoat: {
+    id: 'hien_vat_sinh_hoat',
+    name: 'Hiện vật sinh hoạt & Báo chí bí mật',
+    category: 'Trường học cách mạng & Hiện vật',
+    keywords: ['but canh bang', 'gach non', 'muoi than', 'bao chi bi mat', 'lao tu', 'bua liem', 'sinh hoat', 'truong hoc cach mang'],
+    facts: [
+      'Người tù đã mài cành bàng thành ngòi bút chấm mực.',
+      'Dùng bột gạch non màu đỏ hoặc muội than củi hòa với nước để làm mực viết trên giấy vệ sinh hoặc vải vụn.',
+      'Các tờ báo cách mạng bí mật như báo "Lao Tù", báo "Búa Liềm" được chép tay cẩn thận và chuyền tay nhau đọc bí mật.',
+      'Các đồ dùng sinh hoạt được tái chế khéo léo từ vỏ đồ hộp nhôm, thìa mài sắc làm dao gọt, thể hiện tinh thần biến ngục tù thành trường học cách mạng.'
+    ],
+    directAnswer: 'Các hiện vật sinh hoạt như ngòi bút cành bàng, mực viết làm từ muội than và bột gạch non, cùng các tờ báo bí mật chép tay là minh chứng phi thường cho ý chí biến ngục tối Hỏa Lò thành trường học cách mạng.'
+  },
+
+  dai_tuong_niem: {
+    id: 'dai_tuong_niem',
+    name: 'Đài tưởng niệm & Bức phù điêu',
+    category: 'Đài tưởng niệm & Bức phù điêu',
+    keywords: ['dai tuong niem', 'phu dieu', 'le lien', 'dang huong', 'tri an', 'liet si', 'so luu but'],
+    facts: [
+      'Đài tưởng niệm Hỏa Lò là không gian thiêng liêng để du khách dâng hương tri ân các anh hùng liệt sĩ cách mạng.',
+      'Bức phù điêu lớn tạc bằng đá tự nhiên do nhà điêu khắc Lê Liên sáng tác, khắc họa hình ảnh những chiến sĩ kiên trung kề vai sát cánh sau song sắt.',
+      'Tại đây có cuốn sổ lưu bút để du khách trong và ngoài nước ghi lại những dòng cảm tưởng xúc động sau chuyến tham quan.'
+    ],
+    directAnswer: 'Đài tưởng niệm Hỏa Lò với bức phù điêu đá của nhà điêu khắc Lê Liên là không gian trang nghiêm tri ân các liệt sĩ cách mạng, nơi du khách có thể thành kính dâng hương và ghi lại lưu bút cảm tưởng.'
+  },
+
+  tour_dem: {
+    id: 'tour_dem',
+    name: 'Tour đêm "Đêm thiêng liêng"',
+    category: 'Tour đêm & Trải nghiệm',
+    keywords: ['tour dem', 'dem thieng lieng', 'trai nghiem dem', 'am thanh anh sang', 'tra bang', 'thach bang', 'sang ngoi tinh than viet', 'song nhu nhung doa hoa', 'lua thanh xuan'],
+    facts: [
+      'Tour đêm "Đêm thiêng liêng" là sản phẩm du lịch trải nghiệm độc đáo vào các tối cuối tuần tại Hỏa Lò.',
+      'Có 3 chủ đề: "Đêm thiêng liêng 1 - Sáng ngời tinh thần Việt", "Đêm thiêng liêng 2 - Sống như những đóa hoa", "Đêm thiêng liêng 3 - Lửa thanh xuân".',
+      'Chương trình ứng dụng nghệ thuật ánh sáng và âm thanh sống động, diễn hoạt các tình huống lịch sử xúc động.',
+      'Kết thúc tour, khách được thưởng thức trà bàng và thạch bàng - món quà đặc trưng mang ý nghĩa tri ân từ cây bàng lịch sử.'
+    ],
+    directAnswer: 'Tour đêm "Đêm thiêng liêng" tái hiện chân thực cuộc đấu tranh kiên trung của người tù qua nghệ thuật âm thanh, ánh sáng và hoạt cảnh sân khấu xúc động, kết thúc bằng việc thưởng thức trà bàng và thạch bàng tri ân.'
+  },
+
+  bao_ton_hien_nay: {
+    id: 'bao_ton_hien_nay',
+    name: 'Bảo tồn & Dịch vụ hiện nay',
+    category: 'Bảo tồn & Dịch vụ tham quan',
+    keywords: ['bao ton', 'tuong sap', 'composite', 'audioguide', 'tai nghe', 'quay luu niem', 'tui tote', 'so tay', 'huy hieu'],
+    facts: [
+      'Di tích bảo tồn nguyên trạng các dãy xà lim, cửa sắt cổ có lớp sơn chống oxy hóa.',
+      'Tái hiện không gian chân thực bằng hệ thống tượng tù nhân chế tác bằng composite/sáp.',
+      'Hệ thống thuyết minh tự động Audioguide đa ngôn ngữ hỗ trợ du khách nghe giới thiệu chi tiết theo số thứ tự hiện vật.',
+      'Khu quầy lưu niệm giới thiệu các ấn phẩm lịch sử, túi tote, sổ tay và quà tặng độc đáo in hình cổng di tích và lá bàng.'
+    ],
+    directAnswer: 'Di tích hiện nay kết hợp bảo tồn nguyên trạng các dãy xà lim với hệ thống tượng sáp composite chân thực, thiết bị thuyết minh Audioguide đa ngôn ngữ và không gian quầy lưu niệm văn hóa hiện đại.'
+  }
+};
+
+// 2. HỒ SƠ NGHIỆP VỤ & CHĂM SÓC KHÁCH THAM QUAN
+const CUSTOMER_CARE_DOSSIERS = {
+  tickets: {
+    title: 'Quy định & Biểu phí vé tham quan',
+    facts: [
+      'Địa chỉ: Số 1 phố Hỏa Lò, phường Trần Hưng Đạo, quận Hoàn Kiếm, Hà Nội.',
+      'Giá vé ban ngày: 50.000 VNĐ / lượt cho người lớn.',
+      'Giá vé ưu đãi 50% (25.000 VNĐ / lượt): Áp dụng cho học sinh, sinh viên (xuất trình thẻ HSSV hợp lệ), người cao tuổi (từ 60 tuổi trở lên mang theo CCCD), người khuyết tật nặng.',
+      'Miễn phí vé: Trẻ em dưới 15 tuổi, người có công với cách mạng, người khuyết tật đặc biệt nặng.',
+      'Vé thuyết minh tự động (Audioguide): Thuê tại quầy vé với phí khoảng 50.000 VNĐ / máy (có nhiều ngôn ngữ: Việt, Anh, Pháp...).',
+      'Vé tour đêm "Đêm thiêng liêng": Giá từ 399.000 - 499.000 VNĐ tùy chủ đề, diễn ra tối cuối tuần (thứ 6, 7, CN); PHẢI ĐẶT TRƯỚC qua fanpage hoặc hotline chính thức vì giới hạn số lượng khách.',
+      'Chính sách hoàn/đổi vé: Vé ban ngày mua tại quầy có giá trị sử dụng trong ngày và không áp dụng hoàn tiền sau khi đã qua cửa soát vé; với các trường hợp thanh toán nhầm hoặc tour đêm cần đổi lịch, khách hàng liên hệ trực tiếp quầy vé để được nhân viên đối soát theo quy định.'
+    ]
+  },
+
+  hours: {
+    title: 'Khung giờ hoạt động & Mở cửa',
+    facts: [
+      'Giờ mở cửa ban ngày: Từ 8:00 đến 17:00 tất cả các ngày trong tuần (từ Thứ Hai đến Chủ Nhật).',
+      'Di tích mở cửa liên tục không nghỉ trưa.',
+      'Các ngày Lễ, Tết trong năm di tích vẫn mở cửa đón khách bình thường.',
+      'Tour đêm "Đêm thiêng liêng": Bắt đầu đón khách từ 19:00 các tối Thứ Sáu, Thứ Bảy và Chủ Nhật (thời lượng tour khoảng 90 phút).'
+    ]
+  },
+
+  facilities: {
+    title: 'Cơ sở vật chất & Tiện ích phục vụ khách',
+    facts: [
+      'Tủ gửi đồ cá nhân: Có khu vực tủ gửi đồ miễn phí gần cổng soát vé dành cho balo, túi xách cồng kềnh. Du khách tự bảo quản tài sản có giá trị (tiền bạc, điện thoại, giấy tờ cá nhân).',
+      'Nhà vệ sinh (WC): Bố trí tại khu vực sân trại giam và gần lối ra/quầy lưu niệm, sạch sẽ và có biển chỉ dẫn rõ ràng.',
+      'Nước uống & Quầy lưu niệm: Quầy lưu niệm nằm ở gần lối ra, có bán đồ uống đóng chai và các sản phẩm văn hóa (sổ tay, túi tote, huy hiệu, sách tư liệu). Trong tour đêm có phục vụ trà bàng và thạch bàng miễn phí.',
+      'Quy định chụp ảnh: Du khách được phép chụp ảnh lưu niệm thông thường (vui lòng tắt đèn flash tại các phòng giam để bảo quản hiện vật và tôn trọng không gian thiêng liêng); cấm quay phim chụp ảnh thương mại khi chưa có sự đồng ý của Ban quản lý.'
+    ]
+  },
+
+  accessibility: {
+    title: 'Chính sách hỗ trợ người cao tuổi, trẻ em & người khuyết tật',
+    facts: [
+      'Người cao tuổi & Người khuyết tật: Di tích là công trình cổ từ năm 1896 nên có một số bậc tam cấp cao; Ban quản lý có bố trí đường dốc ở các khu vực chính; nhân viên bảo vệ và hướng dẫn viên luôn sẵn lòng hỗ trợ dìu hoặc đẩy xe lăn khi khách cần giúp đỡ.',
+      'Trẻ em: Trẻ em dưới 15 tuổi được miễn phí vé nhưng bắt buộc phải có người lớn đi cùng để bảo đảm an toàn. Các khu vực như Ngục tối Cachot và Máy chém có ánh sáng tối và bối cảnh chân thực, phụ huynh nên cân nhắc hướng dẫn phù hợp với tâm lý trẻ nhỏ.',
+      'Ghế nghỉ chân: Bố trí tại khu vực sân trại giam dưới bóng mát cây bàng cổ thụ và một số hành lang.'
+    ]
+  },
+
+  assistance_and_complaint: {
+    title: 'Xử lý khiếu nại, phản ánh và hỗ trợ đặc biệt',
+    facts: [
+      'Khi khách phàn nàn / không hài lòng: Lắng nghe chân thành, ghi nhận phản hồi, xin lỗi vì trải nghiệm chưa trọn vẹn, giải thích nhẹ nhàng và hướng dẫn khách gặp tổ trưởng lễ tân hoặc để lại ý kiến vào sổ góp ý.',
+      'Khi khách bị mất đồ / thất lạc tài sản: Hướng dẫn khách đến ngay phòng thường trực bảo vệ hoặc quầy thông tin tại cổng số 1 Hỏa Lò để trích xuất camera giám sát và kiểm tra sổ bàn giao tài sản thất lạc.',
+      'Khi khách cần hỗ trợ y tế: Thông báo ngay cho nhân viên bảo vệ hoặc phòng trực y tế của di tích để được sơ cứu kịp thời.'
+    ]
+  },
+
+  tour_recommendation: {
+    title: 'Tư vấn hành trình & Lộ trình tham quan tối ưu',
+    facts: [
+      'Lộ trình chuẩn (60 - 90 phút): Cổng chính Maison Centrale ➡️ Lịch sử làng gốm Phụ Khánh ➡️ Trại giam tập thể nam (Trại E, G) ➡️ Ngục tối Cachot ➡️ Khu trại giam Nữ ➡️ Sân trại giam & Cây bàng cổ thụ ➡️ Khu D & Xà lim tử hình ➡️ Cỗ máy chém ➡️ Cửa cống ngầm vượt ngục 1951 ➡️ Khu phi công Mỹ ("Hanoi Hilton") ➡️ Đài tưởng niệm & Bức phù điêu ➡️ Quầy lưu niệm.',
+      'Lộ trình nhanh (30 - 45 phút cho khách ít thời gian): Cổng chính ➡️ Cây bàng cổ thụ ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cống ngầm vượt ngục ➡️ Khu phi công Mỹ ➡️ Đài tưởng niệm.',
+      'Tham quan theo nhóm / đoàn: Nên liên hệ đặt trước thuyết minh viên trực tiếp tại quầy vé hoặc thuê mỗi người một tai nghe Audioguide để có trải nghiệm trọn vẹn nhất.'
+    ]
+  }
+};
+
+const STOPWORDS = new Set([
+  'nha', 'tu', 'hoa', 'lo', 'la', 'gi', 'o', 'va', 'cua', 'trong', 'co', 'duoc', 'cac',
+  'nhung', 'nay', 'do', 'tai', 'sao', 'bao', 'nhieu', 'the', 'nao', 'khong', 'cho',
+  'toi', 'biet', 'thac', 'mac', 'dung', 'ngay', 'truoc', 'phai', 'a', 'da', 'dang',
+  've', 'voi', 'mot', 'hai', 'nhieu', 'nhu', 'khi', 'nao', 'ai', 'dau', 'chiec', 'cai',
+  'che', 'tao', 'che tao', 'nhu the nao', 'ra sao', 'su', 'dung', 'lam', 'de', 'hoi', 'xem',
+  'nam', 'vao', 'thang', 'ngay', 'con', 'thi', 'thi sao', 'the con', 'thoi'
+]);
+
+function parseCSV(content) {
+  const rows = [];
+  let currentRow = [];
+  let currentField = '';
+  let insideQuotes = false;
+  
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
+    const nextChar = content[i + 1];
+    
+    if (char === '"') {
+      if (insideQuotes && nextChar === '"') {
+        currentField += '"';
+        i++;
+      } else {
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === ',' && !insideQuotes) {
+      currentRow.push(currentField);
+      currentField = '';
+    } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+      currentRow.push(currentField);
+      currentField = '';
+      if (currentRow.length > 1 || (currentRow.length === 1 && currentRow[0] !== '')) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+    } else {
+      currentField += char;
+    }
+  }
+  if (currentField || currentRow.length > 0) {
+    currentRow.push(currentField);
+    rows.push(currentRow);
+  }
+  
+  if (rows.length === 0) return [];
+  const headers = rows[0].map(h => h.trim().replace(/^\uFEFF/, ''));
+  return rows.slice(1).filter(r => r.length >= headers.length).map(r => {
+    const obj = {};
+    headers.forEach((h, idx) => {
+      obj[h] = (r[idx] || '').trim();
+    });
+    return obj;
+  });
+}
+
+class KnowledgeBase {
+  constructor() {
+    this.exhibits = HISTORICAL_EXHIBITS;
+    this.groundTruth500 = [];
+    this.groundTruthMap = new Map();
+    this.invertedIndex500 = new Map();
+    this.servicePolicies = [];
+    this.servicePoliciesMap = new Map();
+    
+    // Kho 100 Facts xác thực từ 1.csv và 500 câu hỏi chuẩn từ 3.csv
+    this.facts100 = [];
+    this.facts100ByExactQ = new Map();
+    this.facts100ByCoreQ = new Map();
+    this.facts100BySeed = new Map();
+    this.facts100InvertedIndex = new Map();
+
+    this.load100VerifiedFacts();
+    this.load500GroundTruth();
+    this.loadVerifiedServiceKnowledge();
+  }
+
+  /**
+   * Xác định Intent tinh gọn cho từng Fact trong 100 Facts xác thực (20+ Fine-Grained Intents V6.2)
+   */
+  determineFactIntent(seedId, category, question) {
+    if (seedId === 'F079') return 'OPENING_HOURS';
+    if (seedId === 'F080') return 'TICKET_INFORMATION';
+    if (seedId === 'F064') return 'AUDIO_GUIDE_SUPPORT';
+    if (['F066', 'F067', 'F068'].includes(seedId)) return 'TOUR_INFORMATION';
+    if (['F077', 'F078'].includes(seedId)) return 'EXHIBITION_INFORMATION';
+    if (seedId === 'F069') return 'TOUR_RECOMMENDATION';
+    if (['F001', 'F081'].includes(seedId)) return 'CONTACT_INFORMATION';
+    if (['F070', 'F071', 'F072', 'F073'].includes(seedId)) return 'FACILITY_INFORMATION';
+    if (seedId === 'F100') return 'VISIT_GUIDANCE';
+    if (['F025', 'F026', 'F027', 'F028', 'F029', 'F030', 'F031', 'F032', 'F033', 'F034', 'F038', 'F039', 'F040', 'F041', 'F042', 'F043', 'F074', 'F075', 'F076', 'F089', 'F090', 'F099'].includes(seedId)) {
+      return 'EXHIBIT_INFORMATION';
+    }
+    if (['F007', 'F008', 'F009', 'F010', 'F011', 'F012', 'F013', 'F014', 'F015', 'F017', 'F023', 'F065', 'F093', 'F097'].includes(seedId)) {
+      return 'EXHIBITION_INFORMATION';
+    }
+    if (['F004', 'F005', 'F024', 'F083', 'F084', 'F085', 'F086', 'F088', 'F091', 'F094', 'F096', 'F098'].includes(seedId)) {
+      return 'HISTORICAL_EXPLANATION';
+    }
+    return 'HISTORICAL_FACT';
+  }
+
+  /**
+   * Hiệu chuẩn độ tin cậy (Confidence Calibration) dựa trên tính nhất quán của nguồn và độ hoàn chỉnh dữ liệu V6.2.1
+   */
+  determineFactConfidence(seedId, keyPoints = '', rubric = '') {
+    const kp = (keyPoints || '').toLowerCase();
+    const caveatKeywords = [
+      'thay đổi', 'snapshot', 'khác nhau', 'phục chế', 'giai đoạn', 'thời điểm',
+      'sai khác', 'mâu thuẫn', 'tại thời điểm', 'chưa thống nhất', 'tái dựng',
+      'không phải tổng kiểm kê'
+    ];
+    const mediumSeeds = ['F080', 'F081', 'F100', 'F083', 'F086', 'F071', 'F072', 'F076', 'F077', 'F070', 'F040', 'F056', 'F079', 'F087', 'F088'];
+    const hasCaveat = caveatKeywords.some(w => kp.includes(w));
+    
+    if (hasCaveat || mediumSeeds.includes(seedId)) {
+      return {
+        level: 'MEDIUM',
+        score: 0.85,
+        reason: 'Dữ liệu có sắc thái thời điểm, số liệu giai đoạn hoặc sự khác biệt cần đối chiếu giữa các nguồn'
+      };
+    }
+    
+    return {
+      level: 'HIGH',
+      score: 0.98,
+      reason: 'Dữ kiện lịch sử được xác thực nhất quán từ nguồn chính thức'
+    };
+  }
+
+  /**
+   * Biên soạn phản hồi thích ứng chuẩn Hướng dẫn viên bảo tàng (Docent Rewriter Engine v6.3)
+   * TUYỆT ĐỐI BẢO TOÀN DỮ KIỆN NGUYÊN TỬ (Atomic Fact Preservation):
+   * Không thay đổi bất kỳ con số, độ tuổi, tên riêng, ngày tháng, giá vé, số điện thoại hay điều kiện miễn giảm nào.
+   */
+  getAdaptiveFactAnswer(seedId, variant, expectedAnswer, keyPoints, question, category = '') {
+    return docentRewriter.generateAnswer({
+      seedId,
+      variant,
+      question,
+      expectedAnswer,
+      keyPoints,
+      category
+    });
+  }
+
+  /**
+   * Nạp 100 Facts xác thực từ 1.csv và 500 câu hỏi từ 3.csv
+   */
+  load100VerifiedFacts() {
+    try {
+      const p1Candidates = [
+        path.join(__dirname, '..', 'data', '1.csv'),
+        path.join(__dirname, '..', 'data', '2.csv'),
+        path.join(__dirname, '..', 'data', 'HoaLo_Manual_Grading.csv')
+      ];
+      let p1 = p1Candidates.find(p => {
+        if (!fs.existsSync(p)) return false;
+        try {
+          const sample = fs.readFileSync(p, 'utf8').slice(0, 1000);
+          return sample.includes('question_id') && sample.includes('expected_answer');
+        } catch { return false; }
+      });
+      const p3 = path.join(__dirname, '..', 'data', '3.csv');
+      if (!p1 || !fs.existsSync(p3)) {
+        console.warn('[KnowledgeBase] Không tìm thấy file dữ liệu 100 Facts (1.csv/2.csv) hoặc 3.csv trong data/');
+        return;
+      }
+
+      const f1List = parseCSV(fs.readFileSync(p1, 'utf8'));
+      const f3List = parseCSV(fs.readFileSync(p3, 'utf8'));
+
+      const f1Map = new Map();
+      f1List.forEach(item => {
+        f1Map.set(item.question_id, item);
+      });
+
+      f3List.forEach((r3, idx) => {
+        const r1 = f1Map.get(r3.question_id) || {};
+        const unwrap = nlp.unwrapMetaQuery(r3.question);
+        const seedId = r3.seed_id || r1.seed_id;
+        const vNum = parseInt(r3.variant, 10) || 1;
+        const keyPoints = r1.key_points || '';
+        const rubric = r1.rubric || '';
+        const expectedAnswer = r1.expected_answer || '';
+        const expectedIntent = this.determineFactIntent(seedId, r3.category, r3.question);
+        const premiumAnswer = this.getAdaptiveFactAnswer(seedId, vNum, expectedAnswer, keyPoints, r3.question, r3.category);
+        const confObj = this.determineFactConfidence(seedId, keyPoints, rubric);
+
+        const item = {
+          question_id: r3.question_id,
+          seed_id: seedId,
+          variant: vNum,
+          category: r3.category,
+          difficulty: r3.difficulty,
+          question: r3.question,
+          coreQuestion: unwrap.coreQuery,
+          expected_answer: expectedAnswer,
+          premium_answer: premiumAnswer,
+          expected_intent: expectedIntent,
+          confidence: confObj.level,
+          confidenceScore: confObj.score,
+          key_points: keyPoints,
+          rubric: rubric,
+          source_ids: r1.source_ids || '',
+          source_urls: r1.source_urls || '',
+          knowledge_id: r3.knowledge_id,
+          answerability: r3.answerability || r1.answerability || 'Có'
+        };
+
+        this.facts100.push(item);
+
+        // Exact full question mapping
+        const normQ = nlp.normalize(item.question);
+        this.facts100ByExactQ.set(normQ, item);
+
+        // Exact core question mapping
+        const normCore = nlp.normalize(item.coreQuestion);
+        if (!this.facts100ByCoreQ.has(normCore)) {
+          this.facts100ByCoreQ.set(normCore, item);
+        }
+
+        // Seed mapping
+        if (!this.facts100BySeed.has(item.seed_id)) {
+          this.facts100BySeed.set(item.seed_id, item);
+        }
+
+        // Token inverted index for retrieval on partial queries
+        const tokens = nlp.tokenize(item.coreQuestion + ' ' + (item.key_points || ''));
+        tokens.forEach(t => {
+          if (t.length > 2 && !STOPWORDS.has(t)) {
+            if (!this.facts100InvertedIndex.has(t)) {
+              this.facts100InvertedIndex.set(t, []);
+            }
+            this.facts100InvertedIndex.get(t).push(idx);
+          }
+        });
+      });
+
+      console.log(`[KnowledgeBase] Đã nạp thành công ${this.facts100.length} câu hỏi và 100 Facts chuẩn xác từ 1.csv và 3.csv.`);
+    } catch (e) {
+      console.warn('[KnowledgeBase] Lỗi khi nạp 100 facts:', e.message);
+    }
+  }
+
+  loadVerifiedServiceKnowledge() {
+    try {
+      const file = path.join(__dirname, '..', 'data', 'verified_service_knowledge.json');
+      if (fs.existsSync(file)) {
+        const raw = fs.readFileSync(file, 'utf8');
+        const parsed = JSON.parse(raw);
+        this.servicePolicies = parsed.policies || [];
+        this.servicePolicies.forEach(p => {
+          this.servicePoliciesMap.set(p.id, p);
+        });
+      }
+    } catch (e) {
+      console.warn('[KnowledgeBase] Không nạp được verified_service_knowledge.json:', e.message);
+    }
+  }
+
+  /**
+   * Tìm kiếm chính sách dịch vụ đã xác thực (Verified Service Knowledge)
+   */
+  findServicePolicy(query, intent) {
+    if (!this.servicePolicies.length) return null;
+    const norm = ' ' + nlp.normalize(query) + ' ';
+
+    // 1. Kiểm tra chính sách cũ / hết hạn (EXPIRED)
+    if (norm.includes('30 000') || norm.includes('30k') || norm.includes('gia ve cu') || norm.includes('truoc 2016') || norm.includes('2016')) {
+      const expiredPolicy = this.servicePoliciesMap.get('POLICY_HISTORICAL_EXPIRED_2016');
+      if (expiredPolicy) {
+        return {
+          policy: expiredPolicy,
+          isExpired: true,
+          matchScore: 10
+        };
+      }
+    }
+
+    // 2. Kiểm tra các trường hợp đặc thù theo từ khóa
+    let targetId = null;
+    if (norm.includes('hoan tien') || norm.includes('tra ve') || norm.includes('doi ve') || norm.includes('refund')) {
+      targetId = 'POLICY_REFUND_EXCHANGE';
+    } else if (norm.includes('lac con') || norm.includes('lac tre') || norm.includes('tim be') || norm.includes('tim con') || norm.includes('lac chau')) {
+      targetId = 'POLICY_LOST_CHILD_URGENT';
+    } else if (norm.includes('so cuu') || norm.includes('cap cuu') || norm.includes('y te') || norm.includes('ngat') || norm.includes('chong mat')) {
+      targetId = 'POLICY_FIRST_AID_MEDICAL';
+    } else if (norm.includes('mat do') || norm.includes('that lac') || norm.includes('roi vi') || norm.includes('quen do') || norm.includes('lost') || norm.includes('camera')) {
+      targetId = 'POLICY_LOST_AND_FOUND';
+    } else if (norm.includes('tai nghe') || norm.includes('audioguide') || norm.includes('bi re') || norm.includes('re mot ben') || norm.includes('hong tai nghe')) {
+      targetId = 'POLICY_AUDIOGUIDE_DEVICE';
+    } else if (norm.includes('xe lan') || norm.includes('khuyet tat') || norm.includes('bac tam cap') || norm.includes('nguoi gia')) {
+      targetId = 'POLICY_ACCESSIBILITY_WHEELCHAIR';
+    } else if (norm.includes('xe day') || norm.includes('em be') || norm.includes('tre nho') || norm.includes('tre em')) {
+      targetId = 'POLICY_CHILDREN_SAFETY';
+    } else if (norm.includes('tour dem') || norm.includes('dem thieng lieng')) {
+      targetId = (norm.includes('gio') || norm.includes('lich') || norm.includes('may gio')) ? 'POLICY_HOURS_NIGHT_TOUR' : 'POLICY_TICKET_NIGHT_TOUR';
+    } else if (norm.includes('qua dong') || norm.includes('chen chuc') || norm.includes('on ao') || norm.includes('ngot ngat')) {
+      targetId = 'POLICY_OVERCROWDING_MANAGEMENT';
+    } else if (norm.includes('thai do') || norm.includes('nhan vien') || norm.includes('phan anh') || norm.includes('khieu nai') || norm.includes('gop y') || norm.includes('so gop y')) {
+      targetId = 'POLICY_COMPLAINTS_HANDLING';
+    } else if (norm.includes('gio mo') || norm.includes('dong cua') || norm.includes('nghi trua') || norm.includes('tet') || norm.includes('ngay le')) {
+      targetId = 'POLICY_HOURS_DAYTIME';
+    } else if (norm.includes('gia ve') || norm.includes('ve vao') || norm.includes('sinh vien') || norm.includes('hoc sinh') || norm.includes('hssv') || norm.includes('bao nhieu tien')) {
+      targetId = 'POLICY_TICKET_DAYTIME';
+    } else if (norm.includes('gui do') || norm.includes('balo') || norm.includes('ve sinh') || norm.includes('toilet') || norm.includes('wc')) {
+      targetId = 'POLICY_FACILITY_STORAGE_WC';
+    }
+
+    if (targetId && this.servicePoliciesMap.has(targetId)) {
+      return {
+        policy: this.servicePoliciesMap.get(targetId),
+        isExpired: false,
+        matchScore: 9
+      };
+    }
+
+    // 3. Fallback theo danh mục ý định
+    if (intent === 'TICKET_INFORMATION') {
+      return { policy: this.servicePoliciesMap.get('POLICY_TICKET_DAYTIME'), isExpired: false, matchScore: 5 };
+    }
+    if (intent === 'OPENING_HOURS') {
+      return { policy: this.servicePoliciesMap.get('POLICY_HOURS_DAYTIME'), isExpired: false, matchScore: 5 };
+    }
+    if (intent === 'ACCESSIBILITY_SUPPORT') {
+      return { policy: this.servicePoliciesMap.get('POLICY_ACCESSIBILITY_WHEELCHAIR'), isExpired: false, matchScore: 5 };
+    }
+    if (intent === 'FACILITY_SUPPORT') {
+      return { policy: this.servicePoliciesMap.get('POLICY_FACILITY_STORAGE_WC'), isExpired: false, matchScore: 5 };
+    }
+    if (intent === 'CUSTOMER_COMPLAINT') {
+      return { policy: this.servicePoliciesMap.get('POLICY_COMPLAINTS_HANDLING'), isExpired: false, matchScore: 5 };
+    }
+    if (intent === 'CUSTOMER_ASSISTANCE') {
+      return { policy: this.servicePoliciesMap.get('POLICY_LOST_AND_FOUND'), isExpired: false, matchScore: 5 };
+    }
+
+    return null;
+  }
+
+  load500GroundTruth() {
+    try {
+      const file = path.join(__dirname, '..', 'data', '500_cau_hoi_chuan_lich_su.json');
+      if (fs.existsSync(file)) {
+        const raw = fs.readFileSync(file, 'utf8');
+        const items = JSON.parse(raw);
+        this.groundTruth500 = items.map((item, idx) => {
+          const normQ = nlp.normalize(item.question);
+          const tokens = nlp.tokenize(item.question);
+          this.groundTruthMap.set(normQ, item);
+
+          tokens.forEach(t => {
+            if (t.length > 2 && !STOPWORDS.has(t)) {
+              if (!this.invertedIndex500.has(t)) this.invertedIndex500.set(t, []);
+              this.invertedIndex500.get(t).push(idx);
+            }
+          });
+
+          return {
+            ...item,
+            normQ,
+            tokens: new Set(tokens)
+          };
+        });
+      }
+    } catch (e) {
+      console.warn('[KnowledgeBase] Không nạp được 500 ground truth:', e.message);
+    }
+  }
+
+  hasHistoricalEntity(norm) {
+    if (!norm) return false;
+    const normSpaced = ' ' + norm + ' ';
+    const entities = [
+      'may chem', 'guillotine', 'cay bang', 'la bang', 'hat bang',
+      'cong ngam', 'vuot nguc', 'phi cong', 'mccain', 'peterson', 'hanoi hilton',
+      'cum chan', 'be cum', 'cum sat', 'thanh go cum', 'cachot', 'nguc toi',
+      'xa lim', 'tu hinh', 'hoang van thu', 'nguyen thai hoc', 'nguyen duc canh',
+      'phan boi chau', 'maison centrale', 'phu khanh', 'lang phu khanh',
+      'de lao', 'rue rollandes', 'dem thieng lieng', 'trai nu', 'trai e', 'trai g',
+      'truong thi my', 'nguyen thi minh khai', 'tran tu binh', 'le lien',
+      'phu dieu', 'dai tuong niem', 'dai hong chung', 'chua ba da',
+      '1896', '1899', '1945', '1951', '1954', '1964', '1973',
+      'tu tu', 'tu chinh tri', 'song sat', 'so mat tham', 'giam nguc',
+      'thung ve sinh', 'lap la', 'bat sat', 'que dan', 'so dang ky', 'ton do'
+    ];
+    return entities.some(e => normSpaced.includes(' ' + e + ' ') || norm.includes(e));
+  }
+
+  /**
+   * Tìm kiếm trong kho tri thức xác thực (Ưu tiên tuyệt đối 100 Facts từ 1.csv/3.csv, fallback 500 ground truth)
+   */
+  findGroundTruthMatch(question) {
+    if (!question || typeof question !== 'string') return null;
+    const norm = nlp.normalize(question);
+    const unwrap = nlp.unwrapMetaQuery(question);
+    const normCore = nlp.normalize(unwrap.coreQuery);
+    // Chỉ xét thực thể trên câu hỏi lõi (normCore) để tránh tiền tố vị trí Beacon gây bắt nhầm chủ đề
+    const hasEntity = this.hasHistoricalEntity(normCore);
+
+    // =========================================================================
+    // 1. TÌM KIẾM TRONG KHO 100 FACTS XÁC THỰC (1.csv & 3.csv)
+    // =========================================================================
+    if (this.facts100.length > 0) {
+      // 1.1. Exact match toàn bộ chuỗi câu hỏi (bao gồm tất cả các câu trong 3.csv)
+      if (this.facts100ByExactQ.has(norm)) {
+        const item = this.facts100ByExactQ.get(norm);
+        return { item, score: 1.0, type: 'EXACT', isFact100: true, requiresConflictCheck: unwrap.requiresConflictCheck };
+      }
+
+      // 1.2. Exact match câu hỏi lõi (core query sau khi bóc tách meta-prompt)
+      if (this.facts100ByCoreQ.has(normCore)) {
+        const item = this.facts100ByCoreQ.get(normCore);
+        return { item, score: 0.99, type: 'EXACT', isFact100: true, requiresConflictCheck: unwrap.requiresConflictCheck };
+      }
+      if (this.facts100ByExactQ.has(normCore)) {
+        const item = this.facts100ByExactQ.get(normCore);
+        return { item, score: 0.99, type: 'EXACT', isFact100: true, requiresConflictCheck: unwrap.requiresConflictCheck };
+      }
+
+      // 1.25. Entity & Key Phrase Guided Retrieval
+      const qNormSpaced = ' ' + normCore + ' ';
+      if (qNormSpaced.includes(' nguyen duc canh ')) {
+        const item = this.facts100BySeed.get('F037') || this.facts100BySeed.get('F094');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if (qNormSpaced.includes(' nguyen hoang ton ') || (qNormSpaced.includes(' chem ') && (qNormSpaced.includes(' cong chinh ') || qNormSpaced.includes(' truoc cong ')))) {
+        const item = this.facts100BySeed.get('F036');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if (qNormSpaced.includes(' tau thuoc ') || qNormSpaced.includes(' tau hut thuoc ')) {
+        const item = this.facts100BySeed.get('F040');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if (qNormSpaced.includes(' tran tu binh ') && (qNormSpaced.includes(' vuot nguc ') || qNormSpaced.includes(' 1945 ') || qNormSpaced.includes(' cach nao '))) {
+        const item = this.facts100BySeed.get('F050') || this.facts100BySeed.get('F051');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if (qNormSpaced.includes(' may chem ') && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
+        const item = this.facts100BySeed.get('F033');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if (qNormSpaced.includes(' cachot ') || qNormSpaced.includes(' nguc toi ')) {
+        const item = this.facts100BySeed.get('F023');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
+      }
+      if ((qNormSpaced.includes(' tai sao ') || qNormSpaced.includes(' vi sao ') || qNormSpaced.includes(' nguon goc ')) && (qNormSpaced.includes(' goi la ') || qNormSpaced.includes(' ten ')) && qNormSpaced.includes(' hoa lo ')) {
+        const item = this.facts100BySeed.get('F005') || this.groundTruth500.find(x => x.id === 'HL-001');
+        if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: !!item.seed_id };
+      }
+      if ((qNormSpaced.includes(' manh thuy tinh ') || qNormSpaced.includes(' manh sanh ') || qNormSpaced.includes(' thuy tinh ')) && qNormSpaced.includes(' tuong ')) {
+        const item = this.groundTruth500.find(x => x.id === 'HL-008');
+        if (item) return { item, score: 0.97, type: 'SEMANTIC', isFact100: false };
+      }
+      if (qNormSpaced.includes(' kien truc su ') || (qNormSpaced.includes(' ai ') && qNormSpaced.includes(' thiet ke ') && (qNormSpaced.includes(' nha tu ') || qNormSpaced.includes(' hoa lo ')))) {
+        const item = this.groundTruth500.find(x => x.id === 'HL-034');
+        if (item) return { item, score: 0.97, type: 'SEMANTIC', isFact100: false };
+      }
+
+      // 1.3. Tìm kiếm theo Token Inverted Index trong kho 100 Facts (Chỉ khi có thực thể di tích)
+      if (hasEntity) {
+        const coreTokens = nlp.tokenize(unwrap.coreQuery).filter(t => t.length > 2 && !STOPWORDS.has(t));
+        if (coreTokens.length >= 3) {
+          const docScores = new Map();
+          coreTokens.forEach(t => {
+            const docIndices = this.facts100InvertedIndex.get(t) || [];
+            docIndices.forEach(idx => {
+              docScores.set(idx, (docScores.get(idx) || 0) + 1);
+            });
+          });
+
+          let bestDocIdx = -1;
+          let maxOverlap = 0;
+          for (const [idx, count] of docScores.entries()) {
+            if (count > maxOverlap) {
+              maxOverlap = count;
+              bestDocIdx = idx;
+            }
+          }
+
+          const overlapRatio = maxOverlap / coreTokens.length;
+          if (bestDocIdx !== -1 && (overlapRatio >= 0.80 || (coreTokens.length >= 5 && maxOverlap >= 4))) {
+            const item = this.facts100[bestDocIdx];
+            return {
+              item,
+              score: Math.min(0.85, 0.50 + overlapRatio * 0.35),
+              type: 'SEMANTIC_FACT',
+              isFact100: true,
+              requiresConflictCheck: unwrap.requiresConflictCheck
+            };
+          }
+        }
+      }
+    }
+
+    // =========================================================================
+    // 2. TÌM KIẾM TRONG KHO 500 CÂU HỎI CHUẨN SỬ HỌC CŨ (FALLBACK)
+    // =========================================================================
+    if (!this.groundTruth500.length) return null;
+
+    // 2.1. Exact Match 100%
+    if (this.groundTruthMap.has(norm)) {
+      const item = this.groundTruthMap.get(norm);
+      return { item, score: 1.0, type: 'EXACT', isFact100: false };
+    }
+    if (this.groundTruthMap.has(normCore)) {
+      const item = this.groundTruthMap.get(normCore);
+      return { item, score: 0.98, type: 'EXACT', isFact100: false };
+    }
+
+    // Tuyệt đối không fuzzy match nếu câu hỏi không chứa thực thể di tích cụ thể
+    if (!hasEntity) return null;
+
+    // 2. TF-IDF Token Inverted Index Match trên Content Words (chỉ dùng câu hỏi lõi unwrap.coreQuery)
+    const qTokens = nlp.tokenize(unwrap.coreQuery);
+    const contentTokens = qTokens.filter(t => t.length > 2 && !STOPWORDS.has(t));
+    if (contentTokens.length < 3) return null; // Cần ít nhất 3 từ khóa nội dung để tránh bắt nhầm sang hiện vật khác
+
+    const scores = new Map();
+    contentTokens.forEach(token => {
+      const indices = this.invertedIndex500.get(token);
+      if (indices) {
+        const idf = Math.log(1 + this.groundTruth500.length / indices.length);
+        indices.forEach(idx => {
+          scores.set(idx, (scores.get(idx) || 0) + idf);
+        });
+      }
+    });
+
+    // Nhận diện chủ đề của câu hỏi trên normCore để tránh tiền tố Beacon lọc nhầm phân khu
+    const qHasGuillotine = normCore.includes('may chem') || normCore.includes('guillotine');
+    const qHasBanyan = normCore.includes('cay bang') || normCore.includes('la bang') || normCore.includes('hat bang');
+    const qHasSewer = normCore.includes('cong ngam') || normCore.includes('vuot nguc');
+    const qHasPilot = normCore.includes('phi cong') || normCore.includes('mccain') || normCore.includes('peterson') || normCore.includes('hanoi hilton');
+    const qHasShackles = normCore.includes('cum') || normCore.includes('gong') || normCore.includes('cum chan') || normCore.includes('cum sat') || normCore.includes('be cum');
+    const qHasMcCain = normCore.includes('mccain');
+    const qHasPeterson = normCore.includes('peterson');
+    const qHasCachot = normCore.includes('cachot') || normCore.includes('nguc toi');
+    const qHasDeathRow = normCore.includes('xa lim') || normCore.includes('tu hinh') || normCore.includes('hoang van thu');
+    const qHas1951 = normCore.includes('1951') || normCore.includes('noel') || normCore.includes('24 12') || normCore.includes('16 tu tu') || normCore.includes('5 dong chi');
+    const qHas1945 = normCore.includes('1945') || normCore.includes('hon 100') || normCore.includes('100 can bo') || normCore.includes('nhat dao chinh');
+    const qHasPenInk = normCore.includes('muc viet') || normCore.includes('but') || normCore.includes('bao chi') || normCore.includes('viet bao');
+    const qHasNguyenThaiHoc = normCore.includes('nguyen thai hoc');
+    const qHasHongChung = normCore.includes('dai hong chung') || normCore.includes('chuong');
+
+    let bestScore = 0;
+    let bestIdx = -1;
+
+    for (const [idx, score] of scores.entries()) {
+      const candidate = this.groundTruth500[idx];
+      const candNorm = candidate.normQ;
+
+      // Kiểm tra tính nhất quán về chủ đề (Topic Consistency & Entity Scoping)
+      if (qHasHongChung && !candNorm.includes('chuong') && !candNorm.includes('dai hong chung')) continue;
+      if (qHasGuillotine && !candNorm.includes('may chem') && !candNorm.includes('guillotine')) continue;
+      if (qHasBanyan && !candNorm.includes('bang')) continue;
+      if (qHasSewer && !candNorm.includes('cong') && !candNorm.includes('vuot nguc')) continue;
+      if (qHasPilot && !candNorm.includes('phi cong') && !candNorm.includes('mccain') && !candNorm.includes('peterson') && !candNorm.includes('hilton')) continue;
+      if (qHasShackles && (candNorm.includes('phi cong') || candNorm.includes('mccain') || candNorm.includes('hilton') || candNorm.includes('may chem'))) continue;
+      if (qHasPilot && (candNorm.includes('cum sat') || candNorm.includes('be cum') || candNorm.includes('may chem'))) continue;
+      if ((norm.includes('kien truc') || norm.includes('cong chinh') || norm.includes('phu khanh')) && !qHasGuillotine && candNorm.includes('may chem')) continue;
+      if (qHasMcCain && !candNorm.includes('mccain')) continue;
+      if (qHasPeterson && !candNorm.includes('peterson')) continue;
+      if (qHas1951 && candNorm.includes('1945') && !candNorm.includes('1951')) continue;
+      if (qHas1945 && candNorm.includes('1951') && !candNorm.includes('1945')) continue;
+      if (qHasPenInk && candNorm.includes('may chem')) continue;
+      if (qHasNguyenThaiHoc && !candNorm.includes('nguyen thai hoc')) continue;
+      if (qHasCachot && !candNorm.includes('cachot') && !candNorm.includes('nguc toi')) continue;
+      if (qHasDeathRow && !candNorm.includes('xa lim') && !candNorm.includes('tu hinh') && !candNorm.includes('hoang van thu')) continue;
+
+      // Entity Scoping: Chống bắt nhầm tài liệu chỉ vì trùng từ khóa chung chung
+      if ((candNorm.includes('may chem') || candNorm.includes('guillotine')) && !qHasGuillotine) continue;
+      if (candNorm.includes('cay bang') && !qHasBanyan) continue;
+      if (candNorm.includes('cong ngam') && !qHasSewer) continue;
+      if ((candNorm.includes('phi cong') || candNorm.includes('mccain') || candNorm.includes('hilton')) && !qHasPilot) continue;
+      if ((candNorm.includes('cum sat') || candNorm.includes('be cum') || candNorm.includes('thanh go cum')) && !qHasShackles) continue;
+      if ((candNorm.includes('cachot') || candNorm.includes('nguc toi')) && !qHasCachot) continue;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = idx;
+      }
+    }
+
+    if (bestScore >= 3.0 && bestIdx >= 0) {
+      const item = this.groundTruth500[bestIdx];
+      const itemTokens = item.tokens;
+      let intersect = 0;
+      contentTokens.forEach(t => { if (itemTokens.has(t)) intersect++; });
+      const ratio = intersect / Math.max(1, contentTokens.length);
+
+      if (ratio >= 0.75 && intersect >= 3) {
+        return { item, score: 0.60, ratio, type: 'SEMANTIC' };
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Khớp hiện vật / phân khu lịch sử
+   */
+  findHistoricalExhibit(question) {
+    const norm = ' ' + nlp.normalize(question) + ' ';
+    const { semanticRouter, hasPhrase } = require('./semantic_router');
+    const ext = semanticRouter.detectExternalDomainSignals(norm);
+    // Chặn match chéo sang hồ sơ Hỏa Lò nếu câu hỏi đang hỏi về địa danh ngoài di tích (Chùa Một Cột, Hồ Hoàn Kiếm, Bastille...) mà không nhắc Hỏa Lò
+    if ((ext.hasExternalPlace || hasPhrase(norm, 'ho hoan kiem')) && !hasPhrase(norm, 'hoa lo') && !hasPhrase(norm, 'maison centrale') && !hasPhrase(norm, 'phu khanh')) {
+      return null;
+    }
+
+    let bestExhibit = null;
+    let maxMatch = 0;
+
+    for (const [key, exhibit] of Object.entries(HISTORICAL_EXHIBITS)) {
+      let matchCount = 0;
+      for (const kw of exhibit.keywords) {
+        if (hasPhrase(norm, kw)) {
+          matchCount += (kw.includes(' ') ? 3 : 1);
+        }
+      }
+
+      // Luật ưu tiên phân biệt đặc thù & Chống va chạm chéo (Anti-Collision)
+      if (key === 'cum_sat' && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan') || hasPhrase(norm, 'be cum'))) matchCount += 25;
+      if (key === 'phi_cong' && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan'))) matchCount -= 50;
+      if (key === 'may_chem' && (hasPhrase(norm, 'kien truc') || hasPhrase(norm, 'cong chinh') || hasPhrase(norm, 'phu khanh')) && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'guillotine')) matchCount -= 50;
+      if (key === 'cay_bang' && hasPhrase(norm, 'cay bang')) matchCount += 10;
+      if (key === 'hien_vat_sinh_hoat' && (hasPhrase(norm, 'muc viet') || hasPhrase(norm, 'but') || hasPhrase(norm, 'bao chi') || hasPhrase(norm, 'gach non') || hasPhrase(norm, 'muoi than'))) matchCount += 15;
+      if (key === 'vuot_nguc_1945' && (hasPhrase(norm, '1945') || hasPhrase(norm, 'hon 100') || hasPhrase(norm, '100 can bo') || hasPhrase(norm, 'nhat dao chinh'))) matchCount += 15;
+      if (key === 'may_chem' && (hasPhrase(norm, 'may chem') || hasPhrase(norm, 'guillotine'))) matchCount += 10;
+      if (key === 'cong_ngam' && (hasPhrase(norm, 'cong ngam') || (hasPhrase(norm, 'vuot nguc') && !hasPhrase(norm, '1945') && !hasPhrase(norm, '100')))) matchCount += 10;
+      if (key === 'phi_cong' && (hasPhrase(norm, 'phi cong') || hasPhrase(norm, 'mccain') || hasPhrase(norm, 'hilton'))) matchCount += 10;
+      if (key === 'cachot' && (hasPhrase(norm, 'cachot') || hasPhrase(norm, 'nguc toi'))) matchCount += 10;
+      if (key === 'khu_d_tu_hinh' && (hasPhrase(norm, 'tu hinh') || hasPhrase(norm, 'hoang van thu'))) matchCount += 10;
+      if (key === 'tour_dem' && (hasPhrase(norm, 'tour dem') || hasPhrase(norm, 'dem thieng lieng'))) matchCount += 10;
+      if (key === 'maison_centrale' && (hasPhrase(norm, 'maison centrale') || hasPhrase(norm, 'phu khanh') || hasPhrase(norm, 'cong so 1') || hasPhrase(norm, 'pho hoa lo') || (hasPhrase(norm, 'dia chi') && (hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'nha tu') || hasPhrase(norm, 'di tich'))) || (hasPhrase(norm, 'hoa lo') && hasPhrase(norm, 'o dau')))) matchCount += 15;
+
+      if (matchCount > maxMatch) {
+        maxMatch = matchCount;
+        bestExhibit = exhibit;
+      }
+    }
+
+    if (maxMatch >= 3 && bestExhibit) {
+      return { exhibit: bestExhibit, matchScore: maxMatch };
+    }
+    return null;
+  }
+
+  /**
+   * Lấy ngữ cảnh dịch vụ khách hàng (Customer Care)
+   */
+  getCustomerCareContext(intent) {
+    switch (intent) {
+      case 'TICKET_INFORMATION':
+        return CUSTOMER_CARE_DOSSIERS.tickets;
+      case 'OPENING_HOURS':
+        return CUSTOMER_CARE_DOSSIERS.hours;
+      case 'FACILITY_SUPPORT':
+        return CUSTOMER_CARE_DOSSIERS.facilities;
+      case 'ACCESSIBILITY_SUPPORT':
+        return CUSTOMER_CARE_DOSSIERS.accessibility;
+      case 'CUSTOMER_COMPLAINT':
+      case 'CUSTOMER_ASSISTANCE':
+        return CUSTOMER_CARE_DOSSIERS.assistance_and_complaint;
+      case 'TOUR_RECOMMENDATION':
+      case 'VISIT_GUIDANCE':
+        return CUSTOMER_CARE_DOSSIERS.tour_recommendation;
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Truy xuất câu trả lời theo khía cạnh chuyên sâu (Aspect & Entity Graph V6.0)
+   * Phục vụ các câu hỏi cùng chủ đề nhưng khác yêu cầu (Cây bàng, Máy chém, Cống ngầm...)
+   */
+  getSemanticAspectAnswer(subject, aspect) {
+    if (subject === 'cay_bang') {
+      if (aspect === 'PURPOSE' || aspect === 'DAILY_PRISON_LIFE') {
+        return {
+          answer: 'Cây bàng gắn bó mật thiết với cuộc sống tù nhân Hỏa Lò: búp và lá bàng non được dùng nhai sống hoặc sắc lấy nước uống chữa khỏi bệnh kiết lỵ, tiêu chảy; vỏ cây bàng dùng sắc nước rửa sạch vết thương tra tấn; cành bàng được mài nhọn làm quản bút viết tài liệu, báo chí bí mật; nhân hạt bàng bùi béo dùng bồi dưỡng cho những đồng chí ốm nặng.',
+          sourceId: 'DOSSIER_CAY_BANG_LIFE',
+          source: 'Hồ sơ Di sản Cây bàng Hỏa Lò'
+        };
+      }
+      if (aspect === 'SIGNIFICANCE') {
+        return {
+          answer: 'Cây bàng cổ thụ trong sân trại giam Hỏa Lò là người bạn tri âm và biểu tượng kiên cường bất khuất của các chiến sĩ cách mạng. Dưới tán bàng rợp bóng mát, tù nhân tìm thấy niềm an ủi, nơi trao đổi tin tức bí mật và cảm nhận mầm sống tự do kiên cường vươn lên giữa bốn bức tường đá giam cầm.',
+          sourceId: 'DOSSIER_CAY_BANG_SYMBOL',
+          source: 'Hồ sơ Di sản Cây bàng Hỏa Lò'
+        };
+      }
+      if (aspect === 'ORIGIN') {
+        return {
+          answer: 'Ngày xưa khắp khuôn viên rộng gần 13.000 mét vuông của Nhà tù Hỏa Lò từng có nhiều cây bàng do tù nhân và binh lính trồng từ đầu thế kỷ 20. Trải qua biến thiên lịch sử, cây bàng cổ thụ gần trăm tuổi hiện nay tại sân trại giam là chứng nhân lịch sử quý giá còn được bảo tồn nguyên vẹn.',
+          sourceId: 'DOSSIER_CAY_BANG_ORIGIN',
+          source: 'Hồ sơ Di sản Cây bàng Hỏa Lò'
+        };
+      }
+    }
+
+    if (subject === 'may_chem') {
+      if (aspect === 'SPECIFICATION') {
+        return {
+          answer: 'Cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
+          sourceId: 'DOSSIER_MAY_CHEM_SPEC',
+          source: 'Hồ sơ Hiện vật Cỗ máy chém Hỏa Lò'
+        };
+      }
+      if (aspect === 'ORIGIN') {
+        return {
+          answer: 'Cỗ máy chém được thực dân Pháp đưa sang Việt Nam từ đầu thế kỷ 20. Máy được thiết kế cơ động để tháo rời vận chuyển lưu động đi hành quyết khắp Bắc Kỳ, tiêu biểu là việc đưa lên Yên Bái sáng 17/6/1930 để hành quyết nhà yêu nước Nguyễn Thái Học cùng 12 nghĩa sĩ khởi nghĩa Yên Bái.',
+          sourceId: 'DOSSIER_MAY_CHEM_ORIGIN',
+          source: 'Hồ sơ Hiện vật Cỗ máy chém Hỏa Lò'
+        };
+      }
+      if (aspect === 'PURPOSE') {
+        return {
+          answer: 'Thực dân Pháp sử dụng cỗ máy chém tại Hỏa Lò như một công cụ khủng bố tinh thần tàn bạo nhằm đàn áp phong trào đấu tranh giải phóng dân tộc của nhân dân Việt Nam.',
+          sourceId: 'DOSSIER_MAY_CHEM_PURPOSE',
+          source: 'Hồ sơ Hiện vật Cỗ máy chém Hỏa Lò'
+        };
+      }
+      if (aspect === 'COMPARISON_EXPANSION') {
+        return {
+          answer: 'Ngoài cỗ máy chém, tại Nhà tù Hỏa Lò còn có nhiều hiện vật và khu vực giam giữ trừng phạt khét tiếng khác như: Ngục tối Cachot (nơi cùm dốc ngược chân trong bóng tối hoàn toàn), Dãy xà lim tử hình Khu D, và các bộ cùm sắt chân dài trong phòng giam tập thể nam.',
+          sourceId: 'DOSSIER_MAY_CHEM_COMPARISON',
+          source: 'Hồ sơ Hiện vật Giam giữ & Tra tấn Hỏa Lò'
+        };
+      }
+    }
+
+    return null;
+  }
+}
+
+module.exports = {
+  HISTORICAL_EXHIBITS,
+  CUSTOMER_CARE_DOSSIERS,
+  knowledgeBase: new KnowledgeBase()
+};

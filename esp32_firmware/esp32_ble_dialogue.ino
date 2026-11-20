@@ -12,6 +12,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <BLEDevice.h>
@@ -23,7 +24,8 @@
 // 1. CẤU HÌNH MẠNG WI-FI & ĐỊA CHỈ MÁY CHỦ
 const char* WIFI_SSID     = "TEN_WIFI_CUA_BAN";
 const char* WIFI_PASSWORD = "MAT_KHAU_WIFI";
-const char* SERVER_BASE   = "http://192.168.1.88:5000"; // Thay bằng IP Server hiển thị trên Localhost
+// Có thể điền LAN (http://192.168.1.88:5000), Pinggy (http://xxxx.a.pinggy.link), hoặc Render (https://ten-app.onrender.com)
+const char* SERVER_BASE   = "https://ten-app-cua-ban.onrender.com";
 const char* DEVICE_ID     = "ESP32_SMART_GUIDE_01";
 
 // 2. CẤU HÌNH CHÂN I2S DAC (PCM5102A), AMPLY MAX97220, MICROPHONE (INMP441) & NÚT BẤM HUB
@@ -48,6 +50,23 @@ const char* DEVICE_ID     = "ESP32_SMART_GUIDE_01";
 Audio audio;
 BLEScan* pBLEScan;
 HTTPClient http;
+WiFiClientSecure secureClient;
+
+// Tự động chọn HTTP hoặc HTTPS (hỗ trợ cả LAN, Pinggy và Render.com)
+bool beginServerRequest(const String& url) {
+  http.setTimeout(15000);
+  bool ok = false;
+  if (url.startsWith("https://")) {
+    secureClient.setInsecure();
+    ok = http.begin(secureClient, url);
+  } else {
+    ok = http.begin(url);
+  }
+  if (ok) {
+    http.addHeader("X-Pinggy-No-Screen", "true");
+  }
+  return ok;
+}
 
 bool isAudioPlaying = false;
 unsigned long lastScanTime = 0;
@@ -91,7 +110,7 @@ void sendBleTriggerToServer(String beaconMac, int rssi, String optionalCode = ""
   String url = String(SERVER_BASE) + "/api/ble-scan";
   Serial.printf("\n📡 [HTTP POST] Gửi tín hiệu lên Server: %s\n", url.c_str());
 
-  http.begin(url);
+  beginServerRequest(url);
   http.addHeader("Content-Type", "application/json");
 
   StaticJsonDocument<256> docOut;
@@ -193,7 +212,7 @@ void sendWavRecordingToServer(uint8_t* wavBuffer, size_t wavSize) {
   Serial.println("\n🎙️ [CỤC HUB GỬI FILE .WAV] Đang truyền file âm thanh lên Server AI...");
   Serial.printf("📦 Dung lượng file: %d bytes | Hiện vật mã: %s\n", wavSize, currentArtifactCode.c_str());
 
-  http.begin(url);
+  beginServerRequest(url);
   http.addHeader("Content-Type", "audio/wav");
   http.addHeader("X-Artifact-Code", currentArtifactCode);
   http.addHeader("X-Device-Id", DEVICE_ID);
@@ -249,7 +268,7 @@ void sendVoiceQueryToServer(String questionText) {
   Serial.println("\n🎙️ [CỤC HUB GỬI YÊU CẦU] Đang gửi câu hỏi lên Server AI...");
   Serial.printf("👉 Câu hỏi: \"%s\" (Vị trí hiện vật mã: %s)\n", questionText.c_str(), currentArtifactCode.c_str());
 
-  http.begin(url);
+  beginServerRequest(url);
   http.addHeader("Content-Type", "application/json");
 
   StaticJsonDocument<512> docOut;

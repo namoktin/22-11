@@ -1,0 +1,25 @@
+﻿BỘ 2 — 500 CÂU HỎI MỚI CỦA DU KHÁCH THAM QUAN DI TÍCH NHÀ TÙ HỎA LÒ,,,,,,,
+"Mã câu hỏi HL-501 đến HL-1000 (100% mới, không trùng với 500 câu đầu) | Số 1 phố Hỏa Lò, Hoàn Kiếm, Hà Nội",,,,,,,
+,,,,,,,
+TỔNG SỐ CÂU HỎI MỚI (BỘ 2),,SỐ KHU VỰC / DI TÍCH THAM QUAN,,,SỐ NHÓM LOẠI CÂU HỎI,ĐỘ MỚI SO VỚI BỘ 1 (HL-001..500),
+=COUNTA('500 Câu hỏi mới'!A2:A501),,=COUNTA(B9:B22),,,=COUNTA(F9:F15),1,
+,,,,,,,
+1. PHÂN BỔ 500 CÂU HỎI MỚI THEO 14 KHU VỰC / ĐIỂM THAM QUAN,,,,,2. PHÂN BỔ THEO NHÓM LOẠI CÂU HỎI,,
+STT,Khu vực / Điểm tham quan,Số lượng câu hỏi,Tỷ trọng (%),,Loại câu hỏi,Số lượng câu hỏi,Tỷ trọng (%)
+1,Cổng chính & Kiến trúc tổng thể,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B9)",=C9/$C$23,,Kiến trúc & Nguồn gốc,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F9)",=G9/$G$16
+2,Khu phòng giam tập thể,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B10)",=C10/$C$23,,Lịch sử & Sự kiện,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F10)",=G10/$G$16
+3,Ngục tối (Cachot),"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B11)",=C11/$C$23,,Chi tiết quan sát trực tiếp,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F11)",=G11/$G$16
+4,Khu D & Xà lim tử hình,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B12)",=C12/$C$23,,Cấu tạo & Chất liệu,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F12)",=G12/$G$16
+5,Máy chém & Công cụ tra tấn,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B13)",=C13/$C$23,,Bảo tồn & Trải nghiệm,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F13)",=G13/$G$16
+6,Khu trại giam nữ & Tù nhi,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B14)",=C14/$C$23,,Đời sống & Chế độ giam giữ,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F14)",=G14/$G$16
+7,Cống ngầm & Vượt ngục,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B15)",=C15/$C$23,,Nhân vật & Câu chuyện,"=COUNTIF('500 Câu hỏi mới'!$E$2:$E$501, F15)",=G15/$G$16
+8,Sân trại giam & Cây bàng lịch sử,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B16)",=C16/$C$23,,Tổng cộng (7 nhóm loại),=SUM(G9:G15),=SUM(H9:H15)
+9,Trường học cách mạng & Báo chí trong tù,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B17)",=C17/$C$23,,,,
+10,Kỷ vật chiến sĩ cách mạng,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B18)",=C18/$C$23,,3. HƯỚNG DẪN CẤU TRÚC SHEET '500 Câu hỏi mới',,
+11,Khu trưng bày phi công Mỹ (1964–1973),"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B19)",=C19/$C$23,,Cột A (STT),Số thứ tự từ 1 đến 500,
+12,Đài tưởng niệm & Bức phù điêu,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B20)",=C20/$C$23,,Cột B (Mã câu hỏi),Mã định danh tiếp nối HL-501 đến HL-1000,
+13,Khu chức năng nhà tù cũ,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B21)",=C21/$C$23,,Cột C (Khu vực),14 phân khu theo đúng tuyến tham quan thực tế,
+14,Đêm thiêng liêng & Bảo tồn hiện nay,"=COUNTIF('500 Câu hỏi mới'!$C$2:$C$501, B22)",=C22/$C$23,,Cột D (Hiện vật / Di tích),"Hiện vật, chi tiết kiến trúc hoặc câu chuyện lịch sử mới",
+,Tổng cộng (14 khu vực),=SUM(C9:C22),=SUM(D9:D22),,Cột E (Loại câu hỏi),7 nhóm mục đích câu hỏi của du khách,
+,,,,,Cột F (Câu hỏi của du khách),Câu hỏi tự nhiên ở ngôi thứ nhất khi đứng tại di tích,
+,,,,,Cột G (Ngữ cảnh quan sát),"Mô tả vị trí, góc nhìn trực tiếp của du khách lúc hỏi",

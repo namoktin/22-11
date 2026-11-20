@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: esp32-ble-tour-guide
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: KIEMTHU_IN_PROCESS
+        value: "true"
+      - key: GROQ_API_KEY
+        sync: false

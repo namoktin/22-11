@@ -29,14 +29,33 @@ process.on('unhandledRejection', (reason) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const IS_RENDER = Boolean(process.env.RENDER || process.env.KIEMTHU_IN_PROCESS === 'true');
 const KIEMTHU_API_URL = process.env.KIEMTHU_API_URL || 'http://127.0.0.1:4001/api/chat/ask';
 const DATA_FILE = path.join(__dirname, 'data', 'beacons.json');
 const AUDIO_DIR = path.join(__dirname, 'audio');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
+// TỰ ĐỘNG TÌM FFMPEG (ƯU TIÊN ffmpeg-static KHI CHẠY TRÊN RENDER LINUX)
+let FFMPEG_BIN = 'ffmpeg';
+try {
+  const staticFfmpeg = require('ffmpeg-static');
+  if (staticFfmpeg && fs.existsSync(staticFfmpeg)) {
+    FFMPEG_BIN = staticFfmpeg;
+  }
+} catch (e) {}
+
+// TỰ ĐỘNG ĐỊNH VỊ THƯ MỤC KIEMTHU:
+// - Trên máy local: ưu tiên ../kiemthu để Hot-Reload khi bạn sửa kiemthu
+// - Trên Render (deploy độc lập repo esp32-ble-server): dùng ./kiemthu nhúng sẵn
+const externalKiemthuDir = path.resolve(__dirname, '..', 'kiemthu');
+const bundledKiemthuDir = path.join(__dirname, 'kiemthu');
+const kiemthuDir = fs.existsSync(path.join(externalKiemthuDir, 'smart_ai_server.js'))
+  ? externalKiemthuDir
+  : bundledKiemthuDir;
+
 // NẠP GROQ_API_KEY ĐỂ TRANSCRIBE FILE .WAV TỪ ESP32 QUA WHISPER-LARGE-V3-TURBO
 let GROQ_API_KEY = process.env.GROQ_API_KEY || '';
-const kiemthuEnvPath = path.resolve(__dirname, '..', 'kiemthu', '.env');
+const kiemthuEnvPath = path.join(kiemthuDir, '.env');
 if (!GROQ_API_KEY && fs.existsSync(kiemthuEnvPath)) {
   try {
     const envContent = fs.readFileSync(kiemthuEnvPath, 'utf8');
@@ -67,11 +86,8 @@ const httpsKeepAliveAgent = new https.Agent({ keepAlive: true, maxSockets: 10 })
 const audioCache = new Map(); // hash -> filename
 
 // =========================================================================================
-// 🔄 TỰ ĐỘNG THEO DÕI & ĐỒNG BỘ KHI BẠN SỬA ĐỔI KIEMTHU (HOT-RELOAD ENGINE)
-// Bất kể bạn sửa prompt, thêm dữ liệu CSV, đổi file trong kiemthu -> Server tự động nạp mới!
+// 🔄 TỰ ĐỘNG THEO DÕI & ĐỒNG BỘ KHI BẠN SỬA ĐỔI KIEMTHU (HOT-RELOAD ENGINE - LOCAL ONLY)
 // =========================================================================================
-const kiemthuDir = path.resolve(__dirname, '..', 'kiemthu');
-
 function clearKiemthuCache() {
   for (const modulePath in require.cache) {
     if (modulePath.startsWith(kiemthuDir)) {
@@ -80,7 +96,7 @@ function clearKiemthuCache() {
   }
 }
 
-if (fs.existsSync(kiemthuDir)) {
+if (!IS_RENDER && fs.existsSync(kiemthuDir)) {
   let debounceTimer = null;
   try {
     const watcher = fs.watch(kiemthuDir, { recursive: true }, (eventType, filename) => {
@@ -111,6 +127,34 @@ if (fs.existsSync(kiemthuDir)) {
     console.warn('⚠ Không thể bật fs.watch kiemthu:', err.message);
   }
 }
+
+// =========================================================================================
+// 🧹 TỰ ĐỘNG DỌN FILE ÂM THANH TẠM (CHỐNG ĐẦY Ổ ĐĨA TRÊN RENDER)
+// =========================================================================================
+function cleanupTempAudioFiles(maxAgeMs = 20 * 60 * 1000) {
+  try {
+    const now = Date.now();
+    const files = fs.readdirSync(AUDIO_DIR);
+    let removed = 0;
+    for (const f of files) {
+      if (f.startsWith('reply_') || f.startsWith('hub_rec_')) {
+        const fullPath = path.join(AUDIO_DIR, f);
+        try {
+          const stat = fs.statSync(fullPath);
+          if (now - stat.mtimeMs > maxAgeMs) {
+            fs.unlinkSync(fullPath);
+            removed++;
+          }
+        } catch (e) {}
+      }
+    }
+    if (removed > 0) {
+      audioCache.clear();
+      console.log(`🧹 [Auto Cleanup] Đã dọn ${removed} file âm thanh tạm cũ.`);
+    }
+  } catch (err) {}
+}
+setInterval(() => cleanupTempAudioFiles(), 10 * 60 * 1000).unref();
 
 // Trạng thái máy chủ
 const serverState = {
@@ -292,19 +336,87 @@ function parseRawBody(req) {
  * Nhận diện tiếng Việt qua Whisper-large-v3-turbo (Groq API, độ trễ ~200ms - 400ms)
  * =========================================================================================
  */
-async function transcribeWavToText(wavBuffer) {
+function detectAudioFormat(buf, fallbackContentType = '') {
+  if (buf && buf.length >= 4) {
+    // RIFF....WAVE
+    if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46) {
+      return { ext: 'wav', mime: 'audio/wav' };
+    }
+    // EBML / WebM (0x1A 0x45 0xDF 0xA3)
+    if (buf[0] === 0x1A && buf[1] === 0x45 && buf[2] === 0xDF && buf[3] === 0xA3) {
+      return { ext: 'webm', mime: 'audio/webm' };
+    }
+    // OggS
+    if (buf[0] === 0x4F && buf[1] === 0x67 && buf[2] === 0x67 && buf[3] === 0x53) {
+      return { ext: 'ogg', mime: 'audio/ogg' };
+    }
+    // MP3 (ID3 or MPEG sync)
+    if ((buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33) || (buf[0] === 0xFF && (buf[1] & 0xE0) === 0xE0)) {
+      return { ext: 'mp3', mime: 'audio/mpeg' };
+    }
+    // MP4/M4A (ftyp at offset 4)
+    if (buf.length >= 8 && buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) {
+      return { ext: 'm4a', mime: 'audio/mp4' };
+    }
+  }
+  const ct = (fallbackContentType || '').toLowerCase();
+  if (ct.includes('webm')) return { ext: 'webm', mime: 'audio/webm' };
+  if (ct.includes('ogg')) return { ext: 'ogg', mime: 'audio/ogg' };
+  if (ct.includes('mpeg') || ct.includes('mp3')) return { ext: 'mp3', mime: 'audio/mpeg' };
+  if (ct.includes('mp4') || ct.includes('m4a')) return { ext: 'm4a', mime: 'audio/mp4' };
+  return { ext: 'wav', mime: 'audio/wav' };
+}
+
+function extractMultipartFile(rawBuf, contentType) {
+  const match = contentType.match(/boundary=(?:"([^"]+)"|([^;\s]+))/i);
+  if (!match) return { fileBuf: rawBuf, fields: {} };
+  const boundary = '--' + (match[1] || match[2]);
+  const boundaryBuf = Buffer.from(boundary);
+  const fields = {};
+  let fileBuf = null;
+
+  let pos = rawBuf.indexOf(boundaryBuf);
+  while (pos !== -1) {
+    const start = pos + boundaryBuf.length;
+    if (rawBuf[start] === 0x2D && rawBuf[start + 1] === 0x2D) break; // -- closing
+    const nextPos = rawBuf.indexOf(boundaryBuf, start);
+    if (nextPos === -1) break;
+
+    const partStart = (rawBuf[start] === 0x0D && rawBuf[start + 1] === 0x0A) ? start + 2 : start;
+    const headerEnd = rawBuf.indexOf(Buffer.from('\r\n\r\n'), partStart);
+    if (headerEnd !== -1 && headerEnd < nextPos) {
+      const headersStr = rawBuf.slice(partStart, headerEnd).toString('utf8');
+      let bodyEnd = nextPos;
+      if (rawBuf[bodyEnd - 2] === 0x0D && rawBuf[bodyEnd - 1] === 0x0A) bodyEnd -= 2;
+      const bodyBuf = rawBuf.slice(headerEnd + 4, bodyEnd);
+
+      const nameMatch = headersStr.match(/name="([^"]+)"/i);
+      const filenameMatch = headersStr.match(/filename="([^"]+)"/i);
+      if (filenameMatch) {
+        fileBuf = bodyBuf;
+      } else if (nameMatch) {
+        fields[nameMatch[1]] = bodyBuf.toString('utf8').trim();
+      }
+    }
+    pos = nextPos;
+  }
+  return { fileBuf: fileBuf || rawBuf, fields };
+}
+
+async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
   const t0 = Date.now();
-  if (GROQ_API_KEY && wavBuffer && wavBuffer.length > 500) {
+  if (GROQ_API_KEY && wavBuffer && wavBuffer.length > 200) {
     try {
-      const blob = new Blob([wavBuffer], { type: 'audio/wav' });
+      const fmt = detectAudioFormat(wavBuffer, fallbackContentType);
+      const blob = new Blob([wavBuffer], { type: fmt.mime });
       const form = new FormData();
-      form.append('file', blob, 'hub_mic.wav');
+      form.append('file', blob, `hub_mic.${fmt.ext}`);
       form.append('model', 'whisper-large-v3-turbo');
       form.append('language', 'vi');
       form.append('response_format', 'json');
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 6000);
+      const timeout = setTimeout(() => controller.abort(), 8000);
 
       const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
         method: 'POST',
@@ -318,13 +430,16 @@ async function transcribeWavToText(wavBuffer) {
         const json = await res.json();
         if (json.text && json.text.trim()) {
           const cleanText = json.text.trim();
-          console.log(`✓ [Whisper STT Tiếng Việt] Đã nhận dạng từ file .WAV (${Date.now() - t0}ms): "${cleanText}"`);
+          console.log(`✓ [Whisper STT Tiếng Việt] Đã nhận dạng từ file .${fmt.ext.toUpperCase()} (${Date.now() - t0}ms): "${cleanText}"`);
           return {
             text: cleanText,
             latencyMs: Date.now() - t0,
-            engine: 'Groq Whisper-large-v3-turbo'
+            engine: `Groq Whisper-large-v3-turbo (${fmt.ext.toUpperCase()})`
           };
         }
+      } else {
+        const errBody = await res.text().catch(() => '');
+        console.warn(`⚠ Lỗi Whisper STT HTTP ${res.status} (${fmt.ext}):`, errBody.slice(0, 200));
       }
     } catch (err) {
       console.warn('⚠ Lỗi Whisper STT:', err.message);
@@ -383,7 +498,7 @@ async function fastTextToWav(text, outputFilename) {
       const mp3Buffer = Buffer.from(await res.arrayBuffer());
 
       // 3. Pipe trực tiếp MP3 Buffer sang FFmpeg trong RAM để xuất file WAV 16kHz Mono
-      const ff = spawn('ffmpeg', [
+      const ff = spawn(FFMPEG_BIN, [
         '-y',
         '-i', 'pipe:0',             // Nhận MP3 từ stdin
         '-ar', '16000',             // 16kHz
@@ -512,37 +627,39 @@ async function queryKiemThuAI(question, artifactContext) {
 
   console.log(`\n➡️  Đang gửi câu hỏi sang kiemthu AI: "${formattedQuery}"`);
 
-  // 1. Gọi API KiemThu Server (Port 4001 nếu đang chạy song song)
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
+  // 1. Gọi API KiemThu Server (Port 4001 nếu đang chạy song song ở Local)
+  if (!IS_RENDER) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
 
-    const res = await fetch(KIEMTHU_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: formattedQuery }),
-      signal: controller.signal
-    });
-    clearTimeout(timeout);
+      const res = await fetch(KIEMTHU_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: formattedQuery }),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
 
-    if (res.ok) {
-      const json = await res.json();
-      if (json && json.data && json.data.reply) {
-        console.log(`✓ [kiemthu Port 4001] ${json.data.intent} | Latency: ${json.data.latencyMs}ms`);
-        return {
-          reply: json.data.reply,
-          intent: json.data.intent || 'HISTORICAL_FACT',
-          source: '2Guide KiemThu AI Engine (Port 4001)',
-          latencyMs: json.data.latencyMs || 0
-        };
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.data && json.data.reply) {
+          console.log(`✓ [kiemthu Port 4001] ${json.data.intent} | Latency: ${json.data.latencyMs}ms`);
+          return {
+            reply: json.data.reply,
+            intent: json.data.intent || 'HISTORICAL_FACT',
+            source: '2Guide KiemThu AI Engine (Port 4001)',
+            latencyMs: json.data.latencyMs || 0
+          };
+        }
       }
-    }
-  } catch (err) {}
+    } catch (err) {}
+  }
 
   // 2. Tự Động Nhúng Trực Tiếp Bộ Não KiemThu AI Trong RAM (In-Process Embedded Engine)
-  // Giúp người dùng CHỈ CẦN CHẠY DUY NHẤT 1 SERVER (esp32-ble-server) mà AI vẫn hoạt động đầy đủ 100%!
+  // Giúp chạy độc lập 1 server duy nhất (trên Render hoặc Local) mà AI vẫn hoạt động đầy đủ 100%!
   try {
-    const kiemthuServerPath = path.resolve(__dirname, '..', 'kiemthu', 'smart_ai_server.js');
+    const kiemthuServerPath = path.join(kiemthuDir, 'smart_ai_server.js');
     if (fs.existsSync(kiemthuServerPath)) {
       const { engine } = require(kiemthuServerPath);
       if (engine && typeof engine.handleAsk === 'function') {
@@ -625,7 +742,7 @@ function extractSpokenSummary(fullText) {
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Audio-Format, X-Pinggy-No-Screen');
   res.setHeader('Access-Control-Allow-Private-Network', 'true');
 
   if (req.method === 'OPTIONS') {
@@ -749,32 +866,47 @@ const server = http.createServer(async (req, res) => {
       let sttInfo = { engine: 'None', latencyMs: 0 };
       let transcribedText = '';
 
-      if (contentType.includes('audio') || contentType.includes('octet-stream')) {
-        // [TRƯỜNG HỢP CỐT LÕI]: ESP32 GỬI FILE .WAV TRỰC TIẾP TỪ MICROPHONE (INMP441)
-        const rawAudioBuffer = await parseRawBody(req);
-        const incomingWavName = `hub_rec_${Date.now()}.wav`;
+      if (contentType.includes('audio') || contentType.includes('octet-stream') || contentType.includes('multipart/form-data')) {
+        // [TRƯỜNG HỢP CỐT LÕI]: ESP32 / TRÌNH DUYỆT GỬI FILE .WAV (RAW BINARY HOẶC MULTIPART FORM-DATA)
+        let rawAudioBuffer = await parseRawBody(req);
+        let formFields = {};
+        if (contentType.includes('multipart/form-data')) {
+          const parsedMp = extractMultipartFile(rawAudioBuffer, req.headers['content-type'] || '');
+          rawAudioBuffer = parsedMp.fileBuf;
+          formFields = parsedMp.fields;
+        }
+        if (!rawAudioBuffer || rawAudioBuffer.length < 100) {
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          return res.end(JSON.stringify({ error: 'File âm thanh .WAV quá ngắn hoặc trống (0 bytes). Hãy bấm nói ít nhất 1 giây rồi thử lại.' }));
+        }
+        const fmt = detectAudioFormat(rawAudioBuffer, contentType);
+        const incomingWavName = `hub_rec_${Date.now()}.${fmt.ext}`;
         fs.writeFileSync(path.join(AUDIO_DIR, incomingWavName), rawAudioBuffer);
         inputAudioFile = incomingWavName;
-        console.log(`🎙️ [Cục Hub Ghi Âm] Đã nhận file .WAV từ ESP32: ${incomingWavName} (${rawAudioBuffer.length} bytes)`);
+        console.log(`🎙️ [Cục Hub Ghi Âm] Đã nhận file .${fmt.ext.toUpperCase()} (${rawAudioBuffer.length} bytes): ${incomingWavName}`);
 
-        // Chuyển file .WAV tiếng nói của du khách thành văn bản qua Whisper AI
-        const sttRes = await transcribeWavToText(rawAudioBuffer);
+        // Chuyển file âm thanh tiếng nói của du khách thành văn bản qua Whisper AI
+        const sttRes = await transcribeWavToText(rawAudioBuffer, contentType);
         transcribedText = sttRes.text;
         sttInfo = { engine: sttRes.engine, latencyMs: sttRes.latencyMs };
 
         const urlObj = url.parse(req.url, true);
         payload = {
-          code: req.headers['x-artifact-code'] || req.headers['x-code'] || urlObj.query.code || '001',
+          code: formFields.code || req.headers['x-artifact-code'] || req.headers['x-code'] || urlObj.query.code || '001',
           voice_text: transcribedText,
-          end_speech_time: parseInt(req.headers['x-end-speech-time'], 10) || tServerReceived,
-          device_id: req.headers['x-device-id'] || 'ESP32_HUB_MIC'
+          end_speech_time: parseInt(formFields.end_speech_time || req.headers['x-end-speech-time'], 10) || tServerReceived,
+          device_id: formFields.device_id || req.headers['x-device-id'] || 'ESP32_HUB_MIC'
         };
       } else {
         // [TRƯỜNG HỢP KIỂM THỬ]: Gửi JSON { "voice_text": "..." }
         payload = await parseJsonBody(req);
       }
       
-      const tEndSpeech = payload.end_speech_time || parseInt(req.headers['x-end-speech-time'], 10) || tServerReceived;
+      const rawEndSpeech = Number(payload.end_speech_time || req.headers['x-end-speech-time'] || 0);
+      // Chỉ dùng mốc thời gian client gửi lên nếu là Unix Epoch ms hợp lệ (trong vòng ±60s), tránh millis() của ESP32 làm lệch số đo
+      const tEndSpeech = (rawEndSpeech > 1600000000000 && Math.abs(tServerReceived - rawEndSpeech) < 60000)
+        ? rawEndSpeech
+        : tServerReceived;
       const questionText = payload.voice_text || payload.question || 'Hãy giới thiệu cho tôi về hiện vật này.';
       const currentCode = payload.code || req.headers['x-artifact-code'] || '001';
       const deviceId = payload.device_id || req.headers['x-device-id'] || 'ESP32_HUB_01';
@@ -929,6 +1061,19 @@ const server = http.createServer(async (req, res) => {
     }));
   }
 
+  // 8.5 Health check cho Render & Uptime monitor
+  if (req.method === 'GET' && (pathname === '/health' || pathname === '/api/health')) {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      status: 'ok',
+      uptime_sec: Math.round(process.uptime()),
+      render_mode: IS_RENDER,
+      ffmpeg_bin: FFMPEG_BIN,
+      kiemthu_ready: fs.existsSync(path.join(kiemthuDir, 'smart_ai_server.js')),
+      groq_key_configured: Boolean(GROQ_API_KEY)
+    }));
+  }
+
   // 9. Static files
   let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
   if (!fs.existsSync(filePath)) filePath = path.join(PUBLIC_DIR, 'index.html');
@@ -944,7 +1089,7 @@ const server = http.createServer(async (req, res) => {
   res.end('404 Not Found');
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, () => {
   const primaryIp = getPrimaryIp();
   console.log('\n================================================================');
   console.log('🏛️  ESP32 BLE TOUR GUIDE SERVER (V2.3 - ULTRA-FAST IN-MEMORY TTS)');

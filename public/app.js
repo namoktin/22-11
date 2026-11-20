@@ -276,24 +276,47 @@ function initVoiceForm() {
     }
   };
 
-  // NÚT BẤM NÓI THU ÂM VÀ GỬI FILE .WAV
+  // NÚT BẤM NÓI THU ÂM VÀ GỬI FILE .WAV (CHUẨN PCM 16KHZ MONO NHƯ ESP32)
   let mediaRecorder = null;
   let audioChunks = [];
   let isRecording = false;
   const btnMic = document.getElementById('btnRecordMicWav');
+  const btnPick = document.getElementById('btnPickWavFile');
+  const fileInput = document.getElementById('wavFileInput');
+
+  if (btnPick && fileInput) {
+    btnPick.onclick = () => fileInput.click();
+    fileInput.onchange = async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      fileInput.value = '';
+      await uploadWavFileToServer(file, file.type || 'audio/wav');
+    };
+  }
 
   if (btnMic) {
     btnMic.onclick = async () => {
       if (!isRecording) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('Trình duyệt chặn Microphone trên HTTP không bảo mật. Hãy mở qua http://localhost:5000 hoặc https:// (Pinggy), hoặc dùng nút "📁 Chọn File .WAV".');
+          return;
+        }
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           audioChunks = [];
           mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
           mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const rawMime = mediaRecorder.mimeType || 'audio/webm';
+            const rawBlob = new Blob(audioChunks, { type: rawMime });
             stream.getTracks().forEach(t => t.stop());
-            await uploadWavFileToServer(audioBlob);
+            try {
+              const wavBlob = await convertBlobToPcm16kWav(rawBlob);
+              await uploadWavFileToServer(wavBlob, 'audio/wav');
+            } catch (convErr) {
+              console.warn('Chuyển PCM WAV fallback sang raw:', convErr);
+              await uploadWavFileToServer(rawBlob, rawMime);
+            }
           };
           mediaRecorder.start();
           isRecording = true;
@@ -312,16 +335,57 @@ function initVoiceForm() {
   }
 }
 
-async function uploadWavFileToServer(blob) {
+async function convertBlobToPcm16kWav(blob) {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AudioCtx();
+  try {
+    const arrayBuf = await blob.arrayBuffer();
+    const audioBuf = await ctx.decodeAudioData(arrayBuf);
+    const srcData = audioBuf.getChannelData(0);
+    const srcRate = audioBuf.sampleRate;
+    const dstRate = 16000;
+    const ratio = srcRate / dstRate;
+    const dstLen = Math.max(1, Math.floor(srcData.length / ratio));
+    const samples = new Int16Array(dstLen);
+    for (let i = 0; i < dstLen; i++) {
+      const idx = Math.min(srcData.length - 1, Math.floor(i * ratio));
+      const s = Math.max(-1, Math.min(1, srcData[idx]));
+      samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+    const wavBuf = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(wavBuf);
+    const writeStr = (off, str) => { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); };
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * 2, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, dstRate, true);
+    view.setUint32(28, dstRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, 'data');
+    view.setUint32(40, samples.length * 2, true);
+    let offset = 44;
+    for (let i = 0; i < samples.length; i++, offset += 2) view.setInt16(offset, samples[i], true);
+    return new Blob([wavBuf], { type: 'audio/wav' });
+  } finally {
+    ctx.close().catch(() => {});
+  }
+}
+
+async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
   const code = document.getElementById('voiceCodeSelect').value;
   const tEnd = Date.now();
   handleVoiceProcessingStart({ question: 'Đang chuyển file .WAV lên Whisper STT...' });
 
   try {
-    const res = await fetch('/api/hub/ask', {
+    const res = await fetch(`/api/hub/ask?code=${encodeURIComponent(code)}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'audio/wav',
+        'Content-Type': contentType || 'audio/wav',
         'X-Artifact-Code': code,
         'X-Device-Id': 'BROWSER_MIC_DASHBOARD',
         'X-End-Speech-Time': tEnd.toString()
@@ -329,11 +393,12 @@ async function uploadWavFileToServer(blob) {
       body: blob
     });
     const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     handleVoiceResponse(data);
   } catch (err) {
+    if (latencyTimerInterval) { clearInterval(latencyTimerInterval); latencyTimerInterval = null; }
     alert('Lỗi gửi file .WAV: ' + err.message);
   }
-  };
 }
 
 let currentVoiceChunks = [];

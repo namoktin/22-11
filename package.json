@@ -1,11 +1,17 @@
 {
   "name": "esp32-ble-dialogue-server",
-  "version": "1.0.0",
-  "description": "Máy chủ điều hướng và cấp phát hội thoại / audio thuyết minh thông minh cho ESP32 dựa trên tín hiệu định vị BLE Beacons",
+  "version": "2.4.0",
+  "description": "Máy chủ điều hướng BLE Beacons, Whisper STT (.WAV) và KiemThu AI Voice Guide cho ESP32 (Render & Local Ready)",
   "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server.js",
     "generate-audio": "python scripts/generate_audio.py"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0"
   },
   "keywords": [
     "esp32",

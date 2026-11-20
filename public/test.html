@@ -388,6 +388,10 @@
           <button class="btn-terra" id="btnRecordMicWav" style="padding: 10px 18px; background: #991B1B;" onclick="toggleRecordWav()">
             🎙️ Bấm Nói (Gửi File .WAV)
           </button>
+          <button class="btn-terra" style="padding: 10px 18px; background: #1E3A8A;" onclick="document.getElementById('testWavFileInput').click()">
+            📁 Chọn File .WAV
+          </button>
+          <input type="file" id="testWavFileInput" accept="audio/*,.wav" style="display:none;" onchange="handlePickWavFile(this)">
         </div>
 
         <div class="preset-qs">
@@ -417,7 +421,9 @@
   </div>
 
   <script>
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
+      ? window.location.origin
+      : 'http://localhost:5000';
 
     function selectCode(code, name, mac) {
       document.getElementById('inputCode').value = code;
@@ -579,18 +585,77 @@
     let recordedAudioChunks = [];
     let isMicRecording = false;
 
+    async function handlePickWavFile(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      input.value = '';
+      await sendWavBlobToServer(file, file.type || 'audio/wav');
+    }
+
+    async function convertBlobToPcm16kWav(blob) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      try {
+        const arrayBuf = await blob.arrayBuffer();
+        const audioBuf = await ctx.decodeAudioData(arrayBuf);
+        const srcData = audioBuf.getChannelData(0);
+        const srcRate = audioBuf.sampleRate;
+        const dstRate = 16000;
+        const ratio = srcRate / dstRate;
+        const dstLen = Math.max(1, Math.floor(srcData.length / ratio));
+        const samples = new Int16Array(dstLen);
+        for (let i = 0; i < dstLen; i++) {
+          const idx = Math.min(srcData.length - 1, Math.floor(i * ratio));
+          const s = Math.max(-1, Math.min(1, srcData[idx]));
+          samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        const wavBuf = new ArrayBuffer(44 + samples.length * 2);
+        const view = new DataView(wavBuf);
+        const writeStr = (off, str) => { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); };
+        writeStr(0, 'RIFF');
+        view.setUint32(4, 36 + samples.length * 2, true);
+        writeStr(8, 'WAVE');
+        writeStr(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, dstRate, true);
+        view.setUint32(28, dstRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeStr(36, 'data');
+        view.setUint32(40, samples.length * 2, true);
+        let offset = 44;
+        for (let i = 0; i < samples.length; i++, offset += 2) view.setInt16(offset, samples[i], true);
+        return new Blob([wavBuf], { type: 'audio/wav' });
+      } finally {
+        ctx.close().catch(() => {});
+      }
+    }
+
     async function toggleRecordWav() {
       const btn = document.getElementById('btnRecordMicWav');
       if (!isMicRecording) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          alert('Trình duyệt chặn Microphone trên HTTP không bảo mật. Hãy mở qua http://localhost:5000 hoặc https:// (Pinggy), hoặc dùng nút "📁 Chọn File .WAV".');
+          return;
+        }
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           recordedAudioChunks = [];
           mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = e => recordedAudioChunks.push(e.data);
+          mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recordedAudioChunks.push(e.data); };
           mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/wav' });
+            const rawMime = mediaRecorder.mimeType || 'audio/webm';
+            const rawBlob = new Blob(recordedAudioChunks, { type: rawMime });
             stream.getTracks().forEach(t => t.stop());
-            await sendWavBlobToServer(audioBlob);
+            try {
+              const wavBlob = await convertBlobToPcm16kWav(rawBlob);
+              await sendWavBlobToServer(wavBlob, 'audio/wav');
+            } catch (convErr) {
+              console.warn('Chuyển PCM WAV fallback sang raw:', convErr);
+              await sendWavBlobToServer(rawBlob, rawMime);
+            }
           };
           mediaRecorder.start();
           isMicRecording = true;
@@ -607,7 +672,7 @@
       }
     }
 
-    async function sendWavBlobToServer(blob) {
+    async function sendWavBlobToServer(blob, contentType = 'audio/wav') {
       const code = document.getElementById('voiceCodeSelect').value;
       const t0 = Date.now();
       const box = document.getElementById('voiceResultBox');
@@ -615,10 +680,10 @@
       document.getElementById('voiceResultText').innerText = '⏳ Đang tải file .WAV lên Server, Whisper AI đang chuyển giọng nói thành chữ và KiemThu AI đang suy nghĩ...';
 
       try {
-        const res = await fetch(`${baseUrl}/api/hub/ask`, {
+        const res = await fetch(`${baseUrl}/api/hub/ask?code=${encodeURIComponent(code)}`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'audio/wav',
+            'Content-Type': contentType || 'audio/wav',
             'X-Artifact-Code': code,
             'X-Device-Id': 'BROWSER_MIC_TEST_HUB',
             'X-End-Speech-Time': t0.toString()
@@ -626,11 +691,11 @@
           body: blob
         });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
         handleVoiceQueryData(data);
       } catch (err) {
         document.getElementById('voiceResultText').innerText = 'Lỗi gửi file .WAV: ' + err.message;
       }
-    }
     }
   </script>
 </body>
