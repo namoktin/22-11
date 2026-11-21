@@ -14,15 +14,19 @@ const { detectLanguage: detectLangStatistical, expandVietnameseAbbreviations } =
 class NlpProcessor {
   constructor() {
     this.typoMap = [
-      { pattern: /(?:^|[\s,.:;!?])(mái\s*chém|máy\s*chem|may\s*chem|gáy\s*chém)(?=[\s,.:;!?]|$)/gi, replacement: ' máy chém ' },
+      { pattern: /(?:^|[\s,.:;!?])(mái\s*chém|máy\s*chem|may\s*chem|gáy\s*chém|mai\s*chem)(?=[\s,.:;!?]|$)/gi, replacement: ' máy chém ' },
       { pattern: /(?:^|[\s,.:;!?])(guilot(?:in|ine)?)(?=[\s,.:;!?]|$)/gi, replacement: ' máy chém ' },
-      { pattern: /(?:^|[\s,.:;!?])(?:(?:ngục\s*(?:tối\s*)?)?(?:ca\s*sô|ca\s*xô|caxô|casô|ca\s*so|cachot))(?=[\s,.:;!?]|$)/gi, replacement: ' ngục tối Cachot ' },
-      { pattern: /(?:^|[\s,.:;!?])(hô\s*lò|hỏa\s*lo|hoa\s*lo|hoả\s*lò)(?=[\s,.:;!?]|$)/gi, replacement: ' Hỏa Lò ' },
-      { pattern: /(?:^|[\s,.:;!?])(xa\s*lim)(?=[\s,.:;!?]|$)/gi, replacement: ' xà lim ' },
+      { pattern: /(?:^|[\s,.:;!?])(?:(?:ngục\s*(?:tối\s*)?)?(?:cách\s*chót|cach\s*chot|ca\s*sô|ca\s*xô|caxô|casô|ca\s*so|ca\s*xo|caxo|caso|cachot))(?=[\s,.:;!?]|$)/gi, replacement: ' ngục tối Cachot ' },
+      { pattern: /(?:^|[\s,.:;!?])(hô\s*lò|hỏa\s*lo|hỏa\s*nò|hoa\s*no|hoa\s*lo|hoả\s*lò)(?=[\s,.:;!?]|$)/gi, replacement: ' Hỏa Lò ' },
+      { pattern: /(?:^|[\s,.:;!?])(xa\s*lim|xa\s*nim|xà\s*nim)(?=[\s,.:;!?]|$)/gi, replacement: ' xà lim ' },
+      { pattern: /(?:^|[\s,.:;!?])(cum\s*chan|cúm\s*chân)(?=[\s,.:;!?]|$)/gi, replacement: ' cùm chân ' },
       { pattern: /(?:^|[\s,.:;!?])(cong\s*ngam)(?=[\s,.:;!?]|$)/gi, replacement: ' cống ngầm ' },
       { pattern: /(?:^|[\s,.:;!?])(cay\s*bang)(?=[\s,.:;!?]|$)/gi, replacement: ' cây bàng ' },
-      { pattern: /(?:^|[\s,.:;!?])(hanoi\s*hilton)(?=[\s,.:;!?]|$)/gi, replacement: ' Hanoi Hilton ' },
-      { pattern: /(?:^|[\s,.:;!?])(mác\s*cây|mắc\s*cây|mccain)(?=[\s,.:;!?]|$)/gi, replacement: ' John McCain ' },
+      { pattern: /(?:^|[\s,.:;!?])(hanoi\s*hilton|ha\s*noi\s*hieu\s*ton|hà\s*nội\s*hiêu\s*tơn)(?=[\s,.:;!?]|$)/gi, replacement: ' Hanoi Hilton ' },
+      { pattern: /(?:^|[\s,.:;!?])(giôn\s*mắc\s*ken|gion\s*mac\s*ken|mắc\s*ken|mac\s*ken|mác\s*cây|mắc\s*cây|mccain)(?=[\s,.:;!?]|$)/gi, replacement: ' John McCain ' },
+      { pattern: /(?:^|[\s,.:;!?])(di\s*ia|đi\s*ỉa)(?=[\s,.:;!?]|$)/gi, replacement: ' kiết lỵ ' },
+      { pattern: /(?:^|[\s,.:;!?])(mac\s*te|mắc\s*tè|di\s*te|đi\s*tè)(?=[\s,.:;!?]|$)/gi, replacement: ' nhà vệ sinh ' },
+      { pattern: /(?:^|[\s,.:;!?])(xay\s*lam\s*lao|xây\s*lăm\s*lào)(?=[\s,.:;!?]|$)/gi, replacement: ' xây năm nào ' },
       { pattern: /(?:^|[\s,.:;!?])(tran\s*tu\s*binh)(?=[\s,.:;!?]|$)/gi, replacement: ' Trần Tử Bình ' },
       { pattern: /(?:^|[\s,.:;!?])(hoang\s*van\s*thu)(?=[\s,.:;!?]|$)/gi, replacement: ' Hoàng Văn Thụ ' },
       { pattern: /(?:^|[\s,.:;!?])(nguyen\s*thai\s*hoc)(?=[\s,.:;!?]|$)/gi, replacement: ' Nguyễn Thái Học ' },
@@ -78,16 +82,26 @@ class NlpProcessor {
     const isSafeMuseumContext = norm.includes(' bo quan ao ') || norm.includes(' quan ao ') || norm.includes(' ao tu ') ||
       norm.includes(' huong dan vien ') || norm.includes(' nguoi huong dan ') || norm.includes(' thuyet minh vien ');
 
+    // Lớp 0: XSS / SQL Injection / Template Injection (raw text check trước khi bỏ ký tự đặc biệt)
+    if (/<\s*script|javascript\s*:|onerror\s*=|onload\s*=|\bdrop\s+table\b|\bselect\s+\*\s+from\b|\bunion\s+select\b|'\s*or\s+1\s*=\s*1|\{\{.*\}\}|\$\{\s*process\.env/i.test(text)) {
+      return true;
+    }
+
     // Lớp 1: Instruction Override (Ghi đè chỉ dẫn hệ thống)
     const strictJailbreaks = [
       'ignore previous instructions', 'ignore all previous instructions', 'ignore all instructions', 'disregard prior',
       'bo qua moi huong dan', 'quen het quy tac', 'quen tat ca quy tac', 'quen het moi huong dan',
       'quen het huong dan', 'bo qua moi quy tac', 'bo qua tat ca quy tac', 'bo qua moi chi dan',
-      'you are now', 'jailbreak', 'system override', 'admin mode', 'developer mode',
+      'you are now', 'act as an unrestricted', 'unrestricted ai', 'pretend you are', 'jailbreak', 'system override', 'admin mode', 'developer mode',
       'reveal system prompt', 'show system prompt', 'system prompt', 'in ra huong dan', 'xem prompt',
-      'quy tac bi mat', 'api key', 'cau hinh server'
+      'quy tac bi mat', 'api key', 'cau hinh server', 'override safety rules', 'only reply'
     ];
     if (strictJailbreaks.some(p => norm.includes(' ' + p + ' '))) return true;
+
+    // Lớp 1.5: Ép format trả lời cưỡng bức ("chỉ trả lời YES cho mọi câu hỏi")
+    if (/\bchi tra loi\b/.test(norm) && /\b(moi cau hoi|tiep theo|yes|no|dung|sai)\b/.test(norm)) {
+      return true;
+    }
 
     // Lớp 2: Ép sinh ngôn từ thù hận / thô tục
     if (/\b(chui|chui boi|tho tuc|xuc pham|chui rua)\b/.test(norm) && /\b(hay|giup|bang|loi le|nang ne)\b/.test(norm)) {
@@ -354,7 +368,12 @@ class NlpProcessor {
     ];
 
     const hasPronoun = followUpPronouns.some(p => norm.includes(p));
-    const isVeryShort = (spokenClean || raw).split(/\s+/).length <= 6 && !norm.includes('xin chao') && !norm.includes('tam biet') && !norm.includes('cam on');
+    const cleanedText = (spokenClean || raw).trim();
+    const normStripped = this.normalize(cleanedText);
+    const isVeryShort = normStripped.length >= 3 &&
+      !/^[0-9\s]+$/.test(normStripped) &&
+      cleanedText.split(/\s+/).length <= 5 &&
+      !/(xin chao|chao|hello|hi|hey|tam biet|bye|goodbye|cam on|thank|alo|test|ok|hihi|hehe|haha)/.test(norm);
 
     if (hasPronoun || isVeryShort || isComparisonExpansion) {
       let rawTopicName = lastTurnContext.lastTopicName || lastTurnContext.lastTopic || '';

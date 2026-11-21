@@ -49,7 +49,7 @@ try {
 // - Trên Render (deploy độc lập repo esp32-ble-server): dùng ./kiemthu nhúng sẵn
 const externalKiemthuDir = path.resolve(__dirname, '..', 'kiemthu');
 const bundledKiemthuDir = path.join(__dirname, 'kiemthu');
-const kiemthuDir = fs.existsSync(path.join(externalKiemthuDir, 'smart_ai_server.js'))
+const kiemthuDir = (!IS_RENDER && fs.existsSync(path.join(externalKiemthuDir, 'smart_ai_server.js')))
   ? externalKiemthuDir
   : bundledKiemthuDir;
 
@@ -157,11 +157,28 @@ function cleanupTempAudioFiles(maxAgeMs = 20 * 60 * 1000) {
 setInterval(() => cleanupTempAudioFiles(), 10 * 60 * 1000).unref();
 
 // Trạng thái máy chủ
+const SUPPORTED_LANGUAGES = {
+  vi: { code: 'vi', label: 'Tiếng Việt', nativeName: 'Vietnamese', ttsCode: 'vi' },
+  en: { code: 'en', label: 'English', nativeName: 'English', ttsCode: 'en' },
+  fr: { code: 'fr', label: 'Français', nativeName: 'French', ttsCode: 'fr' },
+  ja: { code: 'ja', label: '日本語', nativeName: 'Japanese', ttsCode: 'ja' },
+  ko: { code: 'ko', label: '한국어', nativeName: 'Korean', ttsCode: 'ko' },
+  zh: { code: 'zh', label: '中文', nativeName: 'Simplified Chinese', ttsCode: 'zh-CN' }
+};
+
+const translationCache = new Map();
+
+function normalizeLangCode(lang) {
+  const raw = (lang || '').toString().toLowerCase().trim().split(/[-_]/)[0];
+  return SUPPORTED_LANGUAGES[raw] ? raw : null;
+}
+
 const serverState = {
   latestBeacon: null,
   latestVoice: null,
   isVoiceProcessing: false,
   voiceProcessingQuestion: '',
+  lockedLanguage: 'vi', // Khóa ngôn ngữ cứng: AI CHỈ được trả lời đúng ngôn ngữ này
   lastUpdate: Date.now()
 };
 
@@ -301,16 +318,19 @@ function serveAudioStream(req, res, filePath, contentType) {
 
 function parseJsonBody(req) {
   return new Promise((resolve, reject) => {
-    let body = '';
+    const chunks = [];
+    let totalBytes = 0;
     req.on('data', chunk => {
-      body += chunk.toString();
-      if (body.length > 1024 * 512) {
+      chunks.push(chunk);
+      totalBytes += chunk.length;
+      if (totalBytes > 1024 * 512) {
         req.destroy();
         reject(new Error('Payload quá lớn'));
       }
     });
     req.on('end', () => {
       try {
+        const body = Buffer.concat(chunks).toString('utf8');
         if (!body.trim()) return resolve({});
         resolve(JSON.parse(body));
       } catch (err) {
@@ -412,8 +432,8 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
       const form = new FormData();
       form.append('file', blob, `hub_mic.${fmt.ext}`);
       form.append('model', 'whisper-large-v3-turbo');
-      form.append('language', 'vi');
-      form.append('response_format', 'json');
+      // KHÔNG ép cứng language='vi' để Whisper tự nghe chuẩn mọi ngôn ngữ (Anh, Việt, Pháp, Nhật, Hàn, Trung...)
+      form.append('response_format', 'verbose_json');
 
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
@@ -460,16 +480,18 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
  * Thời gian: ~250ms - 500ms cho từng Chunk nhỏ (Đạt mốc phản hồi < 1s!)
  * =========================================================================================
  */
-async function fastTextToWav(text, outputFilename) {
+async function fastTextToWav(text, outputFilename, lang = 'vi') {
   const outputPath = path.join(AUDIO_DIR, outputFilename);
-  const cacheKey = crypto.createHash('md5').update(text.trim().toLowerCase()).digest('hex');
+  const langInfo = SUPPORTED_LANGUAGES[normalizeLangCode(lang) || 'vi'];
+  const ttsCode = langInfo.ttsCode;
+  const cacheKey = crypto.createHash('md5').update(`${ttsCode}:${text.trim().toLowerCase()}`).digest('hex');
 
   // 1. Kiểm tra Cache siêu tốc (10ms)
   if (audioCache.has(cacheKey)) {
     const cachedFile = audioCache.get(cacheKey);
     const cachedPath = path.join(AUDIO_DIR, cachedFile);
     if (fs.existsSync(cachedPath)) {
-      console.log(`⚡ [Audio Cache Hit] Tái sử dụng file âm thanh: ${cachedFile} (0ms)`);
+      console.log(`⚡ [Audio Cache Hit] Tái sử dụng file âm thanh (${ttsCode}): ${cachedFile} (0ms)`);
       if (cachedFile !== outputFilename) {
         try { fs.copyFileSync(cachedPath, outputPath); } catch (e) {}
       }
@@ -477,11 +499,11 @@ async function fastTextToWav(text, outputFilename) {
     }
   }
 
-  // 2. Tải MP3 trực tiếp từ Google Fast TTS qua HTTP stream (Sử dụng Keep-Alive Agent)
+  // 2. Tải MP3 trực tiếp từ Google Fast TTS qua HTTP stream theo ĐÚNG giọng ngôn ngữ đã khóa
   return new Promise(async (resolve) => {
     try {
       const cleanText = text.replace(/["'\n\r]/g, ' ').slice(0, 160).trim();
-      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=vi&client=tw-ob`;
+      const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${encodeURIComponent(ttsCode)}&client=tw-ob`;
 
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
@@ -575,12 +597,12 @@ function splitIntoAudioChunks(fullText) {
 /**
  * Đẩy tiếp các Chunks sau ở chế độ nền (Background Progressive Delivery)
  */
-async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl) {
+async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lang = 'vi') {
   for (let i = 1; i < chunks.length; i++) {
     const chunkText = chunks[i];
     const chunkFilename = `${baseName}_p${i + 1}.wav`;
     try {
-      await fastTextToWav(chunkText, chunkFilename);
+      await fastTextToWav(chunkText, chunkFilename, lang);
       console.log(`✓ [Background Progressive TTS] Đã đẩy lên Chunk ${i + 1}/${chunks.length}: ${chunkFilename}`);
       broadcastSSE('VOICE_CHUNK_READY', {
         reply_id: baseName,
@@ -600,43 +622,178 @@ async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl) {
  * 🧠 HỎI ĐÁP KIEMTHU AI ENGINE (Port 4001 & In-Process)
  * =========================================================================================
  */
-async function queryKiemThuAI(question, artifactContext) {
-  const artifactName = artifactContext?.artifact_name || 'Di tích lịch sử';
-  let formattedQuery = question.trim();
-  const lowerQ = formattedQuery.toLowerCase();
+// Chuẩn hóa bỏ dấu tiếng Việt để so khớp câu hỏi về hiện vật trong data/beacons.json
+function normalizeVnText(str) {
+  return (str || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
 
-  // 0. Nhận diện các câu hỏi định vị tức thời tại Beacon (đây là đâu, tôi đang đứng đâu)
-  const isOrientation = /day la dau|đây là đâu|toi dang dung dau|tôi đang đứng đâu|cho nay la gi|chỗ này là gì|o day co gi|ở đây có gì/i.test(lowerQ);
-  if (isOrientation && artifactContext?.dialogue?.text) {
-    console.log(`✓ [Beacon Direct Orientation] Phục vụ thuyết minh định vị tại ${artifactName}`);
-    return {
-      reply: artifactContext.dialogue.text,
-      intent: 'VISIT_GUIDANCE',
-      source: `Di tích Hỏa Lò (Trạm Beacon ${artifactContext.code}: ${artifactName})`,
-      latencyMs: 15
-    };
+// Tìm xem câu hỏi có nhắc tới hiện vật ngoài Hỏa Lò trong data/beacons.json không (Trống Đồng, Đạt Hồng, Bảo Kiếm...)
+function findMatchingBeaconExhibit(question) {
+  const normQ = ' ' + normalizeVnText(question) + ' ';
+  const beacons = loadBeacons();
+  for (const b of beacons) {
+    const normName = normalizeVnText(b.artifact_name || b.name);
+    // Bỏ qua Cây Bàng Hỏa Lò vì KiemThu AI đã có kho dữ liệu Hỏa Lò rất sâu về Cây Bàng
+    if (normName.includes('cay bang') || normName.includes('hoa lo')) continue;
+    const hints = [];
+    if (normName.includes('trong dong')) hints.push('trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'gian so 1', 'gian trung bay so 1');
+    if (normName.includes('dat hong') || normName.includes('dai hong chung')) hints.push('dat hong', 'dai hong chung', 'chuong dong', 'thap chuong', 'gian so 3', 'gian trung bay so 3');
+    if (normName.includes('bao kiem')) hints.push('bao kiem', 'kiem hoang gia', 'luong long trieu nhat', 'thanh kiem', 'kiem co', 'gian so 4', 'gian trung bay so 4');
+    if (normName.length >= 4) hints.push(normName);
+    if (hints.some(h => normQ.includes(' ' + h + ' '))) {
+      return b;
+    }
   }
+  return null;
+}
 
-  // 1. Chỉ gắn ngữ cảnh trạm Beacon khi du khách dùng đại từ chỉ định mơ hồ ("cái này", "chỗ này", "hiện vật này", "nó", "đây", "tôi đang")
-  // KHÔNG cưỡng ép bọc tên hiện vật lên các câu hỏi chung/chủ đề khác (vệ sinh, giá vé, máy chém, lịch sử Hỏa Lò, kiến trúc, v.v.)
-  const needsBeaconContext = /\b(cái này|cai nay|hiện vật này|hien vat nay|chỗ này|cho nay|khu này|khu nay|cây này|cay nay|trống này|trong nay|vật này|vat nay|bức này|buc nay|tôi đang|toi dang|mình đang|minh dang|nó là|no la|nó có|no co)\b/i.test(lowerQ);
+// Kiểm tra nhanh xem văn bản đã đúng ngôn ngữ khóa cứng chưa
+function isTextInLanguage(text, targetLang) {
+  if (!text || !targetLang) return true;
+  const hasViDiacritics = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(text);
+  const hasCJK = /[\u4E00-\u9FFF]/.test(text);
+  const hasJP = /[\u3040-\u30FF]/.test(text);
+  const hasKR = /[\uAC00-\uD7AF\u1100-\u11FF]/.test(text);
+  const hasFrAccents = /[çéèêëàâîïôùûüœæ]/i.test(text) && !/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i.test(text);
 
-  if (needsBeaconContext && !lowerQ.includes(artifactName.toLowerCase())) {
-    formattedQuery = `[Tại khu vực trưng bày ${artifactName}]: ${formattedQuery}`;
+  if (targetLang === 'vi') return hasViDiacritics && !hasJP && !hasKR && !hasCJK;
+  if (targetLang === 'en') return !hasViDiacritics && !hasJP && !hasKR && !hasCJK && !/\b(chao ban|di tich|nha tu|hoa lo la|gia ve|mo cua|khong dung)\b/i.test(text);
+  if (targetLang === 'ja') return hasJP;
+  if (targetLang === 'ko') return hasKR;
+  if (targetLang === 'zh') return hasCJK && !hasJP && !hasKR;
+  if (targetLang === 'fr') return !hasViDiacritics && !hasJP && !hasKR && !hasCJK && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous)\b/i.test(text));
+  return true;
+}
+
+// Dịch siêu tốc qua Groq LLM + Cache (0ms lần lặp) để bảo đảm 100% KHÓA NGÔN NGỮ CỨNG
+async function translateTextStrict(text, targetLang, mode = 'answer') {
+  if (!text || !GROQ_API_KEY) return text;
+  const langInfo = SUPPORTED_LANGUAGES[targetLang];
+  if (!langInfo) return text;
+
+  const cacheKey = `${mode}:${targetLang}:${crypto.createHash('md5').update(text.trim()).digest('hex')}`;
+  if (translationCache.has(cacheKey)) return translationCache.get(cacheKey);
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const sysPrompt = mode === 'query'
+      ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
+      : `You are a professional museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY. Keep all historical dates, numbers, and proper names (Hoa Lo, Maison Centrale, Cachot, John McCain, etc.) accurate. Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no markdown, no notes.`;
+
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'qwen/qwen3.8-27b',
+        temperature: 0.1,
+        max_tokens: 280,
+        messages: [
+          { role: 'system', content: sysPrompt },
+          { role: 'user', content: text }
+        ]
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (res.ok) {
+      const json = await res.json();
+      const translated = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+      if (translated) {
+        if (translationCache.size > 500) translationCache.clear();
+        translationCache.set(cacheKey, translated);
+        return translated;
+      }
+    }
+  } catch (e) {
+    console.warn(`⚠ Lỗi dịch sang ${targetLang}:`, e.message);
   }
+  return text;
+}
 
-  console.log(`\n➡️  Đang gửi câu hỏi sang kiemthu AI: "${formattedQuery}"`);
+// Nếu câu hỏi của du khách là tiếng Pháp/Nhật/Hàn/Trung -> dịch nội bộ sang tiếng Việt để tra đúng 2.046 tư liệu Hỏa Lò
+async function normalizeForeignQueryForLookup(rawQuery) {
+  const hasNonLatin = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF\u0400-\u04FF\u0E00-\u0E7F]/.test(rawQuery);
+  const looksFrench = /\b(bonjour|merci|combien|ou est|quel est|quelle est|horaires|billet|billets|prison|guillotine|toilettes|ouverte)\b/i.test(rawQuery);
+  if ((hasNonLatin || looksFrench) && GROQ_API_KEY) {
+    const viQuery = await translateTextStrict(rawQuery, 'vi', 'query');
+    if (viQuery && viQuery !== rawQuery) {
+      console.log(`🌐 [Multilingual Query] "${rawQuery}" -> VI lookup: "${viQuery}"`);
+      return viQuery;
+    }
+  }
+  return rawQuery;
+}
 
-  // 1. Gọi API KiemThu Server (Port 4001 nếu đang chạy song song ở Local)
-  if (!IS_RENDER) {
+// Trả lời bằng Groq LLM bám sát dữ liệu hiện vật trong data/beacons.json theo ĐÚNG ngôn ngữ đã khóa
+async function answerFromBeaconData(question, beacon, targetLang = 'vi') {
+  const baseText = beacon.dialogue?.text || beacon.dialogue?.short_cue || '';
+  const langInfo = SUPPORTED_LANGUAGES[targetLang] || SUPPORTED_LANGUAGES.vi;
+  if (GROQ_API_KEY) {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 2000); // 2s timeout
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'qwen/qwen3.8-27b',
+          temperature: 0.2,
+          max_tokens: 180,
+          messages: [
+            {
+              role: 'system',
+              content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 1-2 clear sentences based on the artifact info below. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
+            },
+            { role: 'user', content: question }
+          ]
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      if (res.ok) {
+        const json = await res.json();
+        const ans = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        if (ans) {
+          return {
+            reply: ans,
+            intent: 'EXHIBIT_INFORMATION',
+            source: `Data Hiện Vật (Mã ${beacon.code}) + Groq AI [${targetLang.toUpperCase()}]`,
+            latencyMs: 250
+          };
+        }
+      }
+    } catch (e) {}
+  }
+  return {
+    reply: baseText || `Hiện vật ${beacon.artifact_name} tại ${beacon.location || 'khu trưng bày'}.`,
+    intent: 'EXHIBIT_INFORMATION',
+    source: `Data Hiện Vật (data/beacons.json • Mã ${beacon.code})`,
+    latencyMs: 5
+  };
+}
+
+async function callKiemThuOnce(queryText, sessionId = null, targetLang = 'vi') {
+  const hasExplicitKiemthuUrl = Boolean(process.env.KIEMTHU_API_URL);
+
+  // 1. Gọi API KiemThu Server (Port 4001 ở Local hoặc KIEMTHU_API_URL nếu cấu hình riêng trên Render)
+  if (!IS_RENDER || hasExplicitKiemthuUrl) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), hasExplicitKiemthuUrl ? 10000 : 8000);
 
       const res = await fetch(KIEMTHU_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: formattedQuery }),
+        body: JSON.stringify({ question: queryText, sessionId: sessionId || undefined, language: targetLang }),
         signal: controller.signal
       });
       clearTimeout(timeout);
@@ -657,13 +814,12 @@ async function queryKiemThuAI(question, artifactContext) {
   }
 
   // 2. Tự Động Nhúng Trực Tiếp Bộ Não KiemThu AI Trong RAM (In-Process Embedded Engine)
-  // Giúp chạy độc lập 1 server duy nhất (trên Render hoặc Local) mà AI vẫn hoạt động đầy đủ 100%!
   try {
     const kiemthuServerPath = path.join(kiemthuDir, 'smart_ai_server.js');
     if (fs.existsSync(kiemthuServerPath)) {
       const { engine } = require(kiemthuServerPath);
       if (engine && typeof engine.handleAsk === 'function') {
-        const result = await engine.handleAsk({ question: formattedQuery });
+        const result = await engine.handleAsk({ question: queryText, sessionId: sessionId || undefined, language: targetLang });
         if (result && result.success && result.data && result.data.reply) {
           console.log(`✓ [kiemthu AI In-Process] ${result.data.intent} | Latency: ${result.data.latencyMs}ms`);
           return {
@@ -679,31 +835,110 @@ async function queryKiemThuAI(question, artifactContext) {
     console.warn('Lỗi gọi kiemthu in-process:', e.message);
   }
 
-  // 3. Tra cứu Kho 100 Facts SSOT nếu có
+  return null;
+}
+
+async function queryKiemThuAI(question, artifactContext, sessionId = null, targetLang = 'vi') {
+  const lockedLang = normalizeLangCode(targetLang) || serverState.lockedLanguage || 'vi';
+  const rawQuery = (question || '').trim();
+  const lookupQuery = await normalizeForeignQueryForLookup(rawQuery);
+  const normQ = normalizeVnText(lookupQuery);
+  const artifactName = artifactContext?.artifact_name || 'Di tích lịch sử';
+
+  // Hàm bọc bảo đảm KHÓA NGÔN NGỮ CỨNG 100%: AI CHỈ được nói đúng lockedLang
+  const enforceStrictLang = async (resObj) => {
+    if (!resObj || !resObj.reply) return resObj;
+    if (!isTextInLanguage(resObj.reply, lockedLang)) {
+      const translated = await translateTextStrict(resObj.reply, lockedLang, 'answer');
+      if (translated) {
+        resObj.reply = translated;
+        resObj.source = `${resObj.source} 🔒 [${lockedLang.toUpperCase()}]`;
+      }
+    }
+    resObj.language = lockedLang;
+    return resObj;
+  };
+
+  // BƯỚC 0: Chỉ chặn câu hỏi định vị thuần túy siêu ngắn (khách hỏi đích danh mình đang đứng ở trạm BLE nào)
+  const isPureShortOrientation = lookupQuery.length <= 45 &&
+    /^(day la dau|toi dang dung dau|minh dang dung dau|cho nay la gi|cho nay la dau|o day la dau|day la hien vat gi|hien vat nay la gi|cai nay la gi|where am i|what is this)(\s+(vay|a|nhi|ban|oi|the|please))?$/.test(normQ);
+
+  if (isPureShortOrientation && artifactContext?.dialogue?.text) {
+    console.log(`✓ [BLE Position Answer] Định vị trực tiếp tại trạm ${artifactContext.code}: ${artifactName}`);
+    return await enforceStrictLang({
+      reply: `Bạn đang đứng tại khu vực ${artifactName} (${artifactContext.location || 'Di tích'}). ${artifactContext.dialogue.text}`,
+      intent: 'VISIT_GUIDANCE',
+      source: `Định vị BLE Beacon (Mã ${artifactContext.code}: ${artifactName})`,
+      latencyMs: 10
+    });
+  }
+
+  // BƯỚC 1: GỬI NGUYÊN BẢN CÂU HỎI SANG KIEMTHU TRƯỚC KÈM NGÔN NGỮ KHÓA CỨNG
+  console.log(`\n➡️  Đang gửi câu hỏi sang kiemthu AI [🔒 ${lockedLang.toUpperCase()}]: "${lookupQuery}"`);
+  let kiemthuResult = await callKiemThuOnce(lookupQuery, sessionId, lockedLang);
+
+  // BƯỚC 2: CHỈ KHI kiemthu chưa rõ đối tượng / báo mơ hồ / chưa ghi nhận / ngoài phạm vi
+  if (kiemthuResult) {
+    const isAmbiguousOrMissed =
+      kiemthuResult.intent === 'CLARIFICATION' ||
+      kiemthuResult.intent === 'AMBIGUOUS_QUERY' ||
+      kiemthuResult.intent === 'OUT_OF_SCOPE' ||
+      /chưa được ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope/i.test(kiemthuResult.reply || '');
+
+    if (isAmbiguousOrMissed) {
+      const matchedByName = findMatchingBeaconExhibit(lookupQuery);
+      if (matchedByName) {
+        console.log(`✓ [Beacon Data Fallback] Trả lời từ data/beacons.json cho hiện vật: ${matchedByName.artifact_name}`);
+        return await enforceStrictLang(await answerFromBeaconData(rawQuery, matchedByName, lockedLang));
+      }
+
+      const hasDeicticPronoun = /\b(cai nay|hien vat nay|vat nay|cho nay|khu nay|o day|cay nay|trong nay|chuong nay|kiem nay|truoc mat|no|day|this|it|here)\b/.test(normQ);
+      if (hasDeicticPronoun && artifactContext) {
+        const normArtifact = normalizeVnText(artifactName);
+        if (normArtifact.includes('cay bang') || normArtifact.includes('hoa lo')) {
+          const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|chỗ này|cho nay|khu này|khu nay|\bnó\b)/gi, artifactName);
+          const contextualQuery = replacedQuery !== lookupQuery ? replacedQuery : `${artifactName}: ${lookupQuery}`;
+          console.log(`📍 [BLE Context Retry] Hỏi lại kiemthu kèm vị trí BLE: "${contextualQuery}"`);
+          const retryResult = await callKiemThuOnce(contextualQuery, sessionId, lockedLang);
+          if (retryResult && !/chưa được ghi nhận|ngoài phạm vi|not documented|outside the scope/i.test(retryResult.reply || '')) {
+            return await enforceStrictLang(retryResult);
+          }
+          return await enforceStrictLang(await answerFromBeaconData(rawQuery, artifactContext, lockedLang));
+        } else {
+          console.log(`📍 [BLE Context Answer] Dùng vị trí hiện vật BLE hiện tại: ${artifactName}`);
+          return await enforceStrictLang(await answerFromBeaconData(rawQuery, artifactContext, lockedLang));
+        }
+      }
+    }
+
+    return await enforceStrictLang(kiemthuResult);
+  }
+
+  // BƯỚC 3: Tra cứu Kho 100 Facts SSOT nếu có
   try {
-    const kiemthuEnginePath = path.resolve(__dirname, '..', 'kiemthu', 'engine', 'knowledge_base.js');
+    const kiemthuEnginePath = path.join(kiemthuDir, 'engine', 'knowledge_base.js');
     if (fs.existsSync(kiemthuEnginePath)) {
       const { knowledgeBase } = require(kiemthuEnginePath);
-      const gt = knowledgeBase.findGroundTruthMatch(question);
+      const gt = knowledgeBase.findGroundTruthMatch(lookupQuery);
       if (gt && (gt.item.premium_answer || gt.item.verified_answer || gt.item.expected_answer)) {
         const bestAns = gt.item.premium_answer || gt.item.verified_answer || gt.item.expected_answer;
-        return {
+        return await enforceStrictLang({
           reply: bestAns,
           intent: 'HISTORICAL_FACT',
           source: 'kiemthu 100 Facts SSOT (In-Process)',
           latencyMs: 12
-        };
+        });
       }
     }
   } catch (e) {}
 
-  // 3. Fallback câu trả lời súc tích
-  return {
-    reply: generateFallbackAnswer(question, artifactContext?.code || '001'),
+  // BƯỚC 4: Fallback câu trả lời súc tích
+  return await enforceStrictLang({
+    reply: generateFallbackAnswer(lookupQuery, artifactContext?.code || '001'),
     intent: 'HERITAGE_FALLBACK',
     source: 'Heritage Fast Fallback Engine',
     latencyMs: 5
-  };
+  });
 }
 
 function generateFallbackAnswer(question, code) {
@@ -742,7 +977,7 @@ function extractSpokenSummary(fullText) {
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Audio-Format, X-Pinggy-No-Screen');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Audio-Format, X-Pinggy-No-Screen, X-Language');
   res.setHeader('Access-Control-Allow-Private-Network', 'true');
 
   if (req.method === 'OPTIONS') {
@@ -791,6 +1026,44 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && pathname === '/api/state') {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     return res.end(JSON.stringify(serverState));
+  }
+
+  // 3.5 API Khóa Ngôn Ngữ Cứng: GET/POST /api/language
+  if (pathname === '/api/language') {
+    if (req.method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({
+        locked_language: serverState.lockedLanguage,
+        language_info: SUPPORTED_LANGUAGES[serverState.lockedLanguage],
+        supported: Object.values(SUPPORTED_LANGUAGES)
+      }));
+    }
+    if (req.method === 'POST') {
+      try {
+        const body = await parseJsonBody(req);
+        const reqLang = normalizeLangCode(body.language || body.lang || parsedUrl.query.lang);
+        if (!reqLang) {
+          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+          return res.end(JSON.stringify({ error: 'Ngôn ngữ không hợp lệ. Hỗ trợ: vi, en, fr, ja, ko, zh' }));
+        }
+        serverState.lockedLanguage = reqLang;
+        serverState.lastUpdate = Date.now();
+        console.log(`🔒 [Language Lock] Đã khóa cứng ngôn ngữ AI sang: ${SUPPORTED_LANGUAGES[reqLang].label} (${reqLang})`);
+        broadcastSSE('LANGUAGE_CHANGED', {
+          locked_language: reqLang,
+          language_info: SUPPORTED_LANGUAGES[reqLang]
+        });
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({
+          success: true,
+          locked_language: reqLang,
+          language_info: SUPPORTED_LANGUAGES[reqLang]
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: err.message }));
+      }
+    }
   }
 
   // 4. API BLE Scan: POST /api/ble-scan
@@ -907,9 +1180,11 @@ const server = http.createServer(async (req, res) => {
       const tEndSpeech = (rawEndSpeech > 1600000000000 && Math.abs(tServerReceived - rawEndSpeech) < 60000)
         ? rawEndSpeech
         : tServerReceived;
-      const questionText = payload.voice_text || payload.question || 'Hãy giới thiệu cho tôi về hiện vật này.';
+      const questionText = payload.voice_text || payload.question || payload.text || payload.message || payload.query || 'Hãy giới thiệu cho tôi về hiện vật này.';
       const currentCode = payload.code || req.headers['x-artifact-code'] || '001';
       const deviceId = payload.device_id || req.headers['x-device-id'] || 'ESP32_HUB_01';
+      const reqSessionId = payload.sessionId || payload.session_id || null;
+      const lockedLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang) || serverState.lockedLanguage || 'vi';
 
       const beacons = loadBeacons();
       const currentArtifact = beacons.find(b => b.code === currentCode) || beacons[0];
@@ -922,13 +1197,14 @@ const server = http.createServer(async (req, res) => {
         question: questionText,
         artifact: currentArtifact.artifact_name,
         code: currentArtifact.code,
+        locked_language: lockedLang,
         input_type: inputAudioFile ? 'WAV_MIC_UPLOAD' : 'JSON_TEXT',
         tEndSpeech: tEndSpeech
       });
 
-      // BƯỚC 1: HỎI BỘ NÃO KIEMTHU AI
+      // BƯỚC 1: HỎI BỘ NÃO KIEMTHU AI VỚI CHẾ ĐỘ KHÓA NGÔN NGỮ CỨNG
       const tAiStart = Date.now();
-      const kiemthuResult = await queryKiemThuAI(questionText, currentArtifact);
+      const kiemthuResult = await queryKiemThuAI(questionText, currentArtifact, reqSessionId, lockedLang);
       const tAiDone = Date.now();
 
       const fullReply = kiemthuResult.reply;
@@ -936,9 +1212,9 @@ const server = http.createServer(async (req, res) => {
       const baseName = `reply_${Date.now()}`;
       const chunk1Filename = `${baseName}_p1.wav`;
 
-      // BƯỚC 2: TỔNG HỢP SIÊU TỐC ĐOẠN ÂM THANH NHỎ ĐẦU TIÊN (CHUNK 1 - PROGRESSIVE FIRST SOUND)
+      // BƯỚC 2: TỔNG HỢP SIÊU TỐC ĐOẠN ÂM THANH NHỎ ĐẦU TIÊN THEO ĐÚNG GIỌNG NGÔN NGỮ KHÓA
       const tChunk1Start = Date.now();
-      await fastTextToWav(chunks[0], chunk1Filename);
+      await fastTextToWav(chunks[0], chunk1Filename, lockedLang);
       const tFirstAudioSoundReady = Date.now();
 
       // ĐO ĐỘ TRỄ CHÍNH XÁC: TỪ HẾT NÓI ĐẾN TIẾNG ĐẦU TIÊN VỀ TAI NGHE
@@ -971,6 +1247,8 @@ const server = http.createServer(async (req, res) => {
         reply_text: fullReply,
         spoken_audio_text: chunks[0],
         ai_source: kiemthuResult.source,
+        locked_language: lockedLang,
+        language_label: SUPPORTED_LANGUAGES[lockedLang]?.label || lockedLang,
         audio_mode: 'PROGRESSIVE_CHUNKS',
         audio_wav_url: chunk1Url,
         current_chunk: 1,
@@ -1006,7 +1284,7 @@ const server = http.createServer(async (req, res) => {
 
       // BƯỚC 3: ĐẨY DẦN CÁC ĐOẠN TIẾP THEO LÊN Ở CHẾ ĐỘ NỀN (BACKGROUND PROGRESSIVE DELIVERY)
       if (chunks.length > 1) {
-        processRemainingChunksBackground(chunks, baseName, hostBaseUrl);
+        processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lockedLang);
       }
       return;
 
@@ -1063,13 +1341,29 @@ const server = http.createServer(async (req, res) => {
 
   // 8.5 Health check cho Render & Uptime monitor
   if (req.method === 'GET' && (pathname === '/health' || pathname === '/api/health')) {
+    let kbStats = null;
+    try {
+      const kbPath = path.join(kiemthuDir, 'engine', 'knowledge_base.js');
+      if (fs.existsSync(kbPath)) {
+        const { knowledgeBase } = require(kbPath);
+        kbStats = {
+          facts100: knowledgeBase.facts100?.length || 0,
+          groundTruth500: knowledgeBase.groundTruth500?.length || 0,
+          servicePolicies: knowledgeBase.servicePolicies?.length || 0,
+          expandedKnowledge: knowledgeBase.expandedKnowledge?.length || 0,
+          dataset1000: knowledgeBase.dataset1000?.length || 0
+        };
+      }
+    } catch (e) {}
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     return res.end(JSON.stringify({
       status: 'ok',
       uptime_sec: Math.round(process.uptime()),
       render_mode: IS_RENDER,
       ffmpeg_bin: FFMPEG_BIN,
+      kiemthu_dir: kiemthuDir,
       kiemthu_ready: fs.existsSync(path.join(kiemthuDir, 'smart_ai_server.js')),
+      kb_stats: kbStats,
       groq_key_configured: Boolean(GROQ_API_KEY)
     }));
   }

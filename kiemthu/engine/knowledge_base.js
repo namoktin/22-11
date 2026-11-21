@@ -366,9 +366,143 @@ class KnowledgeBase {
     this.facts100BySeed = new Map();
     this.facts100InvertedIndex = new Map();
 
+    // Kho tri thức mở rộng xác thực (Bẫy lịch sử, Song ngữ EN/VI, Lịch sử toàn diện, Giao thông, Tiện ích)
+    this.expandedKnowledge = [];
+    // Kho bổ trợ 1000 câu hỏi Hỏa Lò (đã lọc nhiễu)
+    this.dataset1000 = [];
+    this.invertedIndex1000 = new Map();
+
     this.load100VerifiedFacts();
     this.load500GroundTruth();
     this.loadVerifiedServiceKnowledge();
+    this.loadExpandedKnowledge();
+    this.loadDataset1000();
+  }
+
+  loadExpandedKnowledge() {
+    try {
+      const file = path.join(__dirname, '..', 'data', 'expanded_heritage_knowledge.json');
+      if (fs.existsSync(file)) {
+        const items = JSON.parse(fs.readFileSync(file, 'utf8'));
+        this.expandedKnowledge = Array.isArray(items)
+          ? items.sort((a, b) => (b.priority || 0) - (a.priority || 0))
+          : [];
+        console.log(`[KnowledgeBase] Đã nạp ${this.expandedKnowledge.length} cụm tri thức mở rộng & Fact-Check Traps.`);
+      }
+    } catch (e) {
+      console.warn('[KnowledgeBase] Lỗi nạp expanded_heritage_knowledge.json:', e.message);
+    }
+  }
+
+  loadDataset1000() {
+    try {
+      const file = path.join(__dirname, '..', 'data', '1000_cau_hoi_hoa_lo.json');
+      if (!fs.existsSync(file)) return;
+      const items = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (!Array.isArray(items)) return;
+
+      this.dataset1000 = items.map((item, idx) => {
+        let summary = item.ground_truth_summary || '';
+        // Lọc lỗi lịch sử cũ nếu summary nhầm Hoàng Văn Thụ vào danh sách máy chém
+        if (/hoàng văn thụ/i.test(summary) && /máy chém/i.test(summary) && !/xử bắn/i.test(summary)) {
+          summary = summary.replace(/,\s*Hoàng Văn Thụ\s*\(1944\)/gi, '');
+        }
+        const normQ = nlp.normalize(item.question || '');
+        const tokens = nlp.tokenize(item.question || '').filter(t => t.length > 2 && !STOPWORDS.has(t));
+        tokens.forEach(t => {
+          if (!this.invertedIndex1000.has(t)) this.invertedIndex1000.set(t, []);
+          this.invertedIndex1000.get(t).push(idx);
+        });
+        return {
+          id: `D1000_${item.id || idx}`,
+          category: item.category || '',
+          target_poi: item.target_poi || '',
+          question: item.question || '',
+          answer: summary,
+          normQ,
+          tokens: new Set(tokens)
+        };
+      }).filter(x => x.answer && x.answer.length > 20);
+      console.log(`[KnowledgeBase] Đã nạp bổ sung ${this.dataset1000.length} câu hỏi-đáp từ 1000_cau_hoi_hoa_lo.json.`);
+    } catch (e) {
+      console.warn('[KnowledgeBase] Lỗi nạp 1000_cau_hoi_hoa_lo.json:', e.message);
+    }
+  }
+
+  /**
+   * Tra cứu kho tri thức mở rộng (Fact-Check Traps, Historical, Service, EN/VI, Overview)
+   */
+  findExpandedMatch(question, language = 'vi', minPriority = 0) {
+    if (!question || !this.expandedKnowledge.length) return null;
+    const norm = ' ' + nlp.normalize(question) + ' ';
+    const hasPhraseLocal = (p) => {
+      const clean = nlp.normalize(p);
+      return clean ? norm.includes(' ' + clean + ' ') : false;
+    };
+
+    for (const item of this.expandedKnowledge) {
+      if ((item.priority || 0) < minPriority) continue;
+
+      const allGroups = item.mustMatchAll || [];
+      const allOk = allGroups.every(group =>
+        Array.isArray(group) ? group.some(kw => hasPhraseLocal(kw)) : hasPhraseLocal(group)
+      );
+      if (!allOk) continue;
+
+      const anyList = item.mustMatchAny || [];
+      const anyOk = anyList.length === 0 || anyList.some(kw => hasPhraseLocal(kw));
+      if (!anyOk) continue;
+
+      const reply = (language === 'en' && item.answer_en) ? item.answer_en : item.answer_vi;
+      return {
+        id: item.id,
+        category: item.category,
+        priority: item.priority || 80,
+        reply
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Tra cứu bổ trợ từ kho 1000 câu hỏi Hỏa Lò (chỉ chạy khi các tầng trên chưa khớp)
+   */
+  findDataset1000Match(question) {
+    if (!question || !this.dataset1000.length) return null;
+    const norm = nlp.normalize(question);
+    if (!this.hasHistoricalEntity(norm)) return null;
+
+    const tokens = nlp.tokenize(question).filter(t => t.length > 2 && !STOPWORDS.has(t));
+    if (tokens.length < 3) return null;
+
+    const scores = new Map();
+    tokens.forEach(t => {
+      const list = this.invertedIndex1000.get(t);
+      if (list) {
+        const idf = Math.log(1 + this.dataset1000.length / list.length);
+        list.forEach(idx => scores.set(idx, (scores.get(idx) || 0) + idf));
+      }
+    });
+
+    let bestIdx = -1;
+    let bestScore = 0;
+    for (const [idx, sc] of scores.entries()) {
+      if (sc > bestScore) {
+        bestScore = sc;
+        bestIdx = idx;
+      }
+    }
+
+    if (bestIdx >= 0 && bestScore >= 4.0) {
+      const item = this.dataset1000[bestIdx];
+      let intersect = 0;
+      tokens.forEach(t => { if (item.tokens.has(t)) intersect++; });
+      const ratio = intersect / tokens.length;
+      if (ratio >= 0.55 && intersect >= 3) {
+        return { item, score: bestScore, ratio };
+      }
+    }
+    return null;
   }
 
   /**

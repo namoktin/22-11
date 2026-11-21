@@ -83,8 +83,88 @@ class IntelligentAnswerComposer {
       return this.formatResponse(trapReply, intent, retrievedData);
     }
 
+    // 0.35. Kiểm tra kho Fact-Check Traps ưu tiên cao (Hoàng Văn Thụ, Phi công Mỹ Cachot, 1945 vs 1951, 500kg, 1954 Mỹ xây, TP.HCM, nghỉ trưa, trẻ em 10 tuổi...)
+    if (intent !== 'OUT_OF_SCOPE' && intent !== 'EMERGENCY_SUPPORT' && intent !== 'CLARIFICATION') {
+      const highPriorityExp = knowledgeBase.findExpandedMatch(question, language, 94);
+      if (highPriorityExp) {
+        return this.formatResponse({
+          reply: highPriorityExp.reply,
+          style: 'CUSTOMER_CARE',
+          confidence: 'HIGH',
+          confidenceScore: 0.96,
+          sources: [`EXPANDED_VERIFIED_${highPriorityExp.id}`],
+          claims: [highPriorityExp.category],
+          responseType: 'VERIFIED_EXPANDED_FACT',
+          requiresHuman: false
+        }, intent, retrievedData);
+      }
+    }
+
+    // 0.38. Xử lý nhiễu cực đoan / ký tự lạ / thử mic / câu đệm ngắn
+    if (intent === 'CLARIFICATION' && subIntent === 'EXTREME_NOISE_OR_FILLER') {
+      const reply = language === 'en'
+        ? 'Hello! I did not catch a specific question. You can ask me about Hoa Lo Prison history, exhibits (Guillotine, Banyan tree, Cachot, US pilots), ticket prices, or opening hours!'
+        : 'Chào bạn! Mình chưa nhận rõ câu hỏi của bạn. Bạn có thể hỏi về lịch sử Nhà tù Hỏa Lò, các hiện vật (Cỗ máy chém, Cây bàng, Ngục tối Cachot, Cống ngầm 1951), giá vé, giờ mở cửa hoặc hỏi "Đây là đâu?" nhé!';
+      return this.formatResponse({
+        reply,
+        style: 'CUSTOMER_CARE',
+        confidence: 'HIGH',
+        confidenceScore: 0.95,
+        sources: ['CLARIFICATION_GUIDE_HOA_LO'],
+        claims: ['Hướng dẫn du khách đặt câu hỏi rõ ràng'],
+        responseType: 'CLARIFICATION_PROMPT',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
     // 0.4. Ngoài phạm vi di tích (OUT_OF_SCOPE)
     if (intent === 'OUT_OF_SCOPE') {
+      // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), kiểm tra lại kho tri thức mở rộng / hồ sơ di tích trước khi từ chối nhầm!
+      if (subIntent !== 'STRICT_OUT_OF_DOMAIN') {
+        const rescuedExp = knowledgeBase.findExpandedMatch(question, language, 0);
+        if (rescuedExp) {
+          return this.formatResponse({
+            reply: rescuedExp.reply,
+            style: 'CUSTOMER_CARE',
+            confidence: 'HIGH',
+            confidenceScore: 0.92,
+            sources: [`EXPANDED_VERIFIED_${rescuedExp.id}`],
+            claims: [rescuedExp.category],
+            responseType: 'VERIFIED_EXPANDED_KNOWLEDGE',
+            resolvedIntent: rescuedExp.category === 'SERVICE' || rescuedExp.category === 'EN_SERVICE' ? 'VISIT_GUIDANCE' : 'HISTORICAL_FACT',
+            requiresHuman: false
+          }, 'HISTORICAL_FACT', retrievedData);
+        }
+        const rescuedExhibit = knowledgeBase.findHistoricalExhibit(question);
+        if (rescuedExhibit && rescuedExhibit.exhibit?.directAnswer) {
+          return this.formatResponse({
+            reply: rescuedExhibit.exhibit.directAnswer,
+            style: 'DEEP_EXPLANATION',
+            confidence: 'HIGH',
+            confidenceScore: 0.90,
+            sources: [rescuedExhibit.exhibit.id],
+            claims: [rescuedExhibit.exhibit.name],
+            responseType: 'EXHIBIT_DIRECT_RESCUE',
+            resolvedIntent: 'EXHIBIT_INFORMATION',
+            requiresHuman: false
+          }, 'EXHIBIT_INFORMATION', retrievedData);
+        }
+        const rescued1000 = knowledgeBase.findDataset1000Match(question);
+        if (rescued1000 && rescued1000.item?.answer) {
+          return this.formatResponse({
+            reply: rescued1000.item.answer,
+            style: 'DEEP_EXPLANATION',
+            confidence: 'MEDIUM',
+            confidenceScore: 0.85,
+            sources: [rescued1000.item.id],
+            claims: [rescued1000.item.category || 'Tư liệu Di tích Hỏa Lò'],
+            responseType: 'DATASET_1000_RESCUE',
+            resolvedIntent: 'HISTORICAL_FACT',
+            requiresHuman: false
+          }, 'HISTORICAL_FACT', retrievedData);
+        }
+      }
+
       let reply = language === 'en'
         ? 'I am dedicated specifically to the Hoa Lo Prison Relic in Hanoi. This topic is outside the scope of our historical site. Feel free to ask me about Hoa Lo’s exhibits (the Guillotine, Banyan tree, escape sewer, Cachot) or visiting guidelines!'
         : 'Mình là trợ lý chuyên biệt hỗ trợ thông tin và lịch sử tại Di tích Nhà tù Hỏa Lò. Câu hỏi này nằm ngoài phạm vi dữ liệu và lịch sử của di tích. Bạn vui lòng hỏi về các hiện vật, lịch sử tại Hỏa Lò (như Cỗ máy chém, Cây bàng, Cống ngầm vượt ngục, Ngục tối Cachot) hoặc thông tin tham quan để mình hỗ trợ nhé!';
@@ -738,6 +818,35 @@ Kể tự nhiên, độ dài khoảng 100–180 từ, không tạo lời thoại
       }
     }
 
+    // 5.5. Tra cứu kho tri thức mở rộng (Lịch sử toàn diện, Giao thông, Tiện ích, Song ngữ EN/VI, Tổng quan) & kho bổ trợ 1.000 câu Hỏa Lò
+    const expandedFallback = knowledgeBase.findExpandedMatch(question, language, 0);
+    if (expandedFallback) {
+      return this.formatResponse({
+        reply: expandedFallback.reply,
+        style: 'CUSTOMER_CARE',
+        confidence: 'HIGH',
+        confidenceScore: 0.92,
+        sources: [`EXPANDED_VERIFIED_${expandedFallback.id}`],
+        claims: [expandedFallback.category],
+        responseType: 'VERIFIED_EXPANDED_KNOWLEDGE',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
+    const d1000Match = knowledgeBase.findDataset1000Match(question);
+    if (d1000Match && d1000Match.item?.answer) {
+      return this.formatResponse({
+        reply: d1000Match.item.answer,
+        style: 'DEEP_EXPLANATION',
+        confidence: 'MEDIUM',
+        confidenceScore: 0.85,
+        sources: [d1000Match.item.id],
+        claims: [d1000Match.item.category || 'Tư liệu Di tích Hỏa Lò'],
+        responseType: 'DATASET_1000_RETRIEVAL',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
     // =========================================================================
     // 6. PHÂN TÁCH 4 LOẠI KHƯỚC TỪ MINH BẠCH (4-TYPE ABSTENTION TAXONOMY V7.0)
     // =========================================================================
@@ -1267,6 +1376,7 @@ Kể tự nhiên, độ dài khoảng 100–180 từ, không tạo lời thoại
       verifiedClaims: validated.verifiedClaims || [],
       wasCorrected: validated.wasCorrected || false,
       responseType: result.responseType || 'DIRECT_ANSWER',
+      resolvedIntent: result.resolvedIntent || null,
       requiresHuman: result.requiresHuman || false
     };
   }

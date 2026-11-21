@@ -1,0 +1,272 @@
+[
+  {
+    "id": "EXP_TRAP_HVT",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["hoang van thu"]],
+    "mustMatchAny": ["may chem", "yen bai", "xu chem", "chem dau", "dung khong", "phai khong"],
+    "answer_vi": "Không đúng bạn nhé. Đồng chí Hoàng Văn Thụ không bị xử bằng máy chém và cũng không bị đưa lên Yên Bái. Đồng chí bị giam tại Buồng số 1 Khu D (xà lim tử hình) ở Hỏa Lò rồi bị thực dân Pháp đưa đi xử bắn tại trường bắn Tương Mai (Hà Nội) vào sáng ngày 24/5/1944.",
+    "answer_en": "That is not accurate. Revolutionary leader Hoang Van Thu was not executed by guillotine or in Yen Bai. He was held in Cell No. 1 of Zone D at Hoa Lo and executed by firing squad at Tuong Mai execution ground in Hanoi on May 24, 1944."
+  },
+  {
+    "id": "EXP_TRAP_PILOT_CACHOT",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["phi cong", "mccain", "hanoi hilton", "peterson"]],
+    "mustMatchAny": ["cachot", "cum chan", "cum sat", "doc nguoc", "thuc dan phap", "phap bat", "nguc toi"],
+    "answer_vi": "Không đúng bạn nhé. Giai đoạn 1964–1973, các phi công Mỹ (như John McCain bị bắn rơi tại hồ Trúc Bạch ngày 26/10/1967) bị tạm giam thời kháng chiến chống Mỹ, không phải do thực dân Pháp bắt và hoàn toàn không bị cùm chân dốc ngược trong ngục tối Cachot. Chính phủ Việt Nam thực hiện chính sách nhân đạo: chăm sóc y tế, bảo đảm dinh dưỡng, cho nhận thư gia đình và tổ chức Giáng sinh trước khi trao trả năm 1973.",
+    "answer_en": "That is inaccurate. From 1964 to 1973, captured American pilots (including John McCain, shot down over Truc Bach Lake on October 26, 1967) were held during the American War—not by French colonialists—and were never shackled upside down in the Cachot dungeon. They received humane treatment, medical care, family mail, and holiday observances before release in 1973."
+  },
+  {
+    "id": "EXP_TRAP_BUILD_US_1954",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["hoa lo", "nha tu"]],
+    "mustMatchAny": ["do my xay", "my xay", "xay nam 1954", "1954 dung khong"],
+    "answer_vi": "Không đúng bạn nhé. Nhà tù Hỏa Lò không phải do Mỹ xây năm 1954, mà do thực dân Pháp khởi công xây dựng từ năm 1896 (hoàn thành cơ bản năm 1899) với tên tiếng Pháp là Maison Centrale trên đất làng Phụ Khánh, Hà Nội.",
+    "answer_en": "That is incorrect. Hoa Lo Prison was not built by the United States in 1954; it was built by the French colonial authorities starting in 1896 (named Maison Centrale) on the site of Phu Khanh village in Hanoi."
+  },
+  {
+    "id": "EXP_TRAP_ADDR_HCM",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["hoa lo", "nha tu"]],
+    "mustMatchAny": ["tp hcm", "tphcm", "sai gon", "ho chi minh", "da nang"],
+    "answer_vi": "Không đúng bạn nhé. Di tích Lịch sử Nhà tù Hỏa Lò nằm tại số 1 phố Hỏa Lò, phường Cửa Nam, quận Hoàn Kiếm, thủ đô Hà Nội — không phải ở TP.HCM.",
+    "answer_en": "No, Hoa Lo Prison Relic is located at No. 1 Hoa Lo Street, Hoan Kiem District, Hanoi—not in Ho Chi Minh City."
+  },
+  {
+    "id": "EXP_TRAP_GUILLOTINE_SPEC",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["may chem", "guillotine"]],
+    "mustMatchAny": ["500kg", "500 kg", "10 met", "10m", "100kg"],
+    "answer_vi": "Không đúng bạn nhé. Cỗ máy chém tại Nhà tù Hỏa Lò cao gần 4 mét (không phải 10 mét), dựng bằng hai cột gỗ lim song song, với lưỡi dao thép vát chéo nặng 50kg (không phải 500kg) gắn quả tạ chì trượt từ trên xuống.",
+    "answer_en": "That is inaccurate. The guillotine at Hoa Lo Prison stands nearly 4 meters tall (not 10m) with ironwood pillars and a 50kg slanted steel blade (not 500kg)."
+  },
+  {
+    "id": "EXP_TRAP_1945_1951",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 100,
+    "mustMatchAll": [["1945"], ["16", "cong ngam"]],
+    "mustMatchAny": ["vuot nguc", "cong ngam", "16"],
+    "answer_vi": "Bạn đang nhớ gộp 2 sự kiện lịch sử khác nhau đó: Tháng 3/1945 (nhân thời cơ Nhật đảo chính Pháp), hơn 100 cán bộ cách mạng đã trèo tường, cải trang vượt ngục thành công. Còn vụ vượt ngục qua đường cống ngầm của 16 tử tù (5 đồng chí thoát ra phố Thợ Nhuộm) diễn ra vào đêm Noel 24/12/1951.",
+    "answer_en": "Those are two separate historical escapes: in March 1945 (during the Japanese coup against the French), over 100 political prisoners escaped by scaling walls and disguising themselves. The famous underground sewer escape of 16 death-row prisoners (5 successfully escaped) happened on Christmas Eve, December 24, 1951."
+  },
+  {
+    "id": "EXP_TRAP_BANYAN_1896",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 98,
+    "mustMatchAll": [["cay bang"], ["1896"]],
+    "mustMatchAny": ["1896", "trong tu", "co tu"],
+    "answer_vi": "Không phải từ năm 1896 bạn nhé. Theo tư liệu di tích, trước năm 1930 tù nhân chính trị mang cây bàng non từ nơi lao dịch về trồng trong sân trại giam; còn cây bàng trong sân trại nữ hiện nay được trồng đầu xuân năm 2001 trong dịp Tổng Bí thư Lê Khả Phiêu đến thăm di tích.",
+    "answer_en": "Not from 1896. According to relic records, political prisoners brought a young banyan sapling from forced labor to plant in the yard before 1930, while the current banyan tree in the women's courtyard was planted in early spring 2001."
+  },
+  {
+    "id": "EXP_TRAP_LUNCH_CLOSED",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 96,
+    "mustMatchAll": [["nghi trua", "nghi khong", "nghi ko", "xuyen trua", "dong cua", "chu nhat", "thu hai", "thu 2", "lunch", "may h mo cua", "mo cua"]],
+    "mustMatchAny": ["mo cua", "dong cua", "nghi trua", "xuyen trua", "lunch", "open", "trua", "may h"],
+    "answer_vi": "Di tích Lịch sử Nhà tù Hỏa Lò mở cửa liên tục từ 8:00 đến 17:00 tất cả các ngày trong tuần (từ Thứ Hai đến Chủ Nhật, kể cả ngày Lễ, Tết) và KHÔNG đóng cửa nghỉ trưa bạn nhé.",
+    "answer_en": "Hoa Lo Prison Relic is open daily from 8:00 AM to 5:00 PM (Monday through Sunday, including holidays) with NO lunch break closure."
+  },
+  {
+    "id": "EXP_SVC_TICKET_SENIOR_REFUND",
+    "category": "SERVICE",
+    "priority": 95,
+    "mustMatchAll": [["ve", "gia ve", "ticket"]],
+    "mustMatchAny": ["nguoi lon", "65 tuoi", "60 tuoi", "nguoi cao tuoi", "doi tra", "hoan tien", "khong di nua", "mua roi", "bao nhieu tien"],
+    "answer_vi": "Giá vé tham quan ban ngày tại Di tích Nhà tù Hỏa Lò là 50.000 VNĐ/người lớn; người cao tuổi (từ 60 tuổi trở lên, mang CCCD) và học sinh sinh viên được giảm 50% còn 25.000 VNĐ/lượt; trẻ em dưới 15 tuổi và người có công được miễn phí. Vé ban ngày mua tại quầy dùng trong ngày và không áp dụng hoàn trả sau khi qua cửa soát vé (nếu thanh toán nhầm hoặc cần hỗ trợ đổi lịch tour đêm, vui lòng liên hệ trực tiếp quầy vé Cổng số 1).",
+    "answer_en": "Daytime admission is 50,000 VND for adults, 25,000 VND (50% off) for seniors 60+ and students with ID, and free for children under 15. Tickets are valid for the day of purchase and non-refundable after entry."
+  },
+  {
+    "id": "EXP_SVC_FAMILY_ACCESSIBILITY_GUIDE",
+    "category": "SERVICE",
+    "priority": 92,
+    "mustMatchAll": [["em be", "3 tuoi", "4 tuoi", "5 tuoi", "nguoi lon tuoi", "cau thang", "huong dan vien di cung", "co huong dan vien"]],
+    "mustMatchAny": ["so ko", "so khong", "phu hop", "cau thang", "di cung", "xe lan", "tham quan", "di"],
+    "answer_vi": "Di tích Nhà tù Hỏa Lò chủ yếu nằm ở mặt bằng tầng 1, lối đi rộng rãi, ít bậc cầu thang và có nhân viên hỗ trợ xe lăn nên rất thuận tiện cho người cao tuổi. Với trẻ nhỏ (3–5 tuổi), gia đình vẫn có thể tham quan các khu trưng bày sáng sủa và sân Cây Bàng (nên cân nhắc lướt nhanh qua khu ngục tối Cachot hoặc máy chém nếu bé dễ sợ). Di tích có dịch vụ thuyết minh viên trực tiếp (đặt theo đoàn) hoặc máy thuyết minh tự động Audioguide 50.000 VNĐ/máy rất tiện lợi cho khách đi lẻ.",
+    "answer_en": "Hoa Lo Prison is mostly on the ground floor with minimal stairs and wheelchair support for seniors. Young children can visit comfortably (parents may skip darker rooms like Cachot if needed). Guided tours for groups and 50,000 VND audio guides for individuals are available."
+  },
+  {
+    "id": "EXP_SVC_AUDIOGUIDE_TROUBLESHOOT",
+    "category": "CSKH",
+    "priority": 94,
+    "mustMatchAll": [["tai nghe", "audio guide", "audioguide"]],
+    "mustMatchAny": ["bi lag", "khong co sound", "bi re", "het pin", "mat tieng", "hong", "loi"],
+    "answer_vi": "Nếu máy thuyết minh Audioguide bị rè, mất tiếng, lag hoặc hết pin, bạn hãy mang máy quay lại Quầy phát thiết bị ngay Cổng số 1 để nhân viên kiểm tra và đổi ngay máy mới miễn phí cho bạn nhé.",
+    "answer_en": "If your audio guide has static, no sound, lag, or low battery, please bring it back to the Audio Guide Desk at Gate No. 1 for a free immediate replacement."
+  },
+  {
+    "id": "EXP_TRAP_CHILD_TICKET",
+    "category": "FACT_CHECK_TRAP",
+    "priority": 95,
+    "mustMatchAll": [["tre em", "10 tuoi", "duoi 15", "child", "kids"]],
+    "mustMatchAny": ["ve", "50", "mien phi", "mat tien", "gia", "ticket", "free"],
+    "answer_vi": "Trẻ em dưới 15 tuổi (bao gồm trẻ em 10 tuổi) được MIỄN PHÍ hoàn toàn vé tham quan ban ngày tại Di tích Nhà tù Hỏa Lò bạn nhé. Vé người lớn là 50.000 VNĐ/lượt, còn học sinh sinh viên và người từ 60 tuổi trở lên được giảm 50% (25.000 VNĐ/lượt).",
+    "answer_en": "Children under 15 years old enjoy FREE daytime admission to Hoa Lo Prison Relic. Adult tickets are 50,000 VND, and students/seniors (60+) receive a 50% discount (25,000 VND)."
+  },
+  {
+    "id": "EXP_HIST_BUILD_1896",
+    "category": "HISTORICAL",
+    "priority": 90,
+    "mustMatchAll": [["hoa lo", "nha tu", "prison"]],
+    "mustMatchAny": ["xay nam nao", "lam lao", "ai xay", "xay dung", "khoi cong", "built", "when was", "kien truc su", "vildieu"],
+    "answer_vi": "Nhà tù Hỏa Lò do thực dân Pháp khởi công xây dựng năm 1896 (hoàn thành cơ bản năm 1899) theo bản thiết kế của kiến trúc sư Pháp Henri Vildieu, mang tên chính thức là Maison Centrale (Nhà tù Trung ương), tọa lạc trên nền đất làng Phụ Khánh tại số 1 phố Hỏa Lò, Hà Nội.",
+    "answer_en": "Hoa Lo Prison was built by French colonial authorities beginning in 1896 (designed by French architect Henri Vildieu) under the official name Maison Centrale (Central Prison) on the former land of Phu Khanh village in Hanoi."
+  },
+  {
+    "id": "EXP_HIST_WHY_NAME_HOA_LO",
+    "category": "HISTORICAL",
+    "priority": 90,
+    "mustMatchAll": [["hoa lo", "nha pha", "phu khanh", "xay nha tu"]],
+    "mustMatchAny": ["goi la", "ten goi", "lang nao", "lam nghe gi", "called hoa lo", "why is it called", "tu pha", "bat nguon", "dat nay"],
+    "answer_vi": "Tên gọi 'Hỏa Lò' bắt nguồn từ làng Phụ Khánh (gồm thôn Nguyên Khánh và Phụ Khánh xưa) — ngôi làng nghề nổi tiếng chuyên làm ấm đất, siêu đất và các loại bếp hỏa lò nung gốm đỏ lửa quanh năm nằm ngay trên khu đất xây nhà tù. Còn tên 'Nhà pha' xuất phát từ cách đọc Việt hóa chữ 'Central / Phare' thời Pháp thuộc.",
+    "answer_en": "The name 'Hoa Lo' ('Fiery Furnace') comes from Phu Khanh village, a traditional pottery village on this site famous for making clay stoves and earthenware kilns that burned year-round before the French built Maison Centrale in 1896."
+  },
+  {
+    "id": "EXP_HIST_AREA_TOWERS",
+    "category": "HISTORICAL",
+    "priority": 90,
+    "mustMatchAll": [["dien tich", "m2", "met vuong", "nho hon", "thap ha noi", "hanoi tower", "con lai"]],
+    "mustMatchAny": ["hoa lo", "di tich", "ban dau", "bao ton", "hien nay", "thap ha noi", "hanoi tower", "rong"],
+    "answer_vi": "Khi mới xây dựng, Nhà tù Hỏa Lò có diện tích rộng gần 13.000 m² (chính xác khoảng 12.908 m²). Đến thập niên 1990, một phần diện tích được dành xây dựng Tổ hợp Tháp Hà Nội (Hanoi Towers); phần khu di tích lịch sử bảo tồn nguyên trạng hiện nay rộng khoảng 2.434 m² (hơn 2.400 m²), nằm ở góc Đông Nam nhà tù cũ.",
+    "answer_en": "Originally, Hoa Lo Prison covered nearly 13,000 square meters (12,908 m²). In the 1990s, part of the land was redeveloped into Hanoi Towers, while over 2,400 m² (2,434 m²) at the southeastern corner has been preserved as the historical relic site."
+  },
+  {
+    "id": "EXP_HIST_WALL_WATCHTOWER",
+    "category": "HISTORICAL",
+    "priority": 90,
+    "mustMatchAll": [["tuong bao", "tuong da", "manh chai", "manh thuy tinh", "choi gac", "vong gac"]],
+    "mustMatchAny": ["cao", "day", "met", "lam gi", "tac dung", "may choi", "chong vuot nguc", "hoa lo"],
+    "answer_vi": "Hệ thống tường bao Nhà tù Hỏa Lò xây bằng đá kiên cố cao khoảng 4 mét, dày 0,5 mét; phía trên đỉnh tường gắn dày đặc mảnh chai thủy tinh sắc nhọn và chăng dây thép gai (có thời kỳ chạy điện) để ngăn tù nhân trèo tường vượt ngục. Bốn góc tường bố trí 4 chòi gác cao để lính gác quan sát toàn bộ khu trại cả ngày lẫn đêm.",
+    "answer_en": "Hoa Lo's perimeter stone walls stood about 4 meters high and 0.5 meters thick, topped with embedded broken glass shards and barbed wire, with 4 corner watchtowers allowing guards constant surveillance."
+  },
+  {
+    "id": "EXP_HIST_ZONES_IN_OUT",
+    "category": "HISTORICAL",
+    "priority": 88,
+    "mustMatchAll": [["khu ngoai", "khu trong", "giam nguc", "khu bep", "khu y te", "khu biet giam", "cua so", "be xi mang"]],
+    "mustMatchAny": ["phong gi", "trai nao", "khac gi", "khu nao", "o dau", "thiet ke", "nha tu", "hoa lo"],
+    "answer_vi": "Nhà tù Hỏa Lò xưa được chia thành hai khu chính: Khu ngoài gồm phòng giám ngục, phòng lục sự, nơi tiếp nhận đơn từ, phòng luật sư và khu thường trực hành chính. Khu trong là khu giam giữ chính gồm các trại giam tập thể (A, B, C, D, E, G, I, J, K, L, M, O, P), dãy xà lim tử hình Khu D, ngục tối biệt giam Cachot, cùng khu bếp và trạm xá.",
+    "answer_en": "Historically, Hoa Lo was divided into an Outer Zone (warden's office, clerk rooms, administration) and an Inner Zone containing communal cellblocks, Zone D death-row cells, Cachot solitary dungeons, kitchen, and infirmary."
+  },
+  {
+    "id": "EXP_HIST_CAPACITY_2000",
+    "category": "HISTORICAL",
+    "priority": 88,
+    "mustMatchAll": [["suc chua", "2000", "2 000", "bao nhieu tu nhan"]],
+    "mustMatchAny": ["hoa lo", "ban dau", "cao diem", "giam"],
+    "answer_vi": "Ban đầu thực dân Pháp thiết kế Nhà tù Hỏa Lò với sức chứa khoảng 450 đến 500 tù nhân. Tuy nhiên vào các giai đoạn đàn áp cao điểm (như 1930–1933 và 1950–1953), nhà tù bị nhồi nhét giam giữ tới hơn 2.000 tù nhân trong điều kiện vô cùng chật chội, ngột ngạt.",
+    "answer_en": "Originally designed to hold around 450–500 inmates, Hoa Lo Prison became severely overcrowded during peak crackdowns, holding over 2,000 prisoners at once."
+  },
+  {
+    "id": "EXP_HIST_LIFE_FOOD_TORTURE",
+    "category": "HISTORICAL",
+    "priority": 88,
+    "mustMatchAll": [["an gi", "an uong", "com gao ham", "ca kho", "khau phan", "danh dap", "tra tan", "cap rang", "ao tu", "tu che", "do dung", "lien lac", "giau tai lieu", "hoc ngoai ngu", "nuoc uong", "ve sinh trong phong", "tu nhi", "tuyet thuc"]],
+    "mustMatchAny": ["tu nhan", "trong tu", "hoa lo", "thoi phap", "trai giam", "trai nu", "cach nao", "ra sao", "la ai", "dac diem", "doi quyen loi", "cua ai", "khau phan"],
+    "answer_vi": "Trong chế độ lao tù thực dân Pháp tại Hỏa Lò, tù nhân chính trị phải chịu khẩu phần kham khổ (cơm gạo hẩm, cá khô mặn, thiếu nước sạch, vệ sinh chung tại chỗ), bị đánh đập tra tấn và giám sát bởi 'cập rằng' (tù thường phạm được cai ngục dùng để kìm kẹp tù chính trị). Bất chấp xiềng xích, các chiến sĩ và nữ tù (cùng các em nhỏ 'tù nhi' trong trại nữ) đã kiên cường tuyệt thực đòi cải thiện sinh hoạt, tận dụng vỏ hộp nhôm chế thìa, mài cành bàng làm bút, học văn hóa/ngoại ngữ và chuyền tin bí mật để biến nhà tù thành trường học cách mạng.",
+    "answer_en": "Under French colonial rule, political prisoners endured meager rations, overcrowding, beatings, and surveillance by trustee inmates ('cap rang'). Despite harsh conditions, prisoners—including women and infants in the women's wing—staged hunger strikes, crafted tools from tin cans, made pens from banyan twigs, and turned the prison into a 'revolutionary school'."
+  },
+  {
+    "id": "EXP_HIST_LEADERS",
+    "category": "HISTORICAL",
+    "priority": 88,
+    "mustMatchAll": [["lanh dao", "truong chinh", "le duan", "do muoi", "nguyen van linh", "nguyen duc canh", "pham thi van", "do nhuan", "nguyen thi minh khai", "hoang ngan", "nguyen hoang ton", "tran tu binh"]],
+    "mustMatchAny": ["hoa lo", "bi giam", "trai nu", "ao len", "ai", "tung o", "lien quan", "cau chuyen", "vuot nguc", "xu chem"],
+    "answer_vi": "Nhà tù Hỏa Lò từng giam giữ nhiều nhà yêu nước và lãnh đạo cách mạng kiệt xuất của Việt Nam như: Phan Bội Châu, Lương Văn Can, Nguyễn Thái Học, Nguyễn Đức Cảnh, Hoàng Văn Thụ, Nguyễn Hoàng Tôn, Trần Tử Bình, các nữ chiến sĩ Nguyễn Thị Minh Khai, Hoàng Ngân, Trương Thị Mỹ, cùng nhiều đồng chí sau này giữ trọng trách Tổng Bí thư như Trường Chinh, Lê Duẩn, Nguyễn Văn Linh, Đỗ Mười. Nơi đây còn ghi dấu câu chuyện xúc động chiếc áo len mà nhạc sĩ Đỗ Nhuận nhường lại và bà Phạm Thị Vân bí mật đan gửi tặng đồng chí Hoàng Văn Thụ.",
+    "answer_en": "Hoa Lo Prison held many prominent Vietnamese patriots and future revolutionary leaders, including Phan Boi Chau, Nguyen Thai Hoc, Hoang Van Thu, Nguyen Duc Canh, Nguyen Thi Minh Khai, Truong Chinh, Le Duan, Nguyen Van Linh, and Do Muoi."
+  },
+  {
+    "id": "EXP_HIST_1945_1954_1997_BQL",
+    "category": "HISTORICAL",
+    "priority": 86,
+    "mustMatchAll": [["1997", "xep hang", "cong nhan di tich", "co quan nao quan ly", "sau nam 1954", "thang 8 1945", "1946 1954", "toa an de hinh", "toa an ha noi", "mat tham phap", "dot vuot nguc", "nhac nho", "y nghia giao duc"]],
+    "mustMatchAny": ["hoa lo", "di tich", "nha tu", "giai phong", "quan ly", "quan trong", "lien he", "gi"],
+    "answer_vi": "Trong lịch sử, Hỏa Lò trải qua các dấu mốc lớn: thời Pháp thuộc là công cụ đàn áp gắn với Sở Mật thám và Tòa án Đề hình; tháng 3/1945 có cuộc vượt ngục hơn 100 cán bộ và đến Cách mạng Tháng Tám 1945 các tù nhân được giải phóng; giai đoạn 1946–1954 Pháp tái chiếm giam giữ chiến sĩ kháng chiến (ghi dấu vụ vượt ngục cống ngầm đêm 24/12/1951); sau ngày Giải phóng Thủ đô 10/10/1954 nhà tù do chính quyền Việt Nam quản lý (1964–1973 tạm giam phi công Mỹ). Ngày 18/6/1997, Di tích Lịch sử Nhà tù Hỏa Lò được xếp hạng Di tích Lịch sử Quốc gia và hiện do Ban Quản lý Di tích Nhà tù Hỏa Lò (thuộc Sở Văn hóa và Thể thao Hà Nội) trực tiếp quản lý.",
+    "answer_en": "Hoa Lo Prison was used by the French colonial regime until 1954, then managed by Vietnamese authorities (holding US pilots from 1964 to 1973). It was officially recognized as a National Historical Relic in 1997 and is managed by the Hoa Lo Prison Relic Management Board under the Hanoi Department of Culture and Sports."
+  },
+  {
+    "id": "EXP_SVC_NIGHT_TOUR_DETAIL",
+    "category": "SERVICE",
+    "priority": 92,
+    "mustMatchAll": [["tour dem", "dem thieng lieng", "sacred night"]],
+    "mustMatchAny": ["may gio", "may h", "keo dai", "bao lau", "gia", "nhiu", "chu de", "1", "2", "3", "dat ve", "mua ve", "book", "hom nay", "tell me", "lua thanh xuan", "nhung doa hoa", "sang ngoi"],
+    "answer_vi": "Tour trải nghiệm 'Đêm thiêng liêng' có 3 chủ đề: Đêm thiêng liêng 1 (Sáng ngời tinh thần Việt), Đêm thiêng liêng 2 (Sống như những đóa hoa — tôn vinh các nữ chiến sĩ), và Đêm thiêng liêng 3 (Lửa thanh xuân). Tour diễn ra từ 19:00 các tối Thứ 6, Thứ 7 và Chủ Nhật (thời lượng khoảng 90 phút), giá vé từ 399.000 – 499.000 VNĐ tùy chủ đề (kèm trải nghiệm thưởng thức trà bàng, thạch bàng). Do giới hạn chỗ nên du khách cần đặt vé trước qua Fanpage chính thức hoặc Hotline của Ban Quản lý Di tích Hỏa Lò.",
+    "answer_en": "The 'Sacred Night' experience tour runs on Friday, Saturday, and Sunday evenings starting at 7:00 PM (approx. 90 minutes) with 3 themes. Tickets range from 399,000 to 499,000 VND and must be booked in advance via the official Hoa Lo Prison Relic Fanpage or hotline."
+  },
+  {
+    "id": "EXP_SVC_TRANSPORT_VICINITY",
+    "category": "SERVICE",
+    "priority": 90,
+    "mustMatchAll": [["hoa lo", "nha tu"]],
+    "mustMatchAny": ["xe buyt", "bus", "ga ha noi", "van mieu", "ho guom", "ho hoan kiem", "bao xa", "di the nao", "mat may phut", "quan an", "quan pho", "ca phe"],
+    "answer_vi": "Di tích Nhà tù Hỏa Lò nằm ở trung tâm quận Hoàn Kiếm (số 1 phố Hỏa Lò), rất thuận tiện di chuyển: cách Ga Hà Nội khoảng 700m (8–10 phút đi bộ), cách Hồ Hoàn Kiếm khoảng 900m (10–12 phút đi bộ), cách Văn Miếu khoảng 1,8km (5–7 phút đi xe). Nhiều tuyến xe buýt đi qua khu vực phố Hai Bà Trưng – Quán Sứ – Lý Thường Kiệt gần đó (như tuyến 02, 09, 32, 34, 38, 40, 45). Xung quanh phố Hỏa Lò, Quán Sứ, Lý Thường Kiệt có rất nhiều quán phở, bún chả và cà phê để bạn nghỉ chân sau khi tham quan.",
+    "answer_en": "Hoa Lo Prison (No. 1 Hoa Lo St., Hoan Kiem) is centrally located: about 700m from Hanoi Railway Station, 900m from Hoan Kiem Lake, and 1.8km from the Temple of Literature, with multiple city bus routes and cafes/restaurants nearby."
+  },
+  {
+    "id": "EXP_SVC_INDOOR_WEATHER_COMFORT",
+    "category": "SERVICE",
+    "priority": 90,
+    "mustMatchAll": [["troi mua", "mua to", "nang nong", "dieu hoa", "quat mat", "nghi chan", "ghe ngoi", "it dong", "vang khach", "sang hay chieu"]],
+    "mustMatchAny": ["hoa lo", "di tich", "trong nha", "tham quan", "khung gio", "dep hon", "nguoi gia", "co"],
+    "answer_vi": "Phần lớn các phòng trưng bày tại Di tích Nhà tù Hỏa Lò đều nằm trong nhà có mái che, hệ thống thông gió/quạt mát và ghế nghỉ chân dọc lối đi, nên trời mưa hay nắng nóng bạn vẫn tham quan thuận tiện (riêng khu sân cây bàng và Đài tưởng niệm ngoài trời nên mang theo ô/áo mưa nhỏ nếu trời mưa). Để tham quan thoáng đãng và ít đông nhất, bạn nên đi vào buổi sáng sớm (8:00–9:30) hoặc đầu giờ chiều các ngày trong tuần (Thứ 2 đến Thứ 5).",
+    "answer_en": "Most exhibition rooms at Hoa Lo Prison are indoors with roofs, ventilation/fans, and seating areas, so visiting is comfortable even on rainy or hot days. Early mornings (8:00–9:30 AM) on weekdays are the quietest times to visit."
+  },
+  {
+    "id": "EXP_SVC_RULES_DRESS_TOUCH_FOOD",
+    "category": "SERVICE",
+    "priority": 90,
+    "mustMatchAll": [["so vao", "cham vao", "do an", "nuoc uong", "quan dui", "vay ngan", "trang phuc", "quy dinh", "luu y", "qua luu niem", "tui tote", "so tay", "thue tai nghe", "audio guide", "audioguide"]],
+    "mustMatchAny": ["hoa lo", "may chem", "hien vat", "duoc khong", "dc ko", "co ban", "o dau", "gia", "how much", "ngon ngu", "tieng han", "tieng nhat", "tham quan", "vao", "chup"],
+    "answer_vi": "Khi tham quan Di tích Nhà tù Hỏa Lò, bạn vui lòng mặc trang phục lịch sự, gọn gàng (tránh đồ quá ngắn/phản cảm), không sờ chạm vào hiện vật trưng bày (như máy chém, cùm sắt), không mang đồ ăn/thức uống vào phòng trưng bày và không bật đèn flash hay bay flycam. Bạn có thể thuê máy thuyết minh tự động Audioguide ngay tại quầy vé (50.000 VNĐ/máy, hỗ trợ đa ngôn ngữ như Việt, Anh, Pháp...) và ghé Quầy lưu niệm gần lối ra để mua túi tote, sổ tay, ấn phẩm lịch sử Hỏa Lò.",
+    "answer_en": "Please dress respectfully, do not touch exhibits, avoid bringing food into galleries, and do not use flash or drones. Multilingual audio guides are available for rent at the ticket counter (50,000 VND), and souvenirs are available near the exit."
+  },
+  {
+    "id": "EXP_SVC_LOST_ITEM",
+    "category": "CSKH",
+    "priority": 94,
+    "mustMatchAll": [["mat tui", "mat vi", "roi vi", "roi mat", "quen dien thoai", "that lac", "mat do", "bo quen"]],
+    "mustMatchAny": ["bao", "o dau", "tim lai", "di tich", "san", "nha ve sinh", "trong", "vi tien"],
+    "answer_vi": "Nếu bạn lỡ làm rơi hoặc bỏ quên đồ dùng (ví tiền, điện thoại, túi xách, giấy tờ...), hãy báo ngay cho nhân viên bảo vệ gần nhất hoặc quay lại Quầy Thông Tin / Quầy Gửi Đồ tại Cổng số 1 để Ban Quản lý phát loa hỗ trợ tìm kiếm và đối soát khu vực bạn vừa đi qua nhé.",
+    "answer_en": "If you lost or misplaced an item, please notify the nearest security staff or visit the Information/Luggage Desk at Gate No. 1 immediately so the Management Board can assist in locating it."
+  },
+  {
+    "id": "EXP_GHOST_SCARED_EMPATHY",
+    "category": "EMPATHY",
+    "priority": 92,
+    "mustMatchAll": [["co ma", "so ma", "so qua", "am anh", "noi da ga", "xuc dong", "roi nuoc mat"]],
+    "mustMatchAny": ["ko", "khong", "huhu", "ban dem", "o day", "qua", "xem", "nhin"],
+    "answer_vi": "Cảm giác hồi hộp hay xúc động khi đứng giữa không gian lịch sử trang nghiêm của Hỏa Lò là điều rất nhiều du khách trải qua. Di tích hoàn toàn an toàn, sáng đèn và luôn có nhân viên túc trực hỗ trợ. Nơi đây lưu giữ ký ức thiêng liêng để tri ân sự hy sinh quả cảm của các chiến sĩ yêu nước — nếu thấy hơi ngợp, bạn có thể ra sân Cây Bàng thoáng đãng nghỉ ngơi một chút nhé.",
+    "answer_en": "It is completely natural to feel moved or solemn inside Hoa Lo Prison. The relic is safe, well-lit, and staffed throughout; you can step out to the open Banyan Tree courtyard anytime to take a breather."
+  },
+  {
+    "id": "EXP_EN_TICKET_HOURS_WC_PHOTO_ACCESS",
+    "category": "EN_SERVICE",
+    "priority": 93,
+    "mustMatchAll": [["ticket", "price", "opening hours", "open", "restroom", "toilet", "photo", "photos", "wheelchair", "audio guide"]],
+    "mustMatchAny": ["what", "how much", "where", "can i", "is there", "is hoa lo", "are the", "please", "inside"],
+    "answer_vi": "Di tích Nhà tù Hỏa Lò mở cửa hàng ngày 8:00–17:00 (không nghỉ trưa). Vé người lớn 50.000 VNĐ, HSSV/người cao tuổi giảm 50% (25.000 VNĐ), trẻ em dưới 15 tuổi miễn phí. Máy Audioguide giá 50.000 VNĐ, có nhà vệ sinh, tủ gửi đồ miễn phí và hỗ trợ xe lăn; được chụp ảnh không bật flash.",
+    "answer_en": "Hoa Lo Prison Relic is open daily from 8:00 AM to 5:00 PM (no lunch break). Daytime admission is 50,000 VND for adults, 25,000 VND for students/seniors (60+), and free for children under 15. Multilingual audio guides are 50,000 VND. Restrooms, free luggage lockers, and wheelchair assistance are available; non-flash photography for personal use is allowed."
+  },
+  {
+    "id": "EXP_EN_BANYAN_GUILLOTINE_CACHOT_MCCAIN",
+    "category": "EN_INFO",
+    "priority": 92,
+    "mustMatchAll": [["banyan", "guillotine", "cachot", "mccain", "hanoi hilton", "hoa lo prison"]],
+    "mustMatchAny": ["tell me", "who was", "what is", "where is", "about", "story", "height", "located"],
+    "answer_vi": "Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, Hà Nội) do Pháp xây năm 1896, nổi bật với cỗ máy chém cao gần 4m nặng 50kg, ngục tối Cachot, cây bàng cổ thụ cứu giúp tù nhân và khu trưng bày phi công Mỹ 1964–1973 (John McCain, biệt danh Hanoi Hilton).",
+    "answer_en": "Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi) was built by the French in 1896 (Maison Centrale). Key highlights include the nearly 4m-tall guillotine (50kg blade), the harsh Cachot solitary dungeon, the historic Banyan Tree that provided medicine and hope to political prisoners, the 1951 underground sewer escape, and the 1964–1973 exhibition on American pilots including John McCain ('Hanoi Hilton')."
+  },
+  {
+    "id": "EXP_OVERVIEW_BROAD_GUIDE",
+    "category": "OVERVIEW",
+    "priority": 85,
+    "mustMatchAll": [["ke chuyen di", "co gi hay", "gioi thieu di", "noi gi do", "bat dau di", "hoa lo", "nha tu hoa lo", "lich su", "tham quan", "huong dan toi", "tom tat", "khong the bo qua", "noi tieng the", "dang di khong", "lan dau", "tong quan", "ngan gon", "trai nghiem gi", "tour nao"]],
+    "mustMatchAny": ["ke chuyen", "co gi hay", "gioi thieu", "noi gi", "bat dau", "hoa lo", "lich su", "tham quan", "huong dan", "tom tat", "bo qua", "noi tieng", "dang di", "lan dau", "tong quan", "ngan gon", "trai nghiem", "tour"],
+    "answer_vi": "Chào mừng bạn đến với Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, Hoàn Kiếm, Hà Nội) — công trình do thực dân Pháp xây năm 1896 mang tên Maison Centrale. Điểm nổi bật không thể bỏ qua gồm: Cổng chính & tường đá cổ, Phòng giam tập thể cùm sắt, Ngục tối Cachot, Cỗ máy chém 4m, Sân Cây Bàng lịch sử, Đường cống ngầm vượt ngục 1951, Khu trưng bày phi công Mỹ (1964–1973) và Đài tưởng niệm. Bạn muốn nghe chi tiết về khu vực hay hiện vật nào trước?",
+    "answer_en": "Welcome to Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi), built by the French in 1896 as Maison Centrale. Must-see highlights include the main gate, communal shackled cellblocks, Cachot dark dungeon, the 4m guillotine, the historic Banyan Tree, the 1951 sewer escape, the 1964–1973 US pilots exhibition, and the Memorial. Which exhibit would you like to explore first?"
+  }
+]

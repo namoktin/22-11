@@ -143,6 +143,135 @@ class IntentClassifier {
       };
     }
 
+    // 0.05. Kiểm tra nhiễu cực đoan / ký tự lạ / toàn số / emoji / câu đệm vô nghĩa / lặp từ
+    const trimmedNorm = norm.trim();
+    const normTokens = trimmedNorm ? trimmedNorm.split(' ') : [];
+    const uniqueTokens = new Set(normTokens);
+    const isPureNoiseOrFiller =
+      !trimmedNorm ||
+      /^[0-9\s]+$/.test(trimmedNorm) ||
+      (normTokens.length === 1 && /^(a|aa|alo|test|testing|ok|oke|u|vang|ha|hihi|hehe|haha|o|um|uh|eh|hi|hey)$/.test(normTokens[0]) && !/^(hi|hey)$/.test(normTokens[0])) ||
+      /^(alo alo|alo alo 1234|testing 123|gi co|hihi|hehe|haha)$/.test(trimmedNorm) ||
+      (normTokens.length >= 4 && uniqueTokens.size <= 2 && /^(hoa lo|nha tu|test|alo|ok|a)$/.test([...uniqueTokens].join(' ')));
+
+    if (isPureNoiseOrFiller) {
+      return {
+        intent: INTENTS.CLARIFICATION,
+        subIntent: 'EXTREME_NOISE_OR_FILLER',
+        subject: null,
+        aspect: 'CLARIFICATION_NEEDED',
+        confidence: 0.96,
+        reason: 'Phát hiện tín hiệu nhiễu / ký tự đặc biệt / thử mic / câu đệm ngắn'
+      };
+    }
+
+    // 0.06. Kiểm tra chào hỏi / cảm ơn / tạm biệt / hỏi danh tính trợ lý (cả VI & EN)
+    const isGreetingOnly = /^(xin chao|chao ban|chao|hello|hi|hey|good morning|good afternoon|good evening)/.test(trimmedNorm) &&
+      normTokens.length <= 8 && !hasPhrase(norm, 'gia ve') && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'cay bang');
+    if (isGreetingOnly) {
+      return {
+        intent: INTENTS.GREETING,
+        subIntent: 'GREETING',
+        subject: null,
+        aspect: 'SOCIAL',
+        confidence: 0.97,
+        reason: 'Lời chào mở đầu từ du khách'
+      };
+    }
+    if (/^(cam on|thank you|thanks|tks|many thanks)\b/.test(trimmedNorm) && normTokens.length <= 10) {
+      return {
+        intent: INTENTS.THANK_YOU,
+        subIntent: 'THANK_YOU',
+        subject: null,
+        aspect: 'SOCIAL',
+        confidence: 0.97,
+        reason: 'Lời cảm ơn từ du khách'
+      };
+    }
+    if (/^(tam biet|bye|goodbye|see you|hen gap lai)\b/.test(trimmedNorm) && normTokens.length <= 10) {
+      return {
+        intent: INTENTS.GOODBYE,
+        subIntent: 'GOODBYE',
+        subject: null,
+        aspect: 'SOCIAL',
+        confidence: 0.97,
+        reason: 'Lời tạm biệt từ du khách'
+      };
+    }
+    if (
+      hasPhrase(norm, 'ban ten la gi') || hasPhrase(norm, 'ban la ai') || hasPhrase(norm, 'ai tao ra ban') ||
+      hasPhrase(norm, 'sao ban thong minh') || hasPhrase(norm, 'ban thong minh the')
+    ) {
+      return {
+        intent: INTENTS.CHITCHAT_BOT,
+        subIntent: 'BOT_IDENTITY',
+        subject: null,
+        aspect: 'SOCIAL',
+        confidence: 0.96,
+        reason: 'Khách hỏi về danh tính / khen ngợi trợ lý ảo'
+      };
+    }
+
+    // 0.07. CỔNG CHẶN NGOÀI LỀ TOÀN DIỆN (chạy TRƯỚC SITE_OPERATIONS để 'Giá Bitcoin' không nhảy vào vé 50k!)
+    const hasHoaLoAnchor = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') ||
+      hasPhrase(norm, 'may chem') || hasPhrase(norm, 'cay bang') || hasPhrase(norm, 'cachot') ||
+      hasPhrase(norm, 'cong ngam') || hasPhrase(norm, 'hanoi hilton') || hasPhrase(norm, 'dem thieng lieng') ||
+      hasPhrase(norm, 'tham quan trong nha') || hasPhrase(norm, 'di tich');
+
+    const hardOosPatterns = [
+      // Tài chính, tiền số, ngân hàng, bất động sản
+      'bitcoin', 'crypto', 'chung khoan', 'vn index', 'co phieu', 'gia vang', 'sjc', 'gia xang', 'ron 95',
+      'ty gia do la', 'vietcombank', 'lai suat', 'gui tiet kiem', 'tai khoan ngan hang', 'bat dong san', 'lam sao de giau', 'lam giau',
+      // Thời tiết thuần túy (loại trừ câu hỏi tham quan trong nhà khi trời mưa)
+      'du bao thoi tiet', 'weather in', 'co mua khong',
+      // Thể thao, giải trí, game, mạng xã hội, người nổi tiếng
+      'world cup', 'ngoai hang anh', 'doi tuyen viet nam', 'da may gio', 'bong da',
+      'netflix', 'lien quan', 'minecraft', 'leo rank', 'tiktok', 'son tung', 'elon musk', 'bill gates',
+      // Công nghệ, lập trình, toán, bài tập, dịch thuật, văn học
+      'python', 'javascript', 'quicksort', 'fibonacci', 'dijkstra', 'docker', 'ubuntu', 'windows 11', 'man hinh xanh',
+      'phuong trinh', 'tich phan', 'pytago', 'cong 2 bang may', '2 cong 2', 'ielts', 'viet cv', 'don xin nghi phep',
+      'ta con meo', 'truyen kieu', 'bai tho song', 'triet hoc mac', 'dich cau nay', 'giao tiep trong 30 ngay',
+      'iphone', 'so sanh samsung', 'laptop nao choi game', 'hack wifi',
+      // Ẩm thực công thức, đời sống, y tế dân sinh, xổ số, tử vi, thú cưng, tình cảm
+      'huong dan nau pho', 'cach lam banh chung', 'cong thuc pha tra sua', 'tu van tinh cam', 'nguoi yeu doi chia tay',
+      'danh lo', 'xo so mien bac', 'chua cam cum', 'dau rang uong thuoc', 'tap gym', '6 mui',
+      'cat toc nam', 'quan karaoke', 'khach san 5 sao gan my dinh', 'mua ve may bay', 'lam ho chieu', 'bang lai xe a1',
+      'nuoi meo', 'cho poodle', 'cay kim tien hop menh', 'xem tu vi', 'cung bo cap', 'vuot den do phat',
+      'dong dat o nhat ban', 'thu do nuoc uc', 'dan so nhat ban', 'bong den dien', 'newton', 'trai dat cach mat troi',
+      'mat trang co nuoc', 'bau troi tai sao co mau xanh', 'chatgpt voi gemini',
+      // Địa danh ngoài Hỏa Lò (khi KHÔNG hỏi khoảng cách/đường đi từ Hỏa Lò)
+      'chua mot cot', 'lang bac', 'nha tu con dao', 'nha tu phu quoc', 'dia dao cu chi', 'dinh doc lap',
+      'vinh ha long', 'fansipan', 'cau vang da nang', 'thap eiffel', 'van ly truong thanh', 'kim tu thap ai cap',
+      'bastille', 'alcatraz', 'ben nha rong', 'chua huong', 'trang an ninh binh', 'phong nha ke bang',
+      'thanh co quang tri', 'nga ba dong loc', 'cho ben thanh', 'ho tay rong', 'cau long bien',
+      'hoang thanh thang long', 'bao tang dan toc hoc', 'cong vien thu le', 'san bay noi bai', 'van mieu quoc tu giam'
+    ];
+
+    const isHardOos = hardOosPatterns.some(p => hasPhrase(norm, p) || norm.includes(p));
+    if (isHardOos && !hasHoaLoAnchor) {
+      return {
+        intent: INTENTS.OUT_OF_SCOPE,
+        subIntent: 'STRICT_OUT_OF_DOMAIN',
+        subject: null,
+        aspect: 'OUT_OF_BOUNDS',
+        confidence: 0.98,
+        reason: 'Câu hỏi nằm ngoài phạm vi Di tích Lịch sử Nhà tù Hỏa Lò'
+      };
+    }
+
+    // 0.08. Ngoại lệ thời tiết TRONG KHUÔN VIÊN DI TÍCH ("trời mưa có tham quan trong nhà được không?")
+    if ((hasPhrase(norm, 'troi mua') || hasPhrase(norm, 'mua to') || hasPhrase(norm, 'nang nong')) &&
+        (hasPhrase(norm, 'tham quan') || hasPhrase(norm, 'trong nha') || hasPhrase(norm, 'di tich') || hasPhrase(norm, 'hoa lo'))) {
+      return {
+        intent: INTENTS.VISIT_GUIDANCE,
+        subIntent: 'WEATHER_INDOOR_GUIDANCE',
+        subject: 'tham_quan_trong_nha',
+        aspect: 'VISIT_GUIDANCE',
+        confidence: 0.96,
+        reason: 'Khách hỏi khả năng tham quan trong nhà khi trời mưa/nắng nóng'
+      };
+    }
+
     // 0.1. Kiểm tra chính sách cũ / hết hạn (EXPIRED_POLICY)
     if ((norm.includes('30 000') || norm.includes('30k') || norm.includes('truoc 2016') || norm.includes('2016')) &&
         (hasPhrase(norm, 've') || hasPhrase(norm, 'gia ve') || hasPhrase(norm, 'hoa lo'))) {

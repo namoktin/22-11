@@ -165,7 +165,10 @@ class ProductionSmartTourGuideServer {
     const sessionId = body.sessionId || null;
     const session = sessionManager.getOrCreateSession(sessionId);
     const cleaned = nlp.cleanRawText(rawQuestion);
-    const language = nlp.detectLanguage(cleaned);
+    const requestedLang = (body.language || body.lang || '').toLowerCase().trim();
+    const detectedLanguage = nlp.detectLanguage(cleaned);
+    // Nếu có ngôn ngữ khóa cứng (en/vi/fr/ja/ko/zh), dùng đúng ngôn ngữ đó thay vì auto-detect
+    const language = ['vi', 'en', 'fr', 'ja', 'ko', 'zh'].includes(requestedLang) ? requestedLang : detectedLanguage;
     const standardized = nlp.standardizeTypos(cleaned);
     const userProfileSignals = nlp.extractUserProfileSignals(cleaned);
 
@@ -176,12 +179,30 @@ class ProductionSmartTourGuideServer {
     // Tối ưu Voice-first: làm sạch từ đệm, thán từ nói chuyện đời thường
     const voiceCleaned = nlp.cleanVoiceSpokenInput(coreQuery);
 
+    // Kiểm tra nhanh các nhóm độc lập (Nhiễu, Chào hỏi, Cảm ơn, Tạm biệt, Ngoài lề, Injection, Khẩn cấp)
+    // TRƯỚC KHI giải mã Follow-up để không bị dính chủ đề cũ vào câu ngoài lề / nhiễu / chào hỏi!
+    const preClass = classifier.classify(voiceCleaned, null);
+    const bypassFollowUpIntents = new Set([
+      INTENTS.PROMPT_INJECTION,
+      INTENTS.OUT_OF_SCOPE,
+      INTENTS.EMERGENCY_SUPPORT,
+      INTENTS.GREETING,
+      INTENTS.THANK_YOU,
+      INTENTS.GOODBYE,
+      INTENTS.CHITCHAT_BOT
+    ]);
+    const isNoiseClarification = preClass.intent === INTENTS.CLARIFICATION && preClass.subIntent === 'EXTREME_NOISE_OR_FILLER';
+
     // Xử lý câu hỏi tiếp nối & Chuyển hướng chủ đề (Pronoun Resolution & Topic Shift)
-    const followUp = nlp.resolveFollowUp(voiceCleaned, session.lastContext);
+    const followUp = (bypassFollowUpIntents.has(preClass.intent) || isNoiseClarification)
+      ? { isFollowUp: false, resolvedQuery: voiceCleaned, topic: null, isComparisonExpansion: false }
+      : nlp.resolveFollowUp(voiceCleaned, session.lastContext);
     const activeQuery = followUp.resolvedQuery || voiceCleaned;
 
     // TẦNG 2: SEMANTIC INTENT UNDERSTANDING (4-Dimensional Analysis + Neural Prompt Guard)
-    const intentAnalysis = classifier.classify(activeQuery, session.lastContext);
+    const intentAnalysis = (bypassFollowUpIntents.has(preClass.intent) || isNoiseClarification)
+      ? preClass
+      : classifier.classify(activeQuery, session.lastContext);
     let intent = intentAnalysis.intent;
     const subIntent = intentAnalysis.subIntent || null;
     let subject = intentAnalysis.subject || session.state?.currentSubject || null;
@@ -284,7 +305,15 @@ class ProductionSmartTourGuideServer {
       if (!topicName) topicName = policyResult.policy.title;
     }
 
-    if (intent === INTENTS.HISTORICAL_FACT || intent === INTENTS.EXHIBIT_INFORMATION || intent === INTENTS.HISTORICAL_EXPLANATION) {
+    if (
+      intent === INTENTS.HISTORICAL_FACT ||
+      intent === INTENTS.EXHIBIT_INFORMATION ||
+      intent === INTENTS.EXHIBITION_INFORMATION ||
+      intent === INTENTS.HISTORICAL_EXPLANATION ||
+      intent === INTENTS.TOUR_INFORMATION ||
+      intent === INTENTS.CONTACT_INFORMATION ||
+      intent === INTENTS.VISIT_GUIDANCE
+    ) {
       // 3. Tìm trong 13 hồ sơ phân khu
       const exhibit = knowledgeBase.findHistoricalExhibit(activeQuery);
       if (exhibit) {
@@ -292,6 +321,14 @@ class ProductionSmartTourGuideServer {
         retrievedData.facts.push(...exhibit.exhibit.facts);
         if (!topicId) topicId = exhibit.exhibit.id;
         if (!topicName) topicName = exhibit.exhibit.name;
+      }
+      // Bổ sung ngữ cảnh dịch vụ nếu là TOUR_INFORMATION / VISIT_GUIDANCE
+      if (intent === INTENTS.TOUR_INFORMATION || intent === INTENTS.VISIT_GUIDANCE) {
+        const ccTour = knowledgeBase.getCustomerCareContext(INTENTS.TOUR_RECOMMENDATION);
+        if (ccTour) {
+          retrievedData.customerCareContext = ccTour;
+          retrievedData.facts.push(...ccTour.facts);
+        }
       }
     } else {
       const cc = knowledgeBase.getCustomerCareContext(intent);
@@ -392,9 +429,10 @@ class ProductionSmartTourGuideServer {
     responseCache.recordLatency(latencyMs);
 
     // TẦNG 8: FINAL RESPONSE (Đầy đủ Metadata V6.1)
+    const finalIntent = composerResult.resolvedIntent || intent;
     const responseData = {
       reply: finalReply,
-      intent: intent,
+      intent: finalIntent,
       subIntent: subIntent,
       subject: subject,
       aspect: aspect,

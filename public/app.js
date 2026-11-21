@@ -166,6 +166,16 @@ function connectSSE() {
       renderCards(currentBeacons);
     } catch (err) {}
   });
+
+  eventSource.addEventListener('LANGUAGE_CHANGED', (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      const sel = document.getElementById('languageLockSelect');
+      if (sel && data.locked_language && sel.value !== data.locked_language) {
+        sel.value = data.locked_language;
+      }
+    } catch (err) {}
+  });
 }
 
 // 5. Đồng bộ kép Polling /api/state mỗi giây
@@ -239,9 +249,27 @@ async function triggerCode(code) {
 
 // 6. Xử lý Voice Query & Đo Độ Trễ
 function initVoiceForm() {
+  const langSelect = document.getElementById('languageLockSelect');
+  if (langSelect) {
+    fetch('/api/language').then(r => r.json()).then(d => {
+      if (d && d.locked_language) langSelect.value = d.locked_language;
+    }).catch(() => {});
+
+    langSelect.onchange = async () => {
+      try {
+        await fetch('/api/language', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language: langSelect.value })
+        });
+      } catch (e) {}
+    };
+  }
+
   document.getElementById('btnSendVoiceQuestion').onclick = async () => {
     const code = document.getElementById('voiceCodeSelect').value;
     const question = document.getElementById('voiceQuestionInput').value.trim();
+    const lockedLang = langSelect ? langSelect.value : 'vi';
 
     if (!question) {
       alert('Vui lòng nhập câu hỏi!');
@@ -258,10 +286,14 @@ function initVoiceForm() {
     try {
       const res = await fetch('/api/hub/ask', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Language': lockedLang
+        },
         body: JSON.stringify({
           device_id: 'LOCAL_DASHBOARD',
           code: code,
+          language: lockedLang,
           voice_text: question,
           end_speech_time: tEnd
         })
@@ -378,15 +410,18 @@ async function convertBlobToPcm16kWav(blob) {
 
 async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
   const code = document.getElementById('voiceCodeSelect').value;
+  const langSelect = document.getElementById('languageLockSelect');
+  const lockedLang = langSelect ? langSelect.value : 'vi';
   const tEnd = Date.now();
   handleVoiceProcessingStart({ question: 'Đang chuyển file .WAV lên Whisper STT...' });
 
   try {
-    const res = await fetch(`/api/hub/ask?code=${encodeURIComponent(code)}`, {
+    const res = await fetch(`/api/hub/ask?code=${encodeURIComponent(code)}&lang=${encodeURIComponent(lockedLang)}`, {
       method: 'POST',
       headers: {
         'Content-Type': contentType || 'audio/wav',
         'X-Artifact-Code': code,
+        'X-Language': lockedLang,
         'X-Device-Id': 'BROWSER_MIC_DASHBOARD',
         'X-End-Speech-Time': tEnd.toString()
       },

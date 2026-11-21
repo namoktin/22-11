@@ -10,3 +10,4 @@ audio/reply_*.mp3
 audio/reply_*.tmp.mp3
 audio/hub_rec_*
 kiemthu/.env
+scripts/report_1000_*.json

@@ -38,7 +38,11 @@ const VI_UNACCENTED_MARKERS = new Set([
   'tai', 'sao', 'vi', 'the', 'nao', 'nguoi', 'trong', 'ngoai', 'gan', 'day', 'phut', 'tieng',
   'xe', 've', 'sinh', 'gui', 'do', 'chup', 'quay', 'phim', 'an', 'uong', 'quan', 'pho',
   'hoa', 'lo', 'cay', 'bang', 'may', 'chem', 'cong', 'ngam', 'xa', 'lim', 'tu', 'nhan',
-  'tiep', 'huong', 'het', 'tron', 'oi', 'mat', 'lac', 'dau', 'bung', 'met', 'chan', 'nong'
+  'tiep', 'huong', 'het', 'tron', 'oi', 'mat', 'lac', 'dau', 'bung', 'met', 'chan', 'nong',
+  'nguyen', 'thi', 'minh', 'khai', 'trai', 'nu', 'tung', 'xay', 'tuong', 'cao', 'met',
+  'caxo', 'caso', 'xien', 'nhiu', 'dzay', 'hk', 'lich', 'su', 'tich', 'tham', 'quan',
+  'nghi', 'trua', 'xuyen', 'tour', 'dem', 'chua', 'benh', 'danh', 'dap', 'da', 'man',
+  'hoang', 'van', 'thu', 'thai', 'hoc', 'duc', 'canh', 'thap', 'phong', 'giam', 'mua', 'ban'
 ]);
 
 // Cụm phụ âm / hậu tố đặc trưng tiếng Anh không tồn tại trong tiếng Việt
@@ -75,6 +79,10 @@ function expandVietnameseAbbreviations(text) {
     { re: /\bk0\b/gi, rep: 'không' },
     { re: /\bkhg\b/gi, rep: 'không' },
     { re: /\bhok\b/gi, rep: 'không' },
+    { re: /\bhk\b/gi, rep: 'không' },
+    { re: /\bnhiu\b/gi, rep: 'nhiêu' },
+    { re: /\bxien\b/gi, rep: 'tiền' },
+    { re: /\bdzay\b/gi, rep: 'vậy' },
     { re: /\bdc\b/gi, rep: 'được' },
     { re: /\bdk\b/gi, rep: 'được' },
     { re: /\bhiu\b/gi, rep: 'hiểu' },

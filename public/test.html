@@ -375,6 +375,14 @@
         </p>
 
         <div class="voice-input-row">
+          <select id="languageLockSelect" class="select-box" style="min-width: 195px;" onchange="changeLockedLanguage(this.value)" title="Khóa cứng ngôn ngữ: AI chỉ nói đúng ngôn ngữ đã chọn">
+            <option value="vi" selected>🔒 🇻🇳 Tiếng Việt Only</option>
+            <option value="en">🔒 🇬🇧 English Only</option>
+            <option value="fr">🔒 🇫🇷 Français Only</option>
+            <option value="ja">🔒 🇯🇵 日本語のみ</option>
+            <option value="ko">🔒 🇰🇷 한국어만</option>
+            <option value="zh">🔒 🇨🇳 仅限中文</option>
+          </select>
           <select id="voiceCodeSelect" class="select-box" style="min-width: 200px;">
             <option value="001">Vị trí: Mã 001 (Trống Đồng)</option>
             <option value="002" selected>Vị trí: Mã 002 (Cây Bàng Hỏa Lò)</option>
@@ -507,6 +515,7 @@
     async function sendVoiceQuery() {
       const code = document.getElementById('voiceCodeSelect').value;
       const question = document.getElementById('voiceQuestion').value.trim();
+      const lockedLang = document.getElementById('languageLockSelect')?.value || 'vi';
 
       const tEndSpeech = Date.now();
 
@@ -517,10 +526,14 @@
       try {
         const res = await fetch(`${baseUrl}/api/hub/ask`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': lockedLang
+          },
           body: JSON.stringify({
             device_id: 'ESP32_HUB_01',
             code: code,
+            language: lockedLang,
             voice_text: question,
             end_speech_time: tEndSpeech
           })
@@ -672,19 +685,37 @@
       }
     }
 
+    async function changeLockedLanguage(lang) {
+      try {
+        await fetch(`${baseUrl}/api/language`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language: lang })
+        });
+      } catch (e) {}
+    }
+
+    // Đồng bộ ngôn ngữ khóa cứng khi mở trang
+    fetch(`${baseUrl}/api/language`).then(r => r.json()).then(d => {
+      const sel = document.getElementById('languageLockSelect');
+      if (sel && d && d.locked_language) sel.value = d.locked_language;
+    }).catch(() => {});
+
     async function sendWavBlobToServer(blob, contentType = 'audio/wav') {
       const code = document.getElementById('voiceCodeSelect').value;
+      const lockedLang = document.getElementById('languageLockSelect')?.value || 'vi';
       const t0 = Date.now();
       const box = document.getElementById('voiceResultBox');
       box.style.display = 'block';
       document.getElementById('voiceResultText').innerText = '⏳ Đang tải file .WAV lên Server, Whisper AI đang chuyển giọng nói thành chữ và KiemThu AI đang suy nghĩ...';
 
       try {
-        const res = await fetch(`${baseUrl}/api/hub/ask?code=${encodeURIComponent(code)}`, {
+        const res = await fetch(`${baseUrl}/api/hub/ask?code=${encodeURIComponent(code)}&lang=${encodeURIComponent(lockedLang)}`, {
           method: 'POST',
           headers: {
             'Content-Type': contentType || 'audio/wav',
             'X-Artifact-Code': code,
+            'X-Language': lockedLang,
             'X-Device-Id': 'BROWSER_MIC_TEST_HUB',
             'X-End-Speech-Time': t0.toString()
           },
