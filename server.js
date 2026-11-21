@@ -20,13 +20,28 @@ const url = require('url');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
 
-// BẢO VỆ TIẾN TRÌNH KHỎI MẤT KẾT NỐI MẠNG HOẶC ĐÓNG TAB TRÌNH DUYỆT
+// BẢO VỆ TIẾN TRÌNH CHUẨN PRODUCTION:
+// - Chỉ bỏ qua lỗi ngắt kết nối socket/stream bình thường (EPIPE, ECONNRESET...)
+// - Lỗi nghiêm trọng (EADDRINUSE, lỗi hệ thống không phục hồi được) sẽ log đầy đủ stack và thoát sạch để Render tự restart!
+const BENIGN_NET_ERRORS = new Set(['EPIPE', 'ECONNRESET', 'ECONNABORTED', 'ERR_STREAM_WRITE_AFTER_END', 'ERR_STREAM_PREMATURE_CLOSE']);
 process.on('uncaughtException', (err) => {
-  console.warn('🛡️ [UncaughtException Protected]:', err.message);
+  if (err && BENIGN_NET_ERRORS.has(err.code)) {
+    console.warn('🛡️ [Benign Socket Disconnect]:', err.code, err.message);
+    return;
+  }
+  console.error('💥 [FATAL uncaughtException]:', err && err.stack ? err.stack : err);
+  setTimeout(() => process.exit(1), 200).unref();
 });
 process.on('unhandledRejection', (reason) => {
-  console.warn('🛡️ [UnhandledRejection Protected]:', reason);
+  if (reason && BENIGN_NET_ERRORS.has(reason.code)) {
+    console.warn('🛡️ [Benign Rejection]:', reason.code, reason.message);
+    return;
+  }
+  console.error('⚠️ [unhandledRejection]:', reason && reason.stack ? reason.stack : reason);
 });
+
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY || '';
+const beaconCooldownMap = new Map(); // key: `${deviceId}:${beaconId}` -> timestampMs
 
 const PORT = process.env.PORT || 5000;
 const IS_RENDER = Boolean(process.env.RENDER || process.env.KIEMTHU_IN_PROCESS === 'true');
@@ -506,7 +521,7 @@ async function fastTextToWav(text, outputFilename, lang = 'vi') {
       const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${encodeURIComponent(ttsCode)}&client=tw-ob`;
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 4000); // 4s timeout
+      const timeout = setTimeout(() => controller.abort(), 3500); // 3.5s timeout
 
       const res = await fetch(ttsUrl, {
         agent: httpsKeepAliveAgent,
@@ -678,7 +693,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 3000);
     const sysPrompt = mode === 'query'
       ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
       : `You are a professional museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY. Keep all historical dates, numbers, and proper names (Hoa Lo, Maison Centrale, Cachot, John McCain, etc.) accurate. Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no markdown, no notes.`;
@@ -977,7 +992,7 @@ function extractSpokenSummary(fullText) {
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Audio-Format, X-Pinggy-No-Screen, X-Language');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Audio-Format, X-Pinggy-No-Screen, X-Language, X-Admin-Key');
   res.setHeader('Access-Control-Allow-Private-Network', 'true');
 
   if (req.method === 'OPTIONS') {
@@ -1090,6 +1105,32 @@ const server = http.createServer(async (req, res) => {
       if (!target) {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ status: 'ignored', message: `Không tìm thấy hiện vật với mã: ${codeInput || macInput}` }));
+      }
+
+      // CHỐNG LẶP VÒNG VÔ HẠN (COOLDOWN): Khách đứng yên 1 chỗ trước Beacon sẽ không bị phát lặp lại liên tục
+      // Bỏ qua cooldown nếu bấm test thủ công từ Dashboard/Test client hoặc gửi force: true
+      const deviceId = payload.device_id || 'CLIENT';
+      const isManualTest = Boolean(payload.force) || deviceId === 'LOCAL_DASHBOARD' || deviceId.startsWith('TEST');
+      const cooldownSec = Number(target.cooldown_seconds || 0);
+      if (!isManualTest && cooldownSec > 0) {
+        const cdKey = `${deviceId}:${target.id}`;
+        const lastTime = beaconCooldownMap.get(cdKey) || 0;
+        const elapsedSec = (Date.now() - lastTime) / 1000;
+        if (elapsedSec < cooldownSec) {
+          const remaining = Math.ceil(cooldownSec - elapsedSec);
+          res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+          return res.end(JSON.stringify({
+            status: 'cooldown',
+            action: 'SKIP_COOLDOWN',
+            code: target.code,
+            artifact_id: target.id,
+            artifact_name: target.artifact_name,
+            cooldown_seconds: cooldownSec,
+            remaining_seconds: remaining,
+            message: `Đang trong thời gian nghỉ (${remaining}s nữa mới phát lại hiện vật này cho thiết bị ${deviceId})`
+          }));
+        }
+        beaconCooldownMap.set(cdKey, Date.now());
       }
 
       const hostBaseUrl = getPublicBaseUrl(req);
@@ -1296,8 +1337,17 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // 6. Cập nhật mã
+  // 6. Cập nhật mã (Bảo vệ bằng ADMIN_API_KEY khi triển khai production trên Render)
   if (req.method === 'POST' && pathname === '/api/beacons/update') {
+    if (ADMIN_API_KEY) {
+      const hdrKey = req.headers['x-admin-key'] || '';
+      const authHdr = req.headers['authorization'] || '';
+      const bearer = authHdr.startsWith('Bearer ') ? authHdr.slice(7).trim() : '';
+      if (hdrKey !== ADMIN_API_KEY && bearer !== ADMIN_API_KEY) {
+        res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ error: 'Unauthorized: Thiếu hoặc sai X-Admin-Key để chỉnh sửa cấu hình Beacon.' }));
+      }
+    }
     try {
       const data = await parseJsonBody(req);
       const beacons = loadBeacons();
@@ -1385,6 +1435,13 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   const primaryIp = getPrimaryIp();
+  // Pre-warm KiemThu AI trong RAM ngay lúc boot để câu hỏi đầu tiên của khách phản hồi <20ms
+  try {
+    const kPath = path.join(kiemthuDir, 'smart_ai_server.js');
+    if (fs.existsSync(kPath)) require(kPath);
+  } catch (e) {
+    console.warn('⚠ Pre-warm kiemthu notice:', e.message);
+  }
   console.log('\n================================================================');
   console.log('🏛️  ESP32 BLE TOUR GUIDE SERVER (V2.3 - ULTRA-FAST IN-MEMORY TTS)');
   console.log('================================================================');

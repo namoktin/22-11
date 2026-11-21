@@ -18,7 +18,7 @@
     },
     "audio_file": "trong_dong_dong_son.wav",
     "audio_mp3": "trong_dong_dong_son.mp3",
-    "cooldown_seconds": 0
+    "cooldown_seconds": 45
   },
   {
     "id": "beacon_02",
@@ -39,7 +39,7 @@
     },
     "audio_file": "cay_bang_hoa_lo.wav",
     "audio_mp3": "cay_bang_hoa_lo.mp3",
-    "cooldown_seconds": 0
+    "cooldown_seconds": 45
   },
   {
     "id": "beacon_03",
@@ -60,7 +60,7 @@
     },
     "audio_file": "dai_hong_chung.wav",
     "audio_mp3": "dai_hong_chung.mp3",
-    "cooldown_seconds": 0
+    "cooldown_seconds": 45
   },
   {
     "id": "beacon_04",
@@ -81,6 +81,6 @@
     },
     "audio_file": "bao_kiem_hoang_gia.wav",
     "audio_mp3": "bao_kiem_hoang_gia.mp3",
-    "cooldown_seconds": 0
+    "cooldown_seconds": 45
   }
 ]

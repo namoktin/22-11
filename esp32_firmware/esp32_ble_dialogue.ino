@@ -42,10 +42,37 @@ const char* DEVICE_ID     = "ESP32_SMART_GUIDE_01";
 #define MIC_SAMPLE_RATE     16000 // Tần số mẫu chuẩn 16kHz
 #define MIC_RECORD_SEC      3     // Thời lượng thu âm mỗi câu hỏi (3 giây)
 
-// 3. THÔNG SỐ BLE
-#define BLE_SCAN_TIME_SEC 2
-#define SCAN_INTERVAL_MS  3000
-#define MIN_RSSI_TRIGGER  -80
+// 3. THÔNG SỐ BLE & LỌC BEACON THỰC ĐỊA (CHỐNG NHẬN NHẦM ĐIỆN THOẠI / ĐỒNG HỒ KHÁCH)
+#define BLE_SCAN_TIME_SEC   2
+#define SCAN_INTERVAL_MS    3000
+#define MIN_RSSI_TRIGGER    -75      // Ngưỡng sóng gần (~1.5m - 3m), tránh bắt beacon phòng bên cạnh
+#define BEACON_COOLDOWN_MS  45000    // Nghỉ 45 giây cho cùng 1 beacon -> đứng yên 1 chỗ KHÔNG lặp vòng vô hạn!
+#define DISCOVERY_PRINT_ALL 0        // Đổi thành 1 khi ra thực địa để in MAC thật của các cục beacon ra Serial
+
+// BẢO MẬT HTTPS: Đổi USE_ROOT_CA = 1 và dán chứng chỉ ISRG Root X1 (Render.com) khi triển khai thực tế
+#define USE_ROOT_CA         0
+#if USE_ROOT_CA
+const char* RENDER_ROOT_CA = R"EOF(
+-----BEGIN CERTIFICATE-----
+(Dán chứng chỉ ISRG Root X1 PEM của Let's Encrypt / Render.com tại đây)
+-----END CERTIFICATE-----
+)EOF";
+#endif
+
+// LỌC 2 LỚP: (1) Danh sách MAC thật của các cục Beacon (Thay AA:BB... bằng MAC thật in từ DISCOVERY_PRINT_ALL=1)
+const char* ALLOWED_BEACON_MACS[] = {
+  "AA:BB:CC:DD:EE:01", // Mã 001: Trống Đồng Đông Sơn (thay bằng MAC thật)
+  "AA:BB:CC:DD:EE:02", // Mã 002: Cây Bàng Hỏa Lò (thay bằng MAC thật)
+  "AA:BB:CC:DD:EE:03", // Mã 003: Đạt Hồng (thay bằng MAC thật)
+  "AA:BB:CC:DD:EE:04"  // Mã 004: Bảo Kiếm Hoàng Gia (thay bằng MAC thật)
+};
+const int ALLOWED_BEACON_COUNT = sizeof(ALLOWED_BEACON_MACS) / sizeof(ALLOWED_BEACON_MACS[0]);
+
+// (2) Hoặc khớp 16-byte iBeacon UUID chuẩn của hệ thống: FDA50693-A4E2-4FB1-AFCF-C6EB07647825
+const uint8_t TARGET_IBEACON_UUID[16] = {
+  0xFD, 0xA5, 0x06, 0x93, 0xA4, 0xE2, 0x4F, 0xB1,
+  0xAF, 0xCF, 0xC6, 0xEB, 0x07, 0x64, 0x78, 0x25
+};
 
 Audio audio;
 BLEScan* pBLEScan;
@@ -54,10 +81,14 @@ WiFiClientSecure secureClient;
 
 // Tự động chọn HTTP hoặc HTTPS (hỗ trợ cả LAN, Pinggy và Render.com)
 bool beginServerRequest(const String& url) {
-  http.setTimeout(15000);
+  http.setTimeout(10000);
   bool ok = false;
   if (url.startsWith("https://")) {
-    secureClient.setInsecure();
+#if USE_ROOT_CA
+    secureClient.setCACert(RENDER_ROOT_CA);
+#else
+    secureClient.setInsecure(); // Chỉ dùng cho dev/test; bật USE_ROOT_CA=1 cho production
+#endif
     ok = http.begin(secureClient, url);
   } else {
     ok = http.begin(url);
@@ -70,6 +101,8 @@ bool beginServerRequest(const String& url) {
 
 bool isAudioPlaying = false;
 unsigned long lastScanTime = 0;
+String lastTriggeredMac = "";
+unsigned long lastTriggeredAtMs = 0;
 String currentArtifactCode = "001";
 String pendingNextChunkUrl = "";
 bool hasPendingNextChunk = false;
@@ -82,12 +115,44 @@ struct BestBeacon {
 };
 BestBeacon currentBestBeacon;
 
-// Callback phát hiện thiết bị BLE
+// Kiểm tra xem thiết bị BLE có phải là Beacon thật của di tích không (bỏ qua điện thoại/đồng hồ/tai nghe khách!)
+bool isValidHeritageBeacon(BLEAdvertisedDevice& dev, const String& macUpper) {
+  // Lớp 1: Khớp chính xác MAC trong danh sách Whitelist
+  for (int i = 0; i < ALLOWED_BEACON_COUNT; i++) {
+    if (macUpper.equalsIgnoreCase(ALLOWED_BEACON_MACS[i])) {
+      return true;
+    }
+  }
+
+  // Lớp 2: Khớp chuẩn gói Apple iBeacon (Company ID 0x004C, Type 0x02, Len 0x15 + 16-byte UUID)
+  if (dev.haveManufacturerData()) {
+    std::string mfg = dev.getManufacturerData();
+    if (mfg.length() >= 25 &&
+        (uint8_t)mfg[0] == 0x4C && (uint8_t)mfg[1] == 0x00 &&
+        (uint8_t)mfg[2] == 0x02 && (uint8_t)mfg[3] == 0x15) {
+      if (memcmp((const uint8_t*)mfg.data() + 4, TARGET_IBEACON_UUID, 16) == 0) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+// Callback phát hiện thiết bị BLE (CHỈ CHẤP NHẬN BEACON HỢP LỆ + RSSI ĐỦ MẠNH)
 class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     void onResult(BLEAdvertisedDevice advertisedDevice) {
       int rssi = advertisedDevice.getRSSI();
       String mac = advertisedDevice.getAddress().toString().c_str();
       mac.toUpperCase();
+
+#if DISCOVERY_PRINT_ALL
+      Serial.printf("🔍 [BLE Scan] MAC=%s | RSSI=%d | Name=%s\n",
+                    mac.c_str(), rssi, advertisedDevice.getName().c_str());
+#endif
+
+      if (rssi < MIN_RSSI_TRIGGER) return;
+      if (!isValidHeritageBeacon(advertisedDevice, mac)) return;
 
       if (rssi > currentBestBeacon.rssi) {
         currentBestBeacon.mac = mac;
@@ -416,9 +481,18 @@ void loop() {
     pBLEScan->start(BLE_SCAN_TIME_SEC, false);
 
     if (currentBestBeacon.found && currentBestBeacon.rssi >= MIN_RSSI_TRIGGER) {
-      Serial.printf("🎯 Thấy Beacon gần nhất: [%s] | RSSI: %d dBm\n",
-                    currentBestBeacon.mac.c_str(), currentBestBeacon.rssi);
-      sendBleTriggerToServer(currentBestBeacon.mac, currentBestBeacon.rssi);
+      bool isSameBeaconInCooldown = (currentBestBeacon.mac == lastTriggeredMac) &&
+                                    (now - lastTriggeredAtMs < BEACON_COOLDOWN_MS);
+      if (isSameBeaconInCooldown) {
+        Serial.printf("⏳ [Cooldown] Đang đứng yên tại Beacon [%s], bỏ qua lặp lại.\n",
+                      currentBestBeacon.mac.c_str());
+      } else {
+        Serial.printf("🎯 Thấy Beacon hợp lệ gần nhất: [%s] | RSSI: %d dBm\n",
+                      currentBestBeacon.mac.c_str(), currentBestBeacon.rssi);
+        lastTriggeredMac = currentBestBeacon.mac;
+        lastTriggeredAtMs = now;
+        sendBleTriggerToServer(currentBestBeacon.mac, currentBestBeacon.rssi);
+      }
     }
 
     pBLEScan->clearResults();

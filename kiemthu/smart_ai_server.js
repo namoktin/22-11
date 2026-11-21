@@ -105,7 +105,8 @@ class ProductionSmartTourGuideServer {
       ];
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 12000); // 12s timeout
+      const groqTimeoutMs = Number(process.env.GROQ_TIMEOUT_MS) || 3000;
+      const timeout = setTimeout(() => controller.abort(), groqTimeoutMs); // 3s fast timeout (cấu hình qua GROQ_TIMEOUT_MS)
 
       const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
