@@ -347,42 +347,144 @@ function initVoiceForm() {
     };
   }
 
-  if (btnMic) {
-    btnMic.onclick = async () => {
-      if (!isRecording) {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          alert('Trình duyệt chặn Microphone trên HTTP không bảo mật. Hãy mở qua http://localhost:5000 hoặc https:// (Pinggy), hoặc dùng nút "📁 Chọn File .WAV".');
+  let cachedMicStream = null;
+  let micAudioCtx = null;
+  let micAnalyser = null;
+  let animVolumeFrame = null;
+  let recordStartTime = 0;
+  let pointerDownTime = 0;
+
+  async function initMicStream() {
+    if (cachedMicStream && cachedMicStream.active) {
+      return cachedMicStream;
+    }
+    cachedMicStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      micAudioCtx = new AudioCtx();
+      const source = micAudioCtx.createMediaStreamSource(cachedMicStream);
+      micAnalyser = micAudioCtx.createAnalyser();
+      micAnalyser.fftSize = 256;
+      source.connect(micAnalyser);
+    } catch (e) {}
+    return cachedMicStream;
+  }
+
+  function playMicBeepCue() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+      setTimeout(() => ctx.close().catch(() => {}), 150);
+    } catch (e) {}
+  }
+
+  async function startRecording() {
+    if (isRecording) return;
+    try {
+      btnMic.innerText = '⏳ Đang bật Microphone...';
+      btnMic.style.background = '#B45309';
+      const stream = await initMicStream();
+      playMicBeepCue();
+
+      audioChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = async () => {
+        if (animVolumeFrame) { cancelAnimationFrame(animVolumeFrame); animVolumeFrame = null; }
+        const durationMs = Date.now() - recordStartTime;
+
+        // Bỏ qua nếu bấm nhầm quá ngắn (< 300ms), không dùng alert() gây nghẽn giao diện!
+        if (durationMs < 300) {
           return;
         }
+
+        const rawMime = mediaRecorder.mimeType || 'audio/webm';
+        const rawBlob = new Blob(audioChunks, { type: rawMime });
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          audioChunks = [];
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
-          mediaRecorder.onstop = async () => {
-            const rawMime = mediaRecorder.mimeType || 'audio/webm';
-            const rawBlob = new Blob(audioChunks, { type: rawMime });
-            stream.getTracks().forEach(t => t.stop());
-            try {
-              const wavBlob = await convertBlobToPcm16kWav(rawBlob);
-              await uploadWavFileToServer(wavBlob, 'audio/wav');
-            } catch (convErr) {
-              console.warn('Chuyển PCM WAV fallback sang raw:', convErr);
-              await uploadWavFileToServer(rawBlob, rawMime);
-            }
-          };
-          mediaRecorder.start();
-          isRecording = true;
-          btnMic.innerText = '⏹ Bấm Để Dừng & Gửi .WAV!';
-          btnMic.style.background = '#DC2626';
-        } catch (err) {
-          alert('Không thể mở Microphone: ' + err.message);
+          const wavBlob = await convertBlobToPcm16kWav(rawBlob);
+          await uploadWavFileToServer(wavBlob, 'audio/wav');
+        } catch (convErr) {
+          console.warn('Chuyển PCM WAV fallback sang raw:', convErr);
+          await uploadWavFileToServer(rawBlob, rawMime);
         }
-      } else {
-        mediaRecorder.stop();
-        isRecording = false;
-        btnMic.innerText = '🎙️ Bấm Nói (Gửi File .WAV)';
-        btnMic.style.background = '#991B1B';
+      };
+
+      mediaRecorder.start(250); // Thu liên tục mỗi 250ms
+      isRecording = true;
+      recordStartTime = Date.now();
+      btnMic.style.background = '#DC2626';
+
+      function updateVolIndicator() {
+        if (!isRecording) return;
+        let volLevel = 0;
+        if (micAnalyser) {
+          const arr = new Uint8Array(micAnalyser.frequencyBinCount);
+          micAnalyser.getByteFrequencyData(arr);
+          let sum = 0;
+          for (let i = 0; i < arr.length; i++) sum += arr[i];
+          volLevel = Math.round((sum / arr.length) / 2.5); // 0-100
+        }
+        const sec = Math.floor((Date.now() - recordStartTime) / 1000);
+        const bar = volLevel > 35 ? ' ▂▃▅▆▇' : (volLevel > 15 ? ' ▂▃▅' : ' ▂');
+        btnMic.innerText = `🔴 [Đang nghe${bar}] (${sec}s) - Bấm Dừng`;
+        animVolumeFrame = requestAnimationFrame(updateVolIndicator);
+      }
+      updateVolIndicator();
+
+    } catch (err) {
+      isRecording = false;
+      btnMic.innerText = '🎙️ Bấm Nói (Gửi File .WAV)';
+      btnMic.style.background = '#991B1B';
+      alert('Không thể mở Microphone: ' + err.message);
+    }
+  }
+
+  function stopRecording() {
+    if (!isRecording) return;
+    if (animVolumeFrame) { cancelAnimationFrame(animVolumeFrame); animVolumeFrame = null; }
+    mediaRecorder.stop();
+    isRecording = false;
+    btnMic.innerText = '🎙️ Bấm Nói (Gửi File .WAV)';
+    btnMic.style.background = '#991B1B';
+  }
+
+  if (btnMic) {
+    btnMic.onpointerdown = async (e) => {
+      pointerDownTime = Date.now();
+      if (!isRecording) {
+        await startRecording();
+      }
+    };
+
+    btnMic.onpointerup = (e) => {
+      const holdDuration = Date.now() - pointerDownTime;
+      // Nếu người dùng giữ nút lâu hơn 500ms -> Nhả tay là dừng (Push-To-Talk như bộ đàm/ESP32)
+      if (isRecording && holdDuration > 500) {
+        stopRecording();
+      }
+    };
+
+    btnMic.onclick = (e) => {
+      const holdDuration = Date.now() - pointerDownTime;
+      // Nếu là click nhanh lần 2 khi đang ghi âm -> Dừng lại
+      if (isRecording && holdDuration < 500 && (Date.now() - recordStartTime > 600)) {
+        stopRecording();
       }
     };
   }
@@ -399,10 +501,14 @@ async function convertBlobToPcm16kWav(blob) {
     const dstRate = 16000;
     const ratio = srcRate / dstRate;
     const dstLen = Math.max(1, Math.floor(srcData.length / ratio));
+
+    // Giữ nguyên độ trung thực âm sắc tự nhiên của micro (chỉ bù âm nhẹ nếu cực kỳ nhỏ < 0.1, tuyệt đối không làm méo vỡ phụ âm "B", "Đ", "T")
+    const gain = maxVal < 0.1 ? Math.min(2.0, 0.4 / maxVal) : 1.0;
+
     const samples = new Int16Array(dstLen);
     for (let i = 0; i < dstLen; i++) {
       const idx = Math.min(srcData.length - 1, Math.floor(i * ratio));
-      const s = Math.max(-1, Math.min(1, srcData[idx]));
+      const s = Math.max(-1, Math.min(1, srcData[idx] * gain));
       samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
     }
     const wavBuf = new ArrayBuffer(44 + samples.length * 2);

@@ -535,15 +535,34 @@ function extractMultipartFile(rawBuf, contentType) {
   return { fileBuf: fileBuf || rawBuf, fields };
 }
 
-// Kiểm tra xem file .WAV có phải là khoảng lặng hoàn toàn / mic tắt tiếng không (tránh gửi im lặng sang Whisper gây ảo giác!)
+// Trích xuất raw PCM chunk từ file .WAV mà không cắt xén khoảng lặng (dùng đo âm lượng chính xác)
+function extractRawPcmChunk(wavBuf) {
+  if (!wavBuf || wavBuf.length < 44) return Buffer.alloc(0);
+  let dataOffset = 44;
+  let dataLen = wavBuf.length - 44;
+  let pos = 12;
+  while (pos + 8 <= wavBuf.length) {
+    const chunkId = wavBuf.toString('ascii', pos, pos + 4);
+    const chunkSize = wavBuf.readUInt32LE(pos + 4);
+    if (chunkId === 'data') {
+      dataOffset = pos + 8;
+      dataLen = Math.min(chunkSize, wavBuf.length - dataOffset);
+      break;
+    }
+    pos += 8 + chunkSize + (chunkSize % 2);
+  }
+  return wavBuf.slice(dataOffset, dataOffset + (dataLen - (dataLen % 2)));
+}
+
+// Kiểm tra xem file .WAV có giọng nói người thực sự không (loại bỏ tiếng click chuột cơ học hoặc phòng im lặng)
 function analyzeWavVolume(buf, fmtExt) {
   if (!buf || buf.length < 100 || fmtExt !== 'wav') {
-    return { isSilent: false, isQuiet: false, rms: 1000, peak: 5000 };
+    return { isSilent: false, isQuiet: false, hasSustainedVoice: true, voicedFrames: 10, rms: 1000, peak: 5000 };
   }
-  const pcm = extractCleanPcmFromWav(buf);
+  const pcm = extractRawPcmChunk(buf);
   const totalSamples = Math.floor(pcm.length / 2);
   if (totalSamples < 80) {
-    return { isSilent: true, isQuiet: true, rms: 0, peak: 0 };
+    return { isSilent: true, isQuiet: true, hasSustainedVoice: false, voicedFrames: 0, rms: 0, peak: 0 };
   }
   let sumSq = 0;
   let peak = 0;
@@ -553,9 +572,40 @@ function analyzeWavVolume(buf, fmtExt) {
     sumSq += s * s;
   }
   const rms = Math.sqrt(sumSq / totalSamples);
+
+  // Phân tích năng lượng theo từng khung 100ms (1600 samples @ 16kHz)
+  // Bỏ qua khung đầu tiên (0-100ms) để loại trừ tiếng click chuột cơ học
+  const frameSize = 1600;
+  const totalFrames = Math.floor(totalSamples / frameSize);
+  let voicedFrames = 0;
+  if (totalFrames >= 2) {
+    for (let f = 1; f < totalFrames; f++) {
+      let fPeak = 0, fSumSq = 0;
+      const start = f * frameSize * 2;
+      for (let i = 0; i < frameSize; i++) {
+        const s = Math.abs(pcm.readInt16LE(start + i * 2));
+        if (s > fPeak) fPeak = s;
+        fSumSq += s * s;
+      }
+      const fRms = Math.sqrt(fSumSq / frameSize);
+      if (fRms > 90 || fPeak > 500) {
+        voicedFrames++;
+      }
+    }
+  }
+
+  // File được coi là im lặng nếu:
+  // 1. RMS < 15 VÀ Peak < 80 (hoàn toàn không có tín hiệu điện áp)
+  // 2. HOẶC file > 300ms nhưng hoàn toàn KHÔNG CÓ khung âm thanh nào có năng lượng tiếng người (chỉ có tiếng lách cách chuột)
+  const isPureSilence = rms < 15 && peak < 80;
+  const isOnlyClickNoVoice = totalFrames >= 3 && voicedFrames === 0;
+  const isSilent = isPureSilence || isOnlyClickNoVoice;
+
   return {
-    isSilent: rms < 85 && peak < 420,
-    isQuiet: rms < 220,
+    isSilent,
+    isQuiet: rms < 60,
+    hasSustainedVoice: voicedFrames > 0,
+    voicedFrames,
     rms: Math.round(rms),
     peak
   };
@@ -574,15 +624,45 @@ function getEmptySpeechReply(lang = 'vi') {
   return map[normalizeLangCode(lang) || 'vi'] || map.vi;
 }
 
-const WHISPER_SILENCE_HALLUCINATIONS = /^(thank you\.?|thanks for watching\.?|thanks\.?|you|subscribe|mbc|subtitles by|amara\.org|\.{2,}|\s*)$/i;
+// Danh sách các câu ảo giác đặc trưng của Whisper khi nhận file im lặng/tiếng click chuột (đặc biệt là boilerplate YouTube Việt & Anh)
+const WHISPER_HALLUCINATIONS_REGEX = new RegExp([
+  'ghiền mì gõ',
+  'subscribe cho kênh',
+  'đăng ký kênh',
+  'hãy subscribe',
+  'hãy like',
+  'like và subscribe',
+  'like và theo dõi',
+  'chia sẻ video',
+  'bấm chuông',
+  'nhấn chuông',
+  'thông báo để không bỏ lỡ',
+  'cảm ơn các bạn đã theo dõi',
+  'cảm ơn các bạn đã xem',
+  'hẹn gặp lại các bạn',
+  'video tiếp theo',
+  'chúc các bạn xem video',
+  'chúc các bạn một ngày',
+  'để không bỏ lỡ những video',
+  'xem thêm tại',
+  'đường link bên dưới',
+  'thank you for watching',
+  'thanks for watching',
+  'thank you\\.?$',
+  'thanks\\.?$',
+  'subtitles by',
+  'amara\\.org',
+  'mbc',
+  'cảm ơn đã xem'
+].join('|'), 'i');
 
-async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
+async function transcribeWavToText(wavBuffer, fallbackContentType = '', targetLang = 'vi') {
   const t0 = Date.now();
   const fmt = detectAudioFormat(wavBuffer, fallbackContentType);
   const vol = analyzeWavVolume(wavBuffer, fmt.ext);
 
   if (vol.isSilent) {
-    console.log(`🔇 [STT Silence Guard] Bỏ qua file im lặng (RMS=${vol.rms}, Peak=${vol.peak})`);
+    console.log(`🔇 [STT Silence Guard] Bỏ qua file im lặng/không có tiếng nói (RMS=${vol.rms}, Peak=${vol.peak}, voicedFrames=${vol.voicedFrames || 0})`);
     return {
       text: '',
       isEmptySpeech: true,
@@ -597,13 +677,19 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
       const form = new FormData();
       form.append('file', blob, `hub_mic.${fmt.ext}`);
       form.append('model', 'whisper-large-v3-turbo');
-      // KHÔNG ép cứng language='vi' để Whisper tự nghe chuẩn mọi ngôn ngữ (Anh, Việt, Pháp, Nhật, Hàn, Trung...)
-      // Bổ sung từ điển tên riêng di tích giúp Whisper nhận dạng chuẩn tên lịch sử & hiện vật bảo tàng
-      form.append('prompt', 'Di tích Nhà tù Hỏa Lò, Maison Centrale, Cachot, Cỗ máy chém, Cây bàng, Cống ngầm vượt ngục, Hoàng Văn Thụ, Nguyễn Thái Học, Trần Tử Bình, John McCain, Hanoi Hilton, Trống Đồng Đông Sơn, Đạt Hồng, Đại Hồng Chung, Bảo Kiếm Hoàng Gia.');
+
+      const cleanLang = normalizeLangCode(targetLang);
+      if (cleanLang) {
+        form.append('language', cleanLang);
+      }
+      form.append('temperature', '0.0'); // Khóa nhiệt độ 0.0 để chống ảo giác ngẫu nhiên
+
+      // Prompt ngắn gọn neo ngữ cảnh bảo tàng mà không làm méo mó các câu hỏi ngắn/xã giao
+      form.append('prompt', 'Di tích Nhà tù Hỏa Lò, Hà Nội.');
       form.append('response_format', 'verbose_json');
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
+      const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout cho đoạn nói dài
 
       const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
         method: 'POST',
@@ -616,17 +702,26 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '') {
       if (res.ok) {
         const json = await res.json();
         const cleanText = (json.text || '').trim();
-        const isHallucinatedSilence = !cleanText || (vol.isQuiet && WHISPER_SILENCE_HALLUCINATIONS.test(cleanText));
-        if (!isHallucinatedSilence) {
-          console.log(`✓ [Whisper STT] Đã nhận dạng từ file .${fmt.ext.toUpperCase()} (${Date.now() - t0}ms, RMS=${vol.rms}): "${cleanText}"`);
+        const isHallucination = !cleanText ||
+          WHISPER_HALLUCINATIONS_REGEX.test(cleanText) ||
+          (!vol.hasSustainedVoice && (cleanText.length < 5 || WHISPER_HALLUCINATIONS_REGEX.test(cleanText)));
+
+        if (!isHallucination) {
+          console.log(`✓ [Whisper STT] Đã nhận dạng từ file .${fmt.ext.toUpperCase()} (${Date.now() - t0}ms, RMS=${vol.rms}, lang=${cleanLang || 'auto'}): "${cleanText}"`);
           return {
             text: cleanText,
             isEmptySpeech: false,
             latencyMs: Date.now() - t0,
-            engine: `Groq Whisper-large-v3-turbo (${fmt.ext.toUpperCase()})`
+            engine: `Groq Whisper-large-v3-turbo (${(cleanLang || 'auto').toUpperCase()})`
           };
         }
-        console.log(`🔇 [Whisper Empty/Noise Filtered] raw="${cleanText}" (RMS=${vol.rms})`);
+        console.log(`🔇 [Whisper Hallucination Filtered] Bỏ qua câu ảo giác YouTube: "${cleanText}" (voicedFrames=${vol.voicedFrames}, RMS=${vol.rms})`);
+        return {
+          text: '',
+          isEmptySpeech: true,
+          latencyMs: Date.now() - t0,
+          engine: `Hallucination Filter ("${cleanText.slice(0, 30)}...")`
+        };
       } else {
         const errBody = await res.text().catch(() => '');
         console.warn(`⚠ Lỗi Whisper STT HTTP ${res.status} (${fmt.ext}):`, errBody.slice(0, 200));
@@ -1688,18 +1783,24 @@ const server = http.createServer(async (req, res) => {
         inputAudioFile = incomingWavName;
         console.log(`🎙️ [Cục Hub Ghi Âm] Đã nhận file .${fmt.ext.toUpperCase()} (${rawAudioBuffer.length} bytes): ${incomingWavName}`);
 
-        // Chuyển file âm thanh tiếng nói của du khách thành văn bản qua Whisper AI (có lọc im lặng + từ điển Hỏa Lò)
-        const sttRes = await transcribeWavToText(rawAudioBuffer, contentType);
+        // Trích xuất lockedLang và deviceId trước để Whisper nhận dạng đúng ngôn ngữ khóa cứng!
+        const urlObj = url.parse(req.url, true);
+        const reqDeviceId = sanitizeStringInput(formFields.device_id || req.headers['x-device-id'] || urlObj.query.device_id || 'ESP32_HUB_MIC', 64) || 'ESP32_HUB_MIC';
+        const reqDevCtx = bleManager.getOrCreateDevice(reqDeviceId);
+        const lockedLang = normalizeLangCode(formFields.language || formFields.lang || req.headers['x-language'] || urlObj.query.lang) || reqDevCtx.lockedLanguage || serverState.lockedLanguage || 'vi';
+
+        // Chuyển file âm thanh tiếng nói của du khách thành văn bản qua Whisper AI (có khóa ngôn ngữ)
+        const sttRes = await transcribeWavToText(rawAudioBuffer, contentType, lockedLang);
         transcribedText = sttRes.text;
         isEmptySpeech = Boolean(sttRes.isEmptySpeech);
         sttInfo = { engine: sttRes.engine, latencyMs: sttRes.latencyMs };
 
-        const urlObj = url.parse(req.url, true);
         payload = {
           code: formFields.code || req.headers['x-artifact-code'] || req.headers['x-code'] || urlObj.query.code || '001',
           voice_text: transcribedText,
           end_speech_time: parseInt(formFields.end_speech_time || req.headers['x-end-speech-time'], 10) || tServerReceived,
-          device_id: formFields.device_id || req.headers['x-device-id'] || 'ESP32_HUB_MIC'
+          device_id: reqDeviceId,
+          language: lockedLang
         };
       } else {
         // [TRƯỜNG HỢP KIỂM THỬ]: Gửi JSON { "voice_text": "..." }

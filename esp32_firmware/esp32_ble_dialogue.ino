@@ -91,7 +91,7 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
 #define PIN_MIC_WS          15
 #define PIN_MIC_SD          32
 #define MIC_SAMPLE_RATE     16000
-#define MIC_MAX_RECORD_SEC  4
+#define MIC_MAX_RECORD_SEC  10
 #define MIC_MIN_RECORD_MS   600
 
 // =========================================================================================
@@ -273,8 +273,15 @@ void captureAndSendMicWav() {
     return;
   }
 
-  const size_t maxPcmBytes = MIC_SAMPLE_RATE * 2 * MIC_MAX_RECORD_SEC;
+  // Tự động thích ứng bộ nhớ: Ưu tiên PSRAM (10s), tự fallback 6s hoặc 4s trên ESP32 RAM nội bộ nhỏ
+  size_t recSec = psramFound() ? MIC_MAX_RECORD_SEC : 6;
+  size_t maxPcmBytes = MIC_SAMPLE_RATE * 2 * recSec;
   uint8_t* wavBuf = (uint8_t*)(psramFound() ? ps_malloc(44 + maxPcmBytes) : malloc(44 + maxPcmBytes));
+  if (!wavBuf && !psramFound()) {
+    recSec = 4;
+    maxPcmBytes = MIC_SAMPLE_RATE * 2 * recSec;
+    wavBuf = (uint8_t*)malloc(44 + maxPcmBytes);
+  }
   if (!wavBuf) {
     recordError("ERR_MEM_ALLOC", "Failed to allocate WAV buffer");
     return;

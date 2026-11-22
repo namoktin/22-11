@@ -34,6 +34,16 @@
       "deviceId": "HUB_INT_1",
       "language": "vi",
       "createdAt": "2026-11-22T10:14:17.419Z"
+    },
+    {
+      "id": "FB_1795348452867_d5gt",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-22T11:54:12.867Z"
     }
   ],
   "versions": []
