@@ -108,6 +108,33 @@
     "answer_en": "Children under 15 years old enjoy FREE daytime admission to Hoa Lo Prison Relic. Adult tickets are 50,000 VND, and students/seniors (60+) receive a 50% discount (25,000 VND)."
   },
   {
+    "id": "EXP_HIST_SEWER_MATERIAL",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["cong ngam", "duong cong"]],
+    "mustMatchAny": ["lam bang gi", "chat lieu", "cau tao", "song sat", "bang gi", "xay bang"],
+    "answer_vi": "Hệ thống cống thoát nước ngầm tại Nhà tù Hỏa Lò được xây ngầm bằng gạch và xi măng kiên cố dẫn ra ngoài phố Thợ Nhuộm, còn miệng cống được khóa chắn bằng các thanh song sắt dày. Chính vì vậy đêm Noel 24/12/1951, 16 tử tù chính trị đã phải bí mật dùng lưỡi dũa cưa đứt song sắt cống ngầm để chui qua vượt ngục (5 đồng chí thoát ra vùng tự do an toàn).",
+    "answer_en": "Hoa Lo's underground drainage sewer was built of masonry brick and cement leading out toward Tho Nhuom Street, sealed at the opening with thick iron bars. On Christmas Eve 1951, 16 death-row prisoners secretly sawed through those iron bars using small files to escape."
+  },
+  {
+    "id": "EXP_HIST_BANYAN_SIGNIFICANCE",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["cay bang"]],
+    "mustMatchAny": ["y nghia", "doi voi tu nhan", "bieu tuong", "tri ky", "cuu tinh"],
+    "answer_vi": "Cây bàng cổ thụ tại sân trại giam Hỏa Lò là người bạn tri kỷ và biểu tượng kiên cường của các tù nhân chính trị. Búp và lá bàng non dùng làm thuốc chữa bệnh kiết lỵ, vỏ bàng sắc nước rửa vết thương tra tấn, cành bàng mài làm quản bút viết báo bí mật, còn nhân hạt bàng bồi dưỡng cho những đồng chí ốm nặng.",
+    "answer_en": "The historic banyan tree in Hoa Lo's courtyard was a cherished companion and symbol of resilience for political prisoners. Its young buds and leaves treated dysentery, bark boiled to wash torture wounds, twigs were sharpened into pens for underground newspapers, and seeds nourished sick comrades."
+  },
+  {
+    "id": "EXP_HIST_BANYAN_SIZE",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["cay bang"]],
+    "mustMatchAny": ["to bao nhieu", "cao bao nhieu", "rong bao nhieu", "duong kinh", "chu vi", "kich thuoc", "cao may met", "to may met"],
+    "answer_vi": "Kho tư liệu chính thức của Di tích Nhà tù Hỏa Lò không ghi số đo chính xác về chiều cao hay đường kính thân cây bàng nên mình không suy đoán số liệu. Tư liệu chỉ xác nhận đây là cây bàng cổ thụ tỏa tán rộng giữa sân trại giam (trước năm 1930 tù nhân mang cây non từ nơi lao dịch về trồng; riêng cây bàng sân trại nữ hiện nay được trồng đầu xuân năm 2001).",
+    "answer_en": "Official Hoa Lo Prison records do not list exact height or trunk diameter measurements for the banyan tree, so I will not guess numbers. Archives confirm it is a broad-canopy shade tree in the courtyard (saplings were brought by prisoners before 1930, and the current women's courtyard tree was planted in early spring 2001)."
+  },
+  {
     "id": "EXP_HIST_BUILD_1896",
     "category": "HISTORICAL",
     "priority": 90,

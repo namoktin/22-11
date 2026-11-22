@@ -217,6 +217,9 @@ function handleVoiceProcessingStart(data) {
 }
 
 function handleBeaconTrigger(data) {
+  if (data.timestamp && data.timestamp > lastRenderedBeaconTime) {
+    lastRenderedBeaconTime = data.timestamp;
+  }
   const code = data.code;
   document.querySelectorAll('.exhibit-card').forEach(c => c.classList.remove('active'));
 
@@ -235,10 +238,15 @@ function handleBeaconTrigger(data) {
 
 async function triggerCode(code) {
   try {
+    const langSelect = document.getElementById('languageLockSelect');
+    const lockedLang = langSelect ? langSelect.value : 'vi';
     const res = await fetch('/api/ble-scan', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code, device_id: 'LOCAL_DASHBOARD' })
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Language': lockedLang
+      },
+      body: JSON.stringify({ code: code, device_id: 'LOCAL_DASHBOARD', language: lockedLang })
     });
     const data = await res.json();
     handleBeaconTrigger(data);
@@ -301,7 +309,20 @@ function initVoiceForm() {
       const data = await res.json();
       handleVoiceResponse(data);
     } catch (err) {
-      alert('Lỗi gửi câu hỏi: ' + err.message);
+      if (latencyTimerInterval) {
+        clearInterval(latencyTimerInterval);
+        latencyTimerInterval = null;
+      }
+      if (voiceAudioPlayer) {
+        voiceAudioPlayer.pause();
+      }
+      const evalElem = document.getElementById('latencyEval');
+      if (evalElem) {
+        evalElem.innerText = '⚠ Mất kết nối tới Server (localhost:5000)';
+        evalElem.style.background = '#FEF2F2';
+        evalElem.style.color = '#B91C1C';
+      }
+      alert('Lỗi gửi câu hỏi: ' + err.message + '\n(Kiểm tra lại server node server.js đã bật chưa nhé!)');
     } finally {
       btn.innerText = '💬 Gửi Text';
       btn.disabled = false;
@@ -422,7 +443,7 @@ async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
         'Content-Type': contentType || 'audio/wav',
         'X-Artifact-Code': code,
         'X-Language': lockedLang,
-        'X-Device-Id': 'BROWSER_MIC_DASHBOARD',
+        'X-Device-Id': 'LOCAL_DASHBOARD',
         'X-End-Speech-Time': tEnd.toString()
       },
       body: blob
@@ -437,12 +458,25 @@ async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
 }
 
 let currentVoiceChunks = [];
-let currentVoiceChunkIndex = 0;
+let currentSingleAudioUrl = null;
+let currentReplyId = null;
+let singleAudioEnded = false;
+let isReloadingSingleAudio = false;
+let chunkStatusTimer = null;
 
 function handleVoiceResponse(data) {
   if (latencyTimerInterval) {
     clearInterval(latencyTimerInterval);
     latencyTimerInterval = null;
+  }
+  if (chunkStatusTimer) {
+    clearInterval(chunkStatusTimer);
+    chunkStatusTimer = null;
+  }
+
+  // Ghi nhận timestamp để polling /api/state mỗi 1s KHÔNG gọi đè lại câu trả lời đang phát!
+  if (data.timestamp && data.timestamp > lastRenderedVoiceTime) {
+    lastRenderedVoiceTime = data.timestamp;
   }
 
   const ms = data.latency_measurement?.time_to_first_sound_ms || 0;
@@ -460,28 +494,88 @@ function handleVoiceResponse(data) {
   }
 
   const bd = data.latency_measurement?.breakdown || {};
-  document.getElementById('bdUpload').innerText = `${bd.upload_and_stt_ms || 0} ms`;
+  document.getElementById('bdUpload').innerText = `${bd.upload_and_stt_ms || bd.upload_and_receive_ms || 0} ms`;
   document.getElementById('bdAi').innerText = `${bd.ai_thinking_ms || 0} ms`;
-  document.getElementById('bdTts').innerText = `${bd.first_chunk_wav_ms || bd.tts_wav_synthesis_ms || 0} ms (Đoạn 1)`;
+  document.getElementById('bdTts').innerText = `${bd.first_chunk_wav_ms || bd.tts_wav_synthesis_ms || 0} ms (1 file .WAV liền mạch)`;
 
   const replyBox = document.getElementById('voiceReplyBox');
   replyBox.style.display = 'block';
   document.getElementById('erbSource').innerText = `🧠 ${data.ai_source || 'KiemThu AI'}`;
-  document.getElementById('erbTimeTag').innerText = `⚡ ${ms} ms (< 1s)`;
-  const qPrompt = data.transcribed_question ? `🗣️ Câu hỏi nhận dạng từ file .WAV: "${data.transcribed_question}"\n\n` : '';
+  document.getElementById('erbTimeTag').innerText = ms < 1000 ? `⚡ ${ms} ms (< 1s)` : `⏱️ ${ms} ms`;
+  const isWavInput = data.input_mode === 'ESP32_WAV_RECORDING';
+  const qPrompt = data.transcribed_question
+    ? (isWavInput ? `🎙️ Câu hỏi nhận dạng từ file .WAV: "${data.transcribed_question}"\n\n` : `💬 Câu hỏi: "${data.transcribed_question}"\n\n`)
+    : '';
   document.getElementById('voiceReplyText').innerText = qPrompt + data.reply_text;
 
-  // Danh sách các chunks âm thanh
-  currentVoiceChunks = data.chunks && data.chunks.length > 0 
-    ? data.chunks 
-    : [{ index: 1, text: data.spoken_audio_text || data.reply_text, status: 'ready', wav_url: data.audio_wav_url }];
-  currentVoiceChunkIndex = 0;
+  // Luồng 1 FILE .WAV DUY NHẤT (Chunk 1 phát ngay, Chunk 2 nối thẳng vào cùng luồng PCM, không ngắt quãng!)
+  currentSingleAudioUrl = data.audio_wav_url || null;
+  currentReplyId = currentSingleAudioUrl ? currentSingleAudioUrl.split('/').pop().replace(/\.wav$/i, '') : null;
+  singleAudioEnded = false;
+  currentVoiceChunks = data.chunks && data.chunks.length > 0
+    ? data.chunks.map(c => ({ ...c }))
+    : [{ index: 1, text: data.spoken_audio_text || data.reply_text, status: 'ready', wav_url: currentSingleAudioUrl }];
 
   renderChunkProgressUI(currentVoiceChunks);
 
-  if (data.audio_wav_url) {
-    playVoiceChunk(0);
+  // Phát ĐÚNG 1 LẦN duy nhất trên 1 URL /audio-stream/reply_xxx.wav liền mạch từ đầu tới cuối!
+  if (currentSingleAudioUrl) {
+    isReloadingSingleAudio = true;
+    voiceAudioPlayer.src = currentSingleAudioUrl;
+    voiceAudioPlayer.play().catch(e => console.log('Autoplay block:', e)).finally(() => {
+      setTimeout(() => { isReloadingSingleAudio = false; }, 150);
+    });
+    voiceAudioPlayer.onended = () => {
+      singleAudioEnded = true;
+      currentVoiceChunks.forEach(c => { c.status = 'ready'; });
+      renderChunkProgressUI(currentVoiceChunks);
+    };
   }
+
+  // Fallback cập nhật badge trạng thái ghép file nếu SSE chưa đẩy kịp
+  if (currentVoiceChunks.some(c => c.status !== 'ready')) {
+    let tries = 0;
+    chunkStatusTimer = setInterval(async () => {
+      tries++;
+      try {
+        const stRes = await fetch('/api/state', { cache: 'no-store' });
+        if (stRes.ok) {
+          const st = await stRes.json();
+          const latestChunks = st.latestVoice?.chunks;
+          if (Array.isArray(latestChunks) && latestChunks.length === currentVoiceChunks.length) {
+            let allDone = true;
+            latestChunks.forEach((sc, idx) => {
+              if (sc.status === 'ready') currentVoiceChunks[idx].status = 'ready';
+              else allDone = false;
+            });
+            renderChunkProgressUI(currentVoiceChunks);
+            if (allDone) {
+              clearInterval(chunkStatusTimer);
+              chunkStatusTimer = null;
+            }
+          }
+        }
+      } catch (e) {}
+      if (tries >= 25 && chunkStatusTimer) {
+        clearInterval(chunkStatusTimer);
+        chunkStatusTimer = null;
+      }
+    }, 500);
+  }
+}
+
+function replayAllChunksFromStart() {
+  if (!currentSingleAudioUrl) return;
+  singleAudioEnded = false;
+  isReloadingSingleAudio = true;
+  // Nạp lại với ?r=timestamp để trình duyệt đọc bản file .WAV đã gộp hoàn chỉnh (có tổng thời lượng & thanh tua chuẩn xác!)
+  const sep = currentSingleAudioUrl.includes('?') ? '&' : '?';
+  voiceAudioPlayer.src = `${currentSingleAudioUrl}${sep}r=${Date.now()}`;
+  voiceAudioPlayer.currentTime = 0;
+  voiceAudioPlayer.play().catch(e => console.log('Autoplay block:', e)).finally(() => {
+    setTimeout(() => { isReloadingSingleAudio = false; }, 150);
+  });
+  renderChunkProgressUI(currentVoiceChunks);
 }
 
 function renderChunkProgressUI(chunks) {
@@ -497,74 +591,51 @@ function renderChunkProgressUI(chunks) {
   }
   if (!container) return;
 
+  const allMerged = chunks.every(c => c.status === 'ready');
+  const statusSummary = allMerged
+    ? (chunks.length > 1 ? `✓ Đã gộp trọn ${chunks.length} đoạn thành 1 file .WAV duy nhất (không ngắt quãng)` : '✓ 1 file .WAV liền mạch hoàn chỉnh')
+    : `⚡ Đang đẩy liền mạch vào 1 file .WAV duy nhất...`;
+
   container.innerHTML = `
-    <div style="font-size: 11px; font-weight: 800; color: var(--accent-terra); text-transform: uppercase; margin-bottom: 8px;">
-      ⚡ TIẾN TRÌNH ÂM THANH ĐẨY DẦN LÊN TAI NGHE (<1s):
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+      <div style="font-size: 11px; font-weight: 800; color: ${allMerged ? '#15803D' : 'var(--accent-terra)'}; text-transform: uppercase;">
+        ${statusSummary}
+      </div>
+      <button type="button" onclick="replayAllChunksFromStart()" style="background: #1A1816; color: #FFFFFF; border: none; border-radius: 9999px; padding: 4px 12px; font-size: 11px; font-weight: 700; cursor: pointer;">
+        🔁 Nghe lại toàn bộ (1 file .WAV)
+      </button>
     </div>
     <div class="chunks-badges-row" style="display: flex; gap: 8px; flex-wrap: wrap;">
       ${chunks.map((c, i) => {
         const isReady = c.status === 'ready';
-        const isPlaying = i === currentVoiceChunkIndex;
-        const bg = isPlaying ? '#15803D' : (isReady ? '#EBFDF2' : '#FFFBEB');
-        const color = isPlaying ? '#FFFFFF' : (isReady ? '#15803D' : '#B45309');
-        const border = isPlaying ? '#15803D' : (isReady ? '#86EFAC' : '#FDE68A');
-        const label = isPlaying ? '▶ Đang phát' : (isReady ? '✓ Sẵn sàng' : '⏳ Đang đẩy lên...');
+        const bg = isReady ? '#EBFDF2' : '#FFFBEB';
+        const color = isReady ? '#15803D' : '#B45309';
+        const border = isReady ? '#86EFAC' : '#FDE68A';
+        const label = isReady ? (i === 0 ? '✓ Đã phát ngay' : '✓ Đã nối liền mạch') : '⏳ Đang nối tiếp...';
         return `
-          <div style="background: ${bg}; color: ${color}; border: 1px solid ${border}; border-radius: 9999px; padding: 4px 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
-            <span>Đoạn ${c.index}: ${label}</span>
-          </div>
+          <span style="background: ${bg}; color: ${color}; border: 1px solid ${border}; border-radius: 9999px; padding: 4px 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+            <span>Phần ${c.index}: ${label}</span>
+          </span>
         `;
       }).join('')}
     </div>
   `;
 }
 
-function playVoiceChunk(index) {
-  if (index >= currentVoiceChunks.length) {
-    renderChunkProgressUI(currentVoiceChunks);
-    return;
+// Khi đã nghe hết luồng trực tiếp mà người dùng bấm nút Play ▶ ngay trên thanh <audio> -> tải bản file .WAV đã gộp hoàn chỉnh để nghe lại từ đầu!
+voiceAudioPlayer.addEventListener('play', () => {
+  if (!isReloadingSingleAudio && singleAudioEnded && currentSingleAudioUrl) {
+    replayAllChunksFromStart();
   }
-  currentVoiceChunkIndex = index;
-  const chunk = currentVoiceChunks[index];
-  renderChunkProgressUI(currentVoiceChunks);
-
-  voiceAudioPlayer.src = chunk.wav_url;
-  voiceAudioPlayer.play().catch(e => console.log('Autoplay block:', e));
-
-  voiceAudioPlayer.onended = () => {
-    const nextIdx = index + 1;
-    if (nextIdx < currentVoiceChunks.length) {
-      if (currentVoiceChunks[nextIdx].status === 'ready') {
-        playVoiceChunk(nextIdx);
-      } else {
-        console.log(`⏳ Đang chờ Chunk ${nextIdx + 1} nạp xong...`);
-      }
-    } else {
-      currentVoiceChunkIndex = -1;
-      renderChunkProgressUI(currentVoiceChunks);
-    }
-  };
-}
+});
 
 function handleVoiceChunkReady(chunkData) {
-  const existing = currentVoiceChunks.find(c => c.index === chunkData.chunk_index);
-  if (existing) {
-    existing.status = 'ready';
-    existing.wav_url = chunkData.wav_url;
-  } else {
-    currentVoiceChunks.push({
-      index: chunkData.chunk_index,
-      text: chunkData.text,
-      status: 'ready',
-      wav_url: chunkData.wav_url
-    });
+  if (currentReplyId && chunkData.reply_id && chunkData.reply_id !== currentReplyId) return;
+  const target = currentVoiceChunks.find(c => c.index === chunkData.chunk_index);
+  if (target) {
+    target.status = 'ready';
   }
   renderChunkProgressUI(currentVoiceChunks);
-
-  // Nếu audio vừa phát xong và đang dừng ở chunk trước, tự động phát tiếp chunk mới này!
-  if (voiceAudioPlayer.paused && currentVoiceChunkIndex === chunkData.chunk_index - 2) {
-    playVoiceChunk(chunkData.chunk_index - 1);
-  }
 }
 
 // 7. Modal Sửa Mã

@@ -568,25 +568,33 @@
       document.getElementById('voiceSourceBadge').innerText = `🧠 ${data.ai_source || 'KiemThu AI'} [${data.input_mode || 'JSON'}]`;
       document.getElementById('voiceResultText').innerText = qText + data.reply_text;
 
-      // Xử lý phát Progressive Chunks nối tiếp liền mạch
-      let chunks = data.chunks || [{ index: 1, wav_url: data.audio_wav_url }];
-      let currentIdx = 0;
+      // Phát 1 FILE .WAV DUY NHẤT LIỀN MẠCH (Chunk 1 phát ngay, Chunk 2 nối trực tiếp cùng luồng PCM, 0ms ngắt quãng!)
       const a = document.getElementById('voiceResultAudio');
+      const streamUrl = data.audio_wav_url;
+      let streamEnded = false;
+      let isReloading = false;
 
-      function playChunk(idx) {
-        if (idx >= chunks.length) return;
-        currentIdx = idx;
-        a.src = chunks[idx].wav_url;
-        a.play().catch(e => console.log('Autoplay voice:', e));
+      if (streamUrl) {
+        isReloading = true;
+        a.src = streamUrl;
+        a.play().catch(e => console.log('Autoplay voice:', e)).finally(() => {
+          setTimeout(() => { isReloading = false; }, 150);
+        });
         a.onended = () => {
-          if (idx + 1 < chunks.length) {
-            playChunk(idx + 1);
+          streamEnded = true;
+        };
+        a.onplay = () => {
+          if (!isReloading && streamEnded) {
+            streamEnded = false;
+            isReloading = true;
+            const sep = streamUrl.includes('?') ? '&' : '?';
+            a.src = `${streamUrl}${sep}r=${Date.now()}`;
+            a.currentTime = 0;
+            a.play().catch(e => console.log('Replay voice:', e)).finally(() => {
+              setTimeout(() => { isReloading = false; }, 150);
+            });
           }
         };
-      }
-
-      if (data.audio_wav_url) {
-        playChunk(0);
       }
     }
 

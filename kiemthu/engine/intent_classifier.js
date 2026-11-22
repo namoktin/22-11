@@ -234,9 +234,10 @@ class IntentClassifier {
       'iphone', 'so sanh samsung', 'laptop nao choi game', 'hack wifi',
       // Ẩm thực công thức, đời sống, y tế dân sinh, xổ số, tử vi, thú cưng, tình cảm
       'huong dan nau pho', 'cach lam banh chung', 'cong thuc pha tra sua', 'tu van tinh cam', 'nguoi yeu doi chia tay',
-      'danh lo', 'xo so mien bac', 'chua cam cum', 'dau rang uong thuoc', 'tap gym', '6 mui',
+      'danh lo', 'xo so mien bac', 'chua cam cum', 'cam cum', 'thuoc tri', 'dau dau', 'dau rang uong thuoc', 'tap gym', '6 mui',
       'cat toc nam', 'quan karaoke', 'khach san 5 sao gan my dinh', 'mua ve may bay', 'lam ho chieu', 'bang lai xe a1',
-      'nuoi meo', 'cho poodle', 'cay kim tien hop menh', 'xem tu vi', 'cung bo cap', 'vuot den do phat',
+      'nuoi meo', 'cho poodle', 'cay kim tien hop menh', 'xem tu vi', 'cung bo cap', 'vuot den do', 'luat giao thong',
+      'giau nhat the gioi', 'cau tao cua nguyen tu', 'nguyen tu gom',
       'dong dat o nhat ban', 'thu do nuoc uc', 'dan so nhat ban', 'bong den dien', 'newton', 'trai dat cach mat troi',
       'mat trang co nuoc', 'bau troi tai sao co mau xanh', 'chatgpt voi gemini',
       // Địa danh ngoài Hỏa Lò (khi KHÔNG hỏi khoảng cách/đường đi từ Hỏa Lò)
@@ -701,7 +702,7 @@ class IntentClassifier {
       'loi di rieng', 'co cho ngoi nghi khong', 'ghe ngoi nghi', 'khiem thi', 'khiem thinh', 'nguoi mu', 'gay dan duong',
       'wheelchair', 'disabled', 'handicapped', 'elderly', 'senior', 'baby stroller', 'children', 'kids', 'ramp'
     ];
-    if (accessibilitySignals.some(s => norm.includes(s))) {
+    if (accessibilitySignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.ACCESSIBILITY_SUPPORT,
         subIntent: null,

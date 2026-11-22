@@ -9,6 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const nlp = require('./nlp_processor');
+const { LocalSemanticIndex } = require('./local_semantic_index');
 const docentRewriter = require('./docent_rewriter');
 
 // 1. HỒ SƠ 13 PHÂN KHU & HIỆN VẬT LỊCH SỬ
@@ -377,6 +378,86 @@ class KnowledgeBase {
     this.loadVerifiedServiceKnowledge();
     this.loadExpandedKnowledge();
     this.loadDataset1000();
+    this.localSemanticIndex = new LocalSemanticIndex();
+    this.buildLocalSemanticIndex();
+  }
+
+  buildLocalSemanticIndex() {
+    const t0 = Date.now();
+    this.localSemanticIndex = new LocalSemanticIndex();
+
+    for (const item of this.facts100) {
+      const ans = item.premium_answer || item.expected_answer;
+      if (item.question && ans) {
+        this.localSemanticIndex.addDocument({
+          id: item.question_id || item.seed_id || 'F100',
+          source: 'FACTS_100',
+          question: item.question,
+          answer: ans,
+          lang: 'vi',
+          intent: item.expected_intent || 'HISTORICAL_FACT',
+          priorityBoost: 0.03
+        });
+      }
+    }
+
+    for (const item of this.groundTruth500) {
+      const ans = item.reference_answer || item.verified_answer || item.ground_truth_summary || item.expected_answer;
+      if (item.question && ans) {
+        this.localSemanticIndex.addDocument({
+          id: item.id || 'GT500',
+          source: 'GROUND_TRUTH_500',
+          question: item.question,
+          answer: ans,
+          lang: 'vi',
+          intent: 'HISTORICAL_FACT',
+          priorityBoost: 0.02
+        });
+      }
+    }
+
+    for (const item of this.dataset1000) {
+      if (item.question && item.answer) {
+        this.localSemanticIndex.addDocument({
+          id: item.id,
+          source: 'DATASET_1000',
+          question: item.question,
+          answer: item.answer,
+          lang: 'vi',
+          intent: 'HISTORICAL_FACT'
+        });
+      }
+    }
+
+    for (const ex of Object.values(HISTORICAL_EXHIBITS)) {
+      if (ex.directAnswer) {
+        this.localSemanticIndex.addDocument({
+          id: `EX_${ex.id}`,
+          source: 'EXHIBIT_DOSSIER',
+          question: `${ex.name} ${(ex.keywords || []).slice(0, 6).join(' ')}`,
+          answer: ex.directAnswer,
+          lang: 'vi',
+          intent: 'EXHIBIT_INFORMATION'
+        });
+      }
+    }
+
+    this.localSemanticIndex.rebuildIdf();
+    console.log(`[LocalSemanticIndex] Đã dựng chỉ mục vector ngữ nghĩa cho ${this.localSemanticIndex.docs.length} tri thức cục bộ (${Date.now() - t0}ms).`);
+  }
+
+  findSemanticLocalMatch(question, { language = 'vi', stationCode = null, minScore = 0.68 } = {}) {
+    if (!question || !this.localSemanticIndex) return null;
+    const hits = this.localSemanticIndex.search(question, {
+      lang: language,
+      stationCode,
+      topK: 1,
+      minScore
+    });
+    return hits.length > 0 ? hits[0] : null;
+  }
+
+  _endSemanticPlaceholder() {
   }
 
   loadExpandedKnowledge() {
@@ -1052,7 +1133,9 @@ class KnowledgeBase {
       }
 
       // Luật ưu tiên phân biệt đặc thù & Chống va chạm chéo (Anti-Collision)
-      if (key === 'cum_sat' && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan') || hasPhrase(norm, 'be cum'))) matchCount += 25;
+      const isFluCold = hasPhrase(norm, 'cam cum') || hasPhrase(norm, 'thuoc tri');
+      if (key === 'cum_sat' && !isFluCold && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan') || hasPhrase(norm, 'be cum'))) matchCount += 25;
+      if (key === 'cum_sat' && isFluCold) matchCount -= 50;
       if (key === 'phi_cong' && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan'))) matchCount -= 50;
       if (key === 'may_chem' && (hasPhrase(norm, 'kien truc') || hasPhrase(norm, 'cong chinh') || hasPhrase(norm, 'phu khanh')) && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'guillotine')) matchCount -= 50;
       if (key === 'cay_bang' && hasPhrase(norm, 'cay bang')) matchCount += 10;
@@ -1163,6 +1246,141 @@ class KnowledgeBase {
     }
 
     return null;
+  }
+
+  /**
+   * =========================================================================
+   * UNIVERSAL TOP-K HYBRID RAG RETRIEVER (V7.5)
+   * Gom Top-K tư liệu xác thực liên quan nhất từ TOÀN BỘ 5 kho tri thức
+   * (100 Facts + 500 Ground Truth + 1000 Dataset + 13 Hồ sơ Phân khu + Expanded + BLE Station)
+   * để LLM tổng hợp trả lời CHÍNH XÁC mọi biến thể câu hỏi mới (1000+ kiểu hỏi khác nhau).
+   * =========================================================================
+   */
+  retrieveTopKContext(question, { subject = null, intent = null, artifactContext = null, topK = 8 } = {}) {
+    const snippets = [];
+    const seen = new Set();
+    const addSnippet = (label, text) => {
+      if (!text || typeof text !== 'string') return;
+      const clean = text.replace(/\s+/g, ' ').trim();
+      if (clean.length < 15) return;
+      const sig = clean.slice(0, 75).toLowerCase();
+      if (seen.has(sig)) return;
+      seen.add(sig);
+      snippets.push(label ? `[${label}] ${clean}` : clean);
+    };
+
+    // 1. Ngữ cảnh trạm BLE hiện vật du khách đang đứng ngay trước mặt
+    if (artifactContext && artifactContext.artifact_name) {
+      const dlg = artifactContext.dialogue?.text || artifactContext.dialogue?.short_cue || '';
+      addSnippet(
+        `VỊ TRÍ HIỆN TẠI CỦA DU KHÁCH (BLE Mã ${artifactContext.code || 'N/A'})`,
+        `Du khách đang đứng ngay tại: ${artifactContext.artifact_name} (${artifactContext.location || 'Khu trưng bày'}). Thông tin hiện vật: ${dlg}`
+      );
+    }
+
+    const norm = nlp.normalize(question || '');
+    const tokens = nlp.tokenize(question || '').filter(t => t.length > 2 && !STOPWORDS.has(t));
+
+    // 2. Hồ sơ phân khu lịch sử liên quan (13 phân khu Hỏa Lò - lấy toàn bộ facts[])
+    const matchedExhibit = this.findHistoricalExhibit(question) ||
+      (subject && HISTORICAL_EXHIBITS[subject] ? { exhibit: HISTORICAL_EXHIBITS[subject] } : null);
+    if (matchedExhibit && matchedExhibit.exhibit) {
+      const ex = matchedExhibit.exhibit;
+      if (Array.isArray(ex.facts)) {
+        addSnippet(`Hồ sơ ${ex.name}`, ex.facts.join(' '));
+      } else if (ex.directAnswer) {
+        addSnippet(`Hồ sơ ${ex.name}`, ex.directAnswer);
+      }
+    }
+
+    // 3. Kho tri thức mở rộng (expanded_heritage_knowledge.json)
+    const expMatch = this.findExpandedMatch(question, 'vi', 0);
+    if (expMatch && expMatch.reply) {
+      addSnippet(`Tư liệu xác thực ${expMatch.id}`, expMatch.reply);
+    }
+
+    // 4. Chính sách dịch vụ & chăm sóc khách hàng nếu có
+    const policyMatch = this.findServicePolicy(question, intent);
+    if (policyMatch && policyMatch.policy?.content) {
+      addSnippet(`Chính sách ${policyMatch.policy.title}`, policyMatch.policy.content);
+    }
+    const ccCtx = this.getCustomerCareContext(intent);
+    if (ccCtx && Array.isArray(ccCtx.facts)) {
+      addSnippet(ccCtx.title, ccCtx.facts.slice(0, 3).join(' '));
+    }
+
+    // 5. Top-3 từ Kho 100 Facts xác thực (facts100) theo Inverted Index
+    if (tokens.length > 0 && this.facts100.length > 0) {
+      const scoreMap = new Map();
+      for (const t of tokens) {
+        const list = this.facts100InvertedIndex.get(t);
+        if (!list) continue;
+        const idf = Math.log(1 + this.facts100.length / (list.length + 1));
+        for (const idx of list) {
+          scoreMap.set(idx, (scoreMap.get(idx) || 0) + idf);
+        }
+      }
+      const ranked = [...scoreMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+      for (const [idx, sc] of ranked) {
+        if (sc < 1.2) continue;
+        const item = this.facts100[idx];
+        const ans = item.premium_answer || item.expected_answer;
+        if (ans) addSnippet(`Fact ${item.seed_id || item.question_id || idx}`, ans);
+      }
+    }
+
+    // 6. Top-2 từ Kho 500 câu hỏi chuẩn sử học (groundTruth500)
+    if (tokens.length > 0 && this.groundTruth500.length > 0) {
+      const scoreMap = new Map();
+      for (const t of tokens) {
+        const list = this.invertedIndex500.get(t);
+        if (!list) continue;
+        const idf = Math.log(1 + this.groundTruth500.length / (list.length + 1));
+        for (const idx of list) {
+          scoreMap.set(idx, (scoreMap.get(idx) || 0) + idf);
+        }
+      }
+      const ranked = [...scoreMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2);
+      for (const [idx, sc] of ranked) {
+        if (sc < 2.2) continue;
+        const item = this.groundTruth500[idx];
+        const ans = item.reference_answer || item.verified_answer;
+        if (ans) addSnippet(`Tư liệu ${item.id || idx}`, ans);
+      }
+    }
+
+    // 7. Top-2 từ Kho 1000 câu hỏi Hỏa Lò (dataset1000)
+    if (tokens.length > 0 && this.dataset1000.length > 0) {
+      const scoreMap = new Map();
+      for (const t of tokens) {
+        const list = this.invertedIndex1000.get(t);
+        if (!list) continue;
+        const idf = Math.log(1 + this.dataset1000.length / (list.length + 1));
+        for (const idx of list) {
+          scoreMap.set(idx, (scoreMap.get(idx) || 0) + idf);
+        }
+      }
+      const ranked = [...scoreMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2);
+      for (const [idx, sc] of ranked) {
+        if (sc < 2.5) continue;
+        const item = this.dataset1000[idx];
+        if (item && item.answer) addSnippet(`Kho Hỏa Lò ${item.id}`, item.answer);
+      }
+    }
+
+    // 8. Nếu chưa có snippet di tích nào nhưng có từ khóa chung Hỏa Lò -> thêm tổng quan cốt lõi
+    if (snippets.length <= (artifactContext ? 1 : 0)) {
+      addSnippet(
+        'Tổng quan Di tích Nhà tù Hỏa Lò',
+        'Di tích Lịch sử Nhà tù Hỏa Lò (Maison Centrale, số 1 phố Hỏa Lò, quận Hoàn Kiếm, Hà Nội) do thực dân Pháp xây dựng năm 1896 trên đất làng gốm Phụ Khánh. Mở cửa 8:00–17:00 hàng ngày (không nghỉ trưa), vé 50.000 VNĐ/người lớn, ưu đãi 25.000 VNĐ cho HSSV/người cao tuổi, miễn phí trẻ dưới 15 tuổi. Các điểm nổi bật: Cổng chính, Ngục tối Cachot, Cỗ máy chém cao gần 4m lưỡi thép 50kg, Cây bàng cổ thụ sân trại giam, Cống ngầm vượt ngục 1945 & 1951, Khu phi công Mỹ 1964–1973 (Hanoi Hilton), Đài tưởng niệm.'
+      );
+    }
+
+    return {
+      snippets: snippets.slice(0, topK),
+      hasArchiveEvidence: snippets.length > 0,
+      hasMatchedExhibit: Boolean(matchedExhibit)
+    };
   }
 }
 

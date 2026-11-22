@@ -32,6 +32,8 @@ class IntelligentAnswerComposer {
     language = 'vi',
     session = null,
     userProfile = null,
+    artifactContext = null,
+    previousPhrasings = [],
     groqCaller = null
   }) {
     const normQ = ' ' + nlp.normalize(question) + ' ';
@@ -119,8 +121,46 @@ class IntelligentAnswerComposer {
 
     // 0.4. Ngoài phạm vi di tích (OUT_OF_SCOPE)
     if (intent === 'OUT_OF_SCOPE') {
-      // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), kiểm tra lại kho tri thức mở rộng / hồ sơ di tích trước khi từ chối nhầm!
+      // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), ưu tiên Universal Grounded RAG để hiểu MỌI kiểu hỏi tự nhiên/tiếng Anh gãy/câu hỏi mới!
       if (subIntent !== 'STRICT_OUT_OF_DOMAIN') {
+        if (groqCaller) {
+          const ragRescued = await this.runUniversalGroundedRAG({
+            question,
+            intent: 'HISTORICAL_FACT',
+            subject,
+            retrievedData,
+            language,
+            session,
+            artifactContext,
+            previousPhrasings,
+            groqCaller,
+            allowOutOfScopeRefusal: true
+          });
+          if (ragRescued) return ragRescued;
+        }
+        // Cứu hộ vị trí BLE (kể cả khi mất mạng hoặc hết hạn mức LLM): nhận diện câu hỏi về chỗ khách đang đứng ("nói về chỗ tôi đang đứng", "đây là đâu", "hiện vật trước mặt")
+        const isAboutVisitorCurrentSpot = artifactContext?.dialogue?.text &&
+          !/\b(ban o dau|em o dau|where are you|nha ve sinh|toilet|wc|quay ve)\b/.test(normQ) &&
+          /\b(cho toi dang dung|noi toi dang dung|toi dang dung|minh dang dung|dang dung o|cho nay la|noi nay la|day la dau|hien vat truoc mat|truoc mat toi|noi ve cho nay|gioi thieu cho nay|where am i|where is my from|this spot|in front of me)\b/.test(normQ);
+        if (isAboutVisitorCurrentSpot) {
+          const intros = [
+            `Bạn đang đứng ngay tại khu vực ${artifactContext.artifact_name} (${artifactContext.location || 'Khu trưng bày'}). `,
+            `Vị trí hiện tại của bạn là ${artifactContext.artifact_name} tại ${artifactContext.location || 'khu trưng bày'}. `,
+            `Trước mặt bạn lúc này chính là ${artifactContext.artifact_name} (${artifactContext.location || 'Di tích'}). `
+          ];
+          const lead = intros[(previousPhrasings.length || 0) % intros.length];
+          return this.formatResponse({
+            reply: lead + artifactContext.dialogue.text,
+            style: 'HISTORICAL_EXPLANATION',
+            confidence: 'HIGH',
+            confidenceScore: 0.94,
+            sources: [`BLE_LIVE_STATION_${artifactContext.code || 'ACTIVE'}`],
+            claims: [artifactContext.artifact_name],
+            responseType: 'BLE_STATION_CONTEXT_RESCUE',
+            resolvedIntent: 'VISIT_GUIDANCE',
+            requiresHuman: false
+          }, 'VISIT_GUIDANCE', retrievedData);
+        }
         const rescuedExp = knowledgeBase.findExpandedMatch(question, language, 0);
         if (rescuedExp) {
           return this.formatResponse({
@@ -425,6 +465,24 @@ class IntelligentAnswerComposer {
 
     // 0.6. Câu hỏi mơ hồ / nhiễu / chào ngắn (AMBIGUOUS_QUERY & CLARIFICATION — ĐÃ NỐI MẠCH V7.0)
     if (intent === 'AMBIGUOUS_QUERY' || intent === 'CLARIFICATION') {
+      const isPureNoise = subIntent === 'NOISE_PUNCTUATION' || subIntent === 'NOISE_GIBBERISH' || subIntent === 'EXTREME_NOISE_OR_FILLER' || subIntent === 'CURRENT_TIME_QUERY';
+      // Khi có Groq AI online và câu hỏi KHÔNG phải ký tự rác/nhiễu -> để AI hiểu ý thật bằng Universal RAG + vị trí BLE thay vì trả lời khuôn mẫu!
+      if (!isPureNoise && groqCaller) {
+        const smartClarified = await this.runUniversalGroundedRAG({
+          question,
+          intent: 'VISIT_GUIDANCE',
+          subject,
+          retrievedData,
+          language,
+          session,
+          artifactContext,
+          previousPhrasings,
+          groqCaller,
+          allowOutOfScopeRefusal: true
+        });
+        if (smartClarified) return smartClarified;
+      }
+
       const isEn = language === 'en';
       let reply = isEn
         ? 'Could you please specify which area, facility, or exhibit at Hoa Lo Prison you are looking for? Sharing your current spot will help me guide you accurately.'
@@ -659,6 +717,37 @@ class IntelligentAnswerComposer {
     // =========================================================================
     // 3. KHÁI QUÁT HÓA DỮ LIỆU TỪ GROUND TRUTH / HỒ SƠ LỊCH SỬ (FACTUAL SYNTHESIS)
     // =========================================================================
+    // 3.0. Nếu câu hỏi KHÔNG khớp nguyên văn 100% (EXACT) và có Groq LLM online:
+    //      Chạy UNIVERSAL TOP-K GROUNDED RAG trước để trả lời ĐÚNG TRỌNG TÂM 1000+ kiểu hỏi khác nhau
+    //      (chất liệu, kích thước, ý nghĩa, so sánh, nguyên nhân, diễn đạt đời thường, tiếng Anh/Pháp/Nhật/Hàn/Trung...)
+    //      thay vì xả 1 đoạn văn mẫu tĩnh lệch câu hỏi!
+    const isExactGroundTruth = retrievedData?.groundTruthMatch?.type === 'EXACT';
+    if (!isExactGroundTruth && groqCaller) {
+      const preRagGate = relevanceGate.verifyCandidate(question, '', { intent, sourceType: 'PRE_LLM', language });
+      if (!preRagGate.passed && preRagGate.overrideResponse) {
+        return this.formatResponse({
+          ...preRagGate.overrideResponse,
+          style: 'CUSTOMER_CARE',
+          claims: [preRagGate.reason],
+          requiresHuman: false
+        }, intent, retrievedData);
+      }
+
+      const ragAnswer = await this.runUniversalGroundedRAG({
+        question,
+        intent,
+        subject,
+        retrievedData,
+        language,
+        session,
+        artifactContext,
+        previousPhrasings,
+        groqCaller,
+        allowOutOfScopeRefusal: false
+      });
+      if (ragAnswer) return ragAnswer;
+    }
+
     if (retrievedData?.groundTruthMatch) {
       const gt = retrievedData.groundTruthMatch;
       const gtItem = gt.item;
@@ -705,20 +794,22 @@ class IntelligentAnswerComposer {
         }
       }
 
-      // 3.2. Fallback cho bộ 500 câu hỏi chuẩn sử học cũ
-      const rawAns = gtItem.reference_answer || gtItem.verified_answer;
-      const adapted = this.adaptGroundTruthToQuestion(rawAns, question, aspect, intent, language);
+      // 3.2. Fallback cho bộ 500 câu hỏi chuẩn sử học cũ (bảo đảm không bao giờ trả chuỗi rỗng!)
+      const rawAns = gtItem.reference_answer || gtItem.verified_answer || gtItem.premium_answer || gtItem.expected_answer || gtItem.ground_truth_summary || gtItem.answer || '';
+      if (rawAns.trim().length >= 10) {
+        const adapted = this.adaptGroundTruthToQuestion(rawAns, question, aspect, intent, language);
 
-      return this.formatResponse({
-        reply: adapted.reply,
-        style: adapted.style || 'HISTORICAL_EXPLANATION',
-        confidence: 'HIGH',
-        confidenceScore: 0.97,
-        sources: [gtItem.id || 'Ground Truth Sử học Hỏa Lò'],
-        claims: [gtItem.artifact || gtItem.area || 'Sử học xác thực'],
-        responseType: 'GROUNDED_ADAPTED_ANSWER',
-        requiresHuman: false
-      }, intent, retrievedData);
+        return this.formatResponse({
+          reply: adapted.reply,
+          style: adapted.style || 'HISTORICAL_EXPLANATION',
+          confidence: 'HIGH',
+          confidenceScore: 0.97,
+          sources: [gtItem.id || 'Ground Truth Sử học Hỏa Lò'],
+          claims: [gtItem.artifact || gtItem.area || 'Sử học xác thực'],
+          responseType: 'GROUNDED_ADAPTED_ANSWER',
+          requiresHuman: false
+        }, intent, retrievedData);
+      }
     }
 
     // =========================================================================
@@ -764,58 +855,22 @@ class IntelligentAnswerComposer {
     }
 
     // =========================================================================
-    // 5. TỔNG HỢP CÓ CĂN CỨ VỚI GROQ LLM (CHỈ GỌI KHI CÓ BẰNG CHỨNG TƯ LIỆU THỰC SỰ -> CHỐNG BỊA ĐẶT 100%)
+    // 5. TỔNG HỢP CÓ CĂN CỨ VỚI UNIVERSAL TOP-K GROUNDED RAG (GROQ LLM)
     // =========================================================================
-    const hasVerifiedArchiveFacts = Array.isArray(retrievedData?.facts) && retrievedData.facts.length > 0;
-    if (groqCaller && hasVerifiedArchiveFacts) {
-      const isStorytelling = normQ.includes('ke chuyen') || normQ.includes('thuyet minh') || normQ.includes('ke cho') || normQ.includes('chuyen gi xay ra') || normQ.includes('cau chuyen ve');
-      const factsContext = retrievedData?.facts?.join('\n') || 'Di tích Lịch sử Nhà tù Hỏa Lò (Maison Centrale, số 1 phố Hỏa Lò, Hà Nội).';
-
-      let promptSystem = `SYSTEM PROMPT – HOA LO MUSEUM INTELLIGENT TOUR GUIDE V2.0
-
-1. VAI TRÒ
-Bạn là HOA LO AI GUIDE – hướng dẫn viên tham quan thông minh chuyên sâu về Di tích lịch sử Nhà tù Hỏa Lò tại Hà Nội, Việt Nam.
-Nhiệm vụ: Tạo ra trải nghiệm tham quan giống một hướng dẫn viên bảo tàng thực thụ: thân thiện, sâu sắc, dễ hiểu, hấp dẫn và có trách nhiệm với sự thật lịch sử. Không đọc Wikipedia.
-
-2. PHONG CÁCH GIAO TIẾP
-- Thân thiện nhưng không suồng sã; trang trọng khi nói về lịch sử và các nhân vật hy sinh; truyền cảm nhưng không cường điệu; tự nhiên như đang trò chuyện trực tiếp.
-- Dễ nghe khi chuyển thành giọng đọc TTS.
-- TUYỆT ĐỐI KHÔNG mở đầu bằng: "Chào bạn, tôi là hướng dẫn viên...", "Đây là một câu hỏi rất hay...", "Cảm ơn bạn đã đặt câu hỏi...". Đi thẳng vào trọng tâm.
-
-3. QUY TẮC TRUY XUẤT KIẾN THỨC RAG & ĐỘ CHÍNH XÁC
-- CHỈ sử dụng tài liệu được cung cấp dưới đây.
-- TUYỆT ĐỐI KHÔNG: Dùng tài liệu phi công Mỹ để trả lời câu hỏi về cùm sắt; dùng thông tin máy chém để trả lời về kiến trúc; bịa đặt số liệu hay niên đại.
-- Nếu không có đủ dữ liệu xác minh, hãy nói thẳng:
-"Thông tin này hiện chưa có đủ tư liệu xác thực trong dữ liệu mà tôi được cung cấp. Tôi không muốn đưa ra một câu trả lời thiếu căn cứ về lịch sử di tích."
-Tuyệt đối không lặp lại đoạn năm 1896 để né tránh câu hỏi.
-
-TÀI LIỆU CUNG CẤP (CHỈ ĐƯỢC DÙNG DỮ KIỆN TẠI ĐÂY):
-${factsContext}`;
-
-      if (isStorytelling) {
-        promptSystem += `\n\nHOA LO STORYTELLING MODE:
-Khách đang yêu cầu kể chuyện hoặc thuyết minh. Hãy chuyển sang chế độ kể chuyện bảo tàng:
-1. Mở đầu bằng một chi tiết lịch sử có thật, được nguồn xác nhận.
-2. Đưa khách vào bối cảnh thời gian và không gian.
-3. Giải thích sự kiện hoặc công dụng hiện vật.
-4. Làm rõ ý nghĩa lịch sử và con người phía sau câu chuyện.
-5. Kết thúc bằng một thông tin đáng nhớ.
-Kể tự nhiên, độ dài khoảng 100–180 từ, không tạo lời thoại giả, không tưởng tượng cảm xúc nhân vật.`;
-      }
-
-      const generated = await groqCaller(question, promptSystem, session?.history || []);
-      if (generated) {
-        return this.formatResponse({
-          reply: generated,
-          style: isStorytelling ? 'STORYTELLING' : 'DEEP_EXPLANATION',
-          confidence: 'MEDIUM',
-          confidenceScore: 0.88,
-          sources: ['Groq Grounded Engine (Hoa Lo V2.0 Prompt)'],
-          claims: ['Tổng hợp từ hồ sơ di tích xác thực V2.0'],
-          responseType: isStorytelling ? 'STORYTELLING_NARRATION' : 'LLM_GROUNDED_SYNTHESIS',
-          requiresHuman: false
-        }, intent, retrievedData);
-      }
+    if (groqCaller) {
+      const ragAnswer = await this.runUniversalGroundedRAG({
+        question,
+        intent,
+        subject,
+        retrievedData,
+        language,
+        session,
+        artifactContext,
+        previousPhrasings,
+        groqCaller,
+        allowOutOfScopeRefusal: true
+      });
+      if (ragAnswer) return ragAnswer;
     }
 
     // 5.5. Tra cứu kho tri thức mở rộng (Lịch sử toàn diện, Giao thông, Tiện ích, Song ngữ EN/VI, Tổng quan) & kho bổ trợ 1.000 câu Hỏa Lò
@@ -843,6 +898,25 @@ Kể tự nhiên, độ dài khoảng 100–180 từ, không tạo lời thoại
         sources: [d1000Match.item.id],
         claims: [d1000Match.item.category || 'Tư liệu Di tích Hỏa Lò'],
         responseType: 'DATASET_1000_RETRIEVAL',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
+    // 5.6. Phương pháp 1: Tìm kiếm Vector Ngữ Nghĩa Cục Bộ trên toàn bộ 2.046 tri thức tĩnh (0 Groq, ~2ms!)
+    const semLocalHit = knowledgeBase.findSemanticLocalMatch(question, {
+      language: 'vi',
+      stationCode: artifactContext?.code || null,
+      minScore: 0.56
+    });
+    if (semLocalHit && semLocalHit.doc?.answer) {
+      return this.formatResponse({
+        reply: semLocalHit.doc.answer,
+        style: 'DEEP_EXPLANATION',
+        confidence: semLocalHit.score >= 0.72 ? 'HIGH' : 'MEDIUM',
+        confidenceScore: Number(Math.min(0.95, semLocalHit.score + 0.1).toFixed(2)),
+        sources: [`LOCAL_SEMANTIC_VECTOR_${semLocalHit.doc.id} (sim=${semLocalHit.score.toFixed(2)})`],
+        claims: ['Tìm kiếm theo ý nghĩa ngữ nghĩa cục bộ (0 API)'],
+        responseType: 'LOCAL_SEMANTIC_VECTOR_HIT',
         requiresHuman: false
       }, intent, retrievedData);
     }
@@ -875,6 +949,102 @@ Kể tự nhiên, độ dài khoảng 100–180 từ, không tạo lời thoại
       responseType: 'ARCHIVE_KNOWLEDGE_GAP',
       requiresHuman: false
     }, intent, retrievedData);
+  }
+
+  /**
+   * =========================================================================
+   * UNIVERSAL TOP-K GROUNDED RAG ENGINE (V7.5)
+   * Trả lời thông minh & đúng trọng tâm MỌI câu hỏi mới (1000+ kiểu hỏi khác nhau:
+   * chất liệu, kích thước, ý nghĩa, so sánh, nguyên nhân, vị trí đứng, tiếng Anh gãy, ngôn ngữ tự nhiên)
+   * dựa 100% trên Top-K tư liệu xác thực + Trạm BLE hiện tại, khóa cứng ngôn ngữ đầu ra!
+   * =========================================================================
+   */
+  async runUniversalGroundedRAG({
+    question,
+    intent,
+    subject = null,
+    retrievedData = {},
+    language = 'vi',
+    session = null,
+    artifactContext = null,
+    previousPhrasings = [],
+    groqCaller = null,
+    allowOutOfScopeRefusal = false
+  }) {
+    if (!groqCaller) return null;
+
+    const topK = knowledgeBase.retrieveTopKContext(question, {
+      subject,
+      intent,
+      artifactContext,
+      topK: 4
+    });
+
+    // Nén ngữ cảnh gọn <= 950 ký tự (~280 tokens) để KHÔNG BAO GIỜ chạm trần TPM Groq khi hỏi liên tục!
+    const extraFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
+    const mergedSnippets = [...topK.snippets];
+    for (const f of extraFacts.slice(0, 2)) {
+      if (typeof f === 'string' && f.trim().length > 15) {
+        const sig = f.trim().slice(0, 50).toLowerCase();
+        if (!mergedSnippets.some(s => s.toLowerCase().includes(sig))) {
+          mergedSnippets.push(f.trim());
+        }
+      }
+    }
+    let compactContext = '';
+    for (const s of mergedSnippets.slice(0, 5)) {
+      const piece = s.length > 340 ? s.slice(0, 340) + '...' : s;
+      if (compactContext.length + piece.length > 1050 && compactContext.length > 200) break;
+      compactContext += (compactContext ? '\n' : '') + piece;
+    }
+
+    const langNames = {
+      vi: 'Vietnamese', en: 'English', fr: 'French', ja: 'Japanese', ko: 'Korean', zh: 'Chinese'
+    };
+    const targetLangName = langNames[language] || 'Vietnamese';
+    const normQ = ' ' + nlp.normalize(question) + ' ';
+    const isStorytelling = normQ.includes('ke chuyen') || normQ.includes('thuyet minh') || normQ.includes('ke cho') || normQ.includes('story') || normQ.includes('tell me about');
+
+    const styleVariations = ['warm conversational', 'crisp direct', 'vivid storytelling', 'friendly live docent'];
+    const pickedStyle = styleVariations[(previousPhrasings.length || 0) % styleVariations.length];
+    const recentOpens = Array.isArray(previousPhrasings) && previousPhrasings.length > 0
+      ? `\n- Vary wording freshly (do NOT start like: ${previousPhrasings.slice(-2).map(p => `"${p.slice(0, 60)}..."`).join(' / ')}).`
+      : '';
+
+    const promptSystem = `You are HOA LO AI GUIDE, a human-like museum tour guide at Hoa Lo Prison Relic (Hanoi) & its BLE exhibits.
+- Output STRICTLY in ${targetLangName} ONLY.
+- Distinguish WHO/WHAT is asked: "bạn ở đâu/where are you" = you are the virtual guide inside their audio device; "chỗ tôi đang đứng/where am I/where is my from" = visitor's BLE Current Location below; facility/exhibit "ở đâu" = its exact location.
+- Answer the EXACT aspect asked using ONLY facts in CONTEXT (never invent dates/numbers; if exact measurement is missing, say so honestly and share the closest verified fact).${allowOutOfScopeRefusal ? ` Only if completely unrelated to the museum/exhibits/visiting (crypto, sports, weather, math), politely decline in 1-2 sentences in ${targetLangName}.` : ''}
+- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets).${recentOpens}
+
+CONTEXT:
+${compactContext}`;
+
+    const generated = await groqCaller(question, promptSystem, session?.history || [], {
+      temperature: previousPhrasings.length > 0 ? 0.85 : 0.72,
+      presence_penalty: previousPhrasings.length > 0 ? 0.5 : 0.35,
+      frequency_penalty: previousPhrasings.length > 0 ? 0.4 : 0.25,
+      max_tokens: 230
+    });
+    if (!generated || generated.length < 8) return null;
+
+    const cleanReply = generated
+      .replace(/\*\*/g, '')
+      .replace(/^[-•*]\s+/gm, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return this.formatResponse({
+      reply: cleanReply,
+      style: isStorytelling ? 'STORYTELLING' : 'DEEP_EXPLANATION',
+      confidence: topK.hasMatchedExhibit ? 'HIGH' : 'MEDIUM',
+      confidenceScore: topK.hasMatchedExhibit ? 0.93 : 0.89,
+      sources: ['Universal Top-K Grounded RAG (2,046 Verified Records + Live BLE)'],
+      claims: ['Tổng hợp trực tiếp theo đúng trọng tâm câu hỏi từ kho tư liệu xác thực'],
+      responseType: isStorytelling ? 'STORYTELLING_NARRATION' : 'LLM_GROUNDED_SYNTHESIS',
+      resolvedIntent: intent === 'OUT_OF_SCOPE' ? 'HISTORICAL_FACT' : intent,
+      requiresHuman: false
+    }, intent === 'OUT_OF_SCOPE' ? 'HISTORICAL_FACT' : intent, retrievedData);
   }
 
   /**
