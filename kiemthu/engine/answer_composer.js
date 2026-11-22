@@ -209,16 +209,18 @@ class IntelligentAnswerComposer {
         ? 'I am dedicated specifically to the Hoa Lo Prison Relic in Hanoi. This topic is outside the scope of our historical site. Feel free to ask me about Hoa Lo’s exhibits (the Guillotine, Banyan tree, escape sewer, Cachot) or visiting guidelines!'
         : 'Mình là trợ lý chuyên biệt hỗ trợ thông tin và lịch sử tại Di tích Nhà tù Hỏa Lò. Câu hỏi này nằm ngoài phạm vi dữ liệu và lịch sử của di tích. Bạn vui lòng hỏi về các hiện vật, lịch sử tại Hỏa Lò (như Cỗ máy chém, Cây bàng, Cống ngầm vượt ngục, Ngục tối Cachot) hoặc thông tin tham quan để mình hỗ trợ nhé!';
 
-      if (normQ.includes('tong so tu nhan') || normQ.includes('tong cong')) {
-        reply = 'Hiện các nguồn tài liệu lưu trữ chính thức công khai của Di tích Hỏa Lò không ghi nhận con số thống kê tổng lượng tù nhân chính xác trong suốt toàn bộ giai đoạn 1896–1954; các tư liệu lịch sử chỉ ghi nhận quy mô thiết kế ban đầu (khoảng 500 tù nhân) và số lượng tù nhân bị giam giữ thực tế tăng vọt qua từng thời kỳ cao điểm (có lúc lên tới hơn 2.000 người).';
-      } else if (normQ.includes('quan an') || normQ.includes('nha hang') || normQ.includes('an uong') || normQ.includes('quan ca phe')) {
-        reply = 'Di tích Nhà tù Hỏa Lò không có chức năng giới thiệu dịch vụ ẩm thực hay nhà hàng bên ngoài khuôn viên. Bạn vui lòng tìm kiếm các dịch vụ ẩm thực trên các ứng dụng bản đồ hoặc du lịch xung quanh khu vực phố Hỏa Lò nhé!';
-      } else if (normQ.includes('con dao')) {
-        reply = 'Di tích Nhà tù Hỏa Lò tọa lạc tại Hà Nội và chỉ lưu trữ các tư liệu về Nhà tù Hỏa Lò. Thông tin về Nhà tù Côn Đảo thuộc hệ thống di tích tại tỉnh Bà Rịa – Vũng Tàu, nằm ngoài phạm vi quản lý và tư liệu của di tích Hỏa Lò.';
-      } else if (normQ.includes('thoi tiet')) {
-        reply = 'Dự báo thời tiết là thông tin dân sinh bên ngoài, không thuộc phạm vi hướng dẫn lịch sử và tham quan của Di tích Nhà tù Hỏa Lò.';
-      } else if (normQ.includes('gia vang') || normQ.includes('chung khoan') || normQ.includes('bitcoin')) {
-        reply = 'Thông tin giá vàng và tài chính thị trường nằm ngoài phạm vi hướng dẫn di tích lịch sử của mình.';
+      if (language !== 'en') {
+        if (normQ.includes('tong so tu nhan') || normQ.includes('tong cong')) {
+          reply = 'Hiện các nguồn tài liệu lưu trữ chính thức công khai của Di tích Hỏa Lò không ghi nhận con số thống kê tổng lượng tù nhân chính xác trong suốt toàn bộ giai đoạn 1896–1954; các tư liệu lịch sử chỉ ghi nhận quy mô thiết kế ban đầu (khoảng 500 tù nhân) và số lượng tù nhân bị giam giữ thực tế tăng vọt qua từng thời kỳ cao điểm (có lúc lên tới hơn 2.000 người).';
+        } else if (normQ.includes('quan an') || normQ.includes('nha hang') || normQ.includes('an uong') || normQ.includes('quan ca phe')) {
+          reply = 'Di tích Nhà tù Hỏa Lò không có chức năng giới thiệu dịch vụ ẩm thực hay nhà hàng bên ngoài khuôn viên. Bạn vui lòng tìm kiếm các dịch vụ ẩm thực trên các ứng dụng bản đồ hoặc du lịch xung quanh khu vực phố Hỏa Lò nhé!';
+        } else if (normQ.includes('con dao')) {
+          reply = 'Di tích Nhà tù Hỏa Lò tọa lạc tại Hà Nội và chỉ lưu trữ các tư liệu về Nhà tù Hỏa Lò. Thông tin về Nhà tù Côn Đảo thuộc hệ thống di tích tại tỉnh Bà Rịa – Vũng Tàu, nằm ngoài phạm vi quản lý và tư liệu của di tích Hỏa Lò.';
+        } else if (normQ.includes('thoi tiet')) {
+          reply = 'Dự báo thời tiết là thông tin dân sinh bên ngoài, không thuộc phạm vi hướng dẫn lịch sử và tham quan của Di tích Nhà tù Hỏa Lò.';
+        } else if (normQ.includes('gia vang') || normQ.includes('chung khoan') || normQ.includes('bitcoin')) {
+          reply = 'Thông tin giá vàng và tài chính thị trường nằm ngoài phạm vi hướng dẫn di tích lịch sử của mình.';
+        }
       }
 
       return this.formatResponse({
@@ -1011,11 +1013,16 @@ class IntelligentAnswerComposer {
       ? `\n- Vary wording freshly (do NOT start like: ${previousPhrasings.slice(-2).map(p => `"${p.slice(0, 60)}..."`).join(' / ')}).`
       : '';
 
+    const isChildAudience = session?.state?.userProfile?.audience === 'child' || /\b(cho tre em|cho be|cho con nho|giai thich don gian|for kids|for children|simple explanation)\b/.test(normQ);
+    const audienceInstruction = isChildAudience
+      ? '\n- AUDIENCE: Explain gently and simply for children (warm, easy words, avoid graphic violence, highlight courage & friendship).'
+      : '';
+
     const promptSystem = `You are HOA LO AI GUIDE, a human-like museum tour guide at Hoa Lo Prison Relic (Hanoi) & its BLE exhibits.
 - Output STRICTLY in ${targetLangName} ONLY.
 - Distinguish WHO/WHAT is asked: "bạn ở đâu/where are you" = you are the virtual guide inside their audio device; "chỗ tôi đang đứng/where am I/where is my from" = visitor's BLE Current Location below; facility/exhibit "ở đâu" = its exact location.
 - Answer the EXACT aspect asked using ONLY facts in CONTEXT (never invent dates/numbers; if exact measurement is missing, say so honestly and share the closest verified fact).${allowOutOfScopeRefusal ? ` Only if completely unrelated to the museum/exhibits/visiting (crypto, sports, weather, math), politely decline in 1-2 sentences in ${targetLangName}.` : ''}
-- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets).${recentOpens}
+- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets).${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;

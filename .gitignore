@@ -11,3 +11,12 @@ audio/reply_*.tmp.mp3
 audio/hub_rec_*
 kiemthu/.env
 scripts/report_1000_*.json
+
+# Runtime credentials, rolling backups & telemetry state (DO NOT COMMIT)
+data/device_keys.json
+data/backups/
+data/ble_calibration.json
+data/visitor_feedback.json
+kiemthu/data/backups/
+kiemthu/data/visitor_feedback.json
+esp32_firmware/secrets.h

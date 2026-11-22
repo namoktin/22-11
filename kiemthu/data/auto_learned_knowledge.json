@@ -1,1 +1,40 @@
-[]
+{
+  "schemaVersion": 2,
+  "kbVersion": 1,
+  "approved": [],
+  "pending": [],
+  "rejected": [],
+  "feedback": [
+    {
+      "id": "FB_1795341480936_iogz",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-22T09:58:00.936Z"
+    },
+    {
+      "id": "FB_1795341645989_eydi",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-22T10:00:45.989Z"
+    },
+    {
+      "id": "FB_1795342457419_36mw",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-22T10:14:17.419Z"
+    }
+  ],
+  "versions": []
+}

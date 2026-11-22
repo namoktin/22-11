@@ -19,6 +19,22 @@ const os = require('os');
 const url = require('url');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
+const { SafeJsonStore, logEvent } = require('./src/storage/safe_store');
+const {
+  MAX_JSON_BYTES,
+  MAX_AUDIO_BYTES,
+  getClientIp,
+  applySecurityHeaders,
+  isOriginAllowedForRequest,
+  RateLimiter,
+  DeviceAuthManager,
+  verifyAdminRequest,
+  validateAudioBufferMagic,
+  sanitizeStringInput,
+  validateBeaconPayload,
+  safeErrorResponse
+} = require('./src/security/security_middleware');
+const { BleAndDeviceManager } = require('./src/iot/ble_manager');
 
 // BẢO VỆ TIẾN TRÌNH CHUẨN PRODUCTION:
 // - Chỉ bỏ qua lỗi ngắt kết nối socket/stream bình thường (EPIPE, ECONNRESET...)
@@ -171,7 +187,7 @@ function clearKiemthuCache() {
   }
 }
 
-if (!IS_RENDER && fs.existsSync(kiemthuDir)) {
+if (!IS_RENDER && process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'production' && fs.existsSync(kiemthuDir)) {
   let debounceTimer = null;
   try {
     const watcher = fs.watch(kiemthuDir, { recursive: true }, (eventType, filename) => {
@@ -195,6 +211,7 @@ if (!IS_RENDER && fs.existsSync(kiemthuDir)) {
       }
     });
 
+    if (typeof watcher.unref === 'function') watcher.unref();
     watcher.on('error', (err) => {
       console.warn('🛡️ [FSWatcher Protected]:', err.message);
     });
@@ -292,7 +309,7 @@ setInterval(() => {
       sseClients.delete(client);
     }
   }
-}, 15000);
+}, 15000).unref();
 
 function getLocalIpAddresses() {
   const interfaces = os.networkInterfaces();
@@ -323,32 +340,32 @@ function getPrimaryIp() {
   return '127.0.0.1';
 }
 
+const rateLimiter = new RateLimiter();
+const deviceAuth = new DeviceAuthManager(path.join(__dirname, 'data', 'device_keys.json'));
+const bleManager = new BleAndDeviceManager({
+  calibrationPath: path.join(__dirname, 'data', 'ble_calibration.json')
+});
+const beaconsStore = new SafeJsonStore(DATA_FILE, { defaultData: [] });
+
 function loadBeacons() {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-    }
-  } catch (err) {
-    console.error('Lỗi đọc beacons.json:', err.message);
-  }
-  return [];
+  return beaconsStore.readSync();
 }
 
 function saveBeacons(beacons) {
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(beacons, null, 2), 'utf8');
+    beaconsStore.writeSync(beacons);
     broadcastSSE('BEACONS_UPDATED', { beacons });
     return true;
   } catch (err) {
-    console.error('Lỗi ghi beacons.json:', err.message);
+    logEvent('ERROR', 'BeaconsStore', 'Failed saving beacons.json', { error: err.message });
     return false;
   }
 }
 
 function serveAudioStream(req, res, filePath, contentType) {
   if (!fs.existsSync(filePath)) {
-    res.writeHead(404, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-    return res.end(JSON.stringify({ error: 'Audio file not found', path: filePath }));
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ status: 'error', error: 'Audio file not found' }));
   }
 
   const stat = fs.statSync(filePath);
@@ -357,9 +374,6 @@ function serveAudioStream(req, res, filePath, contentType) {
 
   const baseHeaders = {
     'Content-Type': contentType,
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
-    'Access-Control-Allow-Headers': 'Range, Content-Type, Accept',
     'Accept-Ranges': 'bytes',
     'Cache-Control': 'no-cache'
   };
@@ -391,37 +405,60 @@ function serveAudioStream(req, res, filePath, contentType) {
   }
 }
 
-function parseJsonBody(req) {
+function parseJsonBody(req, maxBytes = MAX_JSON_BYTES) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let totalBytes = 0;
+    let aborted = false;
     req.on('data', chunk => {
-      chunks.push(chunk);
+      if (aborted) return;
       totalBytes += chunk.length;
-      if (totalBytes > 1024 * 512) {
-        req.destroy();
-        reject(new Error('Payload quá lớn'));
+      if (totalBytes > maxBytes) {
+        aborted = true;
+        const err = new Error(`JSON payload exceeds limit (${maxBytes} bytes)`);
+        err.statusCode = 413;
+        req.pause();
+        return reject(err);
       }
+      chunks.push(chunk);
     });
     req.on('end', () => {
+      if (aborted) return;
       try {
         const body = Buffer.concat(chunks).toString('utf8');
         if (!body.trim()) return resolve({});
         resolve(JSON.parse(body));
       } catch (err) {
-        reject(new Error('Invalid JSON: ' + err.message));
+        const parseErr = new Error('Invalid JSON body');
+        parseErr.statusCode = 400;
+        reject(parseErr);
       }
     });
-    req.on('error', err => reject(err));
+    req.on('error', err => { if (!aborted) reject(err); });
   });
 }
 
-function parseRawBody(req) {
+function parseRawBody(req, maxBytes = MAX_AUDIO_BYTES) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on('data', chunk => chunks.push(chunk));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
-    req.on('error', err => reject(err));
+    let totalBytes = 0;
+    let aborted = false;
+    req.on('data', chunk => {
+      if (aborted) return;
+      totalBytes += chunk.length;
+      if (totalBytes > maxBytes) {
+        aborted = true;
+        const err = new Error(`Audio upload exceeds limit (${maxBytes} bytes)`);
+        err.statusCode = 413;
+        req.pause();
+        return reject(err);
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      if (!aborted) resolve(Buffer.concat(chunks));
+    });
+    req.on('error', err => { if (!aborted) reject(err); });
   });
 }
 
@@ -700,19 +737,24 @@ async function fastTextToPcm(text, lang = 'vi') {
     return pcmCache.get(cacheKey);
   }
 
-  try {
-    const mp3Buffer = await fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, 3500);
-    const cleanPcm = await decodeMp3BufferToPcmRam(mp3Buffer);
-    if (pcmCache.size > 400) {
-      const oldest = pcmCache.keys().next().value;
-      if (oldest) pcmCache.delete(oldest);
+  // Bounded retry (tối đa 2 lượt) để chống lỗi mạng thoáng qua khi tải Google TTS
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const mp3Buffer = await fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, 3500);
+      const cleanPcm = await decodeMp3BufferToPcmRam(mp3Buffer);
+      if (pcmCache.size > 400) {
+        const oldest = pcmCache.keys().next().value;
+        if (oldest) pcmCache.delete(oldest);
+      }
+      pcmCache.set(cacheKey, cleanPcm);
+      return cleanPcm;
+    } catch (err) {
+      if (attempt === 2) {
+        logEvent('WARN', 'FastTTS', 'TTS synthesis failed after retry', { error: err.message, lang: ttsCode });
+      }
     }
-    pcmCache.set(cacheKey, cleanPcm);
-    return cleanPcm;
-  } catch (err) {
-    console.warn('⚠ Lỗi Fast TTS RAM:', err.message);
-    return Buffer.alloc(0);
   }
+  return Buffer.alloc(0);
 }
 
 async function fastTextToWav(text, outputFilename, lang = 'vi') {
@@ -1317,20 +1359,48 @@ function extractSpokenSummary(fullText) {
   return target.slice(0, 130);
 }
 
-// KHỞI TẠO HTTP SERVER
+// KHỞI TẠO HTTP SERVER (HARDENED PRODUCTION GATEWAY V3.0)
 const server = http.createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range, X-End-Speech-Time, X-Artifact-Code, X-Code, X-Device-Id, X-Session-Id, X-Audio-Format, X-Pinggy-No-Screen, X-Language, X-Admin-Key');
-  res.setHeader('Access-Control-Allow-Private-Network', 'true');
+  applySecurityHeaders(req, res);
 
   if (req.method === 'OPTIONS') {
+    if (!isOriginAllowedForRequest(req)) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ status: 'error', error: 'CORS origin not allowed' }));
+    }
     res.writeHead(204);
     return res.end();
   }
 
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
+
+  // Chặn cross-origin không được phép trong Production (chỉ áp dụng cho /api/*)
+  if (pathname.startsWith('/api/') && !isOriginAllowedForRequest(req)) {
+    res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({ status: 'error', error: 'Forbidden CORS origin' }));
+  }
+
+  // Sliding-Window Rate Limiter theo IP & Tier
+  const clientIp = getClientIp(req);
+  if (pathname.startsWith('/api/') && pathname !== '/api/events' && pathname !== '/api/state' && pathname !== '/api/health') {
+    let tier = 'general';
+    if (pathname === '/api/hub/ask' || pathname === '/api/voice-query' || pathname === '/api/hub-query' || pathname === '/api/esp32/ask') {
+      tier = 'voice';
+    } else if (pathname === '/api/ble-scan' || pathname === '/api/beacon-trigger') {
+      tier = 'ble';
+    } else if (pathname.startsWith('/api/beacons/') || pathname.startsWith('/api/auto-learning/') || pathname.startsWith('/api/devices/issue') || pathname.startsWith('/api/devices/revoke') || pathname === '/api/ble/calibrate') {
+      tier = 'admin';
+    }
+    const rl = rateLimiter.check(clientIp, tier);
+    res.setHeader('X-RateLimit-Limit', String(rl.limit));
+    res.setHeader('X-RateLimit-Remaining', String(rl.remaining));
+    if (!rl.allowed) {
+      res.setHeader('Retry-After', String(Math.ceil(rl.resetMs / 1000)));
+      res.writeHead(429, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: 'Too many requests. Please retry shortly.' }));
+    }
+  }
 
   // 1. Phục vụ Single Progressive Streaming WAV: /audio-stream/<baseName>.wav
   // - Khi đang tổng hợp Đoạn 2: stream liền mạch 1 file .WAV duy nhất (Chunk 1 PCM + Chunk 2 PCM nối tiếp 0ms ngắt quãng!)
@@ -1347,16 +1417,15 @@ const server = http.createServer(async (req, res) => {
 
     const streamObj = activeAudioStreams.get(streamId);
     if (!streamObj) {
-      res.writeHead(404, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-      return res.end(JSON.stringify({ error: 'Audio stream not found' }));
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ status: 'error', error: 'Audio stream not found' }));
     }
 
     if (req.method === 'HEAD') {
       res.writeHead(200, {
         'Content-Type': 'audio/wav',
         'Accept-Ranges': 'none',
-        'Cache-Control': 'no-cache, no-store',
-        'Access-Control-Allow-Origin': '*'
+        'Cache-Control': 'no-cache, no-store'
       });
       return res.end();
     }
@@ -1366,7 +1435,6 @@ const server = http.createServer(async (req, res) => {
       'Accept-Ranges': 'none',
       'Transfer-Encoding': 'chunked',
       'Cache-Control': 'no-cache, no-store',
-      'Access-Control-Allow-Origin': '*',
       'X-Accel-Buffering': 'no'
     });
 
@@ -1403,7 +1471,6 @@ const server = http.createServer(async (req, res) => {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
       'X-Accel-Buffering': 'no'
     });
     res.write('retry: 1500\n\n');
@@ -1492,34 +1559,45 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ status: 'ignored', message: `Không tìm thấy hiện vật với mã: ${codeInput || macInput}` }));
       }
 
-      // CHỐNG LẶP VÒNG VÔ HẠN (COOLDOWN): Khách đứng yên 1 chỗ trước Beacon sẽ không bị phát lặp lại liên tục
-      // Bỏ qua cooldown nếu bấm test thủ công từ Dashboard/Test client hoặc gửi force: true
-      const deviceId = payload.device_id || 'CLIENT';
+      // Xác thực thiết bị (RBAC: guest / device / admin) & Kiểm định BLE bằng EMA + Hysteresis + Stability + Cooldown
+      const deviceId = sanitizeStringInput(payload.device_id || req.headers['x-device-id'] || 'CLIENT', 64) || 'CLIENT';
+      const devAuth = deviceAuth.verifyDevice(req, deviceId);
+      if (!devAuth.ok) {
+        res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: devAuth.reason }));
+      }
+
       const isManualTest = Boolean(payload.force) || deviceId === 'LOCAL_DASHBOARD' || deviceId.startsWith('TEST');
-      const cooldownSec = Number(target.cooldown_seconds || 0);
-      if (!isManualTest && cooldownSec > 0) {
-        const cdKey = `${deviceId}:${target.id}`;
-        const lastTime = beaconCooldownMap.get(cdKey) || 0;
-        const elapsedSec = (Date.now() - lastTime) / 1000;
-        if (elapsedSec < cooldownSec) {
-          const remaining = Math.ceil(cooldownSec - elapsedSec);
-          res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-          return res.end(JSON.stringify({
-            status: 'cooldown',
-            action: 'SKIP_COOLDOWN',
-            code: target.code,
-            artifact_id: target.id,
-            artifact_name: target.artifact_name,
-            cooldown_seconds: cooldownSec,
-            remaining_seconds: remaining,
-            message: `Đang trong thời gian nghỉ (${remaining}s nữa mới phát lại hiện vật này cho thiết bị ${deviceId})`
-          }));
-        }
-        beaconCooldownMap.set(cdKey, Date.now());
+      const rawRssi = payload.rssi !== undefined && payload.rssi !== null ? Number(payload.rssi) : null;
+      const bleEval = bleManager.evaluateBleScan({
+        deviceId,
+        beacon: target,
+        rawRssi: isNaN(rawRssi) ? null : rawRssi,
+        isManual: isManualTest,
+        force: Boolean(payload.force)
+      });
+
+      if (bleEval.action !== 'TRIGGER') {
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({
+          status: bleEval.action === 'SKIP_COOLDOWN' ? 'cooldown' : 'filtered',
+          action: bleEval.action,
+          code: target.code,
+          artifact_id: target.id,
+          artifact_name: target.artifact_name,
+          smoothed_rssi: bleEval.smoothedRssi,
+          positioning: bleEval.positioning,
+          remaining_seconds: bleEval.remainingSeconds || 0,
+          message: bleEval.reason
+        }));
       }
 
       const hostBaseUrl = getPublicBaseUrl(req);
-      const lockedLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang) || serverState.lockedLanguage || 'vi';
+      const devCtx = bleEval.device;
+      const lockedLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang) || devCtx.lockedLanguage || serverState.lockedLanguage || 'vi';
+      if (payload.language || payload.lang || req.headers['x-language']) {
+        devCtx.lockedLanguage = lockedLang;
+      }
 
       let dialogueOut = { ...(target.dialogue || {}) };
       let artifactNameOut = target.artifact_name;
@@ -1599,11 +1677,12 @@ const server = http.createServer(async (req, res) => {
           rawAudioBuffer = parsedMp.fileBuf;
           formFields = parsedMp.fields;
         }
-        if (!rawAudioBuffer || rawAudioBuffer.length < 100) {
-          res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-          return res.end(JSON.stringify({ error: 'File âm thanh .WAV quá ngắn hoặc trống (0 bytes). Hãy bấm nói ít nhất 1 giây rồi thử lại.' }));
+        const audioValidation = validateAudioBufferMagic(rawAudioBuffer, contentType);
+        if (!audioValidation.valid) {
+          res.writeHead(415, { 'Content-Type': 'application/json; charset=utf-8' });
+          return res.end(JSON.stringify({ status: 'error', error: audioValidation.reason }));
         }
-        const fmt = detectAudioFormat(rawAudioBuffer, contentType);
+        const fmt = { ext: audioValidation.ext, mime: audioValidation.mime };
         const incomingWavName = `hub_rec_${Date.now()}.${fmt.ext}`;
         fs.writeFileSync(path.join(AUDIO_DIR, incomingWavName), rawAudioBuffer);
         inputAudioFile = incomingWavName;
@@ -1626,7 +1705,17 @@ const server = http.createServer(async (req, res) => {
         // [TRƯỜNG HỢP KIỂM THỬ]: Gửi JSON { "voice_text": "..." }
         payload = await parseJsonBody(req);
       }
-      
+
+      const deviceId = sanitizeStringInput(payload.device_id || req.headers['x-device-id'] || 'ESP32_HUB_01', 64) || 'ESP32_HUB_01';
+      const devAuth = deviceAuth.verifyDevice(req, deviceId);
+      if (!devAuth.ok) {
+        res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: devAuth.reason }));
+      }
+      const devCtx = bleManager.getOrCreateDevice(deviceId);
+      devCtx.stats.voiceRequests++;
+      const myVoiceSeq = ++devCtx.activeVoiceSeq;
+
       const rawEndSpeech = Number(payload.end_speech_time || req.headers['x-end-speech-time'] || 0);
       // Chỉ dùng mốc thời gian client gửi lên nếu là Unix Epoch ms hợp lệ (trong vòng ±60s), tránh millis() của ESP32 làm lệch số đo
       const tEndSpeech = (rawEndSpeech > 1600000000000 && Math.abs(tServerReceived - rawEndSpeech) < 60000)
@@ -1634,13 +1723,15 @@ const server = http.createServer(async (req, res) => {
         : tServerReceived;
       const questionText = isEmptySpeech
         ? ''
-        : (payload.voice_text || payload.question || payload.text || payload.message || payload.query || 'Hãy giới thiệu cho tôi về hiện vật này.');
-      const currentCode = payload.code || req.headers['x-artifact-code'] || '001';
-      const deviceId = payload.device_id || req.headers['x-device-id'] || 'ESP32_HUB_01';
+        : sanitizeStringInput(payload.voice_text || payload.question || payload.text || payload.message || payload.query || 'Hãy giới thiệu cho tôi về hiện vật này.', 500);
+      const currentCode = sanitizeStringInput(payload.code || req.headers['x-artifact-code'] || devCtx.activeBeaconCode || '001', 20) || '001';
       // Bật trí nhớ hội thoại đa lượt tự động theo từng thiết bị ESP32 / trình duyệt!
       const rawSess = payload.sessionId || payload.session_id || req.headers['x-session-id'] || `sess_${deviceId}`;
       const reqSessionId = String(rawSess).replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 72);
-      const lockedLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang) || serverState.lockedLanguage || 'vi';
+      const lockedLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang) || devCtx.lockedLanguage || serverState.lockedLanguage || 'vi';
+      if (payload.language || payload.lang || req.headers['x-language']) {
+        devCtx.lockedLanguage = lockedLang;
+      }
 
       const beacons = loadBeacons();
       const currentArtifact = beacons.find(b => b.code === currentCode) || beacons[0];
@@ -1754,60 +1845,293 @@ const server = http.createServer(async (req, res) => {
         timestamp: Date.now()
       };
 
-      serverState.isVoiceProcessing = false;
-      serverState.latestVoice = voiceResponse;
-      serverState.lastUpdate = Date.now();
+      // Bảo đảm thứ tự âm thanh: nếu cùng thiết bị đã gửi câu mới hơn, đánh dấu superseded để tránh phát ngược thứ tự!
+      const isSuperseded = devCtx.activeVoiceSeq !== myVoiceSeq;
+      voiceResponse.device_id = deviceId;
+      voiceResponse.voice_seq = myVoiceSeq;
+      voiceResponse.superseded = isSuperseded;
 
-      broadcastSSE('VOICE_RESPONSE', voiceResponse);
+      serverState.isVoiceProcessing = false;
+      if (!isSuperseded) {
+        devCtx.latestVoicePayload = voiceResponse;
+        serverState.latestVoice = voiceResponse;
+        serverState.lastUpdate = Date.now();
+        broadcastSSE('VOICE_RESPONSE', voiceResponse);
+      }
 
       res.setHeader('X-Latency-To-First-Sound-Ms', totalLatencyMs.toString());
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(voiceResponse, null, 2));
 
       // BƯỚC 3: ĐẨY DẦN CÁC ĐOẠN TIẾP THEO (ĐÃ BẮN SONG SONG SẴN) LÊN CHÍNH LUỒNG .WAV DUY NHẤT!
-      if (chunks.length > 1) {
+      if (chunks.length > 1 && !isSuperseded) {
         processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lockedLang, remainingPcmPromises);
       }
       return;
 
     } catch (err) {
-      console.error('Lỗi Voice Query:', err);
       serverState.isVoiceProcessing = false;
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ error: err.message }));
+      const status = err.statusCode || 500;
+      const msg = status === 413 ? err.message : (status === 400 ? 'Invalid request payload' : 'Internal voice processing error');
+      return safeErrorResponse(res, status, msg, err);
     }
   }
 
-  // 6. Cập nhật mã (Bảo vệ bằng ADMIN_API_KEY khi triển khai production trên Render)
+  // 6. API QUẢN TRỊ BEACON — FAIL-CLOSED MẶC ĐỊNH (BẮT BUỘC ADMIN_API_KEY + INPUT VALIDATION + ATOMIC SAVE)
   if (req.method === 'POST' && pathname === '/api/beacons/update') {
-    if (ADMIN_API_KEY) {
-      const hdrKey = req.headers['x-admin-key'] || '';
-      const authHdr = req.headers['authorization'] || '';
-      const bearer = authHdr.startsWith('Bearer ') ? authHdr.slice(7).trim() : '';
-      if (hdrKey !== ADMIN_API_KEY && bearer !== ADMIN_API_KEY) {
-        res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
-        return res.end(JSON.stringify({ error: 'Unauthorized: Thiếu hoặc sai X-Admin-Key để chỉnh sửa cấu hình Beacon.' }));
-      }
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
     }
     try {
       const data = await parseJsonBody(req);
+      const val = validateBeaconPayload(data);
+      if (!val.valid) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Validation failed', details: val.errors }));
+      }
       const beacons = loadBeacons();
       const index = beacons.findIndex(b => b.id === data.id || b.code === data.target_code || b.code === data.code);
+      if (index < 0) {
+        res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Beacon not found' }));
+      }
 
-      if (index >= 0) {
-        if (data.new_code) beacons[index].code = data.new_code.trim();
-        if (data.artifact_name) beacons[index].artifact_name = data.artifact_name.trim();
-        if (data.speaker) beacons[index].dialogue.speaker = data.speaker.trim();
-        if (data.text) beacons[index].dialogue.text = data.text.trim();
-        if (data.mac) beacons[index].mac = data.mac.trim().toUpperCase();
+      if (data.new_code) beacons[index].code = sanitizeStringInput(data.new_code, 20);
+      if (data.artifact_name) beacons[index].artifact_name = sanitizeStringInput(data.artifact_name, 160);
+      if (data.speaker) beacons[index].dialogue.speaker = sanitizeStringInput(data.speaker, 100);
+      if (data.text) beacons[index].dialogue.text = sanitizeStringInput(data.text, 2000);
+      if (data.mac) beacons[index].mac = sanitizeStringInput(data.mac, 32).toUpperCase();
+      if (data.cooldown_seconds !== undefined) beacons[index].cooldown_seconds = Number(data.cooldown_seconds);
+      if (data.rssi_threshold !== undefined) beacons[index].rssi_threshold = Number(data.rssi_threshold);
+
+      const conflicts = bleManager.detectBeaconConflicts(beacons);
+      if (conflicts.length > 0) {
+        res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Duplicate beacon MAC or code conflict', conflicts }));
       }
 
       saveBeacons(beacons);
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       return res.end(JSON.stringify({ success: true, beacons }));
     } catch (err) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({ error: err.message }));
+      return safeErrorResponse(res, err.statusCode || 500, err.statusCode ? err.message : 'Failed updating beacon', err);
+    }
+  }
+
+  // 6.1. Thêm mới Beacon (Admin Fail-Closed)
+  if (req.method === 'POST' && pathname === '/api/beacons/create') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const data = await parseJsonBody(req);
+      const val = validateBeaconPayload({ ...data, new_code: data.code });
+      if (!val.valid || !data.code || !data.artifact_name) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Missing required fields (code, artifact_name) or invalid format', details: val.errors }));
+      }
+      const beacons = loadBeacons();
+      const newBeacon = {
+        id: sanitizeStringInput(data.id || `beacon_${data.code}`, 40),
+        code: sanitizeStringInput(data.code, 20),
+        mac: sanitizeStringInput(data.mac || `AA:BB:CC:DD:EE:${String(beacons.length + 1).padStart(2, '0')}`, 32).toUpperCase(),
+        artifact_name: sanitizeStringInput(data.artifact_name, 160),
+        location: sanitizeStringInput(data.location || 'Khu trưng bày', 160),
+        icon: sanitizeStringInput(data.icon || '🏛️', 8),
+        cooldown_seconds: Number(data.cooldown_seconds ?? 45),
+        rssi_threshold: Number(data.rssi_threshold ?? -76),
+        audio_file: sanitizeStringInput(data.audio_file || 'trong_dong_dong_son.wav', 120),
+        dialogue: {
+          speaker: sanitizeStringInput(data.speaker || 'Hướng Dẫn Viên AI', 100),
+          text: sanitizeStringInput(data.text || '', 2000)
+        }
+      };
+      beacons.push(newBeacon);
+      const conflicts = bleManager.detectBeaconConflicts(beacons);
+      if (conflicts.length > 0) {
+        res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Duplicate beacon MAC or code conflict', conflicts }));
+      }
+      saveBeacons(beacons);
+      res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: true, beacon: newBeacon }));
+    } catch (err) {
+      return safeErrorResponse(res, err.statusCode || 500, err.statusCode ? err.message : 'Failed creating beacon', err);
+    }
+  }
+
+  // 6.2. Xóa Beacon (Admin Fail-Closed)
+  if ((req.method === 'DELETE' || req.method === 'POST') && pathname === '/api/beacons/delete') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const data = await parseJsonBody(req);
+      const targetId = data.id || parsedUrl.query.id;
+      const targetCode = data.code || parsedUrl.query.code;
+      const beacons = loadBeacons();
+      const idx = beacons.findIndex(b => (targetId && b.id === targetId) || (targetCode && b.code === targetCode));
+      if (idx < 0) {
+        res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Beacon not found' }));
+      }
+      const [removed] = beacons.splice(idx, 1);
+      saveBeacons(beacons);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: true, removed }));
+    } catch (err) {
+      return safeErrorResponse(res, err.statusCode || 500, 'Failed deleting beacon', err);
+    }
+  }
+
+  // 6.3. Rollback Beacons từ Backup (Admin Fail-Closed)
+  if (req.method === 'POST' && pathname === '/api/beacons/rollback') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    const rb = beaconsStore.rollbackLatestSync();
+    res.writeHead(rb.success ? 200 : 404, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify(rb));
+  }
+
+  // 6.4. Hiệu chỉnh ngưỡng RSSI BLE theo môi trường (Admin Fail-Closed)
+  if (req.method === 'POST' && pathname === '/api/ble/calibrate') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const data = await parseJsonBody(req);
+      if (!data.beacon_id || data.threshold === undefined) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Missing beacon_id or threshold' }));
+      }
+      const cal = bleManager.setCalibration(sanitizeStringInput(data.beacon_id, 40), {
+        threshold: Number(data.threshold),
+        rssiOffset: Number(data.rssi_offset || 0)
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: true, calibration: cal }));
+    } catch (err) {
+      return safeErrorResponse(res, 400, 'Invalid calibration payload', err);
+    }
+  }
+
+  // 6.5. Quản trị Auto-Learning 2.0 (Approve / Reject / Rollback — Admin Fail-Closed!)
+  if (req.method === 'POST' && (pathname === '/api/auto-learning/approve' || pathname === '/api/auto-learning/reject' || pathname === '/api/auto-learning/rollback')) {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const data = await parseJsonBody(req);
+      const { autoLearningStore } = require(path.join(kiemthuDir, 'engine', 'auto_learning_store.js'));
+      let result;
+      if (pathname === '/api/auto-learning/approve') {
+        result = autoLearningStore.approveProposal(data.proposal_id, {
+          approvedBy: sanitizeStringInput(data.approved_by || 'admin', 64),
+          editedAnswer: data.edited_answer ? sanitizeStringInput(data.edited_answer, 1200) : null,
+          note: sanitizeStringInput(data.note || '', 200)
+        });
+      } else if (pathname === '/api/auto-learning/reject') {
+        result = autoLearningStore.rejectProposal(data.proposal_id, {
+          rejectedBy: sanitizeStringInput(data.rejected_by || 'admin', 64),
+          reason: sanitizeStringInput(data.reason || 'rejected_by_curator', 200)
+        });
+      } else {
+        result = autoLearningStore.rollbackToVersion(data.version !== undefined ? Number(data.version) : null);
+      }
+      res.writeHead(result.success ? 200 : 400, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify(result));
+    } catch (err) {
+      return safeErrorResponse(res, 500, 'Auto-learning admin action failed', err);
+    }
+  }
+
+  // 6.6. Cấp phát / Xoay / Thu hồi khóa thiết bị ESP32 (Admin Fail-Closed!)
+  if (req.method === 'POST' && (pathname === '/api/devices/issue-key' || pathname === '/api/devices/revoke')) {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const data = await parseJsonBody(req);
+      if (!data.device_id) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Missing device_id' }));
+      }
+      if (pathname === '/api/devices/issue-key') {
+        const issued = deviceAuth.issueDeviceKey(data.device_id);
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ success: true, ...issued }));
+      } else {
+        const ok = deviceAuth.revokeDeviceKey(data.device_id, sanitizeStringInput(data.reason || 'admin_revoked', 120));
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ success: ok, device_id: data.device_id }));
+      }
+    } catch (err) {
+      return safeErrorResponse(res, 400, 'Device credential operation failed', err);
+    }
+  }
+
+  // 6.7. ESP32 Multi-Device Heartbeat & Health Telemetry
+  if (req.method === 'POST' && pathname === '/api/devices/heartbeat') {
+    try {
+      const data = await parseJsonBody(req);
+      const devId = sanitizeStringInput(data.device_id || req.headers['x-device-id'] || '', 64);
+      if (!devId) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Missing device_id' }));
+      }
+      const devAuth = deviceAuth.verifyDevice(req, devId);
+      if (!devAuth.ok) {
+        res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: devAuth.reason }));
+      }
+      const health = bleManager.recordHeartbeat(devId, data);
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ success: true, device: health }));
+    } catch (err) {
+      return safeErrorResponse(res, err.statusCode || 400, 'Invalid heartbeat payload', err);
+    }
+  }
+
+  if (req.method === 'GET' && pathname === '/api/devices/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    return res.end(JSON.stringify({
+      status: 'ok',
+      ...bleManager.listAllDevicesHealth()
+    }, null, 2));
+  }
+
+  // 6.8. Thu thập Phản hồi Du khách (Feedback -> Auto-Learning 2.0)
+  if (req.method === 'POST' && pathname === '/api/feedback') {
+    try {
+      const data = await parseJsonBody(req);
+      const { autoLearningStore } = require(path.join(kiemthuDir, 'engine', 'auto_learning_store.js'));
+      const resFb = autoLearningStore.recordFeedback({
+        question: sanitizeStringInput(data.question || '', 500),
+        reply: sanitizeStringInput(data.reply || '', 700),
+        rating: data.rating,
+        comment: sanitizeStringInput(data.comment || '', 300),
+        deviceId: sanitizeStringInput(data.device_id || req.headers['x-device-id'] || 'GUEST', 64),
+        language: normalizeLangCode(data.language) || 'vi'
+      });
+      res.writeHead(resFb.success ? 200 : 400, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify(resFb));
+    } catch (err) {
+      return safeErrorResponse(res, err.statusCode || 400, 'Invalid feedback payload', err);
     }
   }
 
@@ -1896,23 +2220,33 @@ const server = http.createServer(async (req, res) => {
   res.end('404 Not Found');
 });
 
-server.listen(PORT, () => {
-  const primaryIp = getPrimaryIp();
-  // Pre-warm KiemThu AI + Google TTS TLS Keep-Alive + FFmpeg RAM cache ngay lúc boot!
-  try {
-    const kPath = path.join(kiemthuDir, 'smart_ai_server.js');
-    if (fs.existsSync(kPath)) require(kPath);
-  } catch (e) {
-    console.warn('⚠ Pre-warm kiemthu notice:', e.message);
-  }
-  fastTextToPcm('Xin chào', 'vi').catch(() => {});
-  console.log('\n================================================================');
-  console.log('🏛️  ESP32 BLE TOUR GUIDE SERVER (V2.3 - ULTRA-FAST IN-MEMORY TTS)');
-  console.log('================================================================');
-  console.log(`📡 Màn Hình Trực Quan (Localhost): http://localhost:${PORT}`);
-  console.log(`🌐 IP Mạng LAN (ESP32 Kết Nối)   : http://${primaryIp}:${PORT}`);
-  console.log(`⚡ API Nhận Tín Hiệu (Mã/BLE)    : http://${primaryIp}:${PORT}/api/ble-scan`);
-  console.log(`🎙️ API Giọng Nói AI (Voice Chat) : http://${primaryIp}:${PORT}/api/voice-query`);
-  console.log(`🚀 Thời Gian Phản Hồi Âm Thanh   : ~600ms - 900ms (Đã Tối Ưu Tốc Độ Cao)`);
-  console.log('================================================================\n');
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    const primaryIp = getPrimaryIp();
+    // Pre-warm KiemThu AI + Google TTS TLS Keep-Alive + FFmpeg RAM cache ngay lúc boot!
+    try {
+      const kPath = path.join(kiemthuDir, 'smart_ai_server.js');
+      if (fs.existsSync(kPath)) require(kPath);
+    } catch (e) {
+      console.warn('⚠ Pre-warm kiemthu notice:', e.message);
+    }
+    fastTextToPcm('Xin chào', 'vi').catch(() => {});
+    console.log('\n================================================================');
+    console.log('🏛️  ESP32 BLE TOUR GUIDE SERVER (V3.0 - PRODUCTION HARDENED)');
+    console.log('================================================================');
+    console.log(`📡 Màn Hình Trực Quan (Localhost): http://localhost:${PORT}`);
+    console.log(`🌐 IP Mạng LAN (ESP32 Kết Nối)   : http://${primaryIp}:${PORT}`);
+    console.log(`⚡ API Nhận Tín Hiệu (Mã/BLE)    : http://${primaryIp}:${PORT}/api/ble-scan`);
+    console.log(`🎙️ API Giọng Nói AI (Voice Chat) : http://${primaryIp}:${PORT}/api/hub/ask`);
+    console.log(`🛡️ Bảo Mật Production            : Fail-Closed Admin, RBAC, Rate-Limit, Magic-Byte`);
+    console.log('================================================================\n');
+  });
+}
+
+module.exports = {
+  server,
+  bleManager,
+  deviceAuth,
+  rateLimiter,
+  beaconsStore
+};

@@ -133,6 +133,7 @@ class RealAnswerValidator {
         id: 'CONTRADICTION_EXPIRED_PRICE',
         check: (text) => {
           const norm = ' ' + nlp.normalize(text) + ' ';
+          if (norm.includes('het hieu luc') || norm.includes('chinh sach cu') || norm.includes('50 000')) return false;
           return norm.includes('30 000') && (norm.includes('hien nay') || norm.includes('gia ve hien tai') || norm.includes('van la 30'));
         },
         evidenceFact: 'Giá vé 30.000 VNĐ là chính sách cũ trước 2016 đã hết hiệu lực; giá vé hiện hành là 50.000 VNĐ/người lớn.',
@@ -488,6 +489,71 @@ class RealAnswerValidator {
       wasCorrected: correctionResult.wasCorrected,
       confidence: cal.confidence,
       confidenceScore: cal.score
+    };
+  }
+
+  /**
+   * Kiểm định trung thực câu trả lời do LLM sinh ra đối chiếu với kho bằng chứng truy xuất
+   * (KHÔNG hợp thức hóa các mốc năm/số đo LLM tự bịa ngoài bằng chứng!)
+   */
+  verifyGroundingAgainstEvidence(replyText, evidenceTexts = [], question = '') {
+    const cleanReply = String(replyText || '').trim();
+    if (!cleanReply) {
+      return {
+        reply: cleanReply,
+        groundingStatus: 'UNGROUNDED',
+        ungroundedTokens: [],
+        contradictions: [],
+        wasCorrected: false,
+        calibratedScore: 0.2
+      };
+    }
+
+    const contradictions = [];
+    let workingReply = cleanReply;
+    let wasCorrected = false;
+    for (const rule of this.contradictionRules) {
+      if (rule.check(workingReply, question)) {
+        contradictions.push({ ruleId: rule.id, evidence: rule.evidenceFact });
+        workingReply = rule.replacement;
+        wasCorrected = true;
+        break;
+      }
+    }
+
+    const combinedEvidence = (evidenceTexts || []).join(' ');
+    const normEv = ' ' + nlp.normalize(combinedEvidence) + ' ';
+    const replyYears = [...new Set((workingReply.match(/\b(?:1[0-9]{3}|20[0-2][0-9])\b/g) || []))];
+    const ungroundedYears = replyYears.filter(y => !combinedEvidence.includes(y));
+
+    const replyNums = [...new Set((workingReply.match(/\b\d+(?:[.,]\d+)?\s*(?:mét|m\b|kg|tấn|vnđ|đồng)/gi) || []))];
+    const ungroundedNums = replyNums.filter(n => {
+      const digits = (n.match(/\d+(?:[.,]\d+)?/) || [''])[0];
+      return digits && !normEv.includes(digits.replace(',', '.')) && !combinedEvidence.includes(digits);
+    });
+
+    const ungroundedTokens = [...ungroundedYears, ...ungroundedNums];
+
+    let groundingStatus = 'GROUNDED';
+    let calibratedScore = 0.92;
+    if (contradictions.length > 0) {
+      groundingStatus = 'CORRECTED_CONTRADICTION';
+      calibratedScore = 0.85;
+    } else if (ungroundedTokens.length >= 2) {
+      groundingStatus = 'UNGROUNDED';
+      calibratedScore = 0.45;
+    } else if (ungroundedTokens.length === 1) {
+      groundingStatus = 'PARTIALLY_GROUNDED';
+      calibratedScore = 0.72;
+    }
+
+    return {
+      reply: workingReply,
+      groundingStatus,
+      ungroundedTokens,
+      contradictions,
+      wasCorrected,
+      calibratedScore
     };
   }
 }

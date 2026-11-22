@@ -216,7 +216,7 @@ class SemanticRouter {
       'emergency hospital', 'nearest hospital', 'hospital', 'ambulance', 'first aid',
       'medical emergency', 'fainted', 'dizzy', 'passed out', 'collapsed', 'cant breathe'
     ];
-    if (medicalTerms.some(t => hasPhrase(normText, t)) && !hasPhrase(normText, 'hieu thuoc')) {
+    if (medicalTerms.some(t => hasPhrase(normText, t)) && !hasPhrase(normText, 'hieu thuoc') && !hasPhrase(normText, 'la bang') && !hasPhrase(normText, 'cay bang') && !hasPhrase(normText, 'bup bang')) {
       return { isEmergency: true, subType: 'MEDICAL_EMERGENCY', urgency: 'CRITICAL' };
     }
 

@@ -1,27 +1,30 @@
 /**
  * =========================================================================================
- * 📚 AUTO-LEARNING PERSISTENT LOCAL KNOWLEDGE STORE (PHƯƠNG PHÁP 2)
+ * 📚 AUTO-LEARNING 2.0 — STAGED, VERSIONED, AUDITED KNOWLEDGE LIFECYCLE (PHASE 4)
  * =========================================================================================
- * Cơ chế Tự Học vào Data Local:
- * 1. Khi khách hỏi 1 câu hỏi MỚI hoàn toàn chưa có trong kho tĩnh -> Groq RAG trả lời xác thực 1 lần
- *    -> Hệ thống kiểm định chất lượng rồi TỰ ĐỘNG LƯU BỀN VỮNG vào data/auto_learned_knowledge.json
- *    (và tự động nạp vào LocalSemanticIndex ngay trong RAM!).
- * 2. Từ lần thứ 2 trở đi (kể cả ngày hôm sau, sau khi restart server, hoặc 100 người khác hỏi câu
- *    khác chữ nhưng CÙNG Ý NGHĨA) -> LocalSemanticIndex tìm thấy trong ~2ms -> trả lời + lắp ghép
- *    tự nhiên bằng local_human_composer.js với 0 TOKEN GROQ!
- * 3. Sẵn sàng mở rộng sang MongoDB (nếu cấu hình MONGODB_URI & cài driver `mongodb`).
+ * Quy trình bắt buộc (KHÔNG BAO GIỜ tự biến câu trả lời LLM thành sự thật chính thức!):
+ *   Visitor Question -> AI Answer -> Feedback / Knowledge Gap Detection
+ *   -> Create Proposal (pending_proposals) -> Prompt-Injection & Contradiction Check
+ *   -> Confidence & Provenance Tagging -> Admin Approval / Rejection
+ *   -> Version Snapshot -> Promote to Approved Production KB (approved_knowledge)
+ *   -> Rollback-ready & Atomic Disk Persistence!
  * =========================================================================================
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const nlp = require('./nlp_processor');
+const validator = require('./answer_validator');
 const { LocalSemanticIndex } = require('./local_semantic_index');
 
-const LEARNED_FILE = path.join(__dirname, '..', 'data', 'auto_learned_knowledge.json');
-const MAX_LEARNED_RECORDS = 3000;
+const STORE_FILE = path.join(__dirname, '..', 'data', 'auto_learned_knowledge.json');
+const MAX_PENDING = 1000;
+const MAX_APPROVED = 3000;
+const MAX_HISTORY = 30;
+const MAX_FEEDBACK = 2000;
 
-const BLOCKED_LEARN_INTENTS = new Set([
+const BLOCKED_INTENTS = new Set([
   'OUT_OF_SCOPE',
   'PROMPT_INJECTION',
   'EMERGENCY_SUPPORT',
@@ -32,92 +35,122 @@ const BLOCKED_LEARN_INTENTS = new Set([
   'GOODBYE'
 ]);
 
-class AutoLearningStore {
-  constructor() {
-    this.records = [];
-    this.semanticIndex = new LocalSemanticIndex();
-    this.mongoCollection = null;
+function atomicWriteJsonSync(filePath, data) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const serialized = JSON.stringify(data, null, 2);
+  JSON.parse(serialized); // Verify valid JSON before touching live file
+  const tmp = `${filePath}.tmp.${process.pid}.${Date.now()}`;
+  fs.writeFileSync(tmp, serialized, 'utf8');
+  fs.renameSync(tmp, filePath);
+}
+
+class AutoLearningStoreV2 {
+  constructor(customPath = null) {
+    this.storeFile = customPath || STORE_FILE;
+    this.state = {
+      schemaVersion: 2,
+      kbVersion: 1,
+      approved: [],     // CHỈ dữ liệu đã phê duyệt chính thức mới được phục vụ!
+      pending: [],      // Hàng đợi chờ kiểm duyệt (staging)
+      rejected: [],     // Lịch sử từ chối để tránh lặp đề xuất sai
+      feedback: [],     // Phản hồi thực tế của du khách
+      versions: []      // Snapshot lịch sử phiên bản để rollback an toàn
+    };
+    this.approvedIndex = new LocalSemanticIndex();
+    this.pendingIndex = new LocalSemanticIndex();
     this.stats = {
-      loadedFromDisk: 0,
-      learnedThisSession: 0,
-      semanticCacheHits: 0
+      proposalsCreated: 0,
+      proposalsBlockedInjection: 0,
+      proposalsBlockedContradiction: 0,
+      approvedSemanticHits: 0
     };
     this.loadFromDisk();
-    this.initOptionalMongo();
   }
 
   loadFromDisk() {
     try {
-      if (fs.existsSync(LEARNED_FILE)) {
-        const raw = fs.readFileSync(LEARNED_FILE, 'utf8');
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) {
-          this.records = parsed;
-          this.stats.loadedFromDisk = parsed.length;
-          this.rebuildIndex();
-          console.log(`[AutoLearning] Đã nạp ${this.records.length} tri thức tự học bền vững từ auto_learned_knowledge.json.`);
-        }
+      if (!fs.existsSync(this.storeFile)) return;
+      const raw = JSON.parse(fs.readFileSync(this.storeFile, 'utf8'));
+
+      // Migration an toàn từ định dạng V1 (Array phẳng) -> V2 (Tách Staging / Production)
+      if (Array.isArray(raw)) {
+        this.state.pending = raw.map(item => ({
+          ...item,
+          status: 'pending',
+          provenance: {
+            sourceType: 'MIGRATED_FROM_V1',
+            createdAt: item.learnedAt || new Date().toISOString(),
+            sources: ['LEGACY_V1_UNREVIEWED']
+          },
+          confidenceScore: 0.72
+        }));
+        this.saveToDisk();
+      } else if (raw && typeof raw === 'object') {
+        this.state = {
+          schemaVersion: 2,
+          kbVersion: raw.kbVersion || 1,
+          approved: Array.isArray(raw.approved) ? raw.approved : [],
+          pending: Array.isArray(raw.pending) ? raw.pending : [],
+          rejected: Array.isArray(raw.rejected) ? raw.rejected : [],
+          feedback: Array.isArray(raw.feedback) ? raw.feedback : [],
+          versions: Array.isArray(raw.versions) ? raw.versions : []
+        };
       }
+      this.rebuildIndexes();
     } catch (e) {
-      console.warn('[AutoLearning] Lỗi nạp auto_learned_knowledge.json:', e.message);
-      this.records = [];
+      console.warn('[AutoLearning 2.0] Lỗi nạp file lưu trữ:', e.message);
     }
   }
 
-  async initOptionalMongo() {
-    const uri = process.env.MONGODB_URI;
-    if (!uri) return;
+  saveToDisk() {
     try {
-      const { MongoClient } = require('mongodb');
-      const client = new MongoClient(uri);
-      await client.connect();
-      const dbName = process.env.MONGODB_DB || 'hoalo_ai_guide';
-      this.mongoCollection = client.db(dbName).collection('auto_learned_knowledge');
-      const remoteDocs = await this.mongoCollection.find({}).limit(MAX_LEARNED_RECORDS).toArray();
-      if (remoteDocs.length > this.records.length) {
-        this.records = remoteDocs.map(({ _id, ...rest }) => rest);
-        this.rebuildIndex();
-        console.log(`[AutoLearning MongoDB] Đã đồng bộ ${this.records.length} tri thức từ MongoDB.`);
-      }
+      atomicWriteJsonSync(this.storeFile, this.state);
     } catch (e) {
-      console.warn('[AutoLearning] MongoDB chưa kích hoạt (dùng JSON Local):', e.message);
+      console.warn('[AutoLearning 2.0] Lỗi ghi atomic:', e.message);
     }
   }
 
-  rebuildIndex() {
-    this.semanticIndex = new LocalSemanticIndex();
-    for (const r of this.records) {
-      this.semanticIndex.addDocument({
+  rebuildIndexes() {
+    this.approvedIndex = new LocalSemanticIndex();
+    for (const r of this.state.approved) {
+      this.approvedIndex.addDocument({
         id: r.id,
-        source: 'AUTO_LEARNED_LOCAL',
+        source: 'APPROVED_AUTO_LEARNED',
         question: r.question,
         aliases: r.aliases || [],
         answer: r.answer,
         lang: r.language || 'vi',
         stationCode: r.stationCode || null,
         intent: r.intent || 'HISTORICAL_FACT',
-        priorityBoost: 0.04
+        priorityBoost: 0.05
       });
     }
-    this.semanticIndex.rebuildIdf();
-  }
+    this.approvedIndex.rebuildIdf();
 
-  saveToDisk() {
-    try {
-      const dir = path.dirname(LEARNED_FILE);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(LEARNED_FILE, JSON.stringify(this.records, null, 2), 'utf8');
-    } catch (e) {
-      console.warn('[AutoLearning] Lỗi lưu auto_learned_knowledge.json:', e.message);
+    this.pendingIndex = new LocalSemanticIndex();
+    for (const p of this.state.pending) {
+      this.pendingIndex.addDocument({
+        id: p.id,
+        source: 'PENDING_PROPOSAL',
+        question: p.question,
+        aliases: p.aliases || [],
+        answer: p.answer,
+        lang: p.language || 'vi',
+        stationCode: p.stationCode || null,
+        intent: p.intent || 'HISTORICAL_FACT'
+      });
     }
+    this.pendingIndex.rebuildIdf();
   }
 
   /**
-   * Tra cứu tri thức đã tự học theo Ý NGHĨA NGỮ NGHĨA (~1-2ms, 0 Groq!)
+   * CHỈ tra cứu trong tập APPROVED (dữ liệu chính thức đã được duyệt)!
+   * Tuyệt đối KHÔNG phục vụ dữ liệu pending/chưa duyệt!
    */
-  findSemanticLearnedMatch(question, { language = 'vi', stationCode = null, minScore = 0.56 } = {}) {
-    if (!question || this.records.length === 0) return null;
-    const hits = this.semanticIndex.search(question, {
+  findSemanticLearnedMatch(question, { language = 'vi', stationCode = null, minScore = 0.62 } = {}) {
+    if (!question || this.state.approved.length === 0) return null;
+    const hits = this.approvedIndex.search(question, {
       lang: language,
       stationCode,
       topK: 1,
@@ -125,12 +158,12 @@ class AutoLearningStore {
     });
     if (hits.length > 0) {
       const best = hits[0];
-      const rec = this.records.find(r => r.id === best.doc.id);
+      const rec = this.state.approved.find(r => r.id === best.doc.id);
       if (rec) {
-        rec.hitCount = (rec.hitCount || 1) + 1;
+        rec.hitCount = (rec.hitCount || 0) + 1;
         rec.lastHitAt = new Date().toISOString();
       }
-      this.stats.semanticCacheHits++;
+      this.stats.approvedSemanticHits++;
       return {
         record: rec || best.doc,
         score: Number(best.score.toFixed(3))
@@ -140,93 +173,304 @@ class AutoLearningStore {
   }
 
   /**
-   * Kiểm định chất lượng & Tự động học 1 tri thức mới xác thực từ Groq RAG vào Data Local
+   * Kiểm tra xung đột & mâu thuẫn với bộ quy tắc sử học RealAnswerValidator + tri thức đã duyệt
    */
-  learn({ question, answer, intent, language = 'vi', stationCode = null, responseType = '', extraFacts = [] }) {
-    if (!question || !answer) return false;
-    const cleanQ = question.trim();
-    const cleanA = answer.trim();
+  checkContradictionAndSafety(question, answer) {
+    // 1. Chống Prompt Injection xâm nhập vào kho tri thức!
+    if (nlp.detectPromptInjection(question) || nlp.detectPromptInjection(answer)) {
+      this.stats.proposalsBlockedInjection++;
+      return { safe: false, reason: 'PROMPT_INJECTION_DETECTED' };
+    }
 
-    // 1. Cổng kiểm định chất lượng (KHÔNG bao giờ học câu lỗi, câu ngoài lề, câu ngắn, câu bịa!)
-    if (cleanQ.length < 5 || cleanA.length < 30 || cleanA.length > 700) return false;
-    if (BLOCKED_LEARN_INTENTS.has(intent)) return false;
-    if (/ngoài phạm vi|chưa nghe rõ|could not hear|outside the scope|lỗi máy chủ/i.test(cleanA)) return false;
+    // 2. Kiểm tra mâu thuẫn dữ kiện trọng yếu bằng RealAnswerValidator
+    for (const rule of (validator.contradictionRules || [])) {
+      if (rule.check(answer, question)) {
+        this.stats.proposalsBlockedContradiction++;
+        return {
+          safe: false,
+          reason: `HISTORICAL_CONTRADICTION:${rule.id}`,
+          evidence: rule.evidenceFact
+        };
+      }
+    }
 
-    // 2. Nếu đã có bản ghi rất gần nghĩa (>= 0.88) -> gộp thành alias thay vì lưu trùng!
-    const existing = this.semanticIndex.search(cleanQ, { lang: language, stationCode, topK: 1, minScore: 0.88 });
-    if (existing.length > 0) {
-      const target = this.records.find(r => r.id === existing[0].doc.id);
+    return { safe: true };
+  }
+
+  /**
+   * Đề xuất tri thức mới vào HÀNG ĐỢI CHỜ DUYỆT (pending_proposals) — KHÔNG tự động xuất bản!
+   */
+  propose({
+    question,
+    answer,
+    intent,
+    language = 'vi',
+    stationCode = null,
+    responseType = '',
+    sources = [],
+    confidenceScore = 0.80,
+    extraFacts = [],
+    groundingStatus = 'GROUNDED'
+  }) {
+    if (!question || !answer) return { accepted: false, reason: 'EMPTY_INPUT' };
+    const cleanQ = String(question).trim();
+    const cleanA = String(answer).trim();
+
+    if (cleanQ.length < 6 || cleanA.length < 30 || cleanA.length > 750) {
+      return { accepted: false, reason: 'LENGTH_OUT_OF_RANGE' };
+    }
+    if (BLOCKED_INTENTS.has(intent)) {
+      return { accepted: false, reason: 'BLOCKED_INTENT' };
+    }
+    if (/ngoài phạm vi|chưa nghe rõ|could not hear|outside the scope|lỗi máy chủ|chưa có đủ tư liệu/i.test(cleanA)) {
+      return { accepted: false, reason: 'REFUSAL_OR_GAP_RESPONSE' };
+    }
+    if (groundingStatus === 'UNGROUNDED') {
+      return { accepted: false, reason: 'UNGROUNDED_LLM_OUTPUT' };
+    }
+
+    // Kiểm tra bảo mật & mâu thuẫn lịch sử
+    const safety = this.checkContradictionAndSafety(cleanQ, cleanA);
+    if (!safety.safe) {
+      return { accepted: false, reason: safety.reason };
+    }
+
+    // Chống trùng lặp với tập đã duyệt hoặc đang chờ duyệt
+    const dupApproved = this.approvedIndex.search(cleanQ, { lang: language, stationCode, topK: 1, minScore: 0.88 });
+    if (dupApproved.length > 0) {
+      return { accepted: false, reason: 'DUPLICATE_IN_APPROVED', matchedId: dupApproved[0].doc.id };
+    }
+    const dupPending = this.pendingIndex.search(cleanQ, { lang: language, stationCode, topK: 1, minScore: 0.88 });
+    if (dupPending.length > 0) {
+      const target = this.state.pending.find(p => p.id === dupPending[0].doc.id);
       if (target) {
+        target.frequency = (target.frequency || 1) + 1;
         target.aliases = target.aliases || [];
         if (!target.aliases.includes(cleanQ) && target.question.toLowerCase() !== cleanQ.toLowerCase()) {
           target.aliases.push(cleanQ);
-          if (target.aliases.length > 15) target.aliases = target.aliases.slice(-15);
-          this.rebuildIndex();
-          this.saveToDisk();
         }
+        this.saveToDisk();
       }
-      return false;
+      return { accepted: false, reason: 'MERGED_INTO_PENDING', matchedId: dupPending[0].doc.id };
     }
 
-    const id = 'LEARN_' + crypto.createHash('md5').update(`${language}:${stationCode || ''}:${cleanQ.toLowerCase()}`).digest('hex').slice(0, 10);
-    const newRec = {
+    // Phát hiện mâu thuẫn tiềm ẩn với bản ghi đã duyệt cùng chủ đề nhưng câu trả lời khác biệt mạnh
+    const similarApproved = this.approvedIndex.search(cleanQ, { lang: language, stationCode, topK: 1, minScore: 0.65 });
+    const potentialConflictWith = similarApproved.length > 0 ? similarApproved[0].doc.id : null;
+
+    const id = 'PROP_' + crypto.createHash('md5').update(`${language}:${stationCode || ''}:${cleanQ.toLowerCase()}`).digest('hex').slice(0, 10);
+    const proposal = {
       id,
+      status: 'pending',
       question: cleanQ,
       aliases: [],
       answer: cleanA,
       intent: intent || 'HISTORICAL_FACT',
       language,
       stationCode: /đang đứng|vị trí hiện tại|standing|gian trưng bày/i.test(cleanA) ? (stationCode || null) : null,
-      responseType,
+      confidenceScore: Number(confidenceScore || 0.80),
+      groundingStatus,
+      potentialConflictWith,
+      frequency: 1,
       extraFacts: (extraFacts || []).slice(0, 3),
-      learnedAt: new Date().toISOString(),
-      hitCount: 1
+      provenance: {
+        sourceType: responseType || 'LLM_GROUNDED_SYNTHESIS',
+        sources: Array.isArray(sources) ? sources.slice(0, 5) : [],
+        createdAt: new Date().toISOString()
+      }
     };
 
-    this.records.push(newRec);
-    if (this.records.length > MAX_LEARNED_RECORDS) {
-      this.records = this.records.slice(-MAX_LEARNED_RECORDS);
+    this.state.pending.push(proposal);
+    if (this.state.pending.length > MAX_PENDING) {
+      this.state.pending = this.state.pending.slice(-MAX_PENDING);
     }
-
-    this.semanticIndex.addDocument({
-      id: newRec.id,
-      source: 'AUTO_LEARNED_LOCAL',
-      question: newRec.question,
-      aliases: newRec.aliases,
-      answer: newRec.answer,
-      lang: newRec.language,
-      stationCode: newRec.stationCode,
-      intent: newRec.intent,
-      priorityBoost: 0.04
-    });
-    this.stats.learnedThisSession++;
+    this.stats.proposalsCreated++;
+    this.rebuildIndexes();
     this.saveToDisk();
 
-    if (this.mongoCollection) {
-      this.mongoCollection.updateOne({ id: newRec.id }, { $set: newRec }, { upsert: true }).catch(() => {});
+    return { accepted: true, proposalId: id, status: 'pending', potentialConflictWith };
+  }
+
+  /**
+   * Giữ tương thích ngược tên hàm `learn()` -> chuyển hướng an toàn vào `propose()` (Staging, KHÔNG tự xuất bản!)
+   */
+  learn(params) {
+    return this.propose(params);
+  }
+
+  /**
+   * Phê duyệt đề xuất (chỉ Admin mới được gọi!) -> tạo snapshot phiên bản & đưa vào Approved Production KB
+   */
+  approveProposal(proposalId, { approvedBy = 'admin', editedAnswer = null, note = '' } = {}) {
+    const idx = this.state.pending.findIndex(p => p.id === proposalId);
+    if (idx === -1) return { success: false, error: 'Proposal not found in pending queue' };
+
+    const prop = this.state.pending[idx];
+    const finalAnswer = editedAnswer ? String(editedAnswer).trim() : prop.answer;
+
+    // Kiểm tra lại mâu thuẫn & injection lần cuối trước khi lên Production!
+    const safety = this.checkContradictionAndSafety(prop.question, finalAnswer);
+    if (!safety.safe) {
+      return { success: false, error: `Approval blocked by safety validator: ${safety.reason}` };
     }
 
-    console.log(`🧠 [Auto-Learned Local] Đã tự học & lưu bền vững [${language.toUpperCase()}]: "${cleanQ.slice(0, 55)}" (Tổng: ${this.records.length} tri thức)`);
-    return true;
+    // Lưu snapshot phiên bản trước để hỗ trợ Rollback bất cứ lúc nào!
+    this.createVersionSnapshot(`Before approving ${proposalId} by ${approvedBy}`);
+
+    this.state.pending.splice(idx, 1);
+    this.state.kbVersion = (this.state.kbVersion || 1) + 1;
+
+    const approvedRecord = {
+      id: prop.id.replace(/^PROP_/, 'APPR_'),
+      proposalId: prop.id,
+      version: this.state.kbVersion,
+      status: 'approved',
+      question: prop.question,
+      aliases: prop.aliases || [],
+      answer: finalAnswer,
+      intent: prop.intent,
+      language: prop.language,
+      stationCode: prop.stationCode,
+      confidenceScore: Math.max(0.92, prop.confidenceScore || 0.92),
+      extraFacts: prop.extraFacts || [],
+      provenance: {
+        ...prop.provenance,
+        approvedBy,
+        approvedAt: new Date().toISOString(),
+        approvalNote: note
+      },
+      hitCount: 0
+    };
+
+    this.state.approved.push(approvedRecord);
+    if (this.state.approved.length > MAX_APPROVED) {
+      this.state.approved = this.state.approved.slice(-MAX_APPROVED);
+    }
+
+    this.rebuildIndexes();
+    this.saveToDisk();
+    return { success: true, kbVersion: this.state.kbVersion, record: approvedRecord };
+  }
+
+  rejectProposal(proposalId, { rejectedBy = 'admin', reason = 'rejected_by_curator' } = {}) {
+    const idx = this.state.pending.findIndex(p => p.id === proposalId);
+    if (idx === -1) return { success: false, error: 'Proposal not found' };
+
+    const [prop] = this.state.pending.splice(idx, 1);
+    this.state.rejected.push({
+      id: prop.id,
+      question: prop.question,
+      rejectedBy,
+      reason,
+      rejectedAt: new Date().toISOString()
+    });
+    if (this.state.rejected.length > 500) this.state.rejected = this.state.rejected.slice(-500);
+    this.rebuildIndexes();
+    this.saveToDisk();
+    return { success: true, rejectedId: prop.id };
+  }
+
+  createVersionSnapshot(label = '') {
+    this.state.versions.push({
+      kbVersion: this.state.kbVersion,
+      createdAt: new Date().toISOString(),
+      label,
+      approvedCount: this.state.approved.length,
+      approvedSnapshot: JSON.parse(JSON.stringify(this.state.approved))
+    });
+    if (this.state.versions.length > MAX_HISTORY) {
+      this.state.versions = this.state.versions.slice(-MAX_HISTORY);
+    }
+  }
+
+  rollbackToVersion(targetVersion = null) {
+    if (!this.state.versions.length) {
+      return { success: false, error: 'No version snapshots available for rollback' };
+    }
+    const snapIdx = targetVersion !== null
+      ? this.state.versions.findIndex(v => v.kbVersion === Number(targetVersion))
+      : this.state.versions.length - 1;
+    if (snapIdx === -1) {
+      return { success: false, error: `Version ${targetVersion} not found` };
+    }
+    const snap = this.state.versions[snapIdx];
+    this.state.approved = JSON.parse(JSON.stringify(snap.approvedSnapshot));
+    this.state.kbVersion = snap.kbVersion;
+    this.state.versions = this.state.versions.slice(0, snapIdx);
+    this.rebuildIndexes();
+    this.saveToDisk();
+    return {
+      success: true,
+      restoredVersion: this.state.kbVersion,
+      approvedCount: this.state.approved.length
+    };
+  }
+
+  recordFeedback({ question, reply, rating, comment = '', deviceId = 'GUEST', language = 'vi' }) {
+    if (!question) return { success: false, error: 'Missing question' };
+    const cleanRating = rating === 'up' || rating === 'down' || Number(rating) >= 1 ? rating : 'neutral';
+    const entry = {
+      id: 'FB_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      question: String(question).slice(0, 500),
+      reply: String(reply || '').slice(0, 700),
+      rating: cleanRating,
+      comment: String(comment || '').slice(0, 300),
+      deviceId: String(deviceId || 'GUEST').slice(0, 64),
+      language,
+      createdAt: new Date().toISOString()
+    };
+    this.state.feedback.push(entry);
+    if (this.state.feedback.length > MAX_FEEDBACK) {
+      this.state.feedback = this.state.feedback.slice(-MAX_FEEDBACK);
+    }
+    this.saveToDisk();
+    return { success: true, feedback: entry };
+  }
+
+  // Giữ thuộc tính records tương thích ngược với /health
+  get records() {
+    return this.state.approved;
   }
 
   getSummary() {
     return {
-      total_learned: this.records.length,
-      learned_this_session: this.stats.learnedThisSession,
-      semantic_cache_hits: this.stats.semanticCacheHits,
-      storage: this.mongoCollection ? 'MongoDB + Local JSON' : 'Local JSON (auto_learned_knowledge.json)',
-      recent_learned: this.records.slice(-10).reverse().map(r => ({
+      schema_version: 2,
+      kb_version: this.state.kbVersion,
+      total_approved: this.state.approved.length,
+      total_pending_review: this.state.pending.length,
+      total_rejected: this.state.rejected.length,
+      total_feedback: this.state.feedback.length,
+      available_rollback_versions: this.state.versions.map(v => ({
+        kbVersion: v.kbVersion,
+        approvedCount: v.approvedCount,
+        createdAt: v.createdAt,
+        label: v.label
+      })),
+      stats: { ...this.stats },
+      pending_proposals: this.state.pending.slice(-15).reverse().map(p => ({
+        id: p.id,
+        question: p.question,
+        answer: p.answer,
+        language: p.language,
+        confidenceScore: p.confidenceScore,
+        potentialConflictWith: p.potentialConflictWith,
+        frequency: p.frequency || 1,
+        provenance: p.provenance
+      })),
+      approved_records: this.state.approved.slice(-15).reverse().map(r => ({
         id: r.id,
+        version: r.version,
         question: r.question,
         language: r.language,
-        hitCount: r.hitCount || 1,
-        learnedAt: r.learnedAt
+        hitCount: r.hitCount || 0,
+        approvedBy: r.provenance?.approvedBy || 'admin',
+        approvedAt: r.provenance?.approvedAt || null
       }))
     };
   }
 }
 
 module.exports = {
-  autoLearningStore: new AutoLearningStore()
+  AutoLearningStoreV2,
+  autoLearningStore: new AutoLearningStoreV2()
 };

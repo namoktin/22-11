@@ -25,9 +25,12 @@ const EN_FUNCTION_WORDS = new Set([
 ]);
 
 const FR_FUNCTION_WORDS = new Set([
-  'quel', 'quelle', 'quels', 'quelles', 'ou', 'quand', 'comment', 'pourquoi',
-  'est', 'sont', 'avec', 'pour', 'dans', 'sur', 'les', 'des', 'une', 'vous', 'nous',
-  'prix', 'billet', 'billets', 'ouvert', 'ferme', 'musee', 'bonjour', 'merci'
+  'quel', 'quelle', 'quels', 'quelles', 'ou', 'quand', 'comment', 'pourquoi', 'combien',
+  'est', 'sont', 'avec', 'pour', 'dans', 'sur', 'les', 'des', 'une', 'vous', 'nous', 'puis',
+  'prix', 'billet', 'billets', 'ouvert', 'ferme', 'musee', 'bonjour', 'merci', 'excusez',
+  'horaires', 'ouverture', 'toilettes', 'parlez', 'racontez', 'trouvent', 'visite', 'nocturne',
+  'reserver', 'prendre', 'photos', 'histoire', 'banian', 'cour', 'pilotes', 'americains',
+  'appelaient', 'lieu', 'pourriez', 'expliquer', 'plait', 'evasion', 'egouts'
 ]);
 
 const VI_UNACCENTED_MARKERS = new Set([
@@ -112,11 +115,14 @@ function detectLanguage(text) {
   const trimmed = text.trim();
   if (!trimmed) return 'vi';
 
-  // 1. Có dấu tiếng Việt đặc thù -> chắc chắn tiếng Việt (trừ câu trích dẫn ngắn)
-  const diacriticMatches = trimmed.match(/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/gi) || [];
-  if (diacriticMatches.length >= 2) {
-    return 'vi';
-  }
+  // 0. Nhận diện nhanh theo bảng mã chữ viết Unicode (JA / KO / ZH) trước Latin
+  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(trimmed)) return 'ja';
+  if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(trimmed)) return 'ko';
+  if (/[\u4E00-\u9FFF]/.test(trimmed)) return 'zh';
+
+  // 1. Phân biệt dấu tiếng Việt đặc thù vs dấu tiếng Pháp (tránh é/è/à/ô của tiếng Pháp bị nhầm sang VI!)
+  const viUniqueDiacritics = trimmed.match(/[ăắằẳẵặơớờởỡợưứừửữựđạảãấầẩẫậẻẽếềểễệỉĩịọỏõốồổỗộụủũỳýỷỹỵ]/gi) || [];
+  const sharedDiacritics = trimmed.match(/[àáèéêìíòóôùúçœæîïëû]/gi) || [];
 
   const norm = removeAccents(trimmed.toLowerCase()).replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
   const tokens = norm.split(' ').filter(Boolean);
@@ -129,20 +135,32 @@ function detectLanguage(text) {
   for (const tok of tokens) {
     if (EN_FUNCTION_WORDS.has(tok)) enScore += 1.5;
     if (VI_UNACCENTED_MARKERS.has(tok)) viScore += 1.5;
-    if (FR_FUNCTION_WORDS.has(tok)) frScore += 1.4;
-    if (EN_MORPHOLOGY_REGEX.test(tok) && !VI_UNACCENTED_MARKERS.has(tok)) {
+    if (FR_FUNCTION_WORDS.has(tok)) frScore += 1.8;
+    if (EN_MORPHOLOGY_REGEX.test(tok) && !VI_UNACCENTED_MARKERS.has(tok) && !FR_FUNCTION_WORDS.has(tok)) {
       enScore += 0.9;
     }
-    // Chữ cái f, j, w, z ở đầu từ rất hiếm trong tiếng Việt không dấu chuẩn (trừ teencode j/z)
     if (/^[fw]|w|ck|sh|th[aeiou]/.test(tok) && !VI_UNACCENTED_MARKERS.has(tok)) {
       enScore += 0.6;
     }
   }
 
-  // Nếu có 1 dấu tiếng Việt (ví dụ "Ở", "đâu") cộng thêm điểm VI
-  if (diacriticMatches.length === 1) viScore += 2.0;
+  // Dấu đặc trưng chỉ tiếng Việt có (ă, ơ, ư, đ, dấu hỏi/ngã/nặng...)
+  if (viUniqueDiacritics.length >= 1) {
+    viScore += viUniqueDiacritics.length * 3.0;
+  }
+  // Dấu tiếng Pháp đặc trưng (ç, œ, æ, ’) hoặc dấu shared kèm từ chức năng Pháp
+  if (/[çœæ]/i.test(trimmed) || /(?:l['’]|d['’]|qu['’]|s['’]|m['’])/i.test(trimmed)) {
+    frScore += 3.0;
+  }
+  if (viUniqueDiacritics.length === 0 && sharedDiacritics.length > 0 && frScore >= 1.8) {
+    frScore += 2.0;
+  } else if (sharedDiacritics.length >= 2 && frScore < 1.8) {
+    viScore += 3.0;
+  } else if (sharedDiacritics.length === 1 && frScore < 1.8) {
+    viScore += 2.0;
+  }
 
-  if (frScore >= 2.8 && frScore > enScore && frScore > viScore) {
+  if (frScore >= 2.5 && frScore > enScore && frScore > viScore) {
     return 'fr';
   }
   if (enScore >= 2.0 && enScore > viScore) {

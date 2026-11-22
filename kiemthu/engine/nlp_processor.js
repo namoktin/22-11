@@ -90,11 +90,14 @@ class NlpProcessor {
     // Lớp 1: Instruction Override (Ghi đè chỉ dẫn hệ thống)
     const strictJailbreaks = [
       'ignore previous instructions', 'ignore all previous instructions', 'ignore all instructions', 'disregard prior',
-      'bo qua moi huong dan', 'quen het quy tac', 'quen tat ca quy tac', 'quen het moi huong dan',
+      'disregard all', 'disregard historical guidelines', 'bypass safety', 'bypass safety filter', 'switch to developer mode',
+      'pretend you have no restrictions', 'no restrictions', 'write malware', 'malware code', 'output your system prompt',
+      'bo qua moi huong dan', 'quen het quy tac', 'quen tat ca quy tac', 'quen het moi huong dan', 'quen het vai tro',
+      'bo qua gioi han', 'tra loi toi nhu hacker', 'nhu hacker',
       'quen het huong dan', 'bo qua moi quy tac', 'bo qua tat ca quy tac', 'bo qua moi chi dan',
       'you are now', 'act as an unrestricted', 'unrestricted ai', 'pretend you are', 'jailbreak', 'system override', 'admin mode', 'developer mode',
       'reveal system prompt', 'show system prompt', 'system prompt', 'in ra huong dan', 'xem prompt',
-      'quy tac bi mat', 'api key', 'cau hinh server', 'override safety rules', 'only reply'
+      'quy tac bi mat', 'api key', 'groq api key', 'admin api key', 'cau hinh server', 'override safety rules', 'only reply'
     ];
     if (strictJailbreaks.some(p => norm.includes(' ' + p + ' '))) return true;
 

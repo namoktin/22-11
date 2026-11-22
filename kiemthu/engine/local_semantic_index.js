@@ -206,7 +206,19 @@ class LocalSemanticIndex {
       if (qVec.concepts.has('C_BOT_POS') && doc.vector.concepts.has('C_SELF_POS')) continue;
       if (qVec.concepts.has('C_SELF_POS') && doc.vector.concepts.has('C_BOT_POS')) continue;
 
-      let sim = cosineSimilarity(qVec, doc.vector);
+      // Year Consistency Guard: nếu câu hỏi nêu rõ mốc năm (VD: 1951), ưu tiên tài liệu cùng năm và phạt nặng tài liệu lệch năm (VD: 1945)
+      const qYears = String(query).match(/\b(18\d{2}|19\d{2}|20\d{2})\b/g) || [];
+      let yearAdj = 0;
+      if (qYears.length > 0) {
+        const docText = `${doc.question} ${doc.answer}`;
+        const docYears = docText.match(/\b(18\d{2}|19\d{2}|20\d{2})\b/g) || [];
+        if (docYears.length > 0) {
+          const hasSharedYear = qYears.some(y => docYears.includes(y));
+          yearAdj = hasSharedYear ? 0.16 : -0.32;
+        }
+      }
+
+      let sim = cosineSimilarity(qVec, doc.vector) + yearAdj;
       // Cộng điểm thưởng nhỏ cho dữ liệu đã được kiểm chứng / tự học
       if (doc.priorityBoost) sim += doc.priorityBoost;
       if (sim >= minScore) {

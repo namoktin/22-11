@@ -654,18 +654,52 @@ class ProductionSmartTourGuideServer {
       groqCaller: (q, sysPrompt, hist, opts) => this.callGroq(q, sysPrompt, hist, opts)
     });
 
-    const confidence = composerResult.confidence || 'HIGH';
-    const confidenceScore = composerResult.confidenceScore || 0.95;
-    this.stats.confidenceCount[confidence] = (this.stats.confidenceCount[confidence] || 0) + 1;
+    let confidence = composerResult.confidence || 'HIGH';
+    let confidenceScore = composerResult.confidenceScore || 0.95;
+    let groundingStatus = 'GROUNDED';
+    let ungroundedTokens = [];
+    let validatorCorrected = Boolean(composerResult.wasCorrected);
 
-    // TẦNG 6: LƯU DỮ LIỆU GỐC & TỰ NHIÊN HÓA CỤC BỘ (0 TOKEN GROQ) KHI LẶP LẠI!
+    // TẦNG 6: REAL ANSWER VALIDATOR + AUTO-LEARNING 2.0 (STAGING ONLY!) + LOCAL VARIATION
     let finalReply = composerResult.reply;
     const relatedExtraFacts = [
       ...(Array.isArray(retrievedData?.facts) ? retrievedData.facts : []),
       ...((knowledgeBase.retrieveTopKContext(coreQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
     ];
 
-    // Lưu bản gốc chuẩn xác ở lượt đầu để các lượt hỏi lặp lại 2..100 lắp ghép ngay tại Local (0 Groq, ~2ms!)
+    // 6.1. THẨM ĐỊNH THỰC SỰ ĐẦU RA LLM RAG BẰNG REAL ANSWER VALIDATOR (chống bịa đặt mốc năm/số liệu & mâu thuẫn!)
+    const isLlmOutput = composerResult.responseType === 'LLM_GROUNDED_SYNTHESIS' || composerResult.responseType === 'STORYTELLING_NARRATION';
+    if (isLlmOutput && finalReply) {
+      const groundCheck = validator.verifyGroundingAgainstEvidence(finalReply, relatedExtraFacts, coreQuery);
+      groundingStatus = groundCheck.groundingStatus;
+      ungroundedTokens = groundCheck.ungroundedTokens;
+      if (groundCheck.wasCorrected) {
+        finalReply = groundCheck.reply;
+        validatorCorrected = true;
+      }
+      if (groundCheck.calibratedScore < confidenceScore) {
+        confidenceScore = groundCheck.calibratedScore;
+        confidence = confidenceScore >= 0.85 ? 'HIGH' : (confidenceScore >= 0.65 ? 'MEDIUM' : 'LOW');
+      }
+    }
+
+    // 6.2. Bổ sung thông tin ý định phụ nếu khách hỏi ĐA Ý ĐỊNH trong 1 câu (VD: "Giá vé và giờ mở cửa?")
+    const secondaryIntents = intentAnalysis.secondaryIntents || [];
+    if (secondaryIntents.length > 0 && finalReply && !isLlmOutput && intent !== INTENTS.OUT_OF_SCOPE) {
+      const secIntent = secondaryIntents[0];
+      const secPolicy = knowledgeBase.findServicePolicy(coreQuery, secIntent);
+      if (secPolicy?.policy?.content) {
+        const firstSecSent = secPolicy.policy.content.split(/(?<=[.!?])\s+/)[0] || '';
+        const secNorm = nlp.normalize(firstSecSent);
+        if (firstSecSent.length >= 15 && !nlp.normalize(finalReply).includes(secNorm.slice(0, 28))) {
+          finalReply = `${finalReply} ${firstSecSent}`.trim();
+        }
+      }
+    }
+
+    this.stats.confidenceCount[confidence] = (this.stats.confidenceCount[confidence] || 0) + 1;
+
+    // 6.3. Lưu bản gốc vào bộ nhớ phiên + đẩy đề xuất vào HÀNG ĐỢI CHỜ DUYỆT Auto-Learning 2.0 (KHÔNG tự động xuất bản!)
     const resolvedFinalIntent = composerResult.resolvedIntent || intent;
     if (finalReply && resolvedFinalIntent !== INTENTS.OUT_OF_SCOPE) {
       this.recordVerifiedBase(phrasingKey, {
@@ -674,16 +708,17 @@ class ProductionSmartTourGuideServer {
         intent: resolvedFinalIntent,
         sources: composerResult.sources
       });
-      // PHƯƠNG PHÁP 2 (AUTO-LEARNING): Khi Groq RAG vừa trả lời xong 1 câu hỏi MỚI hoàn toàn chưa có sẵn trong kho tĩnh
-      // -> Tự động lưu bền vững vào auto_learned_knowledge.json & nạp ngay vào LocalSemanticIndex để lần sau 0 cần gọi Groq!
-      if (composerResult.responseType === 'LLM_GROUNDED_SYNTHESIS' || composerResult.responseType === 'STORYTELLING_NARRATION') {
-        autoLearningStore.learn({
+      if (isLlmOutput && groundingStatus !== 'UNGROUNDED') {
+        autoLearningStore.propose({
           question: coreQuery,
           answer: finalReply,
           intent: resolvedFinalIntent,
           language,
           stationCode: artifactContext?.code || null,
           responseType: composerResult.responseType,
+          sources: composerResult.sources || [],
+          confidenceScore,
+          groundingStatus,
           extraFacts: relatedExtraFacts
         });
       }
@@ -742,6 +777,9 @@ class ProductionSmartTourGuideServer {
     const responseData = {
       reply: finalReply,
       intent: finalIntent,
+      secondaryIntents: secondaryIntents,
+      audience: intentAnalysis.audience || 'general',
+      routeReason: intentAnalysis.routeReason || `Classified as ${finalIntent}`,
       subIntent: subIntent,
       subject: subject,
       aspect: aspect,
@@ -749,11 +787,13 @@ class ProductionSmartTourGuideServer {
       style: composerResult.style || 'CUSTOMER_CARE',
       confidence: confidence,
       confidenceScore: confidenceScore,
+      groundingStatus: groundingStatus,
+      ungroundedTokens: ungroundedTokens,
       requestTier: requestTier,
       sources: composerResult.sources || (policyResult ? [policyResult.policy.source] : ['Ban Quản Lý Di Tích Nhà Tù Hỏa Lò']),
       claims: claims.slice(0, 4),
       verifiedClaims: verifiedClaims.slice(0, 4),
-      wasCorrected: composerResult.wasCorrected || false,
+      wasCorrected: validatorCorrected,
       policy: policyResult ? {
         id: policyResult.policy.id,
         title: policyResult.policy.title,

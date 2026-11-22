@@ -123,7 +123,48 @@ class IntentClassifier {
     return 'GENERAL';
   }
 
+  /**
+   * Phát hiện đa ý định trong 1 câu hỏi (Multi-Intent) + đối tượng khán giả (VD: trẻ em / giải thích đơn giản)
+   */
+  detectSecondaryIntentsAndAudience(rawQuestion, primaryIntent) {
+    const norm = ' ' + nlp.normalize(rawQuestion || '') + ' ';
+    const secondary = [];
+    const checks = [
+      ['TICKET_INFORMATION', ['gia ve', 've vao', 'bao nhieu tien', 'ticket price', 'admission']],
+      ['OPENING_HOURS', ['gio mo', 'may gio', 'dong cua', 'nghi trua', 'opening hours']],
+      ['FACILITY_INFORMATION', ['nha ve sinh', 'wc', 'toilet', 'gui do', 'balo', 'locker', 'restroom']],
+      ['PARKING_SUPPORT', ['gui xe', 'do xe', 'bai xe', 'parking']],
+      ['PHOTOGRAPHY_POLICY', ['chup anh', 'quay phim', 'flash', 'photo']],
+      ['TOUR_INFORMATION', ['tour dem', 'dem thieng lieng', 'night tour']]
+    ];
+    for (const [intentName, phrases] of checks) {
+      if (intentName === primaryIntent) continue;
+      if (phrases.some(p => hasPhrase(norm, p))) secondary.push(intentName);
+    }
+
+    const isChildMode =
+      hasPhrase(norm, 'cho tre em') || hasPhrase(norm, 'cho be') || hasPhrase(norm, 'cho con nho') ||
+      hasPhrase(norm, 'giai thich don gian') || hasPhrase(norm, 'de hieu cho be') ||
+      hasPhrase(norm, 'for kids') || hasPhrase(norm, 'for children') || hasPhrase(norm, 'simple explanation');
+
+    return {
+      secondaryIntents: secondary,
+      audience: isChildMode ? 'child' : 'general'
+    };
+  }
+
   classify(rawQuestion, context = null) {
+    const result = this._classifyCore(rawQuestion, context);
+    const extra = this.detectSecondaryIntentsAndAudience(rawQuestion, result.intent);
+    return {
+      ...result,
+      secondaryIntents: extra.secondaryIntents,
+      audience: extra.audience,
+      routeReason: result.reason || `Classified as ${result.intent}`
+    };
+  }
+
+  _classifyCore(rawQuestion, context = null) {
     const raw = nlp.cleanRawText(rawQuestion);
     const norm = ' ' + nlp.normalize(raw) + ' ';
     const lower = raw.toLowerCase();
@@ -261,15 +302,39 @@ class IntentClassifier {
     }
 
     // 0.08. Ngoại lệ thời tiết TRONG KHUÔN VIÊN DI TÍCH ("trời mưa có tham quan trong nhà được không?")
-    if ((hasPhrase(norm, 'troi mua') || hasPhrase(norm, 'mua to') || hasPhrase(norm, 'nang nong')) &&
-        (hasPhrase(norm, 'tham quan') || hasPhrase(norm, 'trong nha') || hasPhrase(norm, 'di tich') || hasPhrase(norm, 'hoa lo'))) {
+    if ((hasPhrase(norm, 'troi mua') || hasPhrase(norm, 'mua to') || hasPhrase(norm, 'nang nong') || hasPhrase(norm, 'rains') || hasPhrase(norm, 'raining') || hasPhrase(norm, 'rain')) &&
+        (hasPhrase(norm, 'tham quan') || hasPhrase(norm, 'trong nha') || hasPhrase(norm, 'di tich') || hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'open'))) {
       return {
-        intent: INTENTS.VISIT_GUIDANCE,
+        intent: INTENTS.WEATHER_ADVISORY,
         subIntent: 'WEATHER_INDOOR_GUIDANCE',
         subject: 'tham_quan_trong_nha',
         aspect: 'VISIT_GUIDANCE',
         confidence: 0.96,
         reason: 'Khách hỏi khả năng tham quan trong nhà khi trời mưa/nắng nóng'
+      };
+    }
+
+    // 0.085. Ngoại lệ tiện ích cốt lõi (Nhà vệ sinh / Restroom / Toilet) luôn thuộc phạm vi di tích (VI + EN)
+    if (hasPhrase(norm, 'restroom') || hasPhrase(norm, 'restrooms') || hasPhrase(norm, 'washroom') || hasPhrase(norm, 'toilets') || hasPhrase(norm, 'toilet') || hasPhrase(norm, 'nha ve sinh') || hasPhrase(norm, 'di ve sinh')) {
+      return {
+        intent: INTENTS.FACILITY_INFORMATION,
+        subIntent: 'RESTROOM_LOCATION',
+        subject: 'nha_ve_sinh',
+        aspect: 'FACILITY_INFO',
+        confidence: 0.96,
+        reason: 'Khách hỏi vị trí nhà vệ sinh trong khuôn viên di tích'
+      };
+    }
+
+    // 0.086. Câu hỏi tâm linh/ma quái tại Hỏa Lò -> HISTORICAL_FACT (tránh rơi sang OUT_OF_SCOPE)
+    if (hasPhrase(norm, 'co ma') || hasPhrase(norm, 'ma quai') || hasPhrase(norm, 'ghost') || hasPhrase(norm, 'ghosts') || hasPhrase(norm, 'haunted')) {
+      return {
+        intent: INTENTS.HISTORICAL_FACT,
+        subIntent: 'MYTH_FACT_CHECK',
+        subject: 'lich_su_hoa_lo',
+        aspect: 'FACTUAL',
+        confidence: 0.94,
+        reason: 'Giải đáp thắc mắc thực tế về không gian trang nghiêm của di tích'
       };
     }
 
@@ -422,7 +487,7 @@ class IntentClassifier {
       };
     }
 
-    if (norm.includes('chuyen cuoi') || norm.includes('ke chuyen vui') || norm.includes('tau hai') || norm.includes('hai huoc') || norm.includes('ke tro vui')) {
+    if (norm.includes('chuyen cuoi') || norm.includes('ke chuyen vui') || norm.includes('tau hai') || norm.includes('hai huoc') || norm.includes('ke tro vui') || hasPhrase(norm, 'joke') || hasPhrase(norm, 'funny joke')) {
       return {
         intent: INTENTS.JOKE_REQUEST,
         subIntent: null,
@@ -444,10 +509,15 @@ class IntentClassifier {
       };
     }
 
-    if (norm.includes('gui xe') || norm.includes('do xe') || norm.includes('bai xe') || norm.includes('cho de xe') || norm.includes('cho gui xe') || norm.includes('bai do xe') || norm.includes('gui o to') || norm.includes('gui xe may') || norm.includes('cho dau xe')) {
+    if (
+      norm.includes('gui xe') || norm.includes('do xe') || norm.includes('bai xe') || norm.includes('cho de xe') ||
+      norm.includes('cho gui xe') || norm.includes('bai do xe') || norm.includes('gui o to') || norm.includes('gui xe may') ||
+      norm.includes('cho dau xe') || ((norm.includes('xe may') || norm.includes('o to')) && (norm.includes('gui') || norm.includes('do'))) ||
+      hasPhrase(norm, 'park') || hasPhrase(norm, 'parking')
+    ) {
       return {
         intent: INTENTS.PARKING_SUPPORT,
-        subIntent: norm.includes('o to') ? 'PARKING_CAR' : 'PARKING_BIKE',
+        subIntent: (norm.includes('o to') || hasPhrase(norm, 'car')) ? 'PARKING_CAR' : 'PARKING_BIKE',
         subject: 'bai_gui_xe',
         aspect: 'SERVICE',
         confidence: 0.98,
@@ -456,7 +526,7 @@ class IntentClassifier {
     }
 
     const isBuyingCameraOutside = (hasPhrase(norm, 'mua may anh') || hasPhrase(norm, 'may anh cu') || hasPhrase(norm, 'sua may anh') || hasPhrase(norm, 'ban may anh'));
-    if (!isBuyingCameraOutside && (hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') || hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash'))) {
+    if (!isBuyingCameraOutside && (hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') || hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash') || hasPhrase(norm, 'take photos') || hasPhrase(norm, 'take pictures') || hasPhrase(norm, 'photos inside'))) {
       return {
         intent: INTENTS.PHOTOGRAPHY_POLICY,
         subIntent: 'PHOTO_RULE',
@@ -484,7 +554,7 @@ class IntentClassifier {
       };
     }
 
-    if ((norm.includes('ho guom') || norm.includes('ho hoan kiem')) && (norm.includes('di bo') || norm.includes('bao lau') || norm.includes('may phut') || norm.includes('bao xa') || norm.includes('cach bao xa') || norm.includes('mat bao lau'))) {
+    if ((norm.includes('ho guom') || norm.includes('ho hoan kiem') || norm.includes('hoan kiem')) && (norm.includes('di bo') || norm.includes('bao lau') || norm.includes('may phut') || norm.includes('bao xa') || norm.includes('cach bao xa') || norm.includes('mat bao lau') || norm.includes('how far') || norm.includes('on foot') || norm.includes('walking'))) {
       return {
         intent: INTENTS.VICINITY_DISTANCE,
         subIntent: 'WALKING_TO_HO_GUOM',
@@ -495,7 +565,7 @@ class IntentClassifier {
       };
     }
 
-    if ((norm.includes('3 cau') || norm.includes('ba cau')) && (norm.includes('tom tat') || norm.includes('ngan gon') || norm.includes('dung 3 cau') || norm.includes('ngan thoi'))) {
+    if ((norm.includes('3 cau') || norm.includes('ba cau') || norm.includes('3 short sentences') || norm.includes('3 sentences')) && (norm.includes('tom tat') || norm.includes('ngan gon') || norm.includes('dung 3 cau') || norm.includes('ngan thoi') || norm.includes('summarize'))) {
       return {
         intent: INTENTS.SUMMARY_REQUEST,
         subIntent: 'THREE_SENTENCES_SUMMARY',
@@ -657,7 +727,8 @@ class IntentClassifier {
     }
 
     // 6. Cấp cứu y tế & Tình huống khẩn cấp (EMERGENCY_SUPPORT)
-    const isEmergency = [
+    const isHistoricalLeafMedicalQuestion = norm.includes('la bang') || norm.includes('cay bang') || norm.includes('bup bang');
+    const isEmergency = !isHistoricalLeafMedicalQuestion && [
       'cap cuu', 'say nang', 'ngat xiu', ' ngat ', 'chong mat', 'so cuu', ' y te ', 'phong y te',
       'lac con', 'lac tre', 'tim be', 'tim con', 'lac chau', 'lac be', 'tim chau', 'lost child', 'medical emergency', 'first aid'
     ].some(s => norm.includes(s));
@@ -715,13 +786,14 @@ class IntentClassifier {
 
     // 9. Giờ mở cửa & Lịch hoạt động (OPENING_HOURS)
     const isHistoricalOpening = (norm.includes('nam nao') || norm.includes('khi nao') || norm.includes('moc thoi gian')) && (norm.includes('cai tao') || norm.includes('xep hang') || norm.includes('di tich') || norm.includes('bao tang'));
+    const isTemporaryExhibitionStatus = norm.includes('bang oi') || (norm.includes('chuyen de') && norm.includes('con mo'));
     const hoursSignals = [
       'gio mo cua', 'mo cua luc may gio', 'mo cua may gio', 'may gio mo cua', 'dong cua', 'may gio dong cua',
       'co nghi trua khong', 'ngay le co mo khong', 'tet co mo khong', 'ngay le', 'tet nguyen dan', 'quoc khanh',
       'thu hai co mo khong', 'gio tham quan', 'lich hoat dong', 'mo cua don khach',
       'opening hours', 'opening time', 'open today', 'when does it open', 'closing time', 'what time does it close', 'schedule'
     ];
-    if (!isHistoricalOpening && hoursSignals.some(s => norm.includes(s))) {
+    if (!isHistoricalOpening && !isTemporaryExhibitionStatus && hoursSignals.some(s => norm.includes(s))) {
       return {
         intent: INTENTS.OPENING_HOURS,
         subIntent: null,
