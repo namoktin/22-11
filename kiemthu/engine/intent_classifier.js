@@ -859,9 +859,9 @@ class IntentClassifier {
     // 10. Thông tin giá vé & Chính sách miễn giảm (TICKET_INFORMATION)
     const ticketSignals = [
       'gia ve', 've vao cong', 've vao cua', 'mua ve', 'tien ve', 've tham quan', 've xem', 'mua o dau', 'gia bao nhieu',
-      'hoc sinh', 'sinh vien', 'hssv', 'giam gia ve', 'mien phi ve', 'dat ve truoc', 'dat ve',
+      'hoc sinh', 'sinh vien', 'hssv', 'sv', 'uu dai', 'giam gia ve', 'giam gia', 'mien phi ve', 'mien phi', 'dat ve truoc', 'dat ve',
       'doi ve', 'tra ve', 'hoan tien ve',
-      'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'free admission', 'book ticket', 'buy ticket'
+      'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'discount', 'free admission', 'book ticket', 'buy ticket'
     ];
     if (ticketSignals.some(s => hasPhrase(norm, s)) && !hasPhrase(norm, 'thoi tiet') && !hasPhrase(norm, 'may bay') && !hasPhrase(norm, 'taxi') && !hasPhrase(norm, 'airport')) {
       return {

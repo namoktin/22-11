@@ -40,7 +40,10 @@ const VI_SAFE_SYNONYMS = [
   [/biểu tượng kiên cường/g, ['biểu tượng kiên cường', 'biểu tượng của ý chí bất khuất', 'minh chứng cho sức sống bền bỉ']],
   [/người bạn tri kỷ/g, ['người bạn tri kỷ', 'người bạn thân thiết', 'chỗ dựa tinh thần gần gũi']],
   [/kiên cố/g, ['kiên cố', 'vững chắc', 'chắc chắn']],
-  [/khắc nghiệt/g, ['khắc nghiệt', 'gian khổ', 'hà khắc']]
+  [/khắc nghiệt/g, ['khắc nghiệt', 'gian khổ', 'hà khắc']],
+  [/Cỗ máy chém/g, ['Cỗ máy chém', 'Hiện vật máy chém', 'Chiếc máy chém']],
+  [/lưỡi dao thép/g, ['lưỡi dao thép', 'lưỡi dao bằng thép', 'phần lưỡi dao thép']],
+  [/chiều cao/g, ['chiều cao', 'độ cao']]
 ];
 
 const EN_SAFE_SYNONYMS = [
@@ -68,7 +71,9 @@ const VI_OPENERS = {
   HISTORY: [
     '', '', '', '', '', '',
     'Theo tư liệu lịch sử tại di tích, ',
-    'Chia sẻ cùng bạn, '
+    'Chia sẻ cùng bạn, ',
+    'Về hiện vật này, ',
+    'Theo hồ sơ lưu trữ tại di tích, '
   ]
 };
 
@@ -249,8 +254,8 @@ function composeLocalHumanVariation({
   const connectors = isEn ? EN_CONNECTORS : VI_CONNECTORS;
   const closings = isEn ? EN_CLOSINGS : VI_CLOSINGS;
 
-  // Thử tối đa 30 tổ hợp khác nhau (< 1ms) để bảo đảm 100/100 lần hỏi liên tiếp KHÔNG BAO GIỜ TRÙNG NHAU!
-  for (let attempt = 0; attempt < 30; attempt++) {
+  // Thử tối đa 60 tổ hợp khác nhau (< 1ms) để bảo đảm 100/100 lần hỏi liên tiếp KHÔNG BAO GIỜ TRÙNG NHAU!
+  for (let attempt = 0; attempt < 60; attempt++) {
     const seed = (turnNumber * 31 + attempt * 17 + previousPhrasings.length * 13 + crypto.randomBytes(1)[0]) % 100000;
 
     // A. Chọn thứ tự lắp ghép các câu cốt lõi (giữ câu 1 hoặc đảo nhẹ vế 2-3 nếu có >= 3 câu)
