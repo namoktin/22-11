@@ -393,25 +393,62 @@ function serveAudioStream(req, res, filePath, contentType) {
     return res.end();
   }
 
-  if (range) {
-    const parts = range.replace(/bytes=/, '').split('-');
-    const start = parseInt(parts[0], 10);
-    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+  if (range && range.startsWith('bytes=')) {
+    const rangeSpec = range.replace(/^bytes=/, '').trim();
+    let start, end;
 
-    if (start >= fileSize) {
+    if (rangeSpec.startsWith('-')) {
+      // Suffix range: bytes=-500 (RFC 7233)
+      const suffixLen = parseInt(rangeSpec.slice(1), 10);
+      if (isNaN(suffixLen) || suffixLen <= 0) {
+        res.writeHead(416, { ...baseHeaders, 'Content-Range': `bytes */${fileSize}` });
+        return res.end();
+      }
+      start = Math.max(0, fileSize - suffixLen);
+      end = fileSize - 1;
+    } else {
+      const parts = rangeSpec.split('-');
+      start = parseInt(parts[0], 10);
+      end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    }
+
+    if (isNaN(start) || isNaN(end) || start < 0 || end < start || start >= fileSize) {
       res.writeHead(416, { ...baseHeaders, 'Content-Range': `bytes */${fileSize}` });
       return res.end();
     }
 
+    end = Math.min(end, fileSize - 1);
+    const chunkLength = end - start + 1;
+
     res.writeHead(206, {
       ...baseHeaders,
       'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Content-Length': end - start + 1
+      'Content-Length': chunkLength
     });
-    fs.createReadStream(filePath, { start, end }).pipe(res);
+    const stream = fs.createReadStream(filePath, { start, end });
+    stream.on('error', (err) => {
+      console.warn(`[AudioStream] Stream error for ${filePath}: ${err.message}`);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'error', error: 'Stream error' }));
+      } else {
+        res.destroy();
+      }
+    });
+    stream.pipe(res);
   } else {
     res.writeHead(200, { ...baseHeaders, 'Content-Length': fileSize });
-    fs.createReadStream(filePath).pipe(res);
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', (err) => {
+      console.warn(`[AudioStream] Full stream error for ${filePath}: ${err.message}`);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'error', error: 'Stream error' }));
+      } else {
+        res.destroy();
+      }
+    });
+    stream.pipe(res);
   }
 }
 
@@ -1874,6 +1911,9 @@ const server = http.createServer(async (req, res) => {
         const reqDeviceId = sanitizeStringInput(formFields.device_id || req.headers['x-device-id'] || urlObj.query.device_id || 'ESP32_HUB_MIC', 64) || 'ESP32_HUB_MIC';
         const reqDevCtx = bleManager.getOrCreateDevice(reqDeviceId);
         const lockedLang = normalizeLangCode(formFields.language || formFields.lang || req.headers['x-language'] || urlObj.query.lang) || reqDevCtx.lockedLanguage || serverState.lockedLanguage || 'vi';
+        if (lockedLang) {
+          reqDevCtx.lockedLanguage = lockedLang;
+        }
 
         // Chuyển file âm thanh tiếng nói của du khách thành văn bản qua Whisper AI (có khóa ngôn ngữ)
         const sttRes = await transcribeWavToText(rawAudioBuffer, contentType, lockedLang);
@@ -1920,8 +1960,16 @@ const server = http.createServer(async (req, res) => {
         devCtx.lockedLanguage = lockedLang;
       }
 
+      const SAFE_FALLBACK_BEACON = {
+        code: currentCode || '001',
+        artifact_name: 'Nhà tù Hỏa Lò (Tổng thể)',
+        zone: 'Khu A',
+        zone_name: 'Toàn cảnh di tích'
+      };
       const beacons = loadBeacons();
-      const currentArtifact = beacons.find(b => b.code === currentCode) || beacons[0];
+      const currentArtifact = (Array.isArray(beacons) && beacons.find(b => b.code === currentCode)) ||
+                             (Array.isArray(beacons) && beacons[0]) ||
+                             SAFE_FALLBACK_BEACON;
 
       // Báo SSE bắt đầu đo
       serverState.isVoiceProcessing = true;

@@ -233,6 +233,11 @@ class SemanticRouter {
       return { isOps: false, subType: null };
     }
 
+    // Mang đồ ăn / thức uống / rượu bia / kẹo bánh vào di tích (OPS_FOOD_DRINK_PROHIBITED)
+    if (/\b(do an|thuc an|nuoc uong|an uong|ruou bia|bia|nuoc ngot|keo|banh|food|drink|drinks|beverage|snack)\b/.test(normText) &&
+        /\b(mang|dem|duoc khong|co duoc|cho phep|cam|quy dinh|vao|trong|bring|inside|allowed|prohibited)\b/.test(normText)) {
+      return { isOps: true, subType: 'OPS_FOOD_DRINK_PROHIBITED' };
+    }
     // Hút thuốc trong khu di tích
     if (hasPhrase(normText, 'hut thuoc') || hasPhrase(normText, 'smoking')) {
       return { isOps: true, subType: 'OPS_SMOKING_VIOLATION' };

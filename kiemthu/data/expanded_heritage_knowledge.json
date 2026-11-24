@@ -4,9 +4,9 @@
     "category": "FACT_CHECK_TRAP",
     "priority": 100,
     "mustMatchAll": [["hoang van thu"]],
-    "mustMatchAny": ["may chem", "yen bai", "xu chem", "chem dau", "dung khong", "phai khong"],
-    "answer_vi": "Không đúng bạn nhé. Đồng chí Hoàng Văn Thụ không bị xử bằng máy chém và cũng không bị đưa lên Yên Bái. Đồng chí bị giam tại Buồng số 1 Khu D (xà lim tử hình) ở Hỏa Lò rồi bị thực dân Pháp đưa đi xử bắn tại trường bắn Tương Mai (Hà Nội) vào sáng ngày 24/5/1944.",
-    "answer_en": "That is not accurate. Revolutionary leader Hoang Van Thu was not executed by guillotine or in Yen Bai. He was held in Cell No. 1 of Zone D at Hoa Lo and executed by firing squad at Tuong Mai execution ground in Hanoi on May 24, 1944."
+    "mustMatchAny": ["may chem", "yen bai", "xu chem", "chem dau", "dung khong", "phai khong", "xu ban", "bi ban", "truong ban", "tuong mai", "o dau", "khi nao", "ngay nao", "ban o dau", "hy sinh"],
+    "answer_vi": "Đồng chí Hoàng Văn Thụ bị giam giữ tại Buồng số 1 Khu D (xà lim tử hình) ở Nhà tù Hỏa Lò và bị thực dân Pháp đưa đi xử bắn tại trường bắn Tương Mai (Hà Nội) vào rạng sáng ngày 24/5/1944 (đồng chí không bị xử chém hay đưa lên Yên Bái). Trước lúc hy sinh, đồng chí hiên ngang từ chối bịt mắt và hô vang các khẩu hiệu cách mạng.",
+    "answer_en": "Revolutionary leader Hoang Van Thu was held in Cell No. 1 of Zone D at Hoa Lo and executed by firing squad at Tuong Mai execution ground in Hanoi on the morning of May 24, 1944 (he was not executed by guillotine or in Yen Bai). Before his execution, he courageously refused a blindfold."
   },
   {
     "id": "EXP_TRAP_PILOT_CACHOT",
@@ -99,11 +99,21 @@
     "answer_en": "If your audio guide has static, no sound, lag, or low battery, please bring it back to the Audio Guide Desk at Gate No. 1 for a free immediate replacement."
   },
   {
+    "id": "EXP_TOUR_DEM_CHILDREN",
+    "category": "TOUR_DEM",
+    "priority": 99,
+    "mustMatchAll": [["tour dem", "dem thieng lieng", "night tour"], ["tre em", "duoi 10", "10 tuoi", "em be", "con nit", "tre con", "duoi 12"]],
+    "mustMatchAny": ["tham gia", "duoc khong", "di khong", "co duoc", "ve", "mien phi", "gia ve", "phu hop"],
+    "answer_vi": "Đối với Tour đêm (Đêm Thiêng Liêng), Ban Quản lý Di tích khuyến cáo và quy định KHÔNG nhận trẻ em dưới 10 tuổi tham gia vì chương trình có nhiều hoạt cảnh tái hiện lịch sử chân thực, không gian tối và âm thanh, ánh sáng kịch tính, rung động mạnh. Đồng thời, Tour đêm là chương trình trải nghiệm đặc biệt có bán vé đồng giá trọn gói theo suất đặt trước, KHÔNG áp dụng chính sách miễn giảm vé trẻ em như tour ban ngày.",
+    "answer_en": "For the Night Tour ('Sacred Night'), the Relic Management strictly recommends and restricts children under 10 years old from participating due to intense sound, lighting effects, and realistic historical dramatizations. Furthermore, Night Tour tickets are flat-rate booked in advance and do NOT offer the free admission policy applicable to daytime child visits."
+  },
+  {
     "id": "EXP_TRAP_CHILD_TICKET",
     "category": "FACT_CHECK_TRAP",
     "priority": 95,
     "mustMatchAll": [["tre em", "10 tuoi", "duoi 15", "child", "kids"]],
-    "mustMatchAny": ["ve", "50", "mien phi", "mat tien", "gia", "ticket", "free"],
+    "mustMatchAny": ["gia ve", "50", "mien phi", "mat tien", "bao nhieu", "ticket", "free"],
+    "mustNotMatchAny": ["tour dem", "dem thieng lieng", "night tour"],
     "answer_vi": "Trẻ em dưới 15 tuổi (bao gồm trẻ em 10 tuổi) được MIỄN PHÍ hoàn toàn vé tham quan ban ngày tại Di tích Nhà tù Hỏa Lò bạn nhé. Vé người lớn là 50.000 VNĐ/lượt, còn học sinh sinh viên và người từ 60 tuổi trở lên được giảm 50% (25.000 VNĐ/lượt).",
     "answer_en": "Children under 15 years old enjoy FREE daytime admission to Hoa Lo Prison Relic. Adult tickets are 50,000 VND, and students/seniors (60+) receive a 50% discount (25,000 VND)."
   },
@@ -288,11 +298,29 @@
     "answer_en": "Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi) was built by the French in 1896 (Maison Centrale). Key highlights include the nearly 4m-tall guillotine (50kg blade), the harsh Cachot solitary dungeon, the historic Banyan Tree that provided medicine and hope to political prisoners, the 1951 underground sewer escape, and the 1964–1973 exhibition on American pilots including John McCain ('Hanoi Hilton')."
   },
   {
+    "id": "EXP_HIST_ESCAPE_ROUTES",
+    "category": "HISTORICAL",
+    "priority": 98,
+    "mustMatchAll": [["vuot nguc", "tron khoi", "thoat khoi", "escape"], ["duong nao", "bang cach nao", "nhung cach nao", "cac cach", "bang duong", "qua dau", "nhung cuoc", "nhung vu", "lich su vuot nguc"]],
+    "mustMatchAny": ["duong nao", "cach nao", "vuot nguc", "hoa lo", "tu tu", "chien si"],
+    "answer_vi": "Trong lịch sử Nhà tù Hỏa Lò có 3 phương thức và cuộc vượt ngục tiêu biểu: (1) Trèo tường và vượt rào năm 1932 (7 tù nhân chính trị trèo tường trốn thoát); (2) Cải trang đi qua cổng chính vào tháng 3/1945 (nhân lúc Nhật đảo chính Pháp, hơn 100 tù chính trị cải trang thường phục vượt ngục); (3) Cưa song sắt chui đường cống ngầm đêm Noel 24/12/1951 của 16 tử tù chính trị (5 đồng chí thoát ra phố Thợ Nhuộm an toàn về vùng tự do).",
+    "answer_en": "Hoa Lo Prison witnessed 3 notable escape methods: (1) Scaling perimeter walls in 1932 (7 political prisoners); (2) Disguising through the main gate in March 1945 during the Japanese coup (over 100 prisoners escaped); (3) Sawing sewer iron bars to crawl through underground drainage pipes on Christmas Eve, Dec 24, 1951 by 16 death-row prisoners (5 reached safety)."
+  },
+  {
+    "id": "EXP_REGULATION_FOOD_DRINK",
+    "category": "REGULATION",
+    "priority": 97,
+    "mustMatchAll": [["do an", "thuc an", "nuoc uong", "an uong", "food", "drink", "snack"]],
+    "mustMatchAny": ["mang vao", "duoc mang", "co duoc", "duoc an", "quy dinh", "cam", "cho phep", "allowed", "bring", "inside", "khong"],
+    "answer_vi": "Theo quy định bảo vệ di tích và giữ gìn vệ sinh chung, du khách KHÔNG ĐƯỢC mang đồ ăn, thực phẩm có mùi, kẹo cao su, rượu bia hoặc các loại nước ngọt có màu vào các phòng trưng bày và buồng giam. Du khách chỉ được mang theo chai nước lọc cá nhân. Nếu mang theo đồ ăn lớn hoặc hành lý cồng kềnh, bạn vui lòng gửi miễn phí tại tủ khóa đồ ở Cổng số 1 trước khi vào tham quan.",
+    "answer_en": "To preserve the historical relic and maintain cleanliness, visitors are strictly prohibited from bringing outside food, snacks, chewing gum, alcohol, or colored sugary drinks into the exhibition halls and cells. You may carry personal plain bottled water. Large food bags or bulky luggage can be safely stored in the free lockers at Gate No. 1 before entering."
+  },
+  {
     "id": "EXP_OVERVIEW_BROAD_GUIDE",
     "category": "OVERVIEW",
     "priority": 85,
-    "mustMatchAll": [["ke chuyen di", "co gi hay", "gioi thieu di", "noi gi do", "bat dau di", "hoa lo", "nha tu hoa lo", "lich su", "tham quan", "huong dan toi", "tom tat", "khong the bo qua", "noi tieng the", "dang di khong", "lan dau", "tong quan", "ngan gon", "trai nghiem gi", "tour nao"]],
-    "mustMatchAny": ["ke chuyen", "co gi hay", "gioi thieu", "noi gi", "bat dau", "hoa lo", "lich su", "tham quan", "huong dan", "tom tat", "bo qua", "noi tieng", "dang di", "lan dau", "tong quan", "ngan gon", "trai nghiem", "tour"],
+    "mustMatchAll": [["ke chuyen di", "co gi hay", "gioi thieu di", "noi gi do", "bat dau di", "lich su hoa lo", "tong quan hoa lo", "huong dan toi", "tom tat", "khong the bo qua", "noi tieng the", "dang di khong", "lan dau", "tong quan", "ngan gon", "trai nghiem gi", "tour nao"]],
+    "mustMatchAny": ["ke chuyen", "co gi hay", "gioi thieu", "noi gi", "bat dau", "lich su hoa lo", "tong quan", "huong dan", "tom tat", "bo qua", "noi tieng", "dang di", "lan dau", "tong quan", "ngan gon", "trai nghiem", "tour"],
     "answer_vi": "Chào mừng bạn đến với Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, Hoàn Kiếm, Hà Nội) — công trình do thực dân Pháp xây năm 1896 mang tên Maison Centrale. Điểm nổi bật không thể bỏ qua gồm: Cổng chính & tường đá cổ, Phòng giam tập thể cùm sắt, Ngục tối Cachot, Cỗ máy chém 4m, Sân Cây Bàng lịch sử, Đường cống ngầm vượt ngục 1951, Khu trưng bày phi công Mỹ (1964–1973) và Đài tưởng niệm. Bạn muốn nghe chi tiết về khu vực hay hiện vật nào trước?",
     "answer_en": "Welcome to Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi), built by the French in 1896 as Maison Centrale. Must-see highlights include the main gate, communal shackled cellblocks, Cachot dark dungeon, the 4m guillotine, the historic Banyan Tree, the 1951 sewer escape, the 1964–1973 US pilots exhibition, and the Memorial. Which exhibit would you like to explore first?"
   }

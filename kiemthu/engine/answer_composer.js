@@ -542,6 +542,9 @@ class IntelligentAnswerComposer {
     if (intent === 'SITE_OPERATIONS') {
       const isEn = language === 'en';
       const opsMap = {
+        OPS_FOOD_DRINK_PROHIBITED: isEn
+          ? 'To preserve the historical relic and maintain hygiene, visitors are strictly prohibited from bringing outside food, snacks, chewing gum, alcohol, or colored sugary drinks into the exhibition halls and prison cells. You may carry personal plain bottled water. Free luggage and food lockers are available at Gate No. 1.'
+          : 'Để bảo tồn di tích lịch sử và giữ gìn vệ sinh chung, Di tích Nhà tù Hỏa Lò nghiêm cấm mang đồ ăn, thực phẩm có mùi, kẹo cao su, rượu bia hoặc các loại nước ngọt có màu vào các phòng trưng bày và buồng giam. Du khách chỉ được mang theo chai nước lọc cá nhân. Bạn có thể gửi đồ ăn và hành lý hoàn toàn miễn phí tại tủ gửi đồ Cổng chính số 1 trước khi vào tham quan.',
         OPS_SMOKING_VIOLATION: isEn
           ? 'Smoking is strictly prohibited throughout Hoa Lo Prison Relic for fire safety and heritage preservation. Please immediately inform the nearest security guard or staff member so they can promptly remind the visitor.'
           : 'Di tích Nhà tù Hỏa Lò nghiêm cấm tuyệt đối việc hút thuốc lá trong toàn bộ khuôn viên để phòng chống cháy nổ và giữ gìn không gian trang nghiêm. Bạn vui lòng báo ngay cho nhân viên bảo vệ gần nhất để các anh chị kịp thời nhắc nhở và xử lý nhé!',

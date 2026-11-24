@@ -17,10 +17,23 @@ class StructuredSessionManager {
   constructor(ttlMs = 30 * 60 * 1000) { // 30 phút TTL
     this.sessions = new Map();
     this.ttlMs = ttlMs;
+    this.maxSessions = 5000; // Bảo vệ chống DoS/OOM bộ nhớ khi có flood session
     this.maxHistoryTurns = 8; // Giữ tối thiểu 8 lượt hội thoại gần nhất cho Multi-turn Voice RAG
 
     // Dọn dẹp session hết hạn định kỳ mỗi 5 phút
     setInterval(() => this.cleanupExpiredSessions(), 5 * 60 * 1000).unref();
+  }
+
+  /**
+   * Giải phóng 15% session cũ nhất theo LRU khi chạm ngưỡng maxSessions
+   */
+  evictOldestSessions() {
+    const toRemove = Math.ceil(this.maxSessions * 0.15);
+    const sorted = Array.from(this.sessions.entries())
+      .sort((a, b) => (a[1].lastAccess || 0) - (b[1].lastAccess || 0));
+    for (let i = 0; i < Math.min(toRemove, sorted.length); i++) {
+      this.sessions.delete(sorted[i][0]);
+    }
   }
 
   /**
@@ -61,6 +74,9 @@ class StructuredSessionManager {
 
     let session = this.getSession(cleanId);
     if (!session) {
+      if (this.sessions.size >= this.maxSessions) {
+        this.evictOldestSessions();
+      }
       session = {
         id: cleanId,
         createdAt: Date.now(),
@@ -196,4 +212,6 @@ class StructuredSessionManager {
   }
 }
 
-module.exports = new StructuredSessionManager();
+const sessionManagerInstance = new StructuredSessionManager();
+sessionManagerInstance.StructuredSessionManager = StructuredSessionManager;
+module.exports = sessionManagerInstance;

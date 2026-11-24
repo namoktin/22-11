@@ -534,6 +534,9 @@ class KnowledgeBase {
       const anyOk = anyList.length === 0 || anyList.some(kw => hasPhraseLocal(kw));
       if (!anyOk) continue;
 
+      const notList = item.mustNotMatchAny || [];
+      if (notList.length > 0 && notList.some(kw => hasPhraseLocal(kw))) continue;
+
       const reply = (language === 'en' && item.answer_en) ? item.answer_en : item.answer_vi;
       return {
         id: item.id,

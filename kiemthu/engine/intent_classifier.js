@@ -526,7 +526,10 @@ class IntentClassifier {
        hasPhrase(norm, 'co o dau') || hasPhrase(norm, 'em dang o dau') || hasPhrase(norm, 'em o dau') ||
        hasPhrase(norm, 'bot dang o dau') || hasPhrase(norm, 'bot o dau')) &&
       !hasPhrase(norm, 'nha ve sinh') && !hasPhrase(norm, 'toilet') && !hasPhrase(norm, 'loi thoat') &&
-      !hasPhrase(norm, 'gui xe') && !hasPhrase(norm, 'di tich') && !hasPhrase(norm, 'hoa lo o dau')
+      !hasPhrase(norm, 'gui xe') && !hasPhrase(norm, 'di tich') && !hasPhrase(norm, 'hoa lo o dau') &&
+      !hasPhrase(norm, 'xu ban') && !hasPhrase(norm, 'bi ban') && !hasPhrase(norm, 'truong ban') &&
+      !hasPhrase(norm, 'tu hinh') && !hasPhrase(norm, 'hoang van thu') && !hasPhrase(norm, 'nguyen thai hoc') &&
+      !hasPhrase(norm, 'tu tu') && !hasPhrase(norm, 'phi cong')
     );
     if (isBotLocationQuery) {
       return {
