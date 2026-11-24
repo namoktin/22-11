@@ -15,7 +15,7 @@ const { knowledgeBase, HISTORICAL_EXHIBITS } = require('./knowledge_base');
 
 class IntelligentAnswerComposer {
   constructor() {
-    this.primaryModel = 'llama-3.3-70b-versatile';
+    this.primaryModel = 'qwen/qwen3.8-27b';
   }
 
   /**
@@ -1072,16 +1072,6 @@ ${compactContext}`;
     const isEn = language === 'en';
 
     if (subject === 'may_chem') {
-      if (aspect === 'SPECIFICATION') {
-        return {
-          reply: isEn
-            ? 'The guillotine at Hoa Lo Prison stands nearly 4 meters high with ironwood columns and an angled steel blade weighing 50kg that slid down from the top.'
-            : 'Cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
-          style: 'QUICK_ANSWER',
-          sourceId: 'DOSSIER_MAY_CHEM_SPEC',
-          claims: ['Máy chém cao gần 4m', 'Lưỡi dao thép vát chéo nặng 50kg', 'Cột gỗ lim']
-        };
-      }
       if (aspect === 'PURPOSE') {
         return {
           reply: isEn
@@ -1092,19 +1082,25 @@ ${compactContext}`;
           claims: ['Máy chém lưu động khủng bố phong trào yêu nước', 'Hành quyết Nguyễn Thái Học và 12 nghĩa sĩ Yên Bái 1930', 'Trưng bày tố cáo tội ác thực dân']
         };
       }
+      return {
+        reply: isEn
+          ? 'The guillotine at Hoa Lo Prison stands nearly 4 meters high with ironwood columns and an angled steel blade weighing 50kg that slid down from the top.'
+          : 'Cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
+        style: 'QUICK_ANSWER',
+        sourceId: 'DOSSIER_MAY_CHEM_SPEC',
+        claims: ['Máy chém cao gần 4m', 'Lưỡi dao thép vát chéo nặng 50kg', 'Cột gỗ lim']
+      };
     }
 
     if (subject === 'cay_bang') {
-      if (aspect === 'PURPOSE' || aspect === 'DAILY_PRISON_LIFE') {
-        return {
-          reply: isEn
-            ? 'The banyan tree supported prisoners in practical daily survival: tender buds and young leaves cured dysentery and intestinal ailments; bark tea cleansed wounds from torture; branches were carved into dip pens for secret revolutionary newspapers; and rich banyan seeds nourished critically ill comrades.'
-            : 'Cây bàng gắn bó mật thiết với cuộc sống tù nhân Hỏa Lò: búp và lá bàng non được dùng nhai sống hoặc sắc lấy nước uống chữa khỏi bệnh kiết lỵ, tiêu chảy; vỏ cây bàng dùng sắc nước rửa sạch vết thương tra tấn; cành bàng được mài nhọn làm quản bút viết tài liệu, báo chí bí mật; nhân hạt bàng bùi béo dùng bồi dưỡng cho những đồng chí ốm nặng.',
-          style: 'HISTORICAL_EXPLANATION',
-          sourceId: 'DOSSIER_CAY_BANG_PURPOSE',
-          claims: ['Búp lá non chữa kiết lỵ', 'Vỏ cây rửa vết thương', 'Cành bàng làm quản bút', 'Hạt bàng bồi dưỡng sức khỏe']
-        };
-      }
+      return {
+        reply: isEn
+          ? 'The banyan tree supported prisoners in practical daily survival: tender buds and young leaves cured dysentery and intestinal ailments; bark tea cleansed wounds from torture; branches were carved into dip pens for secret revolutionary newspapers; and rich banyan seeds nourished critically ill comrades.'
+          : 'Cây bàng gắn bó mật thiết với cuộc sống tù nhân Hỏa Lò: búp và lá bàng non được dùng nhai sống hoặc sắc lấy nước uống chữa khỏi bệnh kiết lỵ, tiêu chảy; vỏ cây bàng dùng sắc nước rửa sạch vết thương tra tấn; cành bàng được mài nhọn làm quản bút viết tài liệu, báo chí bí mật; nhân hạt bàng bùi béo dùng bồi dưỡng cho những đồng chí ốm nặng.',
+        style: 'HISTORICAL_EXPLANATION',
+        sourceId: 'DOSSIER_CAY_BANG_PURPOSE',
+        claims: ['Búp lá non chữa kiết lỵ', 'Vỏ cây rửa vết thương', 'Cành bàng làm quản bút', 'Hạt bàng bồi dưỡng sức khỏe']
+      };
     }
 
     if (subject === 'cachot') {

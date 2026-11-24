@@ -35,8 +35,8 @@ const PORT = process.env.PORT || 4001;
 const API_KEY = process.env.API_KEY || ''; // Nếu set thì kích hoạt API Key protection
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL_POOL = [
-  'llama-3.3-70b-versatile',
-  'llama-3.1-8b-instant'
+  'qwen/qwen3.8-27b',
+  'openai/gpt-oss-120b'
 ];
 const PRIMARY_MODEL = GROQ_MODEL_POOL[0];
 const MAX_PAYLOAD_BYTES = 32 * 1024; // 32KB

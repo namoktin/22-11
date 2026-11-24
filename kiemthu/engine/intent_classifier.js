@@ -415,7 +415,7 @@ class IntentClassifier {
       };
     }
 
-    // 1. Kiểm tra câu hỏi quá ngắn hoặc mơ hồ (Loại trừ lời chào, cảm ơn, tạm biệt)
+    // 1. Kiểm tra câu hỏi quá ngắn hoặc mơ hồ (Loại trừ lời chào, cảm ơn, tạm biệt, hiện vật, nhân vật & dịch vụ)
     const tokens = norm.trim().split(' ').filter(Boolean);
     const isPoliteOrGreeting = (
       norm.includes('chao') || norm.includes('hello') || norm.includes('hi') ||
@@ -423,13 +423,28 @@ class IntentClassifier {
       norm.includes('tam biet') || norm.includes('bye') ||
       norm.includes('gia ve') || norm.includes('gio mo')
     );
-    const isVague = (
-      tokens.length <= 2 &&
-      !isPoliteOrGreeting
-    ) || (
-      (norm.includes('toi muon di khu do') || norm.includes('cho toi xem cai nay') || norm.includes('khu do co gi') || norm.includes('cho nay the nao') || (tokens.length <= 4 && norm.includes('giup toi'))) &&
-      !context?.lastTopic &&
-      !norm.includes('mat do') && !norm.includes('that lac') && !norm.includes('roi vi') && !norm.includes('roi do')
+    const isKnownExhibitOrEntity = (
+      norm.includes('may chem') || norm.includes('guillotine') ||
+      norm.includes('cay bang') || norm.includes('cong ngam') ||
+      norm.includes('cachot') || norm.includes('cum sat') || norm.includes('cum chan') ||
+      norm.includes('trong dong') || norm.includes('bao kiem') || norm.includes('dai hong') ||
+      norm.includes('chuong') || norm.includes('chuong dong') ||
+      norm.includes('mccain') || norm.includes('hilton') || norm.includes('hoa lo') ||
+      norm.includes('maison centrale') || norm.includes('dia chi') ||
+      norm.includes('ve vao') || norm.includes('ve dem') || norm.includes('tour dem') ||
+      norm.includes('gia ve') || norm.includes('gio mo') || norm.includes('nha ve sinh') ||
+      norm.includes('toilet') || norm.includes('wc') || norm.includes('gui xe') ||
+      norm.includes('thung ve sinh') || norm.includes('lap la') || norm.includes('but canh') ||
+      norm.includes('ban do') || norm.includes('nguyen van cu') || norm.includes('hoang van thu') ||
+      norm.includes('nguyen thai hoc') || norm.includes('xa lim') || norm.includes('buong giam') ||
+      norm.includes('tu hinh') || norm.includes('mo cua') || norm.includes('dong cua')
+    );
+    const isVague = !isKnownExhibitOrEntity && (
+      (tokens.length <= 2 && !isPoliteOrGreeting) || (
+        (norm.includes('toi muon di khu do') || norm.includes('cho toi xem cai nay') || norm.includes('khu do co gi') || norm.includes('cho nay the nao') || (tokens.length <= 4 && norm.includes('giup toi'))) &&
+        !context?.lastTopic &&
+        !norm.includes('mat do') && !norm.includes('that lac') && !norm.includes('roi vi') && !norm.includes('roi do')
+      )
     );
 
     if (isVague) {
