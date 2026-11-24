@@ -472,9 +472,12 @@ class IntentClassifier {
                           (hasPhrase(norm, 'ban') || hasPhrase(norm, 'em') || hasPhrase(norm, 'bot') || hasPhrase(norm, 'huong dan vien')) &&
                           !hasPhrase(norm, 'cay') && !hasPhrase(norm, 'bang') && !hasPhrase(norm, 'nguyen') && !hasPhrase(norm, 'hoang van thu');
     const isBotIdentityQuery = isNotOrgQuery && (
-      hasPhrase(norm, 'ban ten gi') || hasPhrase(norm, 'em ten gi') || hasPhrase(norm, 'ten ban la gi') ||
-      hasPhrase(norm, 'ban la ai') || hasPhrase(norm, 'em la ai') || hasPhrase(norm, 'ban la gi') ||
-      hasPhrase(norm, 'la robot') || hasPhrase(norm, 'la nguoi hay')
+      hasPhrase(norm, 'ban ten gi') || hasPhrase(norm, 'ban ten la gi') || hasPhrase(norm, 'mang ten la gi') ||
+      hasPhrase(norm, 'em ten gi') || hasPhrase(norm, 'em ten la gi') || hasPhrase(norm, 'co ten la gi') ||
+      hasPhrase(norm, 'ten ban la gi') || hasPhrase(norm, 'ten em la gi') || hasPhrase(norm, 'ten co la gi') ||
+      hasPhrase(norm, 'ban la ai') || hasPhrase(norm, 'em la ai') || hasPhrase(norm, 'co la ai') || hasPhrase(norm, 'may la ai') ||
+      hasPhrase(norm, 'ban la gi') || hasPhrase(norm, 'la robot') || hasPhrase(norm, 'la nguoi hay') ||
+      hasPhrase(norm, 'ai tao ra ban') || hasPhrase(norm, 'ai lam ra ban')
     );
     if (isBotAgeQuery || isBotIdentityQuery) {
       return {
@@ -484,6 +487,40 @@ class IntentClassifier {
         aspect: 'IDENTITY',
         confidence: 0.98,
         reason: 'Hỏi về danh tính, tên tuổi hướng dẫn viên ảo'
+      };
+    }
+
+    const isUserIdentityQuery = (
+      hasPhrase(norm, 'toi ten la gi') || hasPhrase(norm, 'toi ten gi') || hasPhrase(norm, 'toi la ai') ||
+      hasPhrase(norm, 'minh la ai') || hasPhrase(norm, 'ta la ai') || hasPhrase(norm, 'do biet toi la ai') ||
+      hasPhrase(norm, 'biet toi la ai')
+    );
+    if (isUserIdentityQuery) {
+      return {
+        intent: INTENTS.CHITCHAT_BOT,
+        subIntent: 'USER_IDENTITY',
+        subject: null,
+        aspect: 'IDENTITY',
+        confidence: 0.98,
+        reason: 'Du khách hỏi về danh tính của chính mình'
+      };
+    }
+
+    const isBotLocationQuery = (
+      (hasPhrase(norm, 'ban o dau') || hasPhrase(norm, 'ban dang o dau') || hasPhrase(norm, 'co dang o dau') ||
+       hasPhrase(norm, 'co o dau') || hasPhrase(norm, 'em dang o dau') || hasPhrase(norm, 'em o dau') ||
+       hasPhrase(norm, 'bot dang o dau') || hasPhrase(norm, 'bot o dau')) &&
+      !hasPhrase(norm, 'nha ve sinh') && !hasPhrase(norm, 'toilet') && !hasPhrase(norm, 'loi thoat') &&
+      !hasPhrase(norm, 'gui xe') && !hasPhrase(norm, 'di tich') && !hasPhrase(norm, 'hoa lo o dau')
+    );
+    if (isBotLocationQuery) {
+      return {
+        intent: INTENTS.CHITCHAT_BOT,
+        subIntent: 'BOT_LOCATION',
+        subject: null,
+        aspect: 'LOCATION',
+        confidence: 0.98,
+        reason: 'Hỏi vị trí của hướng dẫn viên ảo'
       };
     }
 

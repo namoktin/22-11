@@ -37,9 +37,10 @@
 
 const char* WIFI_SSID       = "TEN_WIFI_CUA_BAN";
 const char* WIFI_PASSWORD   = "MAT_KHAU_WIFI";
-const char* SERVER_BASE     = "https://ten-app-cua-ban.onrender.com";
+// Google Cloud VM Server (Port 80 Nginx Reverse Proxy -> Node.js 5000):
+const char* SERVER_BASE     = "http://34.87.63.30";
 const char* DEVICE_ID       = "ESP32_SMART_GUIDE_01";
-const char* DEVICE_TOKEN    = "THAY_BANG_TOKEN_CAP_TU_ADMIN_API"; // POST /api/devices/issue-key
+const char* DEVICE_TOKEN    = ""; // Để trống nếu chế độ mặc định; hoặc điền token được cấp qua API /api/devices/issue-key
 const char* LOCKED_LANGUAGE = "vi"; // vi | en | fr | ja | ko | zh
 
 // Chứng chỉ gốc Let's Encrypt ISRG Root X1 (Render.com HTTPS)

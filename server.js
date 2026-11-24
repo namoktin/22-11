@@ -639,13 +639,17 @@ const WHISPER_HALLUCINATIONS_REGEX = new RegExp([
   'thông báo để không bỏ lỡ',
   'cảm ơn các bạn đã theo dõi',
   'cảm ơn các bạn đã xem',
+  'cảm ơn bạn đã xem',
   'hẹn gặp lại các bạn',
   'video tiếp theo',
   'chúc các bạn xem video',
   'chúc các bạn một ngày',
   'để không bỏ lỡ những video',
+  'những video hấp dẫn',
   'xem thêm tại',
   'đường link bên dưới',
+  'hãy nhấn nút subscribe',
+  'ate la di',
   'thank you for watching',
   'thanks for watching',
   'thank you\\.?$',
@@ -684,8 +688,8 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '', targetLa
       }
       form.append('temperature', '0.0'); // Khóa nhiệt độ 0.0 để chống ảo giác ngẫu nhiên
 
-      // Prompt ngắn gọn neo ngữ cảnh bảo tàng mà không làm méo mó các câu hỏi ngắn/xã giao
-      form.append('prompt', 'Di tích Nhà tù Hỏa Lò, Hà Nội.');
+      // Prompt neo ngữ cảnh hội thoại bảo tàng tiếng Việt tự nhiên cho Whisper
+      form.append('prompt', 'Hội thoại tiếng Việt tự nhiên giữa du khách và hướng dẫn viên ảo tại bảo tàng di tích Hỏa Lò: xin chào, bạn tên là gì, tôi tên là gì, bạn ở đâu, lịch sử di tích, hiện vật...');
       form.append('response_format', 'verbose_json');
 
       const controller = new AbortController();
@@ -701,7 +705,15 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '', targetLa
 
       if (res.ok) {
         const json = await res.json();
-        const cleanText = (json.text || '').trim();
+        let cleanText = (json.text || '').trim();
+
+        // Chuẩn hóa và sửa lỗi phiên âm nhầm thường gặp của Whisper
+        cleanText = cleanText
+          .replace(/^(mạng|vạng|vạn)\s+tên\s+là\s+gì/i, 'Bạn tên là gì')
+          .replace(/^ate\s+la\s+di/i, 'Bạn tên là gì')
+          .replace(/^(bạn|cô|em)\s+tê\s+là\s+gì/i, '$1 tên là gì')
+          .replace(/^tôi\s+tê\s+là\s+gì/i, 'Tôi tên là gì');
+
         const isHallucination = !cleanText ||
           WHISPER_HALLUCINATIONS_REGEX.test(cleanText) ||
           (!vol.hasSustainedVoice && (cleanText.length < 5 || WHISPER_HALLUCINATIONS_REGEX.test(cleanText)));
@@ -906,11 +918,15 @@ function splitLongSegmentSafely(segment, maxLen = 148) {
 
 function splitIntoAudioChunks(fullText, maxChunkChars = 148) {
   if (!fullText) return [''];
-  const clean = fullText.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  let clean = fullText.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  // Bảo vệ số có dấu chấm thập phân hoặc phân cách hàng nghìn (50.000, 25.000, 4.5m)
+  clean = clean.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
+  // Bảo vệ các từ viết tắt phổ biến
+  clean = clean.replace(/\b(TP|QĐ|VNĐ|TS|ThS|GS|BS|No|St|Mr|Mrs|Ms|Dr|tr|đ)\./gi, '$1__DOT__');
   // Hỗ trợ dấu kết câu cả Latin (. ! ?) và CJK (。 ！ ？)
   const rawSentences = clean.match(/[^.!?。！？]+[.!?。！？]+|[^.!?。！？]+$/g) || [clean];
-  const sentences = rawSentences.map(s => s.trim()).filter(Boolean);
-  if (sentences.length === 0) return [clean];
+  const sentences = rawSentences.map(s => s.replace(/__DOT__/g, '.').trim()).filter(Boolean);
+  if (sentences.length === 0) return [clean.replace(/__DOT__/g, '.')];
 
   const chunks = [];
 
@@ -1153,7 +1169,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'qwen/qwen3.8-27b',
+          model: 'llama-3.3-70b-versatile',
           temperature: 0.1,
           max_tokens: 350,
           messages: [
@@ -1217,13 +1233,13 @@ async function answerFromBeaconData(question, beacon, targetLang = 'vi') {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'qwen/qwen3.8-27b',
+          model: 'llama-3.3-70b-versatile',
           temperature: 0.2,
-          max_tokens: 180,
+          max_tokens: 320,
           messages: [
             {
               role: 'system',
-              content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 1-2 clear sentences based on the artifact info below. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
+              content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 2-3 complete, natural sentences based on the artifact info below. Never cut off mid-sentence. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
             },
             { role: 'user', content: question }
           ]
@@ -1373,22 +1389,17 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
         return await enforceStrictLang(await answerFromBeaconData(rawQuery, matchedByName, lockedLang));
       }
 
-      const hasDeicticPronoun = /\b(cai nay|hien vat nay|vat nay|cho nay|khu nay|o day|cay nay|trong nay|chuong nay|kiem nay|truoc mat|no|day|this|it|here)\b/.test(normQ);
+      const hasDeicticPronoun = /\b(cai nay|hien vat nay|vat nay|cho nay|khu nay|o day|tai day|tai cho nay|cay nay|trong nay|chuong nay|kiem nay|truoc mat|no|day|this|it|here)\b/.test(normQ);
       if (hasDeicticPronoun && artifactContext) {
         const normArtifact = normalizeVnText(artifactName);
-        if (normArtifact.includes('cay bang') || normArtifact.includes('hoa lo')) {
-          const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|chỗ này|cho nay|khu này|khu nay|\bnó\b)/gi, artifactName);
-          const contextualQuery = replacedQuery !== lookupQuery ? replacedQuery : `${artifactName}: ${lookupQuery}`;
-          console.log(`📍 [BLE Context Retry] Hỏi lại kiemthu kèm vị trí BLE: "${contextualQuery}"`);
-          const retryResult = await callKiemThuOnce(contextualQuery, sessionId, lockedLang, artifactContext);
-          if (retryResult && !/chưa được ghi nhận|ngoài phạm vi|not documented|outside the scope/i.test(retryResult.reply || '')) {
-            return await enforceStrictLang(retryResult);
-          }
-          return await enforceStrictLang(await answerFromBeaconData(rawQuery, artifactContext, lockedLang));
-        } else {
-          console.log(`📍 [BLE Context Answer] Dùng vị trí hiện vật BLE hiện tại: ${artifactName}`);
-          return await enforceStrictLang(await answerFromBeaconData(rawQuery, artifactContext, lockedLang));
+        const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|chỗ này|cho nay|khu này|khu nay|tại đây|tai day|ở đây|o day|\bnó\b)/gi, artifactName);
+        const contextualQuery = replacedQuery !== lookupQuery ? replacedQuery : `${artifactName}: ${lookupQuery}`;
+        console.log(`📍 [BLE Context Retry] Hỏi lại kèm vị trí BLE (${artifactName}): "${contextualQuery}"`);
+        const retryResult = await callKiemThuOnce(contextualQuery, sessionId, lockedLang, artifactContext);
+        if (retryResult && !/chưa được ghi nhận|ngoài phạm vi|not documented|outside the scope/i.test(retryResult.reply || '')) {
+          return await enforceStrictLang(retryResult);
         }
+        return await enforceStrictLang(await answerFromBeaconData(rawQuery, artifactContext, lockedLang));
       }
     }
 
@@ -1435,23 +1446,27 @@ function generateFallbackAnswer(question, code) {
   return 'Hiện vật này là di sản văn hóa quý giá với nhiều tầng ý nghĩa lịch sử sâu sắc.';
 }
 
-// Chắt lọc 1-2 câu quan trọng nhất để nghe qua tai nghe cực nhanh
+// Chắt lọc 1-2 câu quan trọng nhất để nghe qua tai nghe cực nhanh (trọn câu, không cắt đứt từ)
 function extractSpokenSummary(fullText) {
   if (!fullText) return '';
   const paragraphs = fullText.split('\n').map(p => p.trim()).filter(p => p.length > 5);
   let target = paragraphs[0] || fullText;
+  let protectedTarget = target.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
+  protectedTarget = protectedTarget.replace(/\b(TP|QĐ|VNĐ|TS|ThS|GS|BS|No|St|Mr|Mrs|Ms|Dr|tr|đ)\./gi, '$1__DOT__');
   
-  if (target.length > 130) {
-    const sentences = target.match(/[^.!?]+[.!?]+/g);
-    if (sentences && sentences.length >= 1) {
-      let combined = sentences[0];
-      if (sentences.length > 1 && (combined + sentences[1]).length < 140) {
-        combined += ' ' + sentences[1];
+  const sentences = protectedTarget.match(/[^.!?。！？]+[.!?。！？]+/g);
+  if (sentences && sentences.length >= 1) {
+    let combined = sentences[0];
+    for (let i = 1; i < sentences.length; i++) {
+      if ((combined + ' ' + sentences[i]).length <= 250) {
+        combined += ' ' + sentences[i];
+      } else {
+        break;
       }
-      return combined;
     }
+    return combined.replace(/__DOT__/g, '.').trim();
   }
-  return target.slice(0, 130);
+  return target.trim();
 }
 
 // KHỞI TẠO HTTP SERVER (HARDENED PRODUCTION GATEWAY V3.0)
@@ -2349,5 +2364,6 @@ module.exports = {
   bleManager,
   deviceAuth,
   rateLimiter,
-  beaconsStore
+  beaconsStore,
+  queryKiemThuAI
 };

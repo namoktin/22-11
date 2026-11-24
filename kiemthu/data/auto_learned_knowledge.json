@@ -44,6 +44,26 @@
       "deviceId": "HUB_INT_1",
       "language": "vi",
       "createdAt": "2026-11-22T11:54:12.867Z"
+    },
+    {
+      "id": "FB_1795501211483_ozed",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-24T06:20:11.483Z"
+    },
+    {
+      "id": "FB_1795525487845_kaj9",
+      "question": "Giá vé bao nhiêu?",
+      "reply": "50.000 VNĐ",
+      "rating": "up",
+      "comment": "",
+      "deviceId": "HUB_INT_1",
+      "language": "vi",
+      "createdAt": "2026-11-24T13:04:47.845Z"
     }
   ],
   "versions": []

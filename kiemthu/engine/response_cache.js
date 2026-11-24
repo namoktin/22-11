@@ -18,7 +18,7 @@ class ResponseCacheEngineV2 {
     this.maxSize = maxSize;
     this.ttlMs = ttlMs;
     this.knowledgeVersion = '6.1.0';
-    this.modelName = 'qwen/qwen3.8-27b';
+    this.modelName = 'llama-3.3-70b-versatile';
 
     // Thống kê toàn diện
     this.stats = {

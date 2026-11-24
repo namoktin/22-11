@@ -1,0 +1,11 @@
+node_modules
+.git
+.github
+*.log
+tests
+benchmarks
+docs
+start*.bat
+.env
+audio/hub_rec_*
+audio/reply_*

@@ -15,7 +15,7 @@ const { knowledgeBase, HISTORICAL_EXHIBITS } = require('./knowledge_base');
 
 class IntelligentAnswerComposer {
   constructor() {
-    this.primaryModel = 'qwen/qwen3.8-27b';
+    this.primaryModel = 'llama-3.3-70b-versatile';
   }
 
   /**
@@ -285,9 +285,20 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'CHITCHAT_BOT') {
-      const reply = language === 'en'
-        ? 'I am the HOA LO AI GUIDE – your virtual intelligent museum guide at Hoa Lo Prison Historical Relic. As an AI docent, I do not have a physical age, but I hold the complete historical archives, exhibit stories, and visiting guidelines of Hoa Lo to assist you anytime!'
-        : 'Mình là HOA LO AI GUIDE – trợ lý hướng dẫn viên ảo tại Di tích Lịch sử Nhà tù Hỏa Lò. Là một hướng dẫn viên ảo, mình không có tuổi tác như con người, nhưng mình mang trong mình toàn bộ dữ liệu lịch sử, câu chuyện hiện vật và thông tin tham quan của Hỏa Lò để đồng hành cùng bạn bất cứ lúc nào!';
+      let reply = '';
+      if (subIntent === 'USER_IDENTITY') {
+        reply = language === 'en'
+          ? "You are our honored guest visiting the historic relic today! You haven't told me your name yet though, what should I call you?"
+          : 'Bạn là vị khách quý đang tham quan khu di tích hôm nay đấy! Bạn chưa kịp bật mí tên cho mình biết đâu nè, bạn tên là gì vậy?';
+      } else if (subIntent === 'BOT_LOCATION') {
+        reply = language === 'en'
+          ? 'I am right here beside you, accompanying your journey through each exhibit! Feel free to ask me about anything you see.'
+          : 'Mình đang ở ngay bên cạnh và đồng hành cùng bạn tại gian trưng bày này nè! Bạn có câu hỏi nào về hiện vật trước mắt không?';
+      } else {
+        reply = language === 'en'
+          ? 'I am the HOA LO AI GUIDE – your virtual intelligent museum guide at Hoa Lo Prison Historical Relic. As an AI docent, I do not have a physical age, but I hold the complete historical archives, exhibit stories, and visiting guidelines to assist you anytime!'
+          : 'Chào bạn! Mình là Hướng dẫn viên ảo thông minh của Di tích Lịch sử Nhà tù Hỏa Lò. Mình luôn sẵn sàng đồng hành cùng bạn khám phá những câu chuyện lịch sử hào hùng và hiện vật nơi đây. Bạn muốn tìm hiểu về điều gì nào?';
+      }
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',

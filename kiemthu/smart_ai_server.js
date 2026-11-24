@@ -35,9 +35,8 @@ const PORT = process.env.PORT || 4001;
 const API_KEY = process.env.API_KEY || ''; // Nếu set thì kích hoạt API Key protection
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL_POOL = [
-  'qwen/qwen3.8-27b',
-  'openai/gpt-oss-120b',
-  'openai/gpt-oss-20b'
+  'llama-3.3-70b-versatile',
+  'llama-3.1-8b-instant'
 ];
 const PRIMARY_MODEL = GROQ_MODEL_POOL[0];
 const MAX_PAYLOAD_BYTES = 32 * 1024; // 32KB
@@ -162,9 +161,9 @@ class ProductionSmartTourGuideServer {
           bodyObj.reasoning_effort = 'low';
           bodyObj.max_completion_tokens = Math.max(360, (options.max_tokens || 240) + 140);
         } else {
-          bodyObj.max_tokens = options.max_tokens || 240;
-          bodyObj.presence_penalty = typeof options.presence_penalty === 'number' ? options.presence_penalty : 0.35;
-          bodyObj.frequency_penalty = typeof options.frequency_penalty === 'number' ? options.frequency_penalty : 0.25;
+          bodyObj.max_tokens = options.max_tokens || 320;
+          bodyObj.presence_penalty = typeof options.presence_penalty === 'number' ? options.presence_penalty : 0.2;
+          bodyObj.frequency_penalty = typeof options.frequency_penalty === 'number' ? options.frequency_penalty : 0.15;
         }
 
         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -467,7 +466,24 @@ class ProductionSmartTourGuideServer {
     const previousPhrasings = this.getRecentPhrasings(phrasingKey);
     const savedBase = this.verifiedBaseReplies.get(phrasingKey);
 
-    if (savedBase && previousPhrasings.length > 0 && !followUp.isFollowUp && (language === 'vi' || language === 'en')) {
+    const isSensitiveIntent = [
+      INTENTS.OUT_OF_SCOPE,
+      INTENTS.WEATHER_ADVISORY,
+      INTENTS.CHITCHAT_BOT,
+      INTENTS.GREETING,
+      INTENTS.GOODBYE,
+      INTENTS.THANK_YOU,
+      INTENTS.TICKET_INFORMATION,
+      INTENTS.OPENING_HOURS,
+      INTENTS.PARKING_SUPPORT,
+      INTENTS.PHOTOGRAPHY_POLICY,
+      INTENTS.ACCESSIBILITY_SUPPORT,
+      INTENTS.JOKE_REQUEST,
+      INTENTS.EMERGENCY_SUPPORT,
+      INTENTS.EXPIRED_POLICY
+    ].includes(intent);
+
+    if (savedBase && previousPhrasings.length > 0 && !followUp.isFollowUp && (language === 'vi' || language === 'en') && !isSensitiveIntent) {
       const assembledReply = composeLocalHumanVariation({
         baseReply: savedBase.reply,
         extraFacts: savedBase.extraFacts || [],
@@ -662,7 +678,7 @@ class ProductionSmartTourGuideServer {
 
     // TẦNG 6: REAL ANSWER VALIDATOR + AUTO-LEARNING 2.0 (STAGING ONLY!) + LOCAL VARIATION
     let finalReply = composerResult.reply;
-    const relatedExtraFacts = [
+    const relatedExtraFacts = isSensitiveIntent ? [] : [
       ...(Array.isArray(retrievedData?.facts) ? retrievedData.facts : []),
       ...((knowledgeBase.retrieveTopKContext(coreQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
     ];
@@ -701,7 +717,7 @@ class ProductionSmartTourGuideServer {
 
     // 6.3. Lưu bản gốc vào bộ nhớ phiên + đẩy đề xuất vào HÀNG ĐỢI CHỜ DUYỆT Auto-Learning 2.0 (KHÔNG tự động xuất bản!)
     const resolvedFinalIntent = composerResult.resolvedIntent || intent;
-    if (finalReply && resolvedFinalIntent !== INTENTS.OUT_OF_SCOPE) {
+    if (finalReply && resolvedFinalIntent !== INTENTS.OUT_OF_SCOPE && !isSensitiveIntent) {
       this.recordVerifiedBase(phrasingKey, {
         reply: finalReply,
         extraFacts: relatedExtraFacts,
@@ -725,7 +741,7 @@ class ProductionSmartTourGuideServer {
     }
 
     const isAlreadySpokenVerbatim = previousPhrasings.some(p => p.trim() === (finalReply || '').trim());
-    if (finalReply && isAlreadySpokenVerbatim) {
+    if (finalReply && isAlreadySpokenVerbatim && !isSensitiveIntent) {
       if (language === 'vi' || language === 'en') {
         finalReply = composeLocalHumanVariation({
           baseReply: finalReply,

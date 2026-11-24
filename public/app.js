@@ -3,6 +3,11 @@
  * Phong cách Editorial Di Sản (Chuẩn giao diện 2Guide Hỏa Lò)
  */
 
+// Tự động chuyển sang HTTPS nếu đang truy cập qua IP trên trình duyệt để kích hoạt Microphone Web API
+if (location.protocol === 'http:' && (location.hostname === '34.87.63.30' || location.hostname.endsWith('.sslip.io'))) {
+  location.href = 'https://34.87.63.30.sslip.io' + location.pathname + location.search;
+}
+
 let currentBeacons = [];
 const mainAudioPlayer = document.getElementById('mainAudioPlayer');
 const voiceAudioPlayer = document.getElementById('voiceAudioPlayer');
@@ -357,6 +362,15 @@ function initVoiceForm() {
   async function initMicStream() {
     if (cachedMicStream && cachedMicStream.active) {
       return cachedMicStream;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        const httpsUrl = 'https://34.87.63.30.sslip.io' + location.pathname + location.search;
+        alert('Trình duyệt (Chrome/Edge) chỉ cho phép truy cập Microphone trên kết nối HTTPS bảo mật.\n\nĐang tự động chuyển sang đường dẫn HTTPS:\n' + httpsUrl);
+        location.href = httpsUrl;
+        throw new Error('Đang chuyển hướng sang HTTPS...');
+      }
+      throw new Error('Trình duyệt không hỗ trợ hoặc chặn quyền truy cập Microphone.');
     }
     cachedMicStream = await navigator.mediaDevices.getUserMedia({
       audio: {

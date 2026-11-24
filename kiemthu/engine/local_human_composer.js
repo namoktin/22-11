@@ -56,109 +56,78 @@ const EN_SAFE_SYNONYMS = [
 
 const VI_OPENERS = {
   BLE_LOCATION: [
-    '',
-    'Ngay lúc này, ',
-    'Mình thấy ',
-    'Ở vị trí hiện tại, ',
-    'Chia sẻ nhanh với bạn nhé: ',
-    'Ngay trước mắt bạn bây giờ, ',
-    'Điểm dừng chân hiện tại của bạn: ',
-    'Tại đúng góc tham quan này, ',
-    'Chào mừng bạn dừng chân tại đây — ',
-    'Mình định vị được ngay chỗ bạn đứng: ',
-    'Góc trưng bày ngay bên cạnh bạn đây: ',
-    'Nơi anh chị đang đứng lúc này: '
+    '', '', '', '',
+    'Tại vị trí này, ',
+    'Ngay trước mắt bạn, '
   ],
   SERVICE: [
-    '',
-    'Mình thông tin nhanh để bạn tiện sắp xếp nhé: ',
-    'Về quy định tại di tích, ',
-    'Thông tin chính thức hiện nay là: ',
-    'Để bạn dễ chuẩn bị cho chuyến tham quan, ',
-    'Mình gửi anh chị thông tin mới nhất: ',
-    'Theo quy định đang áp dụng ở Hỏa Lò, ',
-    'Cập nhật rõ cho bạn nhé: ',
-    'Rất đơn giản thôi bạn: ',
-    'Mình chia sẻ cụ thể luôn nhé: '
+    '', '', '', '',
+    'Thông tin tới bạn: ',
+    'Theo quy định tại di tích, '
   ],
   HISTORY: [
-    '',
-    'Theo tư liệu lưu trữ tại di tích, ',
-    'Một chi tiết rất đáng nhớ là: ',
-    'Chia sẻ cùng bạn câu chuyện này nhé: ',
-    'Nhắc đến điểm lịch sử này thì ',
-    'Trong hồ sơ lịch sử Hỏa Lò ghi nhận: ',
-    'Điều đặc biệt ở đây là: ',
-    'Mình kể gọn để bạn dễ hình dung nhé: ',
-    'Nói sâu hơn về dấu tích này: ',
-    'Điểm khiến nhiều du khách ấn tượng nhất là: ',
-    'Theo ghi chép xác thực của Ban Quản lý Di tích, ',
-    'Câu chuyện phía sau hiện vật này rất ý nghĩa: '
+    '', '', '', '', '', '',
+    'Theo tư liệu lịch sử tại di tích, ',
+    'Chia sẻ cùng bạn, '
   ]
 };
 
 const EN_OPENERS = {
   BLE_LOCATION: [
-    '', 'Right now, ', 'At your current stop, ', 'Looking right in front of you, ',
-    'You have arrived at this highlight: ', 'Here is where you are standing: ',
-    'At this exact exhibit point, ', 'Let me introduce your current spot: '
+    '', '', '', '',
+    'At your current stop, ',
+    'Looking right in front of you, '
   ],
   SERVICE: [
-    '', 'Here are the current visitor details: ', 'For your visit planning, ',
-    'Good news for your trip: ', 'Officially at the relic today, ', 'To help you plan smoothly, '
+    '', '', '', '',
+    'Visitor information: ',
+    'According to relic regulations, '
   ],
   HISTORY: [
-    '', 'According to the relic archives, ', 'A remarkable detail here is that ',
-    'Historically speaking, ', 'To share the story concisely: ', 'What makes this stand out is that ',
-    'Based on verified historical records, ', 'Here is the fascinating background: '
+    '', '', '', '', '', '',
+    'According to historical records, ',
+    'Historically speaking, '
   ]
 };
 
 const VI_CONNECTORS = [
   ' ',
-  ' Ngoài ra, ',
+  ' ',
+  ' ',
+  ' ',
   ' Bên cạnh đó, ',
-  ' Đặc biệt, ',
-  ' Không chỉ vậy, ',
-  ' Thêm một điểm đáng chú ý là ',
-  ' Hơn thế nữa, ',
-  ' Song song với đó, ',
-  ' Đáng nói nữa là ',
-  ' Chi tiết thú vị tiếp theo là '
+  ' Ngoài ra, '
 ];
 
 const EN_CONNECTORS = [
-  ' ', ' Additionally, ', ' Notably, ', ' Beyond that, ', ' What is more, ',
-  ' On top of that, ', ' Another key detail is that ', ' Interestingly, '
+  ' ',
+  ' ',
+  ' ',
+  ' Additionally, ',
+  ' Furthermore, '
 ];
 
 const VI_CLOSINGS = [
-  '',
-  '',
-  '',
-  ' Bạn muốn mình kể kỹ thêm chi tiết nào nữa không?',
-  ' Anh chị có thể quan sát kỹ hơn ngay tại khu trưng bày này nhé.',
-  ' Nếu cần hỏi thêm về các khu vực lân cận, cứ nhắn mình ngay nhé.',
-  ' Đây là một dấu ấn rất đặc biệt trong hành trình tham quan di tích đấy ạ.',
-  ' Mình luôn sẵn sàng giải đáp thêm nếu bạn muốn tìm hiểu sâu hơn nhé!',
-  ' Hy vọng thông tin này giúp chuyến tham quan của bạn thêm trọn vẹn.',
-  ' Bạn có muốn khám phá tiếp câu chuyện về hiện vật kế bên không?'
+  '', '', '', '', '', '', '', '',
+  ' Bạn có muốn tìm hiểu thêm chi tiết nào nữa không?',
+  ' Mình luôn sẵn sàng giải đáp thêm nếu bạn có câu hỏi nhé.'
 ];
 
 const EN_CLOSINGS = [
-  '', '', '',
-  ' Would you like to hear more details about this?',
-  ' Feel free to ask if you want to explore nearby exhibits too.',
-  ' You can take a closer look right here in the gallery.',
-  ' Let me know anytime if you have another question!',
-  ' This is truly one of the memorable highlights of the visit.'
+  '', '', '', '', '', '', '', '',
+  ' Would you like to explore any other details?',
+  ' Feel free to ask if you have any further questions!'
 ];
 
 function splitIntoSentences(text) {
   if (!text) return [];
-  const clean = text.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  let clean = text.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  // Bảo vệ số có dấu chấm thập phân hoặc phân cách hàng nghìn (50.000, 25.000, 4.5m)
+  clean = clean.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
+  // Bảo vệ các từ viết tắt phổ biến
+  clean = clean.replace(/\b(TP|QĐ|VNĐ|TS|ThS|GS|BS|No|St|Mr|Mrs|Ms|Dr|tr|đ)\./gi, '$1__DOT__');
   const matches = clean.match(/[^.!?。！？]+[.!?。！？]+|[^.!?。！？]+$/g) || [clean];
-  return matches.map(s => s.trim()).filter(s => s.length >= 8);
+  return matches.map(s => s.replace(/__DOT__/g, '.').trim()).filter(s => s.length >= 8);
 }
 
 function ensureSentenceEnding(s) {
@@ -213,6 +182,33 @@ function composeLocalHumanVariation({
   if (!baseReply || typeof baseReply !== 'string') return baseReply;
   // Hiện tối ưu lắp ghép sâu cho tiếng Việt & tiếng Anh (các ngôn ngữ CJK/FR vẫn giữ an toàn nguyên văn nếu không có bảng đồng nghĩa)
   if (language !== 'vi' && language !== 'en') return baseReply;
+
+  // TUYỆT ĐỐI KHÔNG can thiệp, xáo trộn hoặc lắp ghép vào các ý định danh tính, ngoài phạm vi, dịch vụ hoặc giao tiếp!
+  const BYPASS_INTENTS = new Set([
+    'CHITCHAT_BOT',
+    'USER_IDENTITY',
+    'BOT_LOCATION',
+    'OUT_OF_SCOPE',
+    'WEATHER_ADVISORY',
+    'GREETING',
+    'GOODBYE',
+    'THANK_YOU',
+    'JOKE_REQUEST',
+    'EMERGENCY_SUPPORT',
+    'EXPIRED_POLICY',
+    'TICKET_INFORMATION',
+    'OPENING_HOURS',
+    'PARKING_SUPPORT',
+    'PHOTOGRAPHY_POLICY',
+    'ACCESSIBILITY_SUPPORT',
+    'FACILITY_INFORMATION',
+    'SITE_OPERATIONS',
+    'PROMPT_INJECTION',
+    'CUSTOMER_COMPLAINT'
+  ]);
+  if (BYPASS_INTENTS.has(intent)) {
+    return baseReply;
+  }
 
   const isEn = language === 'en';
   const prevSet = new Set((previousPhrasings || []).map(p => p.trim().toLowerCase()));
@@ -273,8 +269,9 @@ function composeLocalHumanVariation({
       }
     }
 
-    // B. Xen kẽ ghép thêm 1 câu tư liệu xác thực liên quan cùng chủ đề (nếu tổng độ dài còn gọn <= 360 ký tự!)
-    if (supplementaryPool.length > 0 && (seed % 3 === 0)) {
+    // B. Tuyệt đối KHÔNG tự tiện chèn câu từ extraFacts nếu câu gốc đã đầy đủ ý nghĩa (>= 60 ký tự)
+    // Tránh triệt để lỗi "nhiễm chéo thông tin" giữa các hiện vật khác nhau!
+    if (coreSentences.join(' ').length < 60 && supplementaryPool.length > 0 && (seed % 3 === 0)) {
       const extraSent = supplementaryPool[seed % supplementaryPool.length];
       const currentLen = sentences.join(' ').length;
       if (currentLen + extraSent.length <= 380) {

@@ -1374,17 +1374,20 @@ class KnowledgeBase {
       snippets.push(label ? `[${label}] ${clean}` : clean);
     };
 
-    // 1. Ngữ cảnh trạm BLE hiện vật du khách đang đứng ngay trước mặt
-    if (artifactContext && artifactContext.artifact_name) {
+    const norm = nlp.normalize(question || '');
+    const tokens = nlp.tokenize(question || '').filter(t => t.length > 2 && !STOPWORDS.has(t));
+
+    // 1. Ngữ cảnh trạm BLE hiện vật du khách đang đứng: CHỈ đưa vào snippet khi câu hỏi hỏi về định vị hoặc hiện vật trước mắt
+    const isExplicitLocationQuery = /\b(o day|tai day|cho nay|khu nay|hien vat nay|vat nay|day la dau|toi dang o dau|dung o dau|truoc mat|xung quanh|this|here|around)\b/i.test(norm) ||
+      intent === 'VISIT_GUIDANCE' ||
+      intent === 'LOCATION_ORIENTATION';
+    if (isExplicitLocationQuery && artifactContext && artifactContext.artifact_name) {
       const dlg = artifactContext.dialogue?.text || artifactContext.dialogue?.short_cue || '';
       addSnippet(
         `VỊ TRÍ HIỆN TẠI CỦA DU KHÁCH (BLE Mã ${artifactContext.code || 'N/A'})`,
         `Du khách đang đứng ngay tại: ${artifactContext.artifact_name} (${artifactContext.location || 'Khu trưng bày'}). Thông tin hiện vật: ${dlg}`
       );
     }
-
-    const norm = nlp.normalize(question || '');
-    const tokens = nlp.tokenize(question || '').filter(t => t.length > 2 && !STOPWORDS.has(t));
 
     // 2. Hồ sơ phân khu lịch sử liên quan (13 phân khu Hỏa Lò - lấy toàn bộ facts[])
     const matchedExhibit = this.findHistoricalExhibit(question) ||
