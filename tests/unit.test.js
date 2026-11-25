@@ -273,3 +273,20 @@ test('Regression guards: Vietnamese boundaries, false-positive injection, bounde
   assert.equal(mgr.devices.has('ESP32_REAL'), true, 'Active hardware device must stay');
   assert.ok(mgr.devices.size <= 3, `Expected <= 3 devices, got ${mgr.devices.size}`);
 });
+
+test('Voice-First grammar, polite subject-predicate replies, TTS arrow expansion & real version label', async () => {
+  const { sanitizeTextForSpeech, splitIntoAudioChunks, queryKiemThuAI } = require('../server');
+  const spoken = sanitizeTextForSpeech('Cổng chính ➡️ Cây bàng ➡️ Đài tưởng niệm.', 'vi');
+  assert.ok(spoken.includes('tiếp theo tới'), 'Route arrows must become spoken connectors');
+  const routeChunks = splitIntoAudioChunks('Cổng chính ➡️ Cây bàng cổ thụ ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cống ngầm ➡️ Đài tưởng niệm.', 148, 'vi');
+  assert.ok(routeChunks.every(c => c.length <= 155), 'Route chunks stay bounded after expanding arrows');
+
+  const banyan = await queryKiemThuAI('Ý nghĩa lịch sử của cây bàng đối với tù nhân Hỏa Lò?', { code: '002', artifact_name: 'Cây Bàng' }, 'test_voice_p1', 'vi');
+  assert.ok(/^(Dạ|Chào|Mình)/i.test(banyan.reply), `Expected polite conversational lead-in, got: ${banyan.reply}`);
+  assert.ok(banyan.reply.includes('được các'), `Expected explicit passive agent in banyan reply, got: ${banyan.reply}`);
+  assert.ok(!banyan.source.includes('v6.1'), `Source label must not be hardcoded v6.1, got: ${banyan.source}`);
+
+  const trap = await queryKiemThuAI('Hoàng Văn Thụ có bị chém không?', { code: '002', artifact_name: 'Cây Bàng' }, 'test_voice_p2', 'vi');
+  assert.ok(!/^Không phải,/i.test(trap.reply), `Trap correction must not start abruptly with "Không phải,": ${trap.reply}`);
+  assert.ok(/^Dạ không phải/i.test(trap.reply), `Expected polite denial opening, got: ${trap.reply}`);
+});

@@ -59,21 +59,24 @@ const EN_SAFE_SYNONYMS = [
 
 const VI_OPENERS = {
   BLE_LOCATION: [
-    '', '', '', '',
-    'Tại vị trí này, ',
-    'Ngay trước mắt bạn, '
+    '', '',
+    'Dạ tại vị trí này, ',
+    'Ngay trước mắt bạn lúc này, ',
+    'Mình xin giới thiệu điểm bạn đang đứng: '
   ],
   SERVICE: [
-    '', '', '', '',
-    'Thông tin tới bạn: ',
-    'Theo quy định tại di tích, '
+    '', '',
+    'Dạ mình xin thông tin tới bạn: ',
+    'Dạ chào bạn, theo quy định tại di tích, ',
+    'Mình xin chia sẻ thông tin hỗ trợ bạn: '
   ],
   HISTORY: [
-    '', '', '', '', '', '',
-    'Theo tư liệu lịch sử tại di tích, ',
-    'Chia sẻ cùng bạn, ',
-    'Về hiện vật này, ',
-    'Theo hồ sơ lưu trữ tại di tích, '
+    '', '', '',
+    'Dạ chào bạn, mình xin chia sẻ cùng bạn: ',
+    'Theo tư liệu lịch sử tại di tích, mình xin chia sẻ với bạn: ',
+    'Mình xin kể cùng bạn về nội dung này: ',
+    'Dạ về hiện vật và dấu tích lịch sử này, ',
+    'Theo hồ sơ lưu trữ tại di tích, mình xin thông tin: '
   ]
 };
 
@@ -294,7 +297,9 @@ function composeLocalHumanVariation({
 
     let assembled = '';
     if (opener) {
-      let firstSent = phrased[0].replace(/^(Chào bạn,\s*|Chào anh chị,\s*|Hello,\s*)/i, '');
+      let firstSent = phrased[0]
+        .replace(/^(Dạ\s+chào\s+bạn,\s*|Dạ,\s*|Chào\s+bạn,\s*|Chào\s+anh\s+chị,\s*|Bạn\s+yên\s+tâm\s+nhé[,:]?\s*|Bạn\s+cứ\s+bình\s+tĩnh\s+nhé[,:]?\s*|Hello,\s*)/i, '')
+        .replace(/^(mình\s+xin\s+(?:chia\s+sẻ|thông\s+tin|giới\s+thiệu|tóm\s+tắt)[^:]{0,48}:\s*)/i, '');
       const needsLower = opener.endsWith(', ') || opener.endsWith(' thì ') || opener.endsWith(' that ');
       const firstBody = needsLower ? lowerFirstIfSafe(firstSent) : (firstSent.charAt(0).toUpperCase() + firstSent.slice(1));
       assembled = opener + firstBody;

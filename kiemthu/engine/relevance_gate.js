@@ -139,7 +139,7 @@ class RelevanceGate {
             overrideResponse: {
               reply: isEn
                 ? `Official historical archives of Hoa Lo Prison Relic do NOT record or confirm that claim.${anchorSuffix}`
-                : `Không đúng bạn nhé — các nguồn tư liệu lịch sử chính thức của Di tích Nhà tù Hỏa Lò hoàn toàn KHÔNG ghi nhận thông tin này.${anchorSuffix}`,
+                : `Dạ không đúng bạn nhé — các nguồn tư liệu lịch sử chính thức của Di tích Nhà tù Hỏa Lò hoàn toàn KHÔNG ghi nhận thông tin này.${anchorSuffix}`,
               responseType: 'FALSE_PREMISE_CORRECTION',
               confidence: 'HIGH',
               confidenceScore: 0.92,
@@ -190,21 +190,21 @@ class RelevanceGate {
     // 3. KIỂM TRA BẪY NGHE ĐỒN / GIÁ VÉ / ĐÓNG CỬA BỊA ĐẶT (Service Rumor Check)
     if (this.isPolarVerificationQuestion(normQ) && (hasPhrase(normQ, '200 nghin') || hasPhrase(normQ, '200k') || hasPhrase(normQ, 'tang len'))) {
       if (!hasPhrase(normA, '50 000') && !hasPhrase(normA, '50000')) {
-        return {
-          passed: false,
-          reason: 'TICKET_RUMOR_UNREFUTED',
-          overrideResponse: {
-            reply: isEn
-              ? 'No, that is not true. The official daytime admission ticket to Hoa Lo Prison Relic remains 50,000 VND/adult (25,000 VND for eligible students and seniors; free for children under 15).'
-              : 'Không phải bạn nhé! Giá vé tham quan ban ngày hiện hành tại Di tích Nhà tù Hỏa Lò vẫn là 50.000 VNĐ/người lớn (giảm 50% còn 25.000 VNĐ cho học sinh, sinh viên, người cao tuổi từ 60 tuổi và miễn phí cho trẻ dưới 15 tuổi).',
-            responseType: 'FALSE_PREMISE_CORRECTION',
-            confidence: 'HIGH',
-            confidenceScore: 0.98,
-            sources: ['POLICY_TICKET_DAYTIME']
-          }
-        };
+          return {
+            passed: false,
+            reason: 'TICKET_RUMOR_UNREFUTED',
+            overrideResponse: {
+              reply: isEn
+                ? 'No, that is not true. The official daytime admission ticket to Hoa Lo Prison Relic remains 50,000 VND/adult (25,000 VND for eligible students and seniors; free for children under 15).'
+                : 'Dạ không phải bạn nhé! Giá vé tham quan ban ngày hiện hành tại Di tích Nhà tù Hỏa Lò vẫn là 50.000 VNĐ/người lớn (giảm 50% còn 25.000 VNĐ cho học sinh, sinh viên, người cao tuổi từ 60 tuổi và miễn phí cho trẻ dưới 15 tuổi).',
+              responseType: 'FALSE_PREMISE_CORRECTION',
+              confidence: 'HIGH',
+              confidenceScore: 0.98,
+              sources: ['POLICY_TICKET_DAYTIME']
+            }
+          };
+        }
       }
-    }
 
     // 4. KIỂM TRA CÂU HỎI PHI LỊCH SỬ VỀ CÔNG NGHỆ HIỆN ĐẠI TRONG TÙ XƯA (vd: điện thoại thời Pháp)
     if ((hasPhrase(normQ, 'thoi phap') || hasPhrase(normQ, 'tu nhan')) && (hasPhrase(normQ, 'dien thoai') || hasPhrase(normQ, 'internet') || hasPhrase(normQ, 'wifi'))) {
@@ -214,7 +214,7 @@ class RelevanceGate {
         overrideResponse: {
           reply: isEn
             ? 'No. Under the harsh French colonial prison regime (1899–1954), political prisoners were strictly isolated and had no access to telephones or modern communication devices; they relied on secret notes and clandestine channels to communicate.'
-            : 'Hoàn toàn không bạn nhé. Dưới chế độ giam giữ hà khắc của thực dân Pháp (1899–1954), tù nhân chính trị bị cách ly nghiêm ngặt và dĩ nhiên thời kỳ đó không có điện thoại cá nhân để liên lạc; các chiến sĩ phải dùng mật thư và đường dây liên lạc bí mật rất gian nan.',
+            : 'Dạ hoàn toàn không bạn nhé. Dưới chế độ giam giữ hà khắc của thực dân Pháp (1899–1954), tù nhân chính trị bị cách ly nghiêm ngặt và dĩ nhiên thời kỳ đó không có điện thoại cá nhân để liên lạc; các chiến sĩ phải dùng mật thư và đường dây liên lạc bí mật rất gian nan.',
           responseType: 'FALSE_PREMISE_CORRECTION',
           confidence: 'HIGH',
           confidenceScore: 0.96,
@@ -231,7 +231,7 @@ class RelevanceGate {
         overrideResponse: {
           reply: isEn
             ? 'There is no closure notice in our current official data: Hoa Lo Prison normally opens daily from 8:00 AM to 5:00 PM including weekends and holidays. To double-check any sudden maintenance schedule, please verify on the official fanpage or call 024.39342253.'
-            : 'Hiện trong thông tin chính thức của di tích KHÔNG có thông báo đóng cửa sửa chữa một tháng bạn nhé. Di tích Nhà tù Hỏa Lò mở cửa thường xuyên từ 8:00 đến 17:00 tất cả các ngày trong tuần (kể cả Lễ, Tết). Để yên tâm tuyệt đối về lịch đột xuất nếu có, bạn có thể kiểm tra nhanh trên Fanpage chính thức hoặc gọi 024.39342253.',
+            : 'Mình xin đính chính với bạn là hiện trong thông tin chính thức của di tích KHÔNG có thông báo đóng cửa sửa chữa một tháng bạn nhé. Di tích Nhà tù Hỏa Lò mở cửa thường xuyên từ 8:00 đến 17:00 tất cả các ngày trong tuần (kể cả Lễ, Tết). Để yên tâm tuyệt đối về lịch đột xuất nếu có, bạn có thể kiểm tra nhanh trên Fanpage chính thức hoặc gọi 024.39342253 ạ.',
           responseType: 'FALSE_PREMISE_CORRECTION',
           confidence: 'HIGH',
           confidenceScore: 0.96,

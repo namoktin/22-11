@@ -224,12 +224,12 @@ class ProductionSmartTourGuideServer {
   applyLocalNaturalVariation(baseReply, previousPhrasings = [], language = 'vi') {
     if (!baseReply) return baseReply;
     const viOpeners = [
-      'Mình chia sẻ thêm nhé: ',
-      'Để mình nói gọn lại cho dễ nhớ: ',
+      'Dạ mình xin chia sẻ thêm với bạn nhé: ',
+      'Để mình tóm tắt lại cho bạn dễ nhớ: ',
       'Theo tư liệu di tích thì ',
-      'Nói một cách gần gũi thì ',
-      'Thông tin chính xác dành cho bạn là: ',
-      'Về điểm này, '
+      'Dạ nói một cách gần gũi thì ',
+      'Thông tin chính xác mình gửi tới bạn là: ',
+      'Về điểm này, mình xin thông tin thêm: '
     ];
     const enOpeners = [
       'To put it simply, ',
@@ -240,10 +240,11 @@ class ProductionSmartTourGuideServer {
     ];
     const openers = language === 'en' ? enOpeners : (language === 'vi' ? viOpeners : []);
     if (!openers.length) return baseReply;
-    const lowerFirst = baseReply.charAt(0).toLowerCase() + baseReply.slice(1);
+    const stripped = baseReply.replace(/^(Dạ\s+chào\s+bạn,\s*|Dạ,\s*|Chào\s+bạn,\s*)/i, '');
+    const lowerFirst = stripped.charAt(0).toLowerCase() + stripped.slice(1);
     const idx = previousPhrasings.length % openers.length;
     const prefix = openers[idx];
-    return prefix.endsWith(': ') ? `${prefix}${baseReply}` : `${prefix}${lowerFirst}`;
+    return prefix.endsWith(': ') ? `${prefix}${stripped}` : `${prefix}${lowerFirst}`;
   }
 
   /**
@@ -262,7 +263,7 @@ class ProductionSmartTourGuideServer {
     const lastOpens = previousPhrasings.slice(-2).map(p => `"${p.slice(0, 65)}..."`).join(' | ');
     const avoidLine = lastOpens ? `Do NOT start like: ${lastOpens}.` : '';
 
-    const sysPrompt = `Rewrite the verified museum answer below in a ${style} human voice, STRICTLY in ${targetLangName} ONLY. Keep EVERY date, number, price, name, and fact 100% accurate. Use fresh opening words & sentence flow (2-3 plain spoken sentences, no markdown). ${avoidLine}`;
+    const sysPrompt = `Rewrite the verified museum answer below in a ${style} human voice, STRICTLY in ${targetLangName} ONLY. Keep EVERY date, number, price, name, and fact 100% accurate. Use complete subject-predicate sentences with polite, warm Vietnamese pronouns ("mình"-"bạn", natural lead-in like "Dạ..." or "Mình xin chia sẻ...") when speaking Vietnamese, never fragments or bare bullets (2-3 plain spoken sentences, no markdown). ${avoidLine}`;
 
     const varied = await this.callGroq(
       `Q: ${question}\nFACT: ${baseReply}`,
@@ -842,7 +843,7 @@ class ProductionSmartTourGuideServer {
       resolvedQuery: followUp.isFollowUp ? activeQuery : undefined,
       sessionId: session.id,
       latencyMs: latencyMs,
-      provider: '2Guide Production Conversational AI Engine v6.2.1'
+      provider: '2Guide Production Conversational AI Engine v8.0'
     };
 
     // Lưu vào LRU Cache nếu đủ điều kiện
@@ -955,7 +956,7 @@ const server = http.createServer(async (req, res) => {
       ? (engine.stats.totalLatencyMs / engine.stats.totalRequests).toFixed(2)
       : 0;
     res.end(JSON.stringify({
-      server: '2Guide Production Conversational AI Engine v6.1 (Production-Grade)',
+      server: '2Guide Production Conversational AI Engine v8.0 (Production-Grade)',
       activeSessions: sessionManager.getSessionCount(),
       stats: {
         ...engine.stats,
@@ -972,7 +973,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({
       status: 'UP',
-      version: '6.1.0 (Production-Grade Conversational AI)',
+      version: '8.0.0 (Production-Grade Conversational AI)',
       port: PORT,
       memoryUsage: process.memoryUsage(),
       activeSessions: sessionManager.getSessionCount()
@@ -988,7 +989,7 @@ const server = http.createServer(async (req, res) => {
 if (require.main === module) {
   server.listen(PORT, () => {
     console.log('\n======================================================');
-    console.log('🎉 2GUIDE PRODUCTION CONVERSATIONAL AI v6.1 ĐÃ SẴN SÀNG!');
+    console.log('🎉 2GUIDE PRODUCTION CONVERSATIONAL AI v8.0 ĐÃ SẴN SÀNG!');
     console.log('======================================================');
     console.log(`🌐 Cổng dịch vụ:     http://localhost:${PORT}`);
     console.log(`🎯 API Chat:         http://localhost:${PORT}/api/chat/ask`);

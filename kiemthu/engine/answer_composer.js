@@ -66,7 +66,7 @@ class IntelligentAnswerComposer {
     if (intent === 'EXPIRED_POLICY') {
       const reply = language === 'en'
         ? 'Please note that the 30,000 VND ticket price was an older policy prior to 2016 and is currently EXPIRED. Under the current regulation (Decision No. 21/2021/QD-UBND), the standard daytime ticket to Hoa Lo Prison is 50,000 VND/adult (with a 50% discount to 25,000 VND for students and seniors).'
-        : 'Lưu ý rằng mức giá vé 30.000 VNĐ là chính sách cũ trước năm 2016 và hiện nay ĐÃ HẾT HIỆU LỰC. Theo quy định hiện hành (Quyết định số 21/2021/QĐ-UBND), giá vé tham quan ban ngày tại Di tích Hỏa Lò là 50.000 VNĐ/người lớn (ưu đãi 50% còn 25.000 VNĐ cho học sinh, sinh viên và người cao tuổi).';
+        : 'Dạ bạn lưu ý giúp mình nhé: mức giá vé 30.000 VNĐ là chính sách cũ trước năm 2016 và hiện nay ĐÃ HẾT HIỆU LỰC. Theo quy định hiện hành (Quyết định số 21/2021/QĐ-UBND), giá vé tham quan ban ngày tại Di tích Hỏa Lò là 50.000 VNĐ/người lớn (ưu đãi 50% còn 25.000 VNĐ cho học sinh, sinh viên và người cao tuổi).';
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -330,7 +330,7 @@ class IntelligentAnswerComposer {
     if (intent === 'HIGHLIGHTS_REQUEST') {
       const reply = language === 'en'
         ? 'The top must-see highlights at Hoa Lo Prison include: the formidable Maison Centrale Main Gate (1896), the pitch-dark Cachot cells ("hell within hell"), the original French Guillotine, the historic Banyan Tree in the prison yard, the 1951 escape sewer exit, the American pilots exhibition ("Hanoi Hilton"), and the solemn Memorial Monument.'
-        : 'Những điểm nhấn ấn tượng và giàu ý nghĩa lịch sử nhất tại Di tích Hỏa Lò bạn không nên bỏ lỡ gồm: Cổng chính Maison Centrale kiên cố từ năm 1896, Ngục tối Cachot ("địa ngục của địa ngục"), Cỗ máy chém thời Pháp, Cây bàng cổ thụ tại sân trại, Cửa cống ngầm vượt ngục huyền thoại năm 1951, Khu trưng bày phi công Mỹ ("Hanoi Hilton"), và Đài tưởng niệm tri ân các anh hùng liệt sĩ.';
+        : 'Mình xin gợi ý cho bạn những điểm nhấn ấn tượng và giàu ý nghĩa lịch sử nhất tại Di tích Hỏa Lò mà bạn không nên bỏ lỡ: Cổng chính Maison Centrale kiên cố từ năm 1896, Ngục tối Cachot ("địa ngục của địa ngục"), Cỗ máy chém thời Pháp, Cây bàng cổ thụ tại sân trại, Cửa cống ngầm vượt ngục huyền thoại năm 1951, Khu trưng bày phi công Mỹ ("Hanoi Hilton"), và Đài tưởng niệm tri ân các anh hùng liệt sĩ.';
       return this.formatResponse({
         reply,
         style: 'SMART_RECOMMENDATION',
@@ -362,7 +362,7 @@ class IntelligentAnswerComposer {
     if (intent === 'PHOTOGRAPHY_POLICY') {
       const reply = language === 'en'
         ? 'Visitors are welcome to take souvenir photos with phones and personal cameras throughout the site. Please note: TURN OFF CAMERA FLASH inside the cellblocks to preserve artifacts and maintain solemnity. Commercial photography, videography, or staged shoots require prior permission from the Relic Management Board.'
-        : 'Tại Di tích Nhà tù Hỏa Lò, du khách hoàn toàn được mang điện thoại và máy ảnh cá nhân vào chụp ảnh lưu niệm thông thường. Bạn lưu ý TẮT ĐÈN FLASH tại các buồng giam để bảo quản hiện vật và giữ sự trang nghiêm; việc quay phim, chụp ảnh thương mại hoặc dàn dựng cần đăng ký trước với Ban Quản lý Di tích.';
+        : 'Dạ chào bạn, tại Di tích Nhà tù Hỏa Lò, du khách hoàn toàn được mang điện thoại và máy ảnh cá nhân vào chụp ảnh lưu niệm thông thường. Bạn lưu ý giúp mình là TẮT ĐÈN FLASH tại các buồng giam để bảo quản hiện vật và giữ sự trang nghiêm; còn việc quay phim, chụp ảnh thương mại hoặc dàn dựng cần đăng ký trước với Ban Quản lý Di tích nhé.';
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -412,7 +412,7 @@ class IntelligentAnswerComposer {
     if (intent === 'SUMMARY_REQUEST' || ((normQ.includes('3 cau') || normQ.includes('ba cau')) && (normQ.includes('tom tat') || normQ.includes('ngan gon') || normQ.includes('dung 3 cau')))) {
       const reply = language === 'en'
         ? '1. Hoa Lo Prison was built by French colonialists in 1896 on Phu Khanh village land to suppress Vietnamese patriots and revolutionaries.\n2. Once known as a notorious "hell on earth", it was turned into a revolutionary school fostering unwavering courage and daring escapes.\n3. Today, it stands as a sacred national relic honoring heroic sacrifices and educating future generations in patriotic traditions.'
-        : '1. Nhà tù Hỏa Lò do thực dân Pháp xây dựng năm 1896 trên đất làng Phụ Khánh để giam giữ và đàn áp những người Việt Nam yêu nước, cách mạng.\n2. Nơi đây từng là "địa ngục trần gian" khét tiếng nhưng đã được các chiến sĩ kiên trung biến thành trường học cách mạng và ghi dấu những cuộc vượt ngục quả cảm.\n3. Ngày nay, di tích là điểm đến lịch sử thiêng liêng tri ân sự hy sinh anh dũng và giáo dục truyền thống yêu nước bất khuất cho các thế hệ.';
+        : 'Mình xin tóm tắt lịch sử Nhà tù Hỏa Lò qua 3 câu ngắn gọn cho bạn dễ nhớ nhé. Thứ nhất, Nhà tù Hỏa Lò do thực dân Pháp xây dựng năm 1896 trên đất làng Phụ Khánh để giam giữ những người Việt Nam yêu nước. Thứ hai, nơi đây từng là "địa ngục trần gian" khét tiếng nhưng các chiến sĩ kiên trung đã biến nơi này thành trường học cách mạng. Thứ ba, ngày nay di tích là điểm đến lịch sử thiêng liêng nhằm tri ân sự hy sinh anh dũng và giáo dục truyền thống yêu nước.';
       return this.formatResponse({
         reply,
         style: 'QUICK_ANSWER',
@@ -596,7 +596,7 @@ class IntelligentAnswerComposer {
       const empMap = {
         EMPATHY_TIRED: isEn
           ? 'Take a well-deserved break! There are shaded resting benches right under the historic Ancient Banyan Tree in the prison courtyard where you can sit, relax, and catch your breath before continuing.'
-          : 'Đi bộ tham quan một vòng cũng khá mỏi chân rồi! Bạn có thể ghé ngay khu vực ghế nghỉ dưới bóng mát Cây bàng cổ thụ ngoài sân trại giam để ngồi thư giãn một chút, sau đó hẵng đi tiếp cho khỏe nhé.',
+          : 'Chắc hẳn bạn đi bộ tham quan một vòng cũng khá mỏi chân rồi nhỉ! Bạn có thể ghé ngay khu vực ghế nghỉ dưới bóng mát Cây bàng cổ thụ ngoài sân trại giam để ngồi thư giãn một chút, sau đó hẵng đi tiếp cho khỏe nhé.',
         EMPATHY_HOT: isEn
           ? 'Hanoi weather can get quite warm! Most of Hoa Lo’s exhibition rooms are indoors with cooling and ventilation, and you can also grab cold bottled water at the souvenir shop near the exit.'
           : 'Thời tiết Hà Nội hôm nay khá oi nóng nhỉ! Rất may là phần lớn các gian trưng bày tại Hỏa Lò đều ở trong nhà thoáng mát; bạn cũng có thể mua thêm nước uống mát tại quầy lưu niệm gần lối ra để giải nhiệt nhé.',
@@ -1036,7 +1036,8 @@ class IntelligentAnswerComposer {
 - Output STRICTLY in ${targetLangName} ONLY.
 - Distinguish WHO/WHAT is asked: "bạn ở đâu/where are you" = you are the virtual guide inside their audio device; "chỗ tôi đang đứng/where am I/where is my from" = visitor's BLE Current Location below; facility/exhibit "ở đâu" = its exact location.
 - Answer the EXACT aspect asked using ONLY facts in CONTEXT (never invent dates/numbers; if exact measurement is missing, say so honestly and share the closest verified fact).${allowOutOfScopeRefusal ? ` Only if completely unrelated to the museum/exhibits/visiting (crypto, sports, weather, math), politely decline in 1-2 sentences in ${targetLangName}.` : ''}
-- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets).${audienceInstruction}${recentOpens}
+- VOICE & GRAMMAR (especially for Vietnamese): Always speak directly, warmly, and politely with consistent pronouns ("mình" for yourself, "bạn" for the visitor, gentle lead-ins like "Dạ chào bạn," or "Mình xin chia sẻ,"). Every sentence MUST have a complete subject and predicate (đầy đủ chủ ngữ và vị ngữ); never open abruptly with "Không phải," fragments, bullet points, or omitted agents.
+- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets/arrows).${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;
@@ -1079,7 +1080,7 @@ ${compactContext}`;
         return {
           reply: isEn
             ? 'The French colonialists used this portable guillotine as a terror weapon across Tonkin to suppress patriotic uprisings, notably executing leader Nguyen Thai Hoc and 12 Yen Bai martyrs in 1930. Today, it is exhibited to bear witness to colonial brutality and honor heroic sacrifice.'
-            : 'Thực dân Pháp thiết kế cỗ máy chém lưu động này để khủng bố tinh thần phong trào yêu nước trên khắp Bắc Kỳ, tiêu biểu là việc đưa máy lên Yên Bái hành quyết nhà cách mạng Nguyễn Thái Học và 12 nghĩa sĩ năm 1930. Hiện nay cỗ máy được trưng bày để tố cáo tội ác thực dân và giáo dục truyền thống yêu nước kiên trung.',
+            : 'Mình xin chia sẻ với bạn về mục đích sử dụng hiện vật này: thực dân Pháp thiết kế cỗ máy chém lưu động để khủng bố tinh thần phong trào yêu nước trên khắp Bắc Kỳ, tiêu biểu là việc đưa máy lên Yên Bái hành quyết nhà cách mạng Nguyễn Thái Học và 12 nghĩa sĩ năm 1930. Hiện nay cỗ máy được trưng bày để tố cáo tội ác thực dân và giáo dục truyền thống yêu nước kiên trung.',
           style: 'HISTORICAL_EXPLANATION',
           sourceId: 'DOSSIER_MAY_CHEM_PURPOSE',
           claims: ['Máy chém lưu động khủng bố phong trào yêu nước', 'Hành quyết Nguyễn Thái Học và 12 nghĩa sĩ Yên Bái 1930', 'Trưng bày tố cáo tội ác thực dân']
@@ -1088,7 +1089,7 @@ ${compactContext}`;
       return {
         reply: isEn
           ? 'The guillotine at Hoa Lo Prison stands nearly 4 meters high with ironwood columns and an angled steel blade weighing 50kg that slid down from the top.'
-          : 'Cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
+          : 'Dạ chào bạn, cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột được dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
         style: 'QUICK_ANSWER',
         sourceId: 'DOSSIER_MAY_CHEM_SPEC',
         claims: ['Máy chém cao gần 4m', 'Lưỡi dao thép vát chéo nặng 50kg', 'Cột gỗ lim']
@@ -1099,7 +1100,7 @@ ${compactContext}`;
       return {
         reply: isEn
           ? 'The banyan tree supported prisoners in practical daily survival: tender buds and young leaves cured dysentery and intestinal ailments; bark tea cleansed wounds from torture; branches were carved into dip pens for secret revolutionary newspapers; and rich banyan seeds nourished critically ill comrades.'
-          : 'Cây bàng gắn bó mật thiết với cuộc sống tù nhân Hỏa Lò: búp và lá bàng non được dùng nhai sống hoặc sắc lấy nước uống chữa khỏi bệnh kiết lỵ, tiêu chảy; vỏ cây bàng dùng sắc nước rửa sạch vết thương tra tấn; cành bàng được mài nhọn làm quản bút viết tài liệu, báo chí bí mật; nhân hạt bàng bùi béo dùng bồi dưỡng cho những đồng chí ốm nặng.',
+          : 'Dạ chào bạn, Cây bàng cổ thụ gắn bó mật thiết với cuộc sống của tù nhân Hỏa Lò: búp và lá bàng non được các tù nhân nhai sống hoặc sắc lấy nước uống chữa khỏi bệnh kiết lỵ, tiêu chảy; vỏ cây bàng được sắc nước rửa sạch vết thương tra tấn; cành bàng được các chiến sĩ mài nhọn làm quản bút viết tài liệu, báo chí bí mật; còn nhân hạt bàng bùi béo được dùng để bồi dưỡng cho những đồng chí ốm nặng.',
         style: 'HISTORICAL_EXPLANATION',
         sourceId: 'DOSSIER_CAY_BANG_PURPOSE',
         claims: ['Búp lá non chữa kiết lỵ', 'Vỏ cây rửa vết thương', 'Cành bàng làm quản bút', 'Hạt bàng bồi dưỡng sức khỏe']
@@ -1110,7 +1111,7 @@ ${compactContext}`;
       return {
         reply: isEn
           ? 'Cachot was the "hell within hell" at Hoa Lo, used to punish prisoners who resisted the prison rules. The cells are pitch-dark, extremely narrow, poorly ventilated, and prisoners were chained to cement beds day and night, suffering edema, scabies, and extreme physical torture.'
-          : 'Ngục tối Cachot được coi là "địa ngục của địa ngục" tại Hỏa Lò, dùng để trừng phạt những tù nhân phản nghịch. Buồng giam tối tăm, chật hẹp, thiếu dưỡng khí, người tù bị cùm chân trên sàn xi măng dốc ngược cả ngày lẫn đêm dẫn đến ghẻ lở, teo cơ và suy kiệt thể xác.',
+          : 'Dạ chào bạn, Ngục tối Cachot được coi là "địa ngục của địa ngục" tại Hỏa Lò, được thực dân Pháp dùng để trừng phạt những tù nhân phản nghịch. Buồng giam tối tăm, chật hẹp, thiếu dưỡng khí, và người tù bị cùm chân trên sàn xi măng dốc ngược cả ngày lẫn đêm dẫn đến ghẻ lở, teo cơ và suy kiệt thể xác.',
         style: 'HISTORICAL_EXPLANATION',
         sourceId: 'DOSSIER_CACHOT_SUMMARY',
         claims: ['Địa ngục của địa ngục', 'Cùm chân sàn dốc ngược trong bóng tối', 'Trừng phạt tù nhân bất khuất']
@@ -1158,7 +1159,7 @@ ${compactContext}`;
       return {
         reply: language === 'en'
           ? 'There are no ghosts here. Hoa Lo Prison is a sacred historical relic dedicated to honoring the bravery and sacrifice of patriotic Vietnamese revolutionaries. The exhibition space is solemn and well-lit to preserve historical memory, not supernatural stories.'
-          : 'Không có chuyện ma quái đâu bạn nhé. Di tích Lịch sử Nhà tù Hỏa Lò là không gian lịch sử trang nghiêm, tôn vinh ý chí kiên cường và sự hy sinh anh dũng của các chiến sĩ yêu nước. Các khu trưng bày được bảo tồn và chiếu sáng khoa học để giúp du khách hiểu đúng giá trị lịch sử, không mang yếu tố tâm linh kỳ bí.',
+          : 'Dạ không có chuyện ma quái đâu bạn nhé. Di tích Lịch sử Nhà tù Hỏa Lò là không gian lịch sử trang nghiêm, tôn vinh ý chí kiên cường và sự hy sinh anh dũng của các chiến sĩ yêu nước. Các khu trưng bày được bảo tồn và chiếu sáng khoa học để giúp du khách hiểu đúng giá trị lịch sử, hoàn toàn không mang yếu tố tâm linh kỳ bí ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['HOA_LO_AUTHENTICITY_GUIDANCE'],
@@ -1170,7 +1171,7 @@ ${compactContext}`;
     // 1. Bẫy phi công Mỹ có bị tử hình không
     if ((normQ.includes('phi cong') || normQ.includes('tu binh my')) && (normQ.includes('tu hinh') || normQ.includes('xu ban') || normQ.includes('bi giet') || normQ.includes('bi chem') || normQ.includes('chet trong tu') || normQ.includes('co bi'))) {
       return {
-        reply: 'Hoàn toàn không có phi công hay tù binh Mỹ nào bị tử hình tại Hỏa Lò. Trong giai đoạn 1964–1973, Chính phủ Việt Nam đã thực hiện nhất quán chính sách nhân đạo và khoan hồng: các tù binh phi công Mỹ được đảm bảo điều kiện ăn ở, chữa trị y tế khi bị thương, được nhận thư từ bưu phẩm gia đình, và toàn bộ đã được trao trả về nước an toàn sau Hiệp định Paris năm 1973.',
+        reply: 'Dạ hoàn toàn không có phi công hay tù binh Mỹ nào bị tử hình tại Hỏa Lò bạn nhé. Trong giai đoạn 1964–1973, Chính phủ Việt Nam đã thực hiện nhất quán chính sách nhân đạo và khoan hồng: các tù binh phi công Mỹ được đảm bảo điều kiện ăn ở, chữa trị y tế khi bị thương, được nhận thư từ bưu phẩm gia đình, và toàn bộ đã được trao trả về nước an toàn sau Hiệp định Paris năm 1973.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['DOSSIER_PILOT_NO_EXECUTION'],
@@ -1184,7 +1185,7 @@ ${compactContext}`;
     // 2. Đại hồng chung tại Đài tưởng niệm (nêu rõ tư liệu chưa ghi năm đúc)
     if (normQ.includes('dai hong chung') || (normQ.includes('chuong') && (normQ.includes('duc vao') || normQ.includes('duc nam') || normQ.includes('nam nao') || normQ.includes('dai tuong niem')))) {
       return {
-        reply: 'Hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung này; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ.',
+        reply: 'Mình xin thông tin thật với bạn là hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung này; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ.',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['DOSSIER_DAI_HONG_CHUNG_YEAR'],
@@ -1198,7 +1199,7 @@ ${compactContext}`;
     // 3. Phi công John McCain có quay lại thăm Hỏa Lò sau chiến tranh không
     if (normQ.includes('mccain') && (normQ.includes('quay lai') || normQ.includes('tro lai') || normQ.includes('tham lai') || normQ.includes('tham hoa lo') || normQ.includes('sau chien tranh'))) {
       return {
-        reply: 'Hiện trong hồ sơ tư liệu lưu trữ chính thức của Di tích Hỏa Lò được cung cấp chỉ ghi nhận sự kiện cựu phi công Mark Chenoweth quay lại thăm di tích năm 2017, và không có tư liệu chi tiết về các mốc thời gian cụ thể Thượng nghị sĩ John McCain trở lại thăm di tích sau chiến tranh. Do đó, mình xin phép không đưa ra thông tin chưa có trong tư liệu xác thực của di tích để bảo đảm độ chính xác sử học.',
+        reply: 'Mình xin chia sẻ thông tin chính xác với bạn là hiện trong hồ sơ tư liệu lưu trữ chính thức của Di tích Hỏa Lò được cung cấp chỉ ghi nhận sự kiện cựu phi công Mark Chenoweth quay lại thăm di tích năm 2017, và không có tư liệu chi tiết về các mốc thời gian cụ thể Thượng nghị sĩ John McCain trở lại thăm di tích sau chiến tranh. Do đó, mình xin phép không đưa ra thông tin chưa có trong tư liệu xác thực của di tích để bảo đảm độ chính xác sử học.',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['DOSSIER_MCCAIN_RETURN_VISIT_ARCHIVES'],
@@ -1212,7 +1213,7 @@ ${compactContext}`;
     // 4. Tổng cộng từ 1896 đến 1954 có chính xác bao nhiêu người bị giam
     if ((normQ.includes('tong cong') || normQ.includes('tong so')) && (normQ.includes('1896') || normQ.includes('1954') || normQ.includes('chinh xac bao nhieu')) && normQ.includes('giam')) {
       return {
-        reply: 'Hiện các nguồn tài liệu lưu trữ chính thức công khai của Di tích Hỏa Lò không ghi nhận con số thống kê tổng lượng tù nhân chính xác trong suốt toàn bộ giai đoạn 1896–1954; các tư liệu lịch sử chỉ ghi nhận quy mô thiết kế ban đầu (khoảng 500 tù nhân) và số lượng tù nhân bị giam giữ thực tế tăng vọt qua từng thời kỳ cao điểm (có lúc lên tới hơn 2.000 người).',
+        reply: 'Mình xin thông tin trung thực với bạn là hiện các nguồn tài liệu lưu trữ chính thức công khai của Di tích Hỏa Lò không ghi nhận con số thống kê tổng lượng tù nhân chính xác trong suốt toàn bộ giai đoạn 1896–1954; các tư liệu lịch sử chỉ ghi nhận quy mô thiết kế ban đầu (khoảng 500 tù nhân) và số lượng tù nhân bị giam giữ thực tế tăng vọt qua từng thời kỳ cao điểm (có lúc lên tới hơn 2.000 người).',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['DOSSIER_TOTAL_PRISONERS_AUTHENTICITY'],
@@ -1478,7 +1479,7 @@ ${compactContext}`;
     // Bẫy kích thước máy chém 15m / 5 tấn
     if (((normQ.includes('15m') || normQ.includes('15 met') || normQ.includes('cao 15')) && (normQ.includes('may chem') || normQ.includes('chem'))) || (normQ.includes('5 tan') && (normQ.includes('may chem') || normQ.includes('chem')))) {
       return {
-        reply: 'Không phải, cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét và lưỡi dao bằng thép vát chéo nặng 50kg trượt trong hai cột gỗ lim.',
+        reply: 'Dạ không phải đâu bạn nhé, cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét và lưỡi dao bằng thép vát chéo nặng 50kg trượt trong hai cột gỗ lim ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['DOSSIER_MAY_CHEM_CORRECTION'],
@@ -1491,7 +1492,7 @@ ${compactContext}`;
 
     if (normQ.includes('hoang van thu') && (normQ.includes('chem') || normQ.includes('may chem'))) {
       return {
-        reply: 'Không phải, đồng chí Hoàng Văn Thụ bị thực dân Pháp đưa đi xử bắn tại trường bắn Tương Mai sáng ngày 24/5/1944, không bị xử chém tại Hỏa Lò.',
+        reply: 'Dạ không phải đâu bạn nhé, đồng chí Hoàng Văn Thụ bị thực dân Pháp đưa đi xử bắn tại trường bắn Tương Mai sáng ngày 24/5/1944, chứ không bị xử chém tại Hỏa Lò ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['DOSSIER_HOANG_VAN_THU_CORRECTION'],
@@ -1504,7 +1505,7 @@ ${compactContext}`;
 
     if (normQ.includes('1951') && (normQ.includes('toan bo') || normQ.includes('tat ca') || normQ.includes('thoat het') || normQ.includes('deu tron thoat') || normQ.includes('deu thanh cong'))) {
       return {
-        reply: 'Không phải, trong 16 tử tù tham gia cuộc vượt ngục cống ngầm đêm Noel 1951 chỉ có 5 đồng chí thoát ra vùng tự do kháng chiến an toàn, số còn lại đã bị địch lùng bắt lại.',
+        reply: 'Dạ không phải đâu bạn nhé, trong 16 tử tù tham gia cuộc vượt ngục cống ngầm đêm Noel 1951 chỉ có 5 đồng chí thoát ra vùng tự do kháng chiến an toàn, số còn lại đã bị địch lùng bắt lại ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['DOSSIER_VUOT_NGUC_1951_CORRECTION'],
@@ -1517,7 +1518,7 @@ ${compactContext}`;
 
     if (normQ.includes('phan boi chau') && (normQ.includes('tu hinh') || normQ.includes('chem') || normQ.includes('may chem'))) {
       return {
-        reply: 'Không phải, cụ Phan Bội Châu sau đó được đưa về an trí tại Bến Ngự (Huế) cho đến khi qua đời năm 1940, không bị thực dân Pháp xử tử tại Hỏa Lò.',
+        reply: 'Dạ không phải đâu bạn nhé, cụ Phan Bội Châu sau đó được đưa về an trí tại Bến Ngự (Huế) cho đến khi qua đời năm 1940, chứ không bị thực dân Pháp xử tử tại Hỏa Lò ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['DOSSIER_PHAN_BOI_CHAU_CORRECTION'],
@@ -1530,7 +1531,7 @@ ${compactContext}`;
 
     if ((normQ.includes(' 500k ') || normQ.includes(' 500 000 ') || normQ.includes(' 500 nghin ')) && (normQ.includes(' gia ve ') || normQ.includes(' tien ve ') || normQ.includes(' ve vao ') || normQ.includes(' mua ve '))) {
       return {
-        reply: 'Không phải, giá vé vào cổng tham quan ban ngày tại Di tích Nhà tù Hỏa Lò là 50.000 VNĐ/người lớn (25.000 VNĐ cho học sinh, sinh viên và người cao tuổi).',
+        reply: 'Dạ không phải đâu bạn nhé, giá vé vào cổng tham quan ban ngày tại Di tích Nhà tù Hỏa Lò là 50.000 VNĐ/người lớn (25.000 VNĐ cho học sinh, sinh viên và người cao tuổi) ạ.',
         confidence: 'HIGH',
         confidenceScore: 0.99,
         sources: ['POLICY_TICKET_DAYTIME'],

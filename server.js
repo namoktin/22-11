@@ -943,6 +943,10 @@ function decodeMp3BufferToPcmRam(mp3Buffer) {
 function sanitizeTextForSpeech(text, lang = 'vi') {
   if (!text) return '';
   let s = String(text);
+  // Chuyển mũi tên lộ trình thành từ nối tự nhiên để AI Voice đọc mượt có mạch câu
+  s = s.replace(/\s*(?:➡️|→|➡)\s*/g, lang === 'vi' ? ', tiếp theo tới ' : ', then ');
+  // Chuyển đánh số đầu đoạn kiểu "1) ", "2) " thành từ nối tự nhiên thay vì đọc cộc
+  s = s.replace(/(?:^|\s)\d+\)\s+/g, ', ');
   // Loại bỏ Markdown: **bold**, *italic*, __underline__, `code`, # header
   s = s.replace(/[*_#`~]/g, ' ');
   // Loại bỏ Markdown links [anchor](url) -> anchor
@@ -966,8 +970,8 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
   }
   // Loại bỏ ký tự thừa thãi
   s = s.replace(/[^\p{L}\p{N}\s.,?!:;-]/gu, ' ');
-  // Chuẩn hóa khoảng trắng
-  s = s.replace(/\s+/g, ' ').trim();
+  // Chuẩn hóa khoảng trắng và dấu phẩy thừa
+  s = s.replace(/\s*,\s*,+/g, ',').replace(/^\s*,\s*/, '').replace(/\s+/g, ' ').trim();
   return s;
 }
 
@@ -1061,9 +1065,13 @@ function splitLongSegmentSafely(segment, maxLen = 148) {
   return parts;
 }
 
-function splitIntoAudioChunks(fullText, maxChunkChars = 148) {
+function splitIntoAudioChunks(fullText, maxChunkChars = 148, lang = 'vi') {
   if (!fullText) return [''];
-  let clean = fullText.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+  let clean = fullText
+    .replace(/\s*(?:➡️|→|➡)\s*/g, lang === 'vi' ? ', tiếp theo tới ' : ', then ')
+    .replace(/[\n\r]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   // Bảo vệ số có dấu chấm thập phân hoặc phân cách hàng nghìn (50.000, 25.000, 4.5m)
   clean = clean.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
   // Bảo vệ các từ viết tắt phổ biến
@@ -1126,7 +1134,7 @@ async function synthesizeCachedBeaconWav(beacon, translatedText, lang) {
     return cachedFilename;
   }
 
-  const chunks = splitIntoAudioChunks(translatedText, 148);
+  const chunks = splitIntoAudioChunks(translatedText, 148, lang);
   const pcmList = await Promise.all(chunks.map(c => fastTextToPcm(c, lang)));
   const pcmParts = [];
   for (const pcm of pcmList) {
@@ -1467,7 +1475,7 @@ async function callKiemThuOnce(queryText, sessionId = null, targetLang = 'vi', a
           return {
             reply: json.data.reply,
             intent: json.data.intent || 'HISTORICAL_FACT',
-            source: '2Guide KiemThu AI Engine (HTTP API)',
+            source: json.data.provider || '2Guide KiemThu AI Engine v8.0 (HTTP API)',
             latencyMs: json.data.latencyMs || 0
           };
         }
@@ -1487,7 +1495,7 @@ async function callKiemThuOnce(queryText, sessionId = null, targetLang = 'vi', a
           return {
             reply: result.data.reply,
             intent: result.data.intent || 'HISTORICAL_FACT',
-            source: '2Guide KiemThu AI Engine v6.1 (In-Process Embedded)',
+            source: result.data.provider || '2Guide KiemThu AI Engine v8.0 (In-Process Embedded)',
             latencyMs: result.data.latencyMs || 15
           };
         }
@@ -1608,15 +1616,15 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
 
 function generateFallbackAnswer(question, code) {
   if (code === '001') {
-    return 'Trống đồng Đông Sơn có niên đại khoảng thế kỷ thứ 7 trước Công nguyên, là bảo vật quốc gia đúc bằng đồng tượng trưng cho quyền uy và văn minh sông Hồng.';
+    return 'Dạ chào bạn, Trống đồng Đông Sơn có niên đại khoảng thế kỷ thứ 7 trước Công nguyên, là bảo vật quốc gia đúc bằng đồng tượng trưng cho quyền uy và văn minh sông Hồng ạ.';
   } else if (code === '002') {
-    return 'Cây bàng cổ thụ Hỏa Lò gắn bó với các tù nhân chính trị, lá và vỏ từng được dùng làm thuốc chữa bệnh và búp bàng làm thức ăn bồi dưỡng.';
+    return 'Dạ chào bạn, Cây bàng cổ thụ Hỏa Lò gắn bó với các tù nhân chính trị; lá và vỏ cây từng được dùng làm thuốc chữa bệnh còn búp bàng làm thức ăn bồi dưỡng cho các đồng chí ốm nặng.';
   } else if (code === '003') {
-    return 'Đạt Hồng là Đại Hồng Chung nặng hơn hai tấn đúc thời Nguyễn, tiếng chuông ngân vang xa hàng chục dặm cầu cho quốc thái dân an.';
+    return 'Dạ chào bạn, Đạt Hồng là Đại Hồng Chung nặng hơn hai tấn đúc thời Nguyễn; tiếng chuông ngân vang xa hàng chục dặm cầu cho quốc thái dân an ạ.';
   } else if (code === '004') {
-    return 'Bảo kiếm hoàng gia triều Nguyễn được đúc bằng vàng ròng nạm đá quý ngũ sắc, biểu trưng cho quyền uy tối thượng của thiên tử.';
+    return 'Dạ chào bạn, Bảo kiếm hoàng gia triều Nguyễn được đúc bằng vàng ròng nạm đá quý ngũ sắc, là biểu trưng cho quyền uy tối thượng của thiên tử xưa.';
   }
-  return 'Hiện vật này là di sản văn hóa quý giá với nhiều tầng ý nghĩa lịch sử sâu sắc.';
+  return 'Mình xin giới thiệu với bạn: hiện vật này là di sản văn hóa quý giá với nhiều tầng ý nghĩa lịch sử sâu sắc tại khu di tích ạ.';
 }
 
 // Chắt lọc 1-2 câu quan trọng nhất để nghe qua tai nghe cực nhanh (trọn câu, không cắt đứt từ)
@@ -2062,7 +2070,7 @@ const server = http.createServer(async (req, res) => {
       const tAiDone = Date.now();
 
       const fullReply = kiemthuResult.reply;
-      const chunks = splitIntoAudioChunks(fullReply);
+      const chunks = splitIntoAudioChunks(fullReply, 148, lockedLang);
       const baseName = `reply_${Date.now()}`;
 
       // BƯỚC 2: TỔNG HỢP SIÊU TỐC 100% TRONG RAM (KHÔNG GHI ĐĨA TẠM) + BẮN SONG SONG CÁC ĐOẠN SAU NGAY LẬP TỨC!
@@ -2560,5 +2568,7 @@ module.exports = {
   deviceAuth,
   rateLimiter,
   beaconsStore,
-  queryKiemThuAI
+  queryKiemThuAI,
+  sanitizeTextForSpeech,
+  splitIntoAudioChunks
 };

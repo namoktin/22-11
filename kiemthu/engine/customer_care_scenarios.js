@@ -65,7 +65,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'COMPLAINT_STAFF_ATTITUDE',
           response: isEn
             ? 'We sincerely apologize if you experienced impolite behavior from our staff today. Professionalism and respect are our utmost priorities. Could you share where this occurred (e.g., ticket booth or entrance gate)? You may also speak directly to the Duty Supervisor at the main entrance (No. 1 Hoa Lo) or write in our official guest feedback registry so we can promptly address this.'
-            : 'Rất tiếc và chân thành cáo lỗi cùng bạn nếu bạn có trải nghiệm chưa trọn vẹn về thái độ phục vụ của nhân viên hôm nay. Ban Quản lý Di tích luôn coi trọng sự tôn trọng và văn minh đón tiếp. Bạn có thể cho mình biết sự việc xảy ra tại khu vực nào (quầy vé hay cửa soát vé) không? Bạn hãy gặp trực tiếp Tổ trưởng tổ đón tiếp tại cổng chính số 1 Hỏa Lò hoặc ghi vào sổ góp ý để Ban Quản lý kiểm tra và chấn chỉnh kịp thời nhé.',
+            : 'Mình rất tiếc và xin chân thành cáo lỗi cùng bạn nếu bạn có trải nghiệm chưa trọn vẹn về thái độ phục vụ của nhân viên hôm nay. Ban Quản lý Di tích luôn coi trọng sự tôn trọng và văn minh đón tiếp. Bạn có thể cho mình biết sự việc xảy ra tại khu vực nào (quầy vé hay cửa soát vé) không? Bạn hãy gặp trực tiếp Tổ trưởng tổ đón tiếp tại cổng chính số 1 Hỏa Lò hoặc ghi vào sổ góp ý để Ban Quản lý kiểm tra và chấn chỉnh kịp thời nhé.',
           authorityBoundary: pol?.authority_boundary || 'Tổ trưởng lễ tân và Ban Quản lý trực tiếp xử lý kiểm điểm nhân viên.',
           actionableGuidance: 'Gặp Tổ trưởng tổ đón tiếp tại Cổng số 1 hoặc ghi Sổ góp ý.',
           requiresHuman: true,
@@ -79,7 +79,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'COMPLAINT_AUDIO_DEVICE',
           response: isEn
             ? 'We are truly sorry for the technical issue with your audio guide (crackling sound or audio interruption). To continue enjoying your tour, please bring the device back to the ticket counter at the entrance, and our staff will test and IMMEDIATELY REPLACE IT WITH A NEW UNIT FREE OF CHARGE within 1-2 minutes.'
-            : 'Rất xin lỗi bạn về sự cố kỹ thuật của tai nghe thuyết minh (bị rè hoặc gián đoạn âm thanh). Để không làm ảnh hưởng hành trình tham quan, bạn hãy mang ngay máy về quầy vé ở cổng chính; các bạn nhân viên sẽ kiểm tra và ĐỔI NGAY MỘT MÁY MỚI HOÀN TOÀN MIỄN PHÍ cho bạn trong 1-2 phút nhé!',
+            : 'Mình rất xin lỗi bạn về sự cố kỹ thuật của tai nghe thuyết minh (bị rè hoặc gián đoạn âm thanh). Để không làm ảnh hưởng hành trình tham quan, bạn hãy mang ngay máy về quầy vé ở cổng chính; các bạn nhân viên sẽ kiểm tra và ĐỔI NGAY MỘT MÁY MỚI HOÀN TOÀN MIỄN PHÍ cho bạn trong 1-2 phút nhé!',
           authorityBoundary: pol?.authority_boundary || 'Nhân viên quầy vé đổi máy mới ngay lập tức.',
           actionableGuidance: 'Mang máy về Quầy vé cổng chính để đổi máy mới miễn phí ngay lập tức.',
           requiresHuman: true,
@@ -93,7 +93,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'COMPLAINT_OVERCROWDING',
           response: isEn
             ? 'We understand that heavy crowds during peak hours can cause discomfort and noise in the narrow historical cells. We recommend taking a relaxing pause in the airy prison courtyard under the shaded banyan tree or near the Memorial Monument, and then revisiting the cells once the crowd thins out.'
-            : 'Rất tiếc vì lượng khách tham quan tăng cao hôm nay gây cảm giác đông đúc và ồn ào. Không gian các phòng giam Hỏa Lò mang tính chất di tích lịch sử nguyên trạng nên vào giờ cao điểm có thể hơi ngột ngạt. Gợi ý bạn có thể di chuyển ra sân trại giam dưới bóng mát cây bàng cổ thụ hoặc khu Đài tưởng niệm thoáng đãng để nghỉ chân, sau đó quay lại các buồng giam hẹp khi lượng khách đã giãn bớt nhé.',
+            : 'Mình rất tiếc vì lượng khách tham quan tăng cao hôm nay gây cảm giác đông đúc và ồn ào cho bạn. Không gian các phòng giam Hỏa Lò mang tính chất di tích lịch sử nguyên trạng nên vào giờ cao điểm có thể hơi ngột ngạt. Mình gợi ý bạn có thể di chuyển ra sân trại giam dưới bóng mát cây bàng cổ thụ hoặc khu Đài tưởng niệm thoáng đãng để nghỉ chân, sau đó quay lại các buồng giam hẹp khi lượng khách đã giãn bớt nhé.',
           authorityBoundary: pol?.authority_boundary || 'Đội bảo vệ và lễ tân điều tiết giãn luồng.',
           actionableGuidance: 'Nghỉ chân tại Sân cây bàng hoặc Đài tưởng niệm thoáng đãng.',
           requiresHuman: false,
@@ -107,7 +107,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'COMPLAINT_REFUND_REQUEST',
           response: isEn
             ? 'Under the site financial regulations, purchased daytime tickets are non-refundable once issued (except under extraordinary force majeure circumstances decided by management). As an AI guide, I cannot authorize refunds; please present your ticket stub directly to the Chief Cashier at the main entrance (No. 1 Hoa Lo) for official review.'
-            : 'Theo quy định quản lý tài chính của Di tích Hỏa Lò, vé tham quan ban ngày đã mua không áp dụng chính sách hoàn trả hoặc đổi tiền mặt sau khi xuất vé (trừ các trường hợp bất khả kháng theo quy định của BQL). Vì mình là trợ lý ảo nên không có thẩm quyền giải quyết tài chính, bạn vui lòng mang cuống vé/hóa đơn đến gặp trực tiếp Trưởng quầy vé tại cổng chính số 1 Hỏa Lò để được nhân viên tiếp nhận và hỗ trợ cụ thể nhé.',
+            : 'Dạ theo quy định quản lý tài chính của Di tích Hỏa Lò, vé tham quan ban ngày đã mua không áp dụng chính sách hoàn trả hoặc đổi tiền mặt sau khi xuất vé (trừ các trường hợp bất khả kháng theo quy định của BQL). Vì mình là trợ lý ảo nên không có thẩm quyền giải quyết tài chính, bạn vui lòng mang cuống vé/hóa đơn đến gặp trực tiếp Trưởng quầy vé tại cổng chính số 1 Hỏa Lò để được nhân viên tiếp nhận và hỗ trợ cụ thể nhé.',
           authorityBoundary: pol?.authority_boundary || 'AI tuyệt đối không tự ý cam kết hoàn tiền. Trưởng quầy vé thụ lý trực tiếp.',
           actionableGuidance: 'Đến gặp Trưởng quầy vé tại Cổng chính số 1 Hỏa Lò.',
           requiresHuman: true,
@@ -121,7 +121,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'COMPLAINT_MANAGEMENT_FEEDBACK',
           response: isEn
             ? 'The Management Board of Hoa Lo Prison Relic deeply values constructive feedback to continuously improve our services. You can leave your comments in the official Guest Registry at the main entrance, speak with the Duty Reception Team Leader, or contact us via our official hotline and fanpage.'
-            : 'Ban Quản lý Di tích Nhà tù Hỏa Lò luôn trân trọng mọi ý kiến phản ánh chân thành của du khách để không ngừng nâng cao chất lượng dịch vụ. Bạn có thể để lại ý kiến vào "Sổ góp ý" đặt tại quầy thông tin cổng số 1 Hỏa Lò, hoặc trao đổi trực tiếp với Tổ trưởng tổ đón tiếp trong ca trực để được ghi nhận đầy đủ nhất.',
+            : 'Dạ Ban Quản lý Di tích Nhà tù Hỏa Lò luôn trân trọng mọi ý kiến phản ánh chân thành của du khách để không ngừng nâng cao chất lượng dịch vụ. Bạn có thể để lại ý kiến vào "Sổ góp ý" đặt tại quầy thông tin cổng số 1 Hỏa Lò, hoặc trao đổi trực tiếp với Tổ trưởng tổ đón tiếp trong ca trực để được ghi nhận đầy đủ nhất nhé.',
           authorityBoundary: pol?.authority_boundary || 'Ban Quản lý và Tổ trưởng tổ đón tiếp tiếp nhận phản hồi.',
           actionableGuidance: 'Ghi ý kiến vào Sổ góp ý tại quầy thông tin cổng số 1 Hỏa Lò.',
           requiresHuman: true,
@@ -134,7 +134,7 @@ class CustomerCareScenarioEngine {
         scenarioId: 'COMPLAINT_GENERAL',
         response: isEn
           ? 'We are truly sorry that your visit did not meet your expectations today. We sincerely value your feedback to improve our visitor experience. Could you share what caused your dissatisfaction? If this requires immediate assistance, our team at the main gate (No. 1 Hoa Lo) is always ready to support you.'
-          : 'Rất tiếc vì trải nghiệm hôm nay chưa đáp ứng được kỳ vọng của bạn. Mình xin chân thành ghi nhận phản hồi này để ban quản lý di tích hoàn thiện chất lượng dịch vụ tốt hơn. Bạn có thể chia sẻ cụ thể điều gì khiến bạn chưa hài lòng không? Nếu vấn đề cần can thiệp trực tiếp ngay lúc này, bạn có thể đến phòng thường trực tại cổng số 1 phố Hỏa Lò để được các anh chị nhân viên hỗ trợ xử lý nhé.',
+          : 'Mình rất tiếc vì trải nghiệm hôm nay chưa đáp ứng được kỳ vọng của bạn. Mình xin chân thành ghi nhận phản hồi này để ban quản lý di tích hoàn thiện chất lượng dịch vụ tốt hơn. Bạn có thể chia sẻ cụ thể điều gì khiến bạn chưa hài lòng không? Nếu vấn đề cần can thiệp trực tiếp ngay lúc này, bạn có thể đến phòng thường trực tại cổng số 1 phố Hỏa Lò để được các anh chị nhân viên hỗ trợ xử lý nhé.',
         authorityBoundary: 'Tổ thường trực cổng chính số 1 Hỏa Lò tiếp nhận.',
         actionableGuidance: 'Liên hệ phòng thường trực Cổng số 1 để được hỗ trợ trực tiếp.',
         requiresHuman: true,
@@ -194,7 +194,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'TICKET_ENTRY_ISSUE',
           response: isEn
             ? 'If you have purchased a ticket but cannot pass the barrier: 1) For QR codes, turn your phone brightness to maximum and ensure the QR is for today; 2) If the automatic reader fails, show the ticket/screen to the guard directly at the gate for manual scan; 3) If the code is unreadable, please approach Ticket Counter No. 1 (5 meters away) to receive a replacement ticket in 1 minute.'
-            : 'Nếu bạn đã mua vé nhưng không qua được cổng kiểm soát: 1) Với vé điện tử/mã QR, bạn bật độ sáng màn hình tối đa và kiểm tra đúng ngày tham quan; 2) Nếu đầu đọc tự động không nhận, bạn đưa vé hoặc màn hình cho nhân viên soát vé đứng ngay tại cửa để được quét thủ công hoặc mở cổng trực tiếp; 3) Nếu vé bị lỗi mã vạch, bạn đến ngay Quầy vé số 1 (cách cửa 5 mét) để được cấp thẻ thay thế trong 1 phút nhé.',
+            : 'Nếu bạn đã mua vé nhưng chưa qua được cổng kiểm soát, bạn hãy làm theo hướng dẫn sau nhé: thứ nhất, với vé điện tử hoặc mã QR, bạn bật độ sáng màn hình tối đa và kiểm tra đúng ngày tham quan. Thứ hai, nếu đầu đọc tự động không nhận, bạn đưa vé hoặc màn hình cho nhân viên soát vé đứng ngay tại cửa để được quét thủ công hoặc mở cổng trực tiếp. Thứ ba, nếu vé bị lỗi mã vạch, bạn đến ngay Quầy vé số 1 (cách cửa 5 mét) để được cấp thẻ thay thế trong 1 phút nhé.',
           authorityBoundary: pol?.authority_boundary || 'Nhân viên soát vé và quầy vé cổng số 1 hỗ trợ ngay lập tức.',
           actionableGuidance: 'Đưa vé cho nhân viên soát vé tại cửa hoặc đến Quầy vé số 1 hỗ trợ.',
           requiresHuman: true,
@@ -296,7 +296,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'TICKET_ENTRY_ISSUE',
           response: isEn
             ? 'If you have purchased a ticket but cannot pass the barrier: 1) For QR codes, turn your phone brightness to maximum and ensure the QR is for today; 2) If the automatic reader fails, show the ticket/screen to the guard directly at the gate for manual scan; 3) If the code is unreadable, please approach Ticket Counter No. 1 (5 meters away) to receive a replacement ticket in 1 minute.'
-            : 'Nếu bạn đã mua vé nhưng không qua được cổng kiểm soát: 1) Với vé điện tử/mã QR, bạn bật độ sáng màn hình tối đa và kiểm tra đúng ngày tham quan; 2) Nếu đầu đọc tự động không nhận, bạn đưa vé hoặc màn hình cho nhân viên soát vé đứng ngay tại cửa để được quét thủ công hoặc mở cổng trực tiếp; 3) Nếu vé bị lỗi mã vạch, bạn đến ngay Quầy vé số 1 (cách cửa 5 mét) để được cấp thẻ thay thế trong 1 phút nhé.',
+            : 'Nếu bạn đã mua vé nhưng chưa qua được cổng kiểm soát, bạn hãy làm theo hướng dẫn sau nhé: thứ nhất, với vé điện tử hoặc mã QR, bạn bật độ sáng màn hình tối đa và kiểm tra đúng ngày tham quan. Thứ hai, nếu đầu đọc tự động không nhận, bạn đưa vé hoặc màn hình cho nhân viên soát vé đứng ngay tại cửa để được quét thủ công hoặc mở cổng trực tiếp. Thứ ba, nếu vé bị lỗi mã vạch, bạn đến ngay Quầy vé số 1 (cách cửa 5 mét) để được cấp thẻ thay thế trong 1 phút nhé.',
           authorityBoundary: pol?.authority_boundary || 'Nhân viên soát vé và quầy vé cổng số 1 hỗ trợ ngay lập tức.',
           actionableGuidance: 'Đưa vé cho nhân viên soát vé tại cửa hoặc đến Quầy vé số 1 hỗ trợ.',
           requiresHuman: true,
@@ -425,7 +425,7 @@ class CustomerCareScenarioEngine {
           scenarioId: 'FACILITY_PHOTOGRAPHY',
           response: isEn
             ? 'Regular photo taking is allowed (please turn off camera flash in dark cells to protect relics and maintain solemnity). Commercial filming requires advance permission from the management board.'
-            : 'Du khách được phép chụp ảnh lưu niệm thông thường tại di tích. Vui lòng tắt đèn flash tại các phòng giam để bảo quản hiện vật và giữ gìn không gian trang nghiêm; việc quay phim thương mại cần được Ban quản lý chấp thuận trước.',
+            : 'Dạ du khách được phép chụp ảnh lưu niệm thông thường tại di tích bạn nhé. Bạn vui lòng tắt đèn flash tại các phòng giam để bảo quản hiện vật và giữ gìn không gian trang nghiêm; còn việc quay phim thương mại cần được Ban quản lý chấp thuận trước ạ.',
           authorityBoundary: 'Quy định bảo quản di tích.',
           actionableGuidance: 'Được chụp ảnh lưu niệm, vui lòng tắt đèn flash tại buồng giam.',
           requiresHuman: false,
