@@ -161,7 +161,7 @@ class SemanticRouter {
       'phi cong', 'hanoi hilton', 'mccain', 'peterson', 'hoang van thu', 'nguyen thai hoc',
       'tran tu binh', 'nguyen duc canh', 'nguyen hoang ton', 'phan boi chau', 'luong van can',
       'quang thai', 'minh khai', 'dem thieng lieng', 'audioguide', 'trai giam nu', 'tu nhi',
-      'dai tuong niem', 'dai hong chung', 'chuong dai hong', 'dat hong', 'thap chuong',
+      'dai tuong niem', 'dai hong chung', 'chuong dai hong', 'dat hong', 'dathong', 'chuong lon', 'thap chuong',
       'trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'bao kiem', 'kiem hoang gia',
       'luong long trieu nhat', 'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
       'so 001', 'so 002', 'so 003', 'so 004', 'vuot nguc', 'tuong bao', 'manh thuy tinh',

@@ -245,7 +245,7 @@ const HISTORICAL_EXHIBITS = {
     id: 'dat_hong',
     name: 'Đạt Hồng - Đại Hồng Chung (Mã 003)',
     category: 'Hiện vật BLE - Di Sản Cố Đô',
-    keywords: ['dat hong', 'dai hong chung', 'chuong dai hong', 'thap chuong', 'ma 003', 'so 003', 'chuong dong co', 'great bronze bell', 'bronze bell', 'bat quai', 'rong may'],
+    keywords: ['dat hong', 'dathong', 'dai hong chung', 'chuong dai hong', 'chuong lon', 'thap chuong', 'ma 003', 'so 003', 'chuong dong co', 'great bronze bell', 'bronze bell', 'bat quai', 'rong may'],
     facts: [
       'Đạt Hồng - Đại Hồng Chung tại Gian trưng bày số 3 - Tháp Chuông Di Tích (Mã 003) là chiếc chuông đồng cổ được đúc dưới triều Nguyễn.',
       'Quả chuông nặng hơn 2 tấn; trên thân chuông khắc tinh xảo các bài minh văn, hoa văn bát quái và hình tượng rồng mây uyển chuyển.',

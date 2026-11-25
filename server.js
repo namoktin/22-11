@@ -1268,9 +1268,9 @@ function findMatchingBeaconExhibit(question) {
     // Bỏ qua Cây Bàng Hỏa Lò vì KiemThu AI đã có kho dữ liệu Hỏa Lò rất sâu về Cây Bàng
     if (normName.includes('cay bang') || normName.includes('hoa lo')) continue;
     const hints = [];
-    if (normName.includes('trong dong')) hints.push('trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'gian so 1', 'gian trung bay so 1', 'cai trong');
-    if (normName.includes('dat hong') || normName.includes('dai hong chung')) hints.push('dat hong', 'dai hong chung', 'chuong dong', 'thap chuong', 'gian so 3', 'gian trung bay so 3', 'qua chuong', 'cai chuong', 'chuong nay');
-    if (normName.includes('bao kiem')) hints.push('bao kiem', 'kiem hoang gia', 'luong long trieu nhat', 'thanh kiem', 'kiem co', 'gian so 4', 'gian trung bay so 4', 'cay kiem', 'kiem nay');
+    if (normName.includes('trong dong')) hints.push('trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'gian so 1', 'gian trung bay so 1', 'cai trong', 'ma 001', 'so 001', 'bronze drum');
+    if (normName.includes('dat hong') || normName.includes('dai hong chung')) hints.push('dat hong', 'dathong', 'dai hong chung', 'chuong dai hong', 'chuong lon', 'chuong dong', 'thap chuong', 'gian so 3', 'gian trung bay so 3', 'qua chuong', 'cai chuong', 'chuong nay', 'ma 003', 'so 003', 'bronze bell');
+    if (normName.includes('bao kiem')) hints.push('bao kiem', 'kiem hoang gia', 'luong long trieu nhat', 'thanh kiem', 'kiem co', 'gian so 4', 'gian trung bay so 4', 'cay kiem', 'kiem nay', 'ma 004', 'so 004', 'royal sword');
     if (normName.length >= 4) hints.push(normName);
     if (hints.some(h => normQ.includes(' ' + h + ' '))) {
       return b;

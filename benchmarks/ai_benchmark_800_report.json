@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T15:08:32.835Z",
+  "generated_at": "2026-11-25T15:12:45.333Z",
   "mode": "OFFLINE_DETERMINISTIC_HOLD_OUT (0 Groq API calls, zero data leakage)",
   "total_cases": 800,
   "language_breakdown": {
@@ -10,8 +10,8 @@
     "ko": 50,
     "zh": 50
   },
-  "duration_ms": 4967,
-  "avg_latency_ms": 6.21,
+  "duration_ms": 3931,
+  "avg_latency_ms": 4.91,
   "metrics": {
     "accuracy_pct": 100,
     "faithfulness_pct": 100,

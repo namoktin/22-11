@@ -74,14 +74,14 @@ class IntentClassifier {
       'cachot', 'dem thieng lieng', 'tra bang', 'thach bang', 'phu khanh',
       'lang hoa lo', 'lang phu khanh', 'khoa co chan', 'cong tay', 'xieng xich',
       'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
-      'dai hong chung', 'chuong dai hong', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
-      'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004'
+      'dai hong chung', 'chuong dai hong', 'dathong', 'chuong lon', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
+      'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004', 'so 001', 'so 002', 'so 003', 'so 004'
     ];
   }
 
   extractSubject(norm) {
     if (norm.includes('trong dong') || norm.includes('dong son') || norm.includes('chim lac') || norm.includes('ngoi sao 14 canh') || norm.includes('ma 001') || norm.includes('so 001')) return 'trong_dong';
-    if (norm.includes('dat hong') || norm.includes('dai hong chung') || norm.includes('chuong dai hong') || norm.includes('thap chuong') || norm.includes('ma 003') || norm.includes('so 003')) return 'dat_hong';
+    if (norm.includes('dat hong') || norm.includes('dathong') || norm.includes('dai hong chung') || norm.includes('chuong dai hong') || norm.includes('chuong lon') || norm.includes('thap chuong') || norm.includes('ma 003') || norm.includes('so 003')) return 'dat_hong';
     if (norm.includes('bao kiem') || norm.includes('kiem hoang gia') || norm.includes('luong long trieu nhat') || norm.includes('co vat hoang cung') || norm.includes('ma 004') || norm.includes('so 004')) return 'bao_kiem';
     if (norm.includes('may chem') || norm.includes('guillotine') || norm.includes('luoi dao') || norm.includes('cot go')) return 'may_chem';
     if (norm.includes('cay bang') || norm.includes('la bang') || norm.includes('hat bang') || norm.includes('canh bang') || norm.includes('tra bang') || norm.includes('thach bang')) return 'cay_bang';

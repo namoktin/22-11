@@ -1009,8 +1009,9 @@ class IntelligentAnswerComposer {
     }
     let compactContext = '';
     for (const s of mergedSnippets.slice(0, 5)) {
-      const piece = s.length > 300 ? s.slice(0, 300) + '...' : s;
-      if (compactContext.length + piece.length > 900 && compactContext.length > 180) break;
+      const cap = s.startsWith('[Hồ sơ ') ? 580 : 320;
+      const piece = s.length > cap ? s.slice(0, cap) + '...' : s;
+      if (compactContext.length + piece.length > 1000 && compactContext.length > 220) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 

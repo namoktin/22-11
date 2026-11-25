@@ -357,7 +357,7 @@
     "id": "EXP_BLE_003_DAT_HONG",
     "category": "EXHIBIT_BLE",
     "priority": 99,
-    "mustMatchAll": [["dat hong", "dai hong chung", "chuong dai hong", "great bronze bell", "bronze bell", "ma 003", "so 003"]],
+    "mustMatchAll": [["dat hong", "dathong", "dai hong chung", "chuong dai hong", "chuong lon", "great bronze bell", "bronze bell", "ma 003", "so 003"]],
     "mustMatchAny": ["dat hong", "dai hong chung", "chuong", "trieu", "nguyen", "tan", "hoa van", "bat quai", "rong may", "bell", "ton", "motif", "003"],
     "mustNotMatchAny": ["nam nao", "duc nam", "nam duc", "duc vao nam", "dai tuong niem"],
     "answer_vi": "Dạ chào bạn, Đạt Hồng (Đại Hồng Chung) tại Gian trưng bày số 3 - Tháp Chuông Di Tích (Mã 003) là chiếc chuông đồng cổ được đúc dưới triều Nguyễn với trọng lượng hơn 2 tấn. Trên thân chuông chạm khắc tinh xảo các bài minh văn, hoa văn bát quái và hình tượng rồng mây uyển chuyển; mỗi hồi chuông ngân vang có thể vọng xa hàng chục dặm, gửi gắm ước nguyện quốc thái dân an.",
