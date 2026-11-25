@@ -268,8 +268,9 @@ const SUPPORTED_LANGUAGES = {
   zh: { code: 'zh', label: '中文', nativeName: 'Simplified Chinese', ttsCode: 'zh-CN' }
 };
 
-const MAX_TRANSLATION_CACHE = 1500;
+const MAX_TRANSLATION_CACHE = 2500;
 const translationCache = new Map();
+const translationInFlight = new Map();
 
 function getTranslationCache(key) {
   if (!translationCache.has(key)) return undefined;
@@ -742,70 +743,89 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '', targetLa
   }
 
   if (GROQ_API_KEY && wavBuffer && wavBuffer.length > 200) {
-    try {
-      const blob = new Blob([wavBuffer], { type: fmt.mime });
-      const form = new FormData();
-      form.append('file', blob, `hub_mic.${fmt.ext}`);
-      form.append('model', 'whisper-large-v3-turbo');
+    const cleanLang = normalizeLangCode(targetLang);
+    const whisperPrompts = {
+      vi: 'Hội thoại tiếng Việt tự nhiên giữa du khách và hướng dẫn viên ảo tại bảo tàng di tích Hỏa Lò: xin chào, bạn tên là gì, tôi tên là gì, bạn ở đâu, lịch sử di tích, hiện vật.',
+      en: 'Natural English conversation between a visitor and a tour guide at Hoa Lo Prison Relic in Hanoi: hello, guillotine, banyan tree, prisoner, opening hours, ticket price.',
+      fr: 'Conversation naturelle en français entre un visiteur et un guide au musée de la prison Hoa Lo à Hanoï : bonjour, guillotine, cachot, tarifs, horaires.',
+      ja: 'ハノイのホアロー収容所博物館でのガイドと来館者の自然な会話：こんにちは、ギロチン、歴史、開館時間、入場料。',
+      ko: '하노이 호아로 수용소 박물관에서 가이드와 방문객의 자연스러운 대화: 안녕하세요, 단두대, 역사, 관람 시간, 입장료.',
+      zh: '河内火炉监狱博物馆导游与游客的自然中文对话：你好、断头台、历史、开放时间、门票价格。'
+    };
+    const whisperModels = ['whisper-large-v3-turbo', 'whisper-large-v3'];
 
-      const cleanLang = normalizeLangCode(targetLang);
-      if (cleanLang) {
-        form.append('language', cleanLang);
-      }
-      form.append('temperature', '0.0'); // Khóa nhiệt độ 0.0 để chống ảo giác ngẫu nhiên
-
-      // Prompt neo ngữ cảnh hội thoại bảo tàng tiếng Việt tự nhiên cho Whisper
-      form.append('prompt', 'Hội thoại tiếng Việt tự nhiên giữa du khách và hướng dẫn viên ảo tại bảo tàng di tích Hỏa Lò: xin chào, bạn tên là gì, tôi tên là gì, bạn ở đâu, lịch sử di tích, hiện vật...');
-      form.append('response_format', 'verbose_json');
-
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout cho đoạn nói dài
-
-      const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
-        body: form,
-        signal: controller.signal
-      });
-      clearTimeout(timeout);
-
-      if (res.ok) {
-        const json = await res.json();
-        let cleanText = (json.text || '').trim();
-
-        // Chuẩn hóa và sửa lỗi phiên âm nhầm thường gặp của Whisper
-        cleanText = cleanText
-          .replace(/^(mạng|vạng|vạn)\s+tên\s+là\s+gì/i, 'Bạn tên là gì')
-          .replace(/^ate\s+la\s+di/i, 'Bạn tên là gì')
-          .replace(/^(bạn|cô|em)\s+tê\s+là\s+gì/i, '$1 tên là gì')
-          .replace(/^tôi\s+tê\s+là\s+gì/i, 'Tôi tên là gì');
-
-        const isHallucination = !cleanText ||
-          WHISPER_HALLUCINATIONS_REGEX.test(cleanText) ||
-          (!vol.hasSustainedVoice && (cleanText.length < 5 || WHISPER_HALLUCINATIONS_REGEX.test(cleanText)));
-
-        if (!isHallucination) {
-          console.log(`✓ [Whisper STT] Đã nhận dạng từ file .${fmt.ext.toUpperCase()} (${Date.now() - t0}ms, RMS=${vol.rms}, lang=${cleanLang || 'auto'}): "${cleanText}"`);
-          return {
-            text: cleanText,
-            isEmptySpeech: false,
-            latencyMs: Date.now() - t0,
-            engine: `Groq Whisper-large-v3-turbo (${(cleanLang || 'auto').toUpperCase()})`
-          };
+    for (const wModel of whisperModels) {
+      let timeout = null;
+      try {
+        const blob = new Blob([wavBuffer], { type: fmt.mime });
+        const form = new FormData();
+        form.append('file', blob, `hub_mic.${fmt.ext}`);
+        form.append('model', wModel);
+        if (cleanLang) {
+          form.append('language', cleanLang);
         }
-        console.log(`🔇 [Whisper Hallucination Filtered] Bỏ qua câu ảo giác YouTube: "${cleanText}" (voicedFrames=${vol.voicedFrames}, RMS=${vol.rms})`);
-        return {
-          text: '',
-          isEmptySpeech: true,
-          latencyMs: Date.now() - t0,
-          engine: `Hallucination Filter ("${cleanText.slice(0, 30)}...")`
-        };
-      } else {
-        const errBody = await res.text().catch(() => '');
-        console.warn(`⚠ Lỗi Whisper STT HTTP ${res.status} (${fmt.ext}):`, errBody.slice(0, 200));
+        form.append('temperature', '0.0'); // Khóa nhiệt độ 0.0 để chống ảo giác ngẫu nhiên
+        form.append('prompt', whisperPrompts[cleanLang || 'vi'] || whisperPrompts.vi);
+        form.append('response_format', 'verbose_json');
+
+        const controller = new AbortController();
+        timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout cho đoạn nói dài
+
+        const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${GROQ_API_KEY}` },
+          body: form,
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        timeout = null;
+
+        if (res.status === 429) {
+          console.warn(`⚡ [Whisper Failover] ${wModel} chạm 429 -> chuyển Whisper model kế tiếp...`);
+          continue;
+        }
+
+        if (res.ok) {
+          const json = await res.json();
+          let cleanText = (json.text || '').trim();
+
+          // Chuẩn hóa và sửa lỗi phiên âm nhầm thường gặp của Whisper
+          if (!cleanLang || cleanLang === 'vi') {
+            cleanText = cleanText
+              .replace(/^(mạng|vạng|vạn)\s+tên\s+là\s+gì/i, 'Bạn tên là gì')
+              .replace(/^ate\s+la\s+di/i, 'Bạn tên là gì')
+              .replace(/^(bạn|cô|em)\s+tê\s+là\s+gì/i, '$1 tên là gì')
+              .replace(/^tôi\s+tê\s+là\s+gì/i, 'Tôi tên là gì');
+          }
+
+          const isHallucination = !cleanText ||
+            WHISPER_HALLUCINATIONS_REGEX.test(cleanText) ||
+            (!vol.hasSustainedVoice && (cleanText.length < 5 || WHISPER_HALLUCINATIONS_REGEX.test(cleanText)));
+
+          if (!isHallucination) {
+            console.log(`✓ [Whisper STT:${wModel}] Đã nhận dạng từ file .${fmt.ext.toUpperCase()} (${Date.now() - t0}ms, RMS=${vol.rms}, lang=${cleanLang || 'auto'}): "${cleanText}"`);
+            return {
+              text: cleanText,
+              isEmptySpeech: false,
+              latencyMs: Date.now() - t0,
+              engine: `Groq ${wModel} (${(cleanLang || 'auto').toUpperCase()})`
+            };
+          }
+          console.log(`🔇 [Whisper Hallucination Filtered] Bỏ qua câu ảo giác YouTube: "${cleanText}" (voicedFrames=${vol.voicedFrames}, RMS=${vol.rms})`);
+          return {
+            text: '',
+            isEmptySpeech: true,
+            latencyMs: Date.now() - t0,
+            engine: `Hallucination Filter ("${cleanText.slice(0, 30)}...")`
+          };
+        } else {
+          const errBody = await res.text().catch(() => '');
+          console.warn(`⚠ Lỗi Whisper STT HTTP ${res.status} (${wModel}/${fmt.ext}):`, errBody.slice(0, 200));
+        }
+      } catch (err) {
+        if (timeout) clearTimeout(timeout);
+        console.warn(`⚠ Lỗi Whisper STT (${wModel}):`, err.message);
       }
-    } catch (err) {
-      console.warn('⚠ Lỗi Whisper STT:', err.message);
     }
   }
 
@@ -1259,42 +1279,182 @@ function findMatchingBeaconExhibit(question) {
   return null;
 }
 
+const VI_ALL_DIACRITIC_RE = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i;
+const VI_UNIQUE_DIACRITIC_RE = /[ăđơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i;
+
 // Kiểm tra nhanh xem văn bản đã đúng ngôn ngữ khóa cứng chưa
 function isTextInLanguage(text, targetLang) {
   if (!text || !targetLang) return true;
-  const hasViDiacritics = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(text);
+  // Loại bỏ danh từ riêng di tích tiếng Việt thường được trích dẫn nguyên văn trong câu ngoại ngữ (không dùng \b sau chữ có dấu!)
+  const PROPER_NOUNS_VI_RE = /(?:Nhà\s+tù\s+)?Hỏa\s+Lò|Nguyễn\s+Thái\s+Học|Hoàng\s+Văn\s+Thụ|Nguyễn\s+Đức\s+Cảnh|Trần\s+Tử\s+Bình|Phan\s+Bội\s+Châu|Lương\s+Văn\s+Can|Nguyễn\s+Thị\s+Minh\s+Khai|Hà\s+Nội|Hoàn\s+Kiếm|Hồ\s+Gươm|Bắc\s+Kỳ|Đông\s+Sơn|Yên\s+Bái|Côn\s+Đảo|Cây\s+Bàng|Đêm\s+Thiêng\s+Liêng/gi;
+  const scrubbedForLatinCheck = String(text).replace(PROPER_NOUNS_VI_RE, 'HoaLoRef');
+
+  const hasViDiacritics = VI_ALL_DIACRITIC_RE.test(text);
   const hasCJK = /[\u4E00-\u9FFF]/.test(text);
   const hasJP = /[\u3040-\u30FF]/.test(text);
   const hasKR = /[\uAC00-\uD7AF\u1100-\u11FF]/.test(text);
-  const hasFrAccents = /[çéèêëàâîïôùûüœæ]/i.test(text) && !/[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/i.test(text);
+  const hasFrAccents = /[çéèêëàâîïôùûüœæ]/i.test(scrubbedForLatinCheck) && !VI_UNIQUE_DIACRITIC_RE.test(scrubbedForLatinCheck);
 
-  if (targetLang === 'vi') return hasViDiacritics && !hasJP && !hasKR && !hasCJK;
-  if (targetLang === 'en') return !hasViDiacritics && !hasJP && !hasKR && !hasCJK && !/\b(chao ban|di tich|nha tu|hoa lo la|gia ve|mo cua|khong dung)\b/i.test(text);
+  const alphaTokens = scrubbedForLatinCheck.match(/[A-Za-zÀ-ỹĐđ]+/g) || [];
+  const totalAlpha = alphaTokens.length || 1;
+  const viAllCount = alphaTokens.filter(tok => VI_ALL_DIACRITIC_RE.test(tok)).length;
+  const viOnlyCount = alphaTokens.filter(tok => VI_UNIQUE_DIACRITIC_RE.test(tok)).length;
+  const viAllRatio = viAllCount / totalAlpha;
+  const viOnlyRatio = viOnlyCount / totalAlpha;
+
+  if (targetLang === 'vi') return !hasJP && !hasKR && !hasCJK && (hasViDiacritics || totalAlpha <= 3);
+  if (targetLang === 'en') {
+    if (hasJP || hasKR || hasCJK) return false;
+    if (/\b(chao ban|di tich|nha tu|hoa lo la|gia ve|mo cua|khong dung|hien vat nay|nghiem cam|thuc pham)\b/i.test(scrubbedForLatinCheck)) return false;
+    if (viAllCount === 0) return true;
+    return viAllRatio <= 0.25 && /\b(the|is|are|was|were|in|at|of|and|to|for|with|from|this|that|you|can|by|on|prison|museum|artifact)\b/i.test(scrubbedForLatinCheck);
+  }
   if (targetLang === 'ja') return hasJP;
   if (targetLang === 'ko') return hasKR;
   if (targetLang === 'zh') return hasCJK && !hasJP && !hasKR;
-  if (targetLang === 'fr') return !hasViDiacritics && !hasJP && !hasKR && !hasCJK && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous)\b/i.test(text));
+  if (targetLang === 'fr') {
+    if (hasJP || hasKR || hasCJK) return false;
+    if (/\b(di tich|nha tu|gia ve|mo cua|nghiem cam|thuc pham)\b/i.test(scrubbedForLatinCheck)) return false;
+    if (viOnlyCount === 0 && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous|prison|musée|musee|bonjour|merci)\b/i.test(scrubbedForLatinCheck))) return true;
+    return viOnlyRatio <= 0.22 && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous|prison|musée|musee|bonjour|merci)\b/i.test(scrubbedForLatinCheck));
+  }
   return true;
 }
 
 const GROQ_PRIMARY_MODEL = 'qwen/qwen3.8-27b';
 const GROQ_FALLBACK_MODEL = 'openai/gpt-oss-120b';
-const GROQ_SUPPORTED_MODELS = [GROQ_PRIMARY_MODEL, GROQ_FALLBACK_MODEL];
+const GROQ_LIGHT_MODEL = 'openai/gpt-oss-20b';
+const GROQ_SUPPORTED_MODELS = [GROQ_LIGHT_MODEL, GROQ_PRIMARY_MODEL, GROQ_FALLBACK_MODEL];
 
-// Dịch dự phòng qua Google Translate GTX (không cần API key, đảm bảo 100% KHÓA NGÔN NGỮ ngay cả khi Groq hết hạn mức/timeout)
+let sharedGroqPool = null;
+function getSharedGroqPool() {
+  if (sharedGroqPool) return sharedGroqPool;
+  try {
+    const poolPath = path.join(kiemthuDir, 'engine', 'groq_pool.js');
+    if (fs.existsSync(poolPath)) {
+      sharedGroqPool = require(poolPath).groqPool;
+      return sharedGroqPool;
+    }
+  } catch (e) {}
+  return null;
+}
+
+let gtxCooldownUntil = 0;
+let myMemoryCooldownUntil = 0;
+
+function decodeBasicHtmlEntities(s) {
+  return String(s || '')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .trim();
+}
+
+function detectSourceLangForMT(text, targetLang) {
+  if (/[\u3040-\u30FF]/.test(text)) return 'ja';
+  if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(text)) return 'ko';
+  if (/[\u4E00-\u9FFF]/.test(text)) return 'zh-CN';
+  if (VI_UNIQUE_DIACRITIC_RE.test(text) || /\b(hoa lo|nha tu|di tich|may chem|cay bang|cong ngam|hien vat|bao nhieu)\b/i.test(text)) {
+    return targetLang === 'vi' ? 'en' : 'vi';
+  }
+  if (/[ñ¿¡]|(\b(hola|gracias|cuanto|donde|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo)\b)/i.test(text)) return 'es';
+  if (/[çœæ]|(\b(bonjour|merci|combien|ou est|quel est|quelle est|horaires|billet|billets|toilettes|ouverte|musée)\b)/i.test(text)) return 'fr';
+  if (/[äöß]|(\b(bitte|danke|wie viel|wann|gefaengnis)\b)/i.test(text)) return 'de';
+  return 'en';
+}
+
+function splitTextForMt(text, maxLen = 390) {
+  const s = String(text || '').trim();
+  if (s.length <= maxLen) return [s];
+  const sentences = s.match(/[^.!?。！？]+[.!?。！？]*/g) || [s];
+  const chunks = [];
+  let buf = '';
+  for (const sent of sentences) {
+    const trimmed = sent.trim();
+    if (!trimmed) continue;
+    if ((buf + ' ' + trimmed).trim().length <= maxLen) {
+      buf = (buf ? buf + ' ' : '') + trimmed;
+    } else {
+      if (buf) chunks.push(buf);
+      if (trimmed.length > maxLen) {
+        for (let i = 0; i < trimmed.length; i += maxLen) {
+          chunks.push(trimmed.slice(i, i + maxLen));
+        }
+        buf = '';
+      } else {
+        buf = trimmed;
+      }
+    }
+  }
+  if (buf) chunks.push(buf);
+  return chunks.slice(0, 6);
+}
+
+async function translateViaMyMemory(text, targetLang) {
+  if (!text || Date.now() < myMemoryCooldownUntil) return null;
+  const langMap = { vi: 'vi', en: 'en', fr: 'fr', ja: 'ja', ko: 'ko', zh: 'zh-CN' };
+  const tl = langMap[targetLang];
+  if (!tl) return null;
+  const sl = detectSourceLangForMT(text, targetLang);
+  if (sl === tl) return null;
+
+  try {
+    const chunks = splitTextForMt(text, 390);
+    const outParts = [];
+    for (const part of chunks) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const urlMm = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(part)}&langpair=${encodeURIComponent(`${sl}|${tl}`)}`;
+      const res = await fetch(urlMm, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
+      clearTimeout(timeout);
+      if (!res.ok) {
+        if (res.status === 429) myMemoryCooldownUntil = Date.now() + 10 * 60 * 1000;
+        return null;
+      }
+      const json = await res.json();
+      const translatedPart = decodeBasicHtmlEntities(json?.responseData?.translatedText || '');
+      if (!translatedPart || /MYMEMORY WARNING/i.test(translatedPart)) {
+        if (/MYMEMORY WARNING/i.test(translatedPart)) {
+          myMemoryCooldownUntil = Date.now() + 15 * 60 * 1000;
+          console.warn('⚠ MyMemory chạm ngưỡng ngày -> tạm nghỉ 15 phút.');
+        }
+        return null;
+      }
+      outParts.push(translatedPart);
+    }
+    const merged = outParts.join(' ').replace(/\s+/g, ' ').trim();
+    if (merged && merged.toLowerCase() !== text.trim().toLowerCase()) {
+      return merged;
+    }
+  } catch (e) {
+    console.warn(`⚠ MyMemory dịch (${targetLang}) lỗi:`, e.message);
+  }
+  return null;
+}
+
+// Dịch dự phòng qua Google Translate GTX (tự tạm nghỉ 10 phút nếu GCP IP bị 429)
 async function translateViaGoogleGTX(text, targetLang) {
+  if (Date.now() < gtxCooldownUntil) return null;
   try {
     const tlMap = { vi: 'vi', en: 'en', fr: 'fr', ja: 'ja', ko: 'ko', zh: 'zh-CN' };
     const tl = tlMap[targetLang] || 'en';
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
     const gtxUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(tl)}&dt=t&q=${encodeURIComponent(text)}`;
-    const res = await fetch(gtxUrl, { signal: controller.signal });
+    const res = await fetch(gtxUrl, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
     clearTimeout(timeout);
+    if (res.status === 429) {
+      gtxCooldownUntil = Date.now() + 10 * 60 * 1000;
+      console.warn('⚠ Google GTX trả HTTP 429 -> tạm nghỉ 10 phút, dùng MyMemory/Groq.');
+      return null;
+    }
     if (res.ok) {
       const ctype = res.headers.get('content-type') || '';
       if (!ctype.includes('json')) {
-        console.warn(`⚠ Google GTX fallback trả content-type không phải json (${ctype}), bỏ qua.`);
+        gtxCooldownUntil = Date.now() + 10 * 60 * 1000;
+        console.warn(`⚠ Google GTX fallback trả content-type không phải json (${ctype}), tạm nghỉ 10 phút.`);
         return null;
       }
       const json = await res.json();
@@ -1307,82 +1467,150 @@ async function translateViaGoogleGTX(text, targetLang) {
   return null;
 }
 
-// Dịch siêu tốc qua Groq LLM + Google GTX Fallback + Cache (0ms lần lặp) để bảo đảm 100% KHÓA NGÔN NGỮ CỨNG
+async function callLightGroqMessages(messages, temperature = 0.1, maxTokens = 320, timeoutMs = 3500) {
+  if (!GROQ_API_KEY) return null;
+  const pool = getSharedGroqPool();
+  if (pool) {
+    const res = await pool.callGroqChat({
+      apiKey: GROQ_API_KEY,
+      messages,
+      mode: 'light',
+      preferredModels: GROQ_SUPPORTED_MODELS,
+      temperature,
+      top_p: 0.9,
+      max_tokens: maxTokens,
+      timeoutMs,
+      minHeadroomTokens: 650
+    });
+    return res ? res.content : null;
+  }
+
+  for (const model of GROQ_SUPPORTED_MODELS) {
+    let timeout = null;
+    try {
+      const controller = new AbortController();
+      timeout = setTimeout(() => controller.abort(), timeoutMs);
+      const isGptOss = model.startsWith('openai/gpt-oss');
+      const bodyPayload = { model, temperature, messages };
+      if (isGptOss) {
+        bodyPayload.reasoning_effort = 'low';
+        bodyPayload.max_completion_tokens = maxTokens + 100;
+      } else {
+        bodyPayload.max_tokens = maxTokens;
+      }
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyPayload),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      if (res.ok) {
+        const json = await res.json();
+        const ans = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        if (ans) return ans;
+      }
+    } catch (e) {
+      if (timeout) clearTimeout(timeout);
+    }
+  }
+  return null;
+}
+
+// Dịch siêu tốc kết hợp Cache + Single-flight + Groq Pool (24k TPM) + MyMemory + GTX Guard để 0 rò rỉ ngôn ngữ
 async function translateTextStrict(text, targetLang, mode = 'answer') {
   if (!text) return text;
   const langInfo = SUPPORTED_LANGUAGES[targetLang];
   if (!langInfo) return text;
 
+  if (mode === 'answer' && isTextInLanguage(text, targetLang)) {
+    return text;
+  }
+
   const cacheKey = `${mode}:${targetLang}:${crypto.createHash('md5').update(text.trim()).digest('hex')}`;
   const cachedTrans = getTranslationCache(cacheKey);
   if (cachedTrans !== undefined) return cachedTrans;
 
-  if (GROQ_API_KEY) {
-    const sysPrompt = mode === 'query'
+  if (translationInFlight.has(cacheKey)) {
+    return translationInFlight.get(cacheKey);
+  }
+
+  const runTranslate = async () => {
+    const groqSysPrompt = mode === 'query'
       ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
       : `You are a professional museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY. Keep all historical dates, numbers, and proper names (Hoa Lo, Maison Centrale, Cachot, John McCain, etc.) accurate. Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no markdown, no notes.`;
 
-    for (const model of GROQ_SUPPORTED_MODELS) {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3500);
-        const isGptOss = model.startsWith('openai/gpt-oss');
-        const bodyPayload = {
-          model,
-          temperature: 0.1,
-          messages: [
-            { role: 'system', content: sysPrompt },
-            { role: 'user', content: text }
-          ]
-        };
-        if (isGptOss) {
-          bodyPayload.reasoning_effort = 'low';
-          bodyPayload.max_completion_tokens = 400;
-        } else {
-          bodyPayload.max_tokens = 350;
-        }
+    if (mode === 'query') {
+      // Chiến lược tiết kiệm Groq tối đa: dịch câu hỏi đầu vào bằng MyMemory / GTX TRƯỚC (0 token Groq!)
+      const mmQuery = await translateViaMyMemory(text, targetLang);
+      if (mmQuery && mmQuery.toLowerCase() !== text.trim().toLowerCase()) {
+        setTranslationCache(cacheKey, mmQuery);
+        return mmQuery;
+      }
+      const gtxQuery = await translateViaGoogleGTX(text, targetLang);
+      if (gtxQuery && gtxQuery.toLowerCase() !== text.trim().toLowerCase()) {
+        setTranslationCache(cacheKey, gtxQuery);
+        return gtxQuery;
+      }
+      const groqQuery = await callLightGroqMessages([
+        { role: 'system', content: groqSysPrompt },
+        { role: 'user', content: text }
+      ], 0.1, 220, 3200);
+      if (groqQuery) {
+        setTranslationCache(cacheKey, groqQuery);
+        return groqQuery;
+      }
+      return text;
+    }
 
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bodyPayload),
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-        if (res.ok) {
-          const json = await res.json();
-          const translated = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-          if (translated) {
-            setTranslationCache(cacheKey, translated);
-            return translated;
-          }
-        }
-      } catch (e) {
-        console.warn(`⚠ Groq model ${model} dịch sang ${targetLang} lỗi (${e.message}), thử phương án kế tiếp...`);
+    // Mode 'answer': Groq pool nhẹ trước (nếu còn headroom), rơi ngay xuống MyMemory -> GTX
+    const pool = getSharedGroqPool();
+    if (GROQ_API_KEY && (!pool || !pool.areAllCoolingDown(GROQ_SUPPORTED_MODELS))) {
+      const groqAns = await callLightGroqMessages([
+        { role: 'system', content: groqSysPrompt },
+        { role: 'user', content: text }
+      ], 0.1, 320, 3500);
+      if (groqAns && (targetLang === 'vi' || isTextInLanguage(groqAns, targetLang))) {
+        setTranslationCache(cacheKey, groqAns);
+        return groqAns;
       }
     }
-  }
 
-  // Fallback Tier 2: Google Translate GTX (bảo đảm không bao giờ trả sai ngôn ngữ!)
-  const gtxTranslated = await translateViaGoogleGTX(text, targetLang);
-  if (gtxTranslated) {
-    setTranslationCache(cacheKey, gtxTranslated);
-    return gtxTranslated;
-  }
-  return text;
+    const mmAns = await translateViaMyMemory(text, targetLang);
+    if (mmAns && (targetLang === 'vi' || isTextInLanguage(mmAns, targetLang))) {
+      setTranslationCache(cacheKey, mmAns);
+      return mmAns;
+    }
+
+    const gtxAns = await translateViaGoogleGTX(text, targetLang);
+    if (gtxAns && (targetLang === 'vi' || isTextInLanguage(gtxAns, targetLang))) {
+      setTranslationCache(cacheKey, gtxAns);
+      return gtxAns;
+    }
+
+    // TUYỆT ĐỐI KHÔNG trả về tiếng Việt thô gắn nhãn ngoại ngữ nếu đang khóa khác 'vi'!
+    return targetLang === 'vi' ? text : null;
+  };
+
+  const promise = runTranslate().finally(() => {
+    translationInFlight.delete(cacheKey);
+  });
+  translationInFlight.set(cacheKey, promise);
+  return promise;
 }
 
-// Nếu câu hỏi của du khách là tiếng Pháp/Nhật/Hàn/Trung -> dịch nội bộ sang tiếng Việt để tra đúng 2.046 tư liệu Hỏa Lò
+// Dịch câu hỏi ngoại ngữ (Nhật/Hàn/Trung/Pháp/Tây Ban Nha/Đức...) sang tiếng Việt để tra đúng 2.046 tư liệu Hỏa Lò
 async function normalizeForeignQueryForLookup(rawQuery) {
-  const hasNonLatin = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF\u0400-\u04FF\u0E00-\u0E7F]/.test(rawQuery);
-  const looksFrench = /\b(bonjour|merci|combien|ou est|quel est|quelle est|horaires|billet|billets|prison|guillotine|toilettes|ouverte)\b/i.test(rawQuery);
-  if ((hasNonLatin || looksFrench) && GROQ_API_KEY) {
-    const viQuery = await translateTextStrict(rawQuery, 'vi', 'query');
-    if (viQuery && viQuery !== rawQuery) {
-      console.log(`🌐 [Multilingual Query] "${rawQuery}" -> VI lookup: "${viQuery}"`);
+  const raw = String(rawQuery || '').trim();
+  if (!raw) return rawQuery;
+  const hasNonLatin = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF\u0400-\u04FF\u0E00-\u0E7F]/.test(raw);
+  const hasEuroForeignAccents = /[ñ¿¡áéíóúüäößàèìòùçëïœæ]/i.test(raw) && !VI_UNIQUE_DIACRITIC_RE.test(raw) && !/\b(hoa lo|nha tu|di tich|gia ve|mo cua|bao nhieu|la gi|o dau)\b/i.test(raw);
+  const looksEuroForeignWords = /\b(bonjour|merci|combien|ou est|quel est|quelle est|horaires|billet|billets|prison|guillotine|toilettes|ouverte|hola|gracias|cuanto|donde esta|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo|bitte|danke|wie viel|wann|gefaengnis)\b/i.test(raw);
+
+  if (hasNonLatin || hasEuroForeignAccents || looksEuroForeignWords) {
+    const viQuery = await translateTextStrict(raw, 'vi', 'query');
+    if (viQuery && viQuery !== raw) {
+      console.log(`🌐 [Multilingual Query] "${raw}" -> VI lookup: "${viQuery}"`);
       return viQuery;
     }
   }
@@ -1394,52 +1622,20 @@ async function answerFromBeaconData(question, beacon, targetLang = 'vi') {
   const baseText = beacon.dialogue?.text || beacon.dialogue?.short_cue || '';
   const langInfo = SUPPORTED_LANGUAGES[targetLang] || SUPPORTED_LANGUAGES.vi;
   if (GROQ_API_KEY) {
-    for (const model of GROQ_SUPPORTED_MODELS) {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        const isGptOss = model.startsWith('openai/gpt-oss');
-        const bodyPayload = {
-          model,
-          temperature: 0.2,
-          messages: [
-            {
-              role: 'system',
-              content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 2-3 complete, natural sentences based on the artifact info below. Never cut off mid-sentence. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
-            },
-            { role: 'user', content: question }
-          ]
-        };
-        if (isGptOss) {
-          bodyPayload.reasoning_effort = 'low';
-          bodyPayload.max_completion_tokens = 380;
-        } else {
-          bodyPayload.max_tokens = 320;
-        }
-
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bodyPayload),
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-        if (res.ok) {
-          const json = await res.json();
-          const ans = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-          if (ans) {
-            return {
-              reply: ans,
-              intent: 'EXHIBIT_INFORMATION',
-              source: `Data Hiện Vật (Mã ${beacon.code}) + Groq AI [${targetLang.toUpperCase()}]`,
-              latencyMs: 250
-            };
-          }
-        }
-      } catch (e) {}
+    const ans = await callLightGroqMessages([
+      {
+        role: 'system',
+        content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 2-3 complete, natural sentences based on the artifact info below. Never cut off mid-sentence. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
+      },
+      { role: 'user', content: question }
+    ], 0.2, 260, 4200);
+    if (ans) {
+      return {
+        reply: ans,
+        intent: 'EXHIBIT_INFORMATION',
+        source: `Data Hiện Vật (Mã ${beacon.code}) + Groq AI [${targetLang.toUpperCase()}]`,
+        latencyMs: 250
+      };
     }
   }
   return {
@@ -1515,15 +1711,34 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
   const normQ = normalizeVnText(lookupQuery);
   const artifactName = artifactContext?.artifact_name || 'Di tích lịch sử';
 
+  const getStrictLangSafeNotice = (langCode) => {
+    const fallbackByLang = {
+      en: 'Our AI translation service is briefly busy right now. Please try asking again in a few seconds in English.',
+      fr: 'Notre service de traduction est momentanément surchargé. Veuillez réessayer votre question dans quelques secondes.',
+      ja: '現在AI翻訳サーバーが混み合っております。数秒後にもう一度ご質問ください。',
+      ko: '현재 AI 번역 서버에 요청이 집중되어 있습니다. 몇 초 뒤에 다시 질문해 주세요.',
+      zh: '当前AI翻译服务访问量较高，请您在几秒钟后重新提问，我将继续为您用中文解答。'
+    };
+    return fallbackByLang[langCode] || fallbackByLang.en;
+  };
+
   // Hàm bọc bảo đảm KHÓA NGÔN NGỮ CỨNG 100%: AI CHỈ được nói đúng lockedLang
   const enforceStrictLang = async (resObj) => {
     if (!resObj || !resObj.reply) return resObj;
+    const tag = `🔒 [${lockedLang.toUpperCase()}]`;
     if (!isTextInLanguage(resObj.reply, lockedLang)) {
       const translated = await translateTextStrict(resObj.reply, lockedLang, 'answer');
-      if (translated) {
+      if (translated && (lockedLang === 'vi' || isTextInLanguage(translated, lockedLang))) {
         resObj.reply = translated;
-        resObj.source = `${resObj.source} 🔒 [${lockedLang.toUpperCase()}]`;
+        if (!String(resObj.source || '').includes(tag)) {
+          resObj.source = `${resObj.source} ${tag}`;
+        }
+      } else if (lockedLang !== 'vi') {
+        resObj.reply = getStrictLangSafeNotice(lockedLang);
+        resObj.source = `${resObj.source} 🔒 [${lockedLang.toUpperCase()}-SAFE]`;
       }
+    } else if (lockedLang !== 'vi' && !String(resObj.source || '').includes('🔒')) {
+      resObj.source = `${resObj.source} ${tag}`;
     }
     resObj.language = lockedLang;
     return resObj;
@@ -2570,5 +2785,9 @@ module.exports = {
   beaconsStore,
   queryKiemThuAI,
   sanitizeTextForSpeech,
-  splitIntoAudioChunks
+  splitIntoAudioChunks,
+  normalizeLangCode,
+  isTextInLanguage,
+  translateTextStrict,
+  normalizeForeignQueryForLookup
 };

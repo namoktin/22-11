@@ -117,7 +117,7 @@ class RateLimiter {
     const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 60 * 1000;
     const defaults = {
       general: Number(process.env.RATE_LIMIT_GENERAL) || 120,
-      voice: Number(process.env.RATE_LIMIT_VOICE) || 45,
+      voice: Number(process.env.RATE_LIMIT_VOICE) || 120,
       ble: Number(process.env.RATE_LIMIT_BLE) || 90,
       admin: Number(process.env.RATE_LIMIT_ADMIN) || 30
     };

@@ -226,7 +226,7 @@ class SemanticRouter {
   /**
    * Phát hiện nhóm Quy định vận hành & Tiện ích thực địa (SITE_OPERATIONS)
    */
-  detectSiteOperations(normText) {
+  detectSiteOperations(normText, rawText = '') {
     const isHistoricalAnachronism = (hasPhrase(normText, 'thoi phap') || hasPhrase(normText, 'tu nhan') || /\b19[0-5]\d\b/.test(normText)) &&
                                     (hasPhrase(normText, 'wifi') || hasPhrase(normText, 'dien thoai') || hasPhrase(normText, 'internet'));
     if (isHistoricalAnachronism) {
@@ -234,7 +234,14 @@ class SemanticRouter {
     }
 
     // Mang đồ ăn / thức uống / rượu bia / kẹo bánh vào di tích (OPS_FOOD_DRINK_PROHIBITED)
-    if (/\b(do an|thuc an|nuoc uong|an uong|ruou bia|bia|nuoc ngot|keo|banh|food|drink|drinks|beverage|snack)\b/.test(normText) &&
+    // Tránh bắt nhầm không dấu: "kéo dài" -> "keo", "bia tưởng niệm" -> "bia", "bành" -> "banh"
+    const rawLower = String(rawText || '').toLowerCase();
+    const hasExplicitAccentedSnack = /\b(kẹo|bánh)\b/.test(rawLower);
+    const hasFoodOrDrinkCompound = /\b(do an|thuc an|thuc pham|nuoc uong|do uong|an uong|ruou bia|uong bia|lon bia|chai bia|nuoc ngot|keo cao su|banh keo|banh mi|banh ngot|tra sua|ca phe|food|drink|drinks|beverage|snack|snacks)\b/.test(normText);
+    const hasHistoricalExecutionOrPlaque = /\b(may chem|tu hinh|xu tu|hanh quyet|tuong niem|bia da|bia tuong niem|keo dai|keo le)\b/.test(normText);
+
+    if ((hasFoodOrDrinkCompound || hasExplicitAccentedSnack) &&
+        !hasHistoricalExecutionOrPlaque &&
         /\b(mang|dem|duoc khong|co duoc|cho phep|cam|quy dinh|vao|trong|bring|inside|allowed|prohibited)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_FOOD_DRINK_PROHIBITED' };
     }
@@ -242,8 +249,9 @@ class SemanticRouter {
     if (hasPhrase(normText, 'hut thuoc') || hasPhrase(normText, 'smoking')) {
       return { isOps: true, subType: 'OPS_SMOKING_VIOLATION' };
     }
-    // Mang thú cưng / chó mèo (tổng quát theo danh từ động vật + hành động mang vào)
-    if (/\b(cho cung|thu cung|vat nuoi|dong vat|meo con|chu meo|cho con|cun con|mang cho|mang meo|pet|pets|dog|cat|puppy|kitten)\b/.test(normText) &&
+    // Mang thú cưng / chó mèo (tránh khớp nhầm "mang cho tù nhân" -> phải có "chó/mèo" hoặc cụm thú cưng)
+    const hasAccentedPet = /\b(chó|mèo|cún)\b/.test(rawLower);
+    if ((hasAccentedPet || /\b(cho cung|thu cung|vat nuoi|dong vat|meo con|chu meo|cho con|cun con|dan cho|dat cho|dan meo|pet|pets|dog|cat|puppy|kitten)\b/.test(normText)) &&
         /\b(tham quan|vao|mang|dan|dem|xem|bring|inside|enter)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_PETS_PROHIBITED' };
     }
@@ -373,7 +381,7 @@ class SemanticRouter {
     }
 
     // Ưu tiên tầng 1: Quy định vận hành & tiện ích thực địa
-    const ops = this.detectSiteOperations(normText);
+    const ops = this.detectSiteOperations(normText, rawQuestion);
     if (ops.isOps) {
       return { domain: 'SITE_OPERATIONS', subType: ops.subType, urgency: 'NORMAL', lang, hasHoaLo, ext, scores };
     }

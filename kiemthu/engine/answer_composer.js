@@ -993,10 +993,10 @@ class IntelligentAnswerComposer {
       subject,
       intent,
       artifactContext,
-      topK: 4
+      topK: 3
     });
 
-    // Nén ngữ cảnh gọn <= 950 ký tự (~280 tokens) để KHÔNG BAO GIỜ chạm trần TPM Groq khi hỏi liên tục!
+    // Nén ngữ cảnh gọn <= 720 ký tự (~210 tokens) để tiết kiệm TPM Groq & tránh 429 khi hỏi dồn!
     const extraFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
     const mergedSnippets = [...topK.snippets];
     for (const f of extraFacts.slice(0, 2)) {
@@ -1008,14 +1008,14 @@ class IntelligentAnswerComposer {
       }
     }
     let compactContext = '';
-    for (const s of mergedSnippets.slice(0, 5)) {
-      const piece = s.length > 340 ? s.slice(0, 340) + '...' : s;
-      if (compactContext.length + piece.length > 1050 && compactContext.length > 200) break;
+    for (const s of mergedSnippets.slice(0, 4)) {
+      const piece = s.length > 260 ? s.slice(0, 260) + '...' : s;
+      if (compactContext.length + piece.length > 720 && compactContext.length > 160) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
     const langNames = {
-      vi: 'Vietnamese', en: 'English', fr: 'French', ja: 'Japanese', ko: 'Korean', zh: 'Chinese'
+      vi: 'Vietnamese', en: 'English', fr: 'French', ja: 'Japanese', ko: 'Korean', zh: 'Simplified Chinese'
     };
     const targetLangName = langNames[language] || 'Vietnamese';
     const normQ = ' ' + nlp.normalize(question) + ' ';
@@ -1024,29 +1024,38 @@ class IntelligentAnswerComposer {
     const styleVariations = ['warm conversational', 'crisp direct', 'vivid storytelling', 'friendly live docent'];
     const pickedStyle = styleVariations[(previousPhrasings.length || 0) % styleVariations.length];
     const recentOpens = Array.isArray(previousPhrasings) && previousPhrasings.length > 0
-      ? `\n- Vary wording freshly (do NOT start like: ${previousPhrasings.slice(-2).map(p => `"${p.slice(0, 60)}..."`).join(' / ')}).`
+      ? `\n- Vary opening; avoid: ${previousPhrasings.slice(-2).map(p => `"${p.slice(0, 45)}..."`).join(' / ')}.`
       : '';
 
     const isChildAudience = session?.state?.userProfile?.audience === 'child' || /\b(cho tre em|cho be|cho con nho|giai thich don gian|for kids|for children|simple explanation)\b/.test(normQ);
     const audienceInstruction = isChildAudience
-      ? '\n- AUDIENCE: Explain gently and simply for children (warm, easy words, avoid graphic violence, highlight courage & friendship).'
+      ? '\n- Kids mode: gentle, simple wording, avoid graphic violence, highlight courage.'
+      : '';
+    const refusalRule = allowOutOfScopeRefusal
+      ? ` If unrelated to museum/exhibits/visiting, decline in 1-2 sentences in ${targetLangName}.`
       : '';
 
-    const promptSystem = `You are HOA LO AI GUIDE, a human-like museum tour guide at Hoa Lo Prison Relic (Hanoi) & its BLE exhibits.
-- Output STRICTLY in ${targetLangName} ONLY.
-- Distinguish WHO/WHAT is asked: "bạn ở đâu/where are you" = you are the virtual guide inside their audio device; "chỗ tôi đang đứng/where am I/where is my from" = visitor's BLE Current Location below; facility/exhibit "ở đâu" = its exact location.
-- Answer the EXACT aspect asked using ONLY facts in CONTEXT (never invent dates/numbers; if exact measurement is missing, say so honestly and share the closest verified fact).${allowOutOfScopeRefusal ? ` Only if completely unrelated to the museum/exhibits/visiting (crypto, sports, weather, math), politely decline in 1-2 sentences in ${targetLangName}.` : ''}
-- VOICE & GRAMMAR (especially for Vietnamese): Always speak directly, warmly, and politely with consistent pronouns ("mình" for yourself, "bạn" for the visitor, gentle lead-ins like "Dạ chào bạn," or "Mình xin chia sẻ,"). Every sentence MUST have a complete subject and predicate (đầy đủ chủ ngữ và vị ngữ); never open abruptly with "Không phải," fragments, bullet points, or omitted agents.
-- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} natural spoken sentences, plain prose (no markdown/bullets/arrows).${audienceInstruction}${recentOpens}
+    const promptSystem = `You are HOA LO AI GUIDE (Hoa Lo Prison Relic, Hanoi).
+- Reply STRICTLY in ${targetLangName} ONLY.
+- "bạn ở đâu/where are you" = virtual device guide; "tôi đang đứng ở đâu/where am I" = BLE location in CONTEXT; place "ở đâu" = exact spot.
+- Use ONLY CONTEXT facts (never invent dates/numbers; if missing, state honestly).${refusalRule}
+- Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} plain spoken sentences (no markdown/bullets/arrows). In Vietnamese use "mình"-"bạn", polite lead-in ("Dạ...", "Mình xin chia sẻ..."), complete subject-predicate sentences.${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;
 
-    const generated = await groqCaller(question, promptSystem, session?.history || [], {
+    // Chỉ gửi tối đa 2 lượt hội thoại khi câu thực sự mang tính nối tiếp/chỉ đại từ để tiết kiệm TPM Groq
+    const needsHistory = Boolean(
+      session?.lastContext &&
+      /\b(do|nay|kia|no|ho|ong ay|ba ay|nguoi do|cho do|tiep theo|them nua|chi tiet hon|it|that|this|they|them|he|she|more)\b/i.test(normQ)
+    );
+    const ragHistory = needsHistory ? (session?.history || []).slice(-2) : [];
+
+    const generated = await groqCaller(question, promptSystem, ragHistory, {
       temperature: previousPhrasings.length > 0 ? 0.85 : 0.72,
       presence_penalty: previousPhrasings.length > 0 ? 0.5 : 0.35,
       frequency_penalty: previousPhrasings.length > 0 ? 0.4 : 0.25,
-      max_tokens: 230
+      max_tokens: 210
     });
     if (!generated || generated.length < 8) return null;
 

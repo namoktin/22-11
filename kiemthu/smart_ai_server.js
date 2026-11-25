@@ -33,11 +33,10 @@ if (fs.existsSync(envPath)) {
 
 const PORT = process.env.PORT || 4001;
 const API_KEY = process.env.API_KEY || ''; // Nếu set thì kích hoạt API Key protection
+const { groqPool, GROQ_MODELS_REASONING } = require('./engine/groq_pool');
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
-const GROQ_MODEL_POOL = [
-  'qwen/qwen3.8-27b',
-  'openai/gpt-oss-120b'
-];
+const GROQ_MODEL_POOL = GROQ_MODELS_REASONING;
 const PRIMARY_MODEL = GROQ_MODEL_POOL[0];
 const MAX_PAYLOAD_BYTES = 32 * 1024; // 32KB
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 phút
@@ -71,7 +70,8 @@ class ProductionSmartTourGuideServer {
       totalLatencyMs: 0
     };
     this.rateLimitMap = new Map(); // ip -> { count, resetTime }
-    this.modelCooldowns = new Map(); // model -> cooldownUntilMs (Failover riêng từng model, tổng 24.000 TPM!)
+    this.modelCooldowns = new Map(); // Tham chiếu tương thích ngược; điều phối tập trung qua groqPool
+    this.inFlightAsks = new Map(); // Khử trùng lặp đồng thời khi test burst cùng 1 câu hỏi
     this.recentPhrasings = new Map(); // key -> string[] (lưu tới 120 cách diễn đạt đã nói để hỏi 100 lần đều khác nhau!)
     this.verifiedBaseReplies = new Map(); // key -> { reply, extraFacts, intent, sources, responseType } (dữ liệu gốc để lắp ghép local 0-token!)
 
@@ -153,71 +153,29 @@ class ProductionSmartTourGuideServer {
       { role: 'user', content: question }
     ];
 
-    const now = Date.now();
-    // Tự động chuyển đổi sang model dự phòng khác khi model chính chạm trần 8.000 TPM (HTTP 429)
-    for (const model of GROQ_MODEL_POOL) {
-      const cdUntil = this.modelCooldowns.get(model) || 0;
-      if (now < cdUntil) continue;
-
-      try {
+    const res = await groqPool.callGroqChat({
+      apiKey: GROQ_API_KEY,
+      messages,
+      mode: 'reasoning',
+      preferredModels: GROQ_MODEL_POOL,
+      temperature: typeof options.temperature === 'number' ? options.temperature : 0.72,
+      top_p: typeof options.top_p === 'number' ? options.top_p : 0.92,
+      max_tokens: options.max_tokens || 320,
+      presence_penalty: typeof options.presence_penalty === 'number' ? options.presence_penalty : 0.2,
+      frequency_penalty: typeof options.frequency_penalty === 'number' ? options.frequency_penalty : 0.15,
+      timeoutMs: Number(process.env.GROQ_TIMEOUT_MS) || 3500,
+      onAttempt: () => {
         this.stats.groqCalls++;
-        const controller = new AbortController();
-        const groqTimeoutMs = Number(process.env.GROQ_TIMEOUT_MS) || 3500;
-        const timeout = setTimeout(() => controller.abort(), groqTimeoutMs);
-
-        const isGptOss = model.startsWith('openai/gpt-oss');
-        const bodyObj = {
-          model,
-          messages,
-          temperature: typeof options.temperature === 'number' ? options.temperature : 0.72,
-          top_p: typeof options.top_p === 'number' ? options.top_p : 0.92
-        };
-        if (isGptOss) {
-          bodyObj.reasoning_effort = 'low';
-          bodyObj.max_completion_tokens = Math.max(360, (options.max_tokens || 240) + 140);
-        } else {
-          bodyObj.max_tokens = options.max_tokens || 320;
-          bodyObj.presence_penalty = typeof options.presence_penalty === 'number' ? options.presence_penalty : 0.2;
-          bodyObj.frequency_penalty = typeof options.frequency_penalty === 'number' ? options.frequency_penalty : 0.15;
-        }
-
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
-            'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0'
-          },
-          body: JSON.stringify(bodyObj),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeout);
-
-        if (res.status === 429) {
-          const retryAfterSec = parseInt(res.headers.get('retry-after') || '0', 10);
-          const waitMs = Math.min(Math.max((retryAfterSec || 6) * 1000, 4000), 10000);
-          this.modelCooldowns.set(model, Date.now() + waitMs);
-          this.stats.groqRateLimitSkips++;
-          console.warn(`⚡ [Groq Failover] ${model} chạm trần 429 (nghỉ ${Math.round(waitMs / 1000)}s) -> chuyển model kế tiếp...`);
-          continue;
-        }
-
-        if (res.ok) {
-          const d = await res.json();
-          const rawContent = d.choices?.[0]?.message?.content || '';
-          const content = rawContent.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-          const usage = d.usage;
-          if (usage) {
-            responseCache.trackLLMUsage(usage.prompt_tokens || 150, usage.completion_tokens || 80);
-          }
-          if (content) return content;
-        }
-      } catch (e) {
-        console.warn(`[Groq Engine:${model}] Lỗi gọi API:`, e.message);
+      },
+      onRateLimit: (model, waitMs) => {
+        this.modelCooldowns.set(model, Date.now() + waitMs);
+        this.stats.groqRateLimitSkips++;
+      },
+      onUsage: (usage) => {
+        responseCache.trackLLMUsage(usage.prompt_tokens || 150, usage.completion_tokens || 80);
       }
-    }
-    return null;
+    });
+    return res ? res.content : null;
   }
 
   // Biến tấu tự nhiên cục bộ (0 token) làm lớp dự phòng cuối cùng nếu cả 3 model Groq đều bị bấm dồn chạm trần cùng lúc
@@ -281,6 +239,26 @@ class ProductionSmartTourGuideServer {
    * Xử lý câu hỏi của khách tham quan theo kiến trúc 8 tầng V6.1
    */
   async handleAsk(body) {
+    const rawQ = String(body?.question || '').trim();
+    const sessKey = String(body?.sessionId || 'anon');
+    const langKey = String(body?.language || body?.lang || '').toLowerCase().trim();
+    const stCode = String(body?.artifactContext?.code || '');
+    const inflightKey = rawQ ? `${sessKey}|${langKey}|${stCode}|${rawQ.toLowerCase()}` : null;
+
+    if (inflightKey && this.inFlightAsks.has(inflightKey)) {
+      return this.inFlightAsks.get(inflightKey);
+    }
+
+    const runPromise = this._executeHandleAsk(body).finally(() => {
+      if (inflightKey) this.inFlightAsks.delete(inflightKey);
+    });
+    if (inflightKey) {
+      this.inFlightAsks.set(inflightKey, runPromise);
+    }
+    return runPromise;
+  }
+
+  async _executeHandleAsk(body) {
     const startTime = Date.now();
     this.stats.totalRequests++;
 
@@ -499,15 +477,18 @@ class ProductionSmartTourGuideServer {
       INTENTS.EXPIRED_POLICY
     ].includes(intent);
 
-    if (savedBase && previousPhrasings.length > 0 && !followUp.isFollowUp && (language === 'vi' || language === 'en') && !isSensitiveIntent) {
-      const assembledReply = composeLocalHumanVariation({
-        baseReply: savedBase.reply,
-        extraFacts: savedBase.extraFacts || [],
-        previousPhrasings,
-        language,
-        intent: savedBase.intent || intent,
-        turnNumber: previousPhrasings.length + 1
-      });
+    const canReuseSavedLocal = (language === 'vi' || language === 'en') || groqPool.areAllCoolingDown(GROQ_MODEL_POOL);
+    if (savedBase && previousPhrasings.length > 0 && !followUp.isFollowUp && canReuseSavedLocal && !isSensitiveIntent) {
+      const assembledReply = (language === 'vi' || language === 'en')
+        ? composeLocalHumanVariation({
+            baseReply: savedBase.reply,
+            extraFacts: savedBase.extraFacts || [],
+            previousPhrasings,
+            language,
+            intent: savedBase.intent || intent,
+            turnNumber: previousPhrasings.length + 1
+          })
+        : savedBase.reply;
       this.recordPhrasing(phrasingKey, assembledReply);
 
       const resolvedTopicName = (subject && HISTORICAL_EXHIBITS[subject] ? HISTORICAL_EXHIBITS[subject].name : null) || topicName || 'Di tích Hỏa Lò';
@@ -767,7 +748,7 @@ class ProductionSmartTourGuideServer {
           intent: composerResult.resolvedIntent || intent,
           turnNumber: previousPhrasings.length + 1
         });
-      } else if (GROQ_API_KEY) {
+      } else if (GROQ_API_KEY && !groqPool.areAllCoolingDown(GROQ_MODEL_POOL)) {
         finalReply = await this.naturalizeHumanVoiceReply(finalReply, rawQuestion, previousPhrasings, language);
       }
     }

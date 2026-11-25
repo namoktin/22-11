@@ -290,3 +290,86 @@ test('Voice-First grammar, polite subject-predicate replies, TTS arrow expansion
   assert.ok(!/^Không phải,/i.test(trap.reply), `Trap correction must not start abruptly with "Không phải,": ${trap.reply}`);
   assert.ok(/^Dạ không phải/i.test(trap.reply), `Expected polite denial opening, got: ${trap.reply}`);
 });
+
+test('Anti-429 GroqPool, semantic_router accent collision guards & strict language gating', () => {
+  const { GroqModelPool, GROQ_MODELS_REASONING, parseResetDurationMs } = require(path.join(kiemthuRoot, 'engine', 'groq_pool'));
+  const { isTextInLanguage } = require('../server');
+
+  // 1. Food-prohibition false-positive guard ("kéo dài" -> keo, "bia tưởng niệm" -> bia, "tấm vé vào" -> vao)
+  assert.equal(
+    semanticRouter.detectSiteOperations(
+      nlp.normalize('Xác nhận đoạn lịch sử máy chém kéo dài hành trình và xử tử Nguyễn Thái Học vào lúc rạng sáng?'),
+      'Xác nhận đoạn lịch sử máy chém kéo dài hành trình và xử tử Nguyễn Thái Học vào lúc rạng sáng?'
+    ).isOps,
+    false,
+    'Historical execution with "kéo dài ... vào lúc" must NOT trip food ban'
+  );
+  assert.equal(
+    semanticRouter.detectSiteOperations(
+      nlp.normalize('Cho tôi hỏi vào xem tấm bia tưởng niệm được không?'),
+      'Cho tôi hỏi vào xem tấm bia tưởng niệm được không?'
+    ).isOps,
+    false,
+    'Stone memorial plaque ("bia tưởng niệm") must NOT trip beer ban'
+  );
+  assert.equal(
+    semanticRouter.detectSiteOperations(
+      nlp.normalize('Mang đồ ăn bánh kẹo nước ngọt vào buồng giam được không?'),
+      'Mang đồ ăn bánh kẹo nước ngọt vào buồng giam được không?'
+    ).subType,
+    'OPS_FOOD_DRINK_PROHIBITED'
+  );
+  assert.equal(
+    semanticRouter.detectSiteOperations(
+      nlp.normalize('Mang theo chó mèo vào tham quan được không?'),
+      'Mang theo chó mèo vào tham quan được không?'
+    ).subType,
+    'OPS_PETS_PROHIBITED'
+  );
+
+  // 2. GroqModelPool duration parser, 429 cooldown & proactive headroom rotation
+  assert.equal(parseResetDurationMs('12.5s'), 12500);
+  assert.equal(parseResetDurationMs('250ms'), 250);
+  assert.equal(parseResetDurationMs('1m5s'), 65000);
+
+  const pool = new GroqModelPool();
+  const fakeRes429 = {
+    status: 429,
+    ok: false,
+    headers: {
+      get: (k) => ({ 'retry-after': '12', 'x-ratelimit-remaining-tokens': '0', 'x-ratelimit-reset-tokens': '12s' }[k.toLowerCase()] || null)
+    }
+  };
+  const rl = pool.updateFromResponse('qwen/qwen3.8-27b', fakeRes429);
+  assert.equal(rl.isRateLimited, true);
+  assert.ok(rl.waitMs >= 12000);
+  const availAfter429 = pool.pickAvailableModels(GROQ_MODELS_REASONING);
+  assert.equal(availAfter429.includes('qwen/qwen3.8-27b'), false, 'Cooldown model must be skipped immediately');
+  assert.equal(availAfter429.includes('openai/gpt-oss-20b'), true, 'Third 8k TPM model (gpt-oss-20b) must be available');
+
+  // Proactive rotation when remainingTokens < 2000 on primary while secondary has plenty
+  const fakeLow = {
+    status: 200,
+    ok: true,
+    headers: {
+      get: (k) => ({ 'x-ratelimit-remaining-tokens': '1100', 'x-ratelimit-reset-tokens': '10s' }[k.toLowerCase()] || null)
+    }
+  };
+  const fakeFull = {
+    status: 200,
+    ok: true,
+    headers: {
+      get: (k) => ({ 'x-ratelimit-remaining-tokens': '7500', 'x-ratelimit-reset-tokens': '10s' }[k.toLowerCase()] || null)
+    }
+  };
+  pool.updateFromResponse('openai/gpt-oss-120b', fakeLow);
+  pool.updateFromResponse('openai/gpt-oss-20b', fakeFull);
+  assert.equal(pool.pickAvailableModels(['openai/gpt-oss-120b', 'openai/gpt-oss-20b'])[0], 'openai/gpt-oss-20b');
+
+  // 3. Language check allows isolated VI proper nouns inside valid English/French, while blocking VI sentences
+  assert.equal(isTextInLanguage('The guillotine at Nhà tù Hỏa Lò weighs 50 kg and stands nearly 4 meters high.', 'en'), true);
+  assert.equal(isTextInLanguage('Để bảo tồn di tích lịch sử, Di tích Nhà tù Hỏa Lò nghiêm cấm mang đồ ăn vào bên trong.', 'en'), false);
+  assert.equal(isTextInLanguage('La prison de Nhà tù Hỏa Lò est ouverte tous les jours de 8h à 17h.', 'fr'), true);
+  assert.equal(isTextInLanguage('Để bảo tồn di tích lịch sử, Di tích Nhà tù Hỏa Lò nghiêm cấm mang đồ ăn.', 'zh'), false);
+  assert.equal(isTextInLanguage('火炉监狱博物馆每天上午8点至下午5点开放。', 'zh'), true);
+});

@@ -15,6 +15,21 @@ let eventSource = null;
 let lastRenderedVoiceTime = 0;
 let lastRenderedBeaconTime = 0;
 let latencyTimerInterval = null;
+let pendingLocalAskUntil = 0;
+
+function getBrowserDeviceId() {
+  try {
+    let id = sessionStorage.getItem('hl_browser_device_id');
+    if (!id) {
+      id = 'WEB_' + Math.random().toString(36).slice(2, 10).toUpperCase();
+      sessionStorage.setItem('hl_browser_device_id', id);
+    }
+    return id;
+  } catch (e) {
+    return 'WEB_SESSION';
+  }
+}
+const browserDeviceId = getBrowserDeviceId();
 
 // Hình ảnh minh họa chuẩn phong cách triển lãm di sản (nền sepia/monochrome nghệ thuật)
 const ARTIFACT_IMAGES = {
@@ -153,6 +168,9 @@ function connectSSE() {
   eventSource.addEventListener('VOICE_RESPONSE', (e) => {
     try {
       const data = JSON.parse(e.data);
+      if (Date.now() < pendingLocalAskUntil && data.device_id && data.device_id !== browserDeviceId) {
+        return;
+      }
       handleVoiceResponse(data);
     } catch (err) {}
   });
@@ -249,9 +267,10 @@ async function triggerCode(code) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Language': lockedLang
+        'X-Language': lockedLang,
+        'X-Device-Id': browserDeviceId
       },
-      body: JSON.stringify({ code: code, device_id: 'LOCAL_DASHBOARD', language: lockedLang })
+      body: JSON.stringify({ code: code, device_id: browserDeviceId, language: lockedLang })
     });
     const data = await res.json();
     handleBeaconTrigger(data);
@@ -294,6 +313,7 @@ function initVoiceForm() {
     btn.disabled = true;
 
     const tEnd = Date.now();
+    pendingLocalAskUntil = tEnd + 15000;
     handleVoiceProcessingStart({ question });
 
     try {
@@ -301,10 +321,11 @@ function initVoiceForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Language': lockedLang
+          'X-Language': lockedLang,
+          'X-Device-Id': browserDeviceId
         },
         body: JSON.stringify({
-          device_id: 'LOCAL_DASHBOARD',
+          device_id: browserDeviceId,
           code: code,
           language: lockedLang,
           voice_text: question,
@@ -312,6 +333,7 @@ function initVoiceForm() {
         })
       });
       const data = await res.json();
+      pendingLocalAskUntil = 0;
       handleVoiceResponse(data);
     } catch (err) {
       if (latencyTimerInterval) {
@@ -560,6 +582,7 @@ async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
   const langSelect = document.getElementById('languageLockSelect');
   const lockedLang = langSelect ? langSelect.value : 'vi';
   const tEnd = Date.now();
+  pendingLocalAskUntil = tEnd + 25000;
   handleVoiceProcessingStart({ question: 'Đang chuyển file .WAV lên Whisper STT...' });
 
   try {
@@ -569,12 +592,13 @@ async function uploadWavFileToServer(blob, contentType = 'audio/wav') {
         'Content-Type': contentType || 'audio/wav',
         'X-Artifact-Code': code,
         'X-Language': lockedLang,
-        'X-Device-Id': 'LOCAL_DASHBOARD',
+        'X-Device-Id': browserDeviceId,
         'X-End-Speech-Time': tEnd.toString()
       },
       body: blob
     });
     const data = await res.json();
+    pendingLocalAskUntil = 0;
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     handleVoiceResponse(data);
   } catch (err) {
@@ -598,6 +622,11 @@ function handleVoiceResponse(data) {
   if (chunkStatusTimer) {
     clearInterval(chunkStatusTimer);
     chunkStatusTimer = null;
+  }
+
+  const langSel = document.getElementById('languageLockSelect');
+  if (langSel && data.locked_language && data.device_id !== browserDeviceId) {
+    langSel.value = data.locked_language;
   }
 
   // Ghi nhận timestamp để polling /api/state mỗi 1s KHÔNG gọi đè lại câu trả lời đang phát!
