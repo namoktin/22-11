@@ -1325,9 +1325,13 @@ function isTextInLanguage(text, targetLang) {
     if (viAllCount === 0) return true;
     return viAllRatio <= 0.25 && /\b(the|is|are|was|were|in|at|of|and|to|for|with|from|this|that|you|can|by|on|prison|museum|artifact)\b/i.test(scrubbedForLatinCheck);
   }
-  if (targetLang === 'ja') return hasJP;
-  if (targetLang === 'ko') return hasKR;
-  if (targetLang === 'zh') return hasCJK && !hasJP && !hasKR;
+  const hasViLeakWords = viOnlyCount >= 2 || /\b(chao ban|di tich|nha tu|thuc dan phap|may chem|tu nhan|nghiem cam|la nguoi|duoc dung|sau khi|de thuc hien|khoi nghia|chien si)\b/i.test(scrubbedForLatinCheck);
+  if (targetLang === 'ja') return hasJP && !hasViLeakWords;
+  if (targetLang === 'ko') return hasKR && !hasViLeakWords;
+  if (targetLang === 'zh') {
+    const cjkCount = (text.match(/[\u4E00-\u9FFF]/g) || []).length;
+    return hasCJK && !hasJP && !hasKR && !hasViLeakWords && cjkCount >= Math.min(6, Math.max(2, Math.floor(totalAlpha * 0.4)));
+  }
   if (targetLang === 'fr') {
     if (hasJP || hasKR || hasCJK) return false;
     if (/\b(di tich|nha tu|gia ve|mo cua|nghiem cam|thuc pham)\b/i.test(scrubbedForLatinCheck)) return false;
@@ -1764,7 +1768,7 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
     } else if (lockedLang !== 'vi' && !String(resObj.source || '').includes('🔒')) {
       resObj.source = `${resObj.source} ${tag}`;
     }
-    if (lockedLang !== 'vi' && resObj.reply) {
+    if (resObj.reply) {
       resObj.reply = postPolishForeignTerms(resObj.reply, lockedLang);
     }
     resObj.language = lockedLang;

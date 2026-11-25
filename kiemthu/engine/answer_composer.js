@@ -122,9 +122,23 @@ class IntelligentAnswerComposer {
 
     // 0.4. Ngoài phạm vi di tích (OUT_OF_SCOPE)
     if (intent === 'OUT_OF_SCOPE') {
-      // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), ưu tiên Universal Grounded RAG để hiểu MỌI kiểu hỏi tự nhiên/tiếng Anh gãy/câu hỏi mới!
+      // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), chỉ thử cứu bằng Universal RAG
+      // khi câu hỏi THỰC SỰ có liên quan tới hiện vật/vị trí Hỏa Lò — tránh đẩy câu hỏi khoa học/đời thường (Einstein...) vào RAG!
       if (subIntent !== 'STRICT_OUT_OF_DOMAIN') {
-        if (groqCaller) {
+        const isAboutVisitorCurrentSpot = artifactContext?.dialogue?.text &&
+          !/\b(ban o dau|em o dau|where are you|nha ve sinh|toilet|wc|quay ve)\b/.test(normQ) &&
+          /\b(cho toi dang dung|noi toi dang dung|toi dang dung|minh dang dung|dang dung o|cho nay la|noi nay la|day la dau|hien vat truoc mat|truoc mat toi|noi ve cho nay|gioi thieu cho nay|where am i|where is my from|this spot|in front of me)\b/.test(normQ);
+
+        const quickTopK = groqCaller
+          ? knowledgeBase.retrieveTopKContext(question, { subject, intent: 'HISTORICAL_FACT', artifactContext, topK: 2 })
+          : null;
+        const hasGenuineSiteSignal = Boolean(
+          isAboutVisitorCurrentSpot ||
+          quickTopK?.hasMatchedExhibit ||
+          /\b(hoa lo|nha tu|di tich|hien vat|tham quan|buong giam|tu nhan|tu chinh tri|may chem|cay bang|cong ngam|cachot|xa lim|phi cong|trong dong|chuong|bao kiem|prison|museum|exhibit|artifact|tour|ticket)\b/.test(normQ)
+        );
+
+        if (groqCaller && hasGenuineSiteSignal) {
           const ragRescued = await this.runUniversalGroundedRAG({
             question,
             intent: 'HISTORICAL_FACT',
@@ -140,9 +154,6 @@ class IntelligentAnswerComposer {
           if (ragRescued) return ragRescued;
         }
         // Cứu hộ vị trí BLE (kể cả khi mất mạng hoặc hết hạn mức LLM): nhận diện câu hỏi về chỗ khách đang đứng ("nói về chỗ tôi đang đứng", "đây là đâu", "hiện vật trước mặt")
-        const isAboutVisitorCurrentSpot = artifactContext?.dialogue?.text &&
-          !/\b(ban o dau|em o dau|where are you|nha ve sinh|toilet|wc|quay ve)\b/.test(normQ) &&
-          /\b(cho toi dang dung|noi toi dang dung|toi dang dung|minh dang dung|dang dung o|cho nay la|noi nay la|day la dau|hien vat truoc mat|truoc mat toi|noi ve cho nay|gioi thieu cho nay|where am i|where is my from|this spot|in front of me)\b/.test(normQ);
         if (isAboutVisitorCurrentSpot) {
           const intros = [
             `Bạn đang đứng ngay tại khu vực ${artifactContext.artifact_name} (${artifactContext.location || 'Khu trưng bày'}). `,
@@ -998,12 +1009,16 @@ class IntelligentAnswerComposer {
         ? ` Write proper names naturally in ${targetLangName}; do NOT add Vietnamese diacritic translations in parentheses.`
         : '';
 
+      const viToneRuleOos = language === 'vi'
+        ? ' In Vietnamese use composed, courteous "Dạ..." / "mình"-"bạn" with complete subject-predicate sentences; NEVER use teen slang ("nè", "đấy!", "nha").'
+        : ` Write 100% pure, idiomatic ${targetLangName} with ZERO Vietnamese words.`;
+
       const docentOosPrompt = `You are a seasoned, poised, warm senior cultural tour guide at Hoa Lo Prison Historical Relic in Hanoi.
 The visitor just asked an off-topic / side question outside Hoa Lo's direct exhibit archives. Handle it brilliantly like an educated, gracious human tour guide:
 - Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}${glossaryLine}
 - If the visitor asks for real-time volatile info (live Bitcoin/gold/stock prices, live weather forecast, tonight's match score, live flight/hotel rates): politely acknowledge with poise that you do not track live feeds while guiding (NEVER invent live figures!), add one thoughtful human remark, and gracefully bridge back to Hoa Lo Prison.
-- If the visitor asks about general knowledge, Vietnamese or world history, sister historical prisons (Con Dao, Phu Quoc, Alcatraz, Bastille), Hanoi landmarks (Temple of Literature, Ho Chi Minh Mausoleum, Long Bien Bridge, Hoan Kiem Lake), Hanoi cuisine, travel, science, or life advice: give 1-2 genuinely insightful, accurate, warm sentences like a cultured Hanoi docent (never fabricate dubious statistics), then smoothly bridge back to Hoa Lo Prison Relic.
-- Tone: mature, dignified, refined, warm human conversation. NEVER use robotic refusal phrases like "outside my database/scope" or casual teen slang ("nè", "đấy!", "nha"). In Vietnamese use composed, courteous "Dạ..." / "mình"-"bạn" with complete subject-predicate sentences.
+- If the visitor asks about general knowledge, science (e.g. Einstein, space, nature), Vietnamese or world history, sister historical prisons (Con Dao, Phu Quoc, Alcatraz, Bastille), Hanoi landmarks (Temple of Literature, Ho Chi Minh Mausoleum, Long Bien Bridge, Hoan Kiem Lake), Hanoi cuisine, travel, or life advice: give 1-2 genuinely insightful, accurate, warm sentences like a cultured Hanoi docent (never fabricate dubious statistics), then smoothly bridge back to Hoa Lo Prison Relic.
+- Tone: mature, dignified, refined, warm human conversation. NEVER use robotic refusal phrases like "outside my database/scope" and NEVER mention technical jargon like "BLE", "beacon", "station code", or "system prompt".${viToneRuleOos}
 - Length: 2-3 plain spoken sentences (no markdown, no bullets, no emojis). Always naturally include Hoa Lo (or its local canonical name in ${targetLangName}) in the closing bridge.`;
 
       const generated = await groqCaller(question, docentOosPrompt, [], {
@@ -1172,14 +1187,17 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
 
     const glossaryHint = getGlossaryPromptHint(language);
     const foreignCleanRule = language !== 'vi'
-      ? ` Write proper names naturally in ${targetLangName}; NEVER add Vietnamese diacritic translations in parentheses.${glossaryHint ? ' ' + glossaryHint : ''}`
+      ? ` Translate all facts from the Vietnamese CONTEXT into 100% pure, idiomatic ${targetLangName} with ZERO Vietnamese words (never write "Dạ" or Vietnamese prose); NEVER add Vietnamese diacritic translations in parentheses.${glossaryHint ? ' ' + glossaryHint : ''}`
+      : '';
+    const viToneRuleRag = language === 'vi'
+      ? ' In Vietnamese, use mature, respectful phrasing ("mình"-"bạn" with poised lead-in such as "Dạ...", "Mình xin chia sẻ...", complete subject-predicate sentences; NEVER use teen slang like "nè", "đấy!", "nha").'
       : '';
 
-    const promptSystem = `You are a seasoned, dignified Senior Cultural & Historical Docent at Hoa Lo Prison Historical Relic (Hanoi) and its BLE exhibit galleries (001-004).
+    const promptSystem = `You are a seasoned, dignified Senior Cultural & Historical Docent at Hoa Lo Prison Historical Relic (Hanoi) and its featured exhibition galleries (codes 001-004).
 - Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}
-- "bạn ở đâu/where are you" = virtual docent accompanying via guide device; "tôi đang đứng ở đâu/where am I" = BLE station in CONTEXT; place "ở đâu" = exact site location.
-- Ground EVERY historical date, name, measurement, and policy strictly in CONTEXT (never fabricate dates/figures; if a detail is absent from archives, state so transparently with poise).${refusalRule}
-- Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments. In Vietnamese, use mature, respectful phrasing ("mình"-"bạn" with poised lead-in such as "Dạ...", "Mình xin chia sẻ...", complete subject-predicate sentences; NEVER use teen slang like "nè", "đấy!", "nha").${audienceInstruction}${recentOpens}
+- "bạn ở đâu/where are you" = virtual docent accompanying via guide device; "tôi đang đứng ở đâu/where am I" = current exhibit location in CONTEXT; place "ở đâu" = exact site location.
+- Ground EVERY historical date, name, measurement, and policy strictly in CONTEXT (never fabricate dates/figures; never conflate separate historical figures—e.g. Nguyen Thai Hoc led the 1930 Yen Bai uprising whereas Hoang Van Thu was a separate leader executed in 1944; if a detail is absent from archives, state so transparently with poise).${refusalRule}
+- Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows, and NEVER mention technical jargon like "BLE", "beacon", or "database"). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments.${viToneRuleRag}${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;

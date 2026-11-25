@@ -425,19 +425,33 @@ test('9.5+ Docent Upgrade: 6-language glossary, mature tone, graceful OOS bridge
   const { getGlossaryPromptHint, postPolishForeignTerms } = require(path.join(kiemthuRoot, 'engine', 'heritage_glossary'));
   const { queryKiemThuAI } = require('../server');
 
-  // 1. Canonical 6-language glossary & MT slip cleaner
+  // 1. Canonical 6-language glossary, MT slip cleaner & CJK Vietnamese-leak guard
+  const { isTextInLanguage } = require('../server');
   assert.ok(getGlossaryPromptHint('ko').includes('응우옌 왕조'));
   assert.equal(
-    postPolishForeignTerms('Nguyễn 왕조의 전투기계는 호아로 수용소 (Nhà tù Hỏa Lò)에 있습니다.', 'ko'),
-    '응우옌 왕조의 단두대는 호아로 수용소에 있습니다.'
+    postPolishForeignTerms('Nguyễn 왕조의 전투기계는 일본의 이중 용 왕조 양식이며 호아로 수용소 (Nhà tù Hỏa Lò)에 있습니다.', 'ko'),
+    '응우옌 왕조의 단두대는 쌍룡조일(두 마리 용이 태양을 향하는) 문양이며 호아로 수용소에 있습니다.'
   );
   assert.equal(
-    postPolishForeignTerms('La machine à couper a été utilisée à Yên Bái (Nhà tù Hỏa Lò).', 'fr'),
-    'La guillotine a été utilisée à Yen Bai.'
+    postPolishForeignTerms('La machine à couper a été utilisée à Yên Bái pour Nguyễn Thái Hoc (Nhà tù Hỏa Lò).', 'fr'),
+    'La guillotine a été utilisée à Yen Bai pour Nguyen Thai Hoc.'
+  );
+  assert.equal(
+    postPolishForeignTerms('ノイ・タイ・ホクはイエンバイで処刑されました。', 'ja'),
+    'グエン・タイ・ホックはイエンバイで処刑されました。'
   );
   assert.equal(
     postPolishForeignTerms('1930年在延边使用了断头台 (Cỗ máy chém)。', 'zh'),
     '1930年在安沛使用了断头台。'
+  );
+  assert.equal(
+    isTextInLanguage('Dạ, 阮太学 là người lãnh đạo khởi nghĩa 安沛 năm 1930, thực dân Pháp đã dùng máy chém.', 'zh'),
+    false,
+    'Mixed Vietnamese-Chinese reply MUST fail isTextInLanguage("zh") so it gets cleanly translated'
+  );
+  assert.equal(
+    isTextInLanguage('阮太学是1930年安沛起义的领导人，法国殖民当局将断头台从火炉监狱运往安沛处决了他。', 'zh'),
+    true
   );
 
   // 2. Mature docent tone: zero teen slang ("đâu nè", "nè!", "đấy!")

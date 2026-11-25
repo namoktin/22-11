@@ -9,83 +9,103 @@
  */
 
 const GLOSSARY_BY_LANG = {
+  vi: {
+    promptHint: 'Viết đúng chính tả có dấu tiếng Việt: Nhà tù Hỏa Lò, Hà Nội, Yên Bái, Nguyễn Thái Học, Hoàng Văn Thụ, Đông Sơn, Đạt Hồng, Bảo kiếm Hoàng gia.',
+    replacements: [
+      [/\bHoa\s+Lo\b/g, 'Hỏa Lò'],
+      [/\bHa\s+Noi\b/g, 'Hà Nội'],
+      [/\bYen\s+Bai\b/g, 'Yên Bái'],
+      [/\bNguyen\s+Thai\s+Hoc\b/g, 'Nguyễn Thái Học'],
+      [/\bHoang\s+Van\s+Thu\b/g, 'Hoàng Văn Thụ'],
+      [/\bDong\s+Son\b/g, 'Đông Sơn'],
+      [/\bCon\s+Dao\b/g, 'Côn Đảo']
+    ]
+  },
   en: {
-    promptHint: 'Canonical terms: Hoa Lo Prison, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachot dark cells, Guillotine, Ancient Banyan Tree, Dong Son Bronze Drum, Dat Hong Great Bronze Bell, Nguyen Dynasty Royal Sword, Sacred Night.',
+    promptHint: 'Canonical terms: Hoa Lo Prison, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachot dark cells, Guillotine, Ancient Banyan Tree, Dong Son Bronze Drum, Dat Hong Great Bronze Bell, Nguyen Dynasty Royal Sword, Twin Dragons Facing the Sun motif, Sacred Night.',
     replacements: [
       [/Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison'],
       [/Di tích (?:Lịch sử )?Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison Historical Relic'],
       [/Hỏa Lò/gi, 'Hoa Lo'],
-      [/Nguyễn Thái Học/gi, 'Nguyen Thai Hoc'],
-      [/Hoàng Văn Thụ/gi, 'Hoang Van Thu'],
-      [/Nguyễn Thị Minh Khai/gi, 'Nguyen Thi Minh Khai'],
-      [/Yên Bái/gi, 'Yen Bai'],
+      [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'Nguyen Thai Hoc'],
+      [/Hoàng\s+Văn\s+Th[uụ]/gi, 'Hoang Van Thu'],
+      [/Nguyễn\s+Thị\s+Minh\s+Khai/gi, 'Nguyen Thi Minh Khai'],
+      [/Yên\s+Bái/gi, 'Yen Bai'],
       [/Trống đồng Đông Sơn/gi, 'Dong Son Bronze Drum'],
       [/Đông Sơn/gi, 'Dong Son'],
       [/Đạt Hồng/gi, 'Dat Hong'],
       [/Đại Hồng Chung/gi, 'Great Bronze Bell'],
       [/Bảo kiếm Hoàng gia/gi, 'Royal Sword'],
+      [/Lưỡng Long Triều Nhật/gi, 'Twin Dragons Facing the Sun'],
       [/Đêm Thiêng Liêng/gi, 'Sacred Night'],
       [/Hồ Gươm/gi, 'Hoan Kiem Lake'],
       [/Hà Nội/gi, 'Hanoi']
     ]
   },
   fr: {
-    promptHint: 'Termes officiels : Prison de Hoa Lo, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachots, Guillotine, Badamier historique, Tambour de bronze de Dong Son, Grande Cloche de bronze Dat Hong, Épée royale de la dynastie Nguyen, Nuit Sacrée.',
+    promptHint: 'Termes officiels : Prison de Hoa Lo, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachots, Guillotine, Badamier historique, Tambour de bronze de Dong Son, Grande Cloche de bronze Dat Hong, Épée royale de la dynastie Nguyen, motif des Deux Dragons face au Soleil, Nuit Sacrée.',
     replacements: [
       [/\bmachines?\s+à\s+couper(?:\s+(?:les?\s+)?têtes?)?\b/gi, 'guillotine'],
       [/\bmachine\s+à\s+décapiter\b/gi, 'guillotine'],
       [/Nhà tù Hỏa Lò/gi, 'Prison de Hoa Lo'],
       [/Hỏa Lò/gi, 'Hoa Lo'],
-      [/Nguyễn Thái Học/gi, 'Nguyen Thai Hoc'],
-      [/Hoàng Văn Thụ/gi, 'Hoang Van Thu'],
-      [/Yên Bái/gi, 'Yen Bai'],
+      [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'Nguyen Thai Hoc'],
+      [/Hoàng\s+Văn\s+Th[uụ]/gi, 'Hoang Van Thu'],
+      [/Yên\s+Bái/gi, 'Yen Bai'],
       [/Trống đồng Đông Sơn/gi, 'Tambour de bronze de Dong Son'],
       [/Đông Sơn/gi, 'Dong Son'],
       [/Đạt Hồng/gi, 'Dat Hong'],
+      [/Lưỡng Long Triều Nhật/gi, 'Deux Dragons face au Soleil'],
       [/Đêm Thiêng Liêng/gi, 'Nuit Sacrée'],
       [/Hà Nội/gi, 'Hanoï']
     ]
   },
   ja: {
-    promptHint: '公式用語: ホアロー収容所 (Hoa Lo), メゾン・サントラル (Maison Centrale), イエンバイ (Yen Bai), グエン・タイ・ホック, ホアン・ヴァン・トゥー, カショ独房 (Cachot), ギロチン, 歴史的なモモタマナの木, ドンソン銅鼓, ダットホン大洪鐘, グエン朝王室の宝剣, 聖なる夜.',
+    promptHint: '公式用語: ホアロー収容所 (Hoa Lo), メゾン・サントラル (Maison Centrale), イエンバイ (Yen Bai), グエン・タイ・ホック (Nguyen Thai Hoc), ホアン・ヴァン・トゥー (Hoang Van Thu), カショ独房 (Cachot), ギロチン, 歴史的なモモタマナの木, ドンソン銅鼓, ダットホン大洪鐘, グエン朝王室の宝剣, 双龍朝日文様, 聖なる夜.',
     replacements: [
+      [/ノイ[・\s]?タイ[・\s]?ホク/g, 'グエン・タイ・ホック'],
+      [/トゥンマイ射撃場/g, 'トゥオンマイ射撃場'],
       [/Nhà tù Hỏa Lò/gi, 'ホアロー収容所'],
       [/Hỏa Lò/gi, 'ホアロー'],
-      [/Nguyễn Thái Học/gi, 'グエン・タイ・ホック'],
-      [/Hoàng Văn Thụ/gi, 'ホアン・ヴァン・トゥー'],
-      [/Yên Bái/gi, 'イエンバイ'],
+      [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'グエン・タイ・ホック'],
+      [/Hoàng\s+Văn\s+Th[uụ]/gi, 'ホアン・ヴァン・トゥー'],
+      [/Yên\s+Bái/gi, 'イエンバイ'],
       [/Đông Sơn/gi, 'ドンソン'],
       [/Đạt Hồng/gi, 'ダットホン'],
       [/Bảo Kiếm/gi, '王室の宝剣'],
+      [/Lưỡng Long Triều Nhật/gi, '双龍朝日'],
       [/Hà Nội/gi, 'ハノイ']
     ]
   },
   ko: {
-    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 옌바이 (Yen Bai), 응우옌 타이 혹, 호앙 반 투, 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 방나무, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검, 성스러운 밤.',
+    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 옌바이 (Yen Bai), 응우옌 타이 혹 (Nguyen Thai Hoc), 호앙 반 투 (Hoang Van Thu), 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 방나무, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검, 쌍룡조일(두 마리 용이 태양을 향하는 문양), 성스러운 밤.',
     replacements: [
       [/전투\s*기계|전쟁\s*기계/g, '단두대'],
+      [/일본의\s*이중\s*용(?:\s*왕조)?\s*양식/g, '쌍룡조일(두 마리 용이 태양을 향하는) 문양'],
       [/Nguyễn\s*왕조/gi, '응우옌 왕조'],
       [/Nhà tù Hỏa Lò/gi, '호아로 수용소'],
       [/Hỏa Lò/gi, '호아로'],
-      [/Nguyễn Thái Học/gi, '응우옌 타이 혹'],
-      [/Hoàng Văn Thụ/gi, '호앙 반 투'],
-      [/Yên Bái/gi, '옌바이'],
+      [/Nguyễn\s+Thái\s+H[oọ]c/gi, '응우옌 타이 혹'],
+      [/Hoàng\s+Văn\s+Th[uụ]/gi, '호앙 반 투'],
+      [/Yên\s+Bái/gi, '옌바이'],
       [/Đông Sơn/gi, '동선'],
       [/Đạt Hồng/gi, '닷홍'],
+      [/Lưỡng Long Triều Nhật/gi, '쌍룡조일'],
       [/Hà Nội/gi, '하노이']
     ]
   },
   zh: {
-    promptHint: '标准译名: 火炉监狱 (Hoa Lo), 中央监狱 (Maison Centrale), 安沛 (Yen Bai), 阮太学, 黄文树, 卡绍暗牢 (Cachot), 断头台, 古榄仁树, 东山铜鼓, 达鸿大洪钟, 阮朝皇室宝剑, 神圣之夜.',
+    promptHint: '标准译名: 火炉监狱 (Hoa Lo), 中央监狱 (Maison Centrale), 安沛 (Yen Bai), 阮太学 (Nguyen Thai Hoc), 黄文树 (Hoang Van Thu), 卡绍暗牢 (Cachot), 断头台, 古榄仁树, 东山铜鼓, 达鸿大洪钟, 阮朝皇室宝剑, 双龙朝日纹饰, 神圣之夜.',
     replacements: [
       [/延边/g, '安沛'],
       [/Nhà tù Hỏa Lò/gi, '火炉监狱'],
       [/Hỏa Lò/gi, '火炉'],
-      [/Nguyễn Thái Học/gi, '阮太学'],
-      [/Hoàng Văn Thụ/gi, '黄文树'],
-      [/Yên Bái/gi, '安沛'],
+      [/Nguyễn\s+Thái\s+H[oọ]c/gi, '阮太学'],
+      [/Hoàng\s+Văn\s+Th[uụ]/gi, '黄文树'],
+      [/Yên\s+Bái/gi, '安沛'],
       [/Đông Sơn/gi, '东山'],
       [/Đạt Hồng/gi, '达鸿'],
+      [/Lưỡng Long Triều Nhật/gi, '双龙朝日'],
       [/Hà Nội/gi, '河内']
     ]
   }
@@ -104,8 +124,9 @@ function getGlossaryPromptHint(lang) {
 }
 
 /**
- * Hậu xử lý nhẹ làm sạch danh từ lịch sử cho đầu ra ngoại ngữ (EN/FR/JA/KO/ZH).
- * Không chạm vào tiếng Việt ('vi').
+ * Hậu xử lý nhẹ làm sạch danh từ lịch sử cho đầu ra 6 ngôn ngữ (VI/EN/FR/JA/KO/ZH).
+ * - Với ngoại ngữ: gỡ chú thích tiếng Việt thừa trong ngoặc đơn và sửa lỗi dịch máy danh từ riêng.
+ * - Với tiếng Việt: khôi phục dấu chuẩn cho danh từ riêng nếu LLM vô tình viết không dấu ("Hoa Lo" -> "Hỏa Lò").
  */
 function postPolishForeignTerms(text, lang) {
   if (!text || typeof text !== 'string') return text;
@@ -115,8 +136,10 @@ function postPolishForeignTerms(text, lang) {
 
   let out = text;
 
-  // 1. Gỡ chú thích tiếng Việt có dấu bị chèn thừa trong ngoặc đơn (VD: "호아로 수용소 (Nhà tù Hỏa Lò)")
-  out = out.replace(VI_PARENTHETICAL_RE, '');
+  // 1. Gỡ chú thích tiếng Việt có dấu bị chèn thừa trong ngoặc đơn (chỉ áp dụng cho ngoại ngữ!)
+  if (code !== 'vi') {
+    out = out.replace(VI_PARENTHETICAL_RE, '');
+  }
 
   // 2. Thay thế các lỗi dịch máy / danh từ riêng chưa chuẩn hóa
   for (const [pattern, replacement] of entry.replacements) {
