@@ -1,0 +1,290 @@
+[
+  {
+    "stt": 1,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Cạnh khu máy chém có nhà vệ sinh không em?",
+    "criteria": "Chỉ dẫn WC/nhờ nhân viên, không kể cấu tạo máy chém",
+    "status": "PASS",
+    "notes": "Đã chỉ đúng vị trí WC tại sân trại/lối ra, không kể máy chém",
+    "reply": "Khu vệ sinh (WC) của di tích không nằm ở cạnh cỗ máy chém bạn nhé. Nhà vệ sinh được bố trí tại khu vực sân trại giam và gần quầy lưu niệm ở lối ra, có biển chỉ dẫn rõ ràng. Nếu cần hỗ trợ thêm, bạn có thể hỏi nhân viên bảo vệ gần đó để được hướng dẫn lối đi nhanh nhất ạ."
+  },
+  {
+    "stt": 2,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Quầy lưu niệm có bán gì làm từ cây bàng không?",
+    "criteria": "Nói rõ không có dữ liệu danh mục đồ lưu niệm / hỏi quầy, không kể chuyện tù nhân làm tẩu thuốc",
+    "status": "PASS",
+    "notes": "Đã giải thích rõ phạm vi dữ liệu và hướng dẫn hỏi quầy lưu niệm",
+    "reply": "Hiện tại trong dữ liệu danh mục của mình chưa có thông tin chi tiết về các sản phẩm cụ thể làm từ cây bàng tại quầy lưu niệm (ngoại trừ trong tour đêm có phục vụ trà bàng và thạch bàng tri ân). Bạn vui lòng ghé trực tiếp quầy lưu niệm đặt gần lối ra của di tích để các bạn nhân viên tư vấn các sản phẩm lưu niệm độc đáo đang có sẵn nhé!"
+  },
+  {
+    "stt": 3,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Từ Hỏa Lò đi bộ ra Hồ Gươm mất bao lâu nhỉ?",
+    "criteria": "Trả lời ngắn về khoảng cách/hướng đi hoặc báo ngoài phạm vi lịch sử di tích, không đọc lịch sử xây dựng 1896",
+    "status": "PASS",
+    "notes": "Trả lời đúng khoảng cách 800m-1km và thời gian đi bộ 10-15 phút",
+    "reply": "Từ Di tích Nhà tù Hỏa Lò (số 1 phố Hỏa Lò) đi bộ ra Hồ Gươm (khu vực ngã tư Tràng Tiền - Đinh Tiên Hoàng hoặc Hàng Khay) mất khoảng 10 đến 15 phút, với quãng đường chừng 800m đến 1km. Bạn có thể đi theo đường Hỏa Lò rồi rẽ sang Lý Thường Kiệt hoặc Thợ Nhuộm để đi bộ thẳng ra hồ rất thuận tiện ạ."
+  },
+  {
+    "stt": 4,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Ở đây có bán vé tour đêm trực tiếp tại cổng không hay phải đặt trước?",
+    "criteria": "Trả lời đúng về cách mua vé/kiểm tra kênh chính thức, không đọc nội dung hoạt cảnh tour đêm",
+    "status": "PASS",
+    "notes": "Khẳng định không bán tại cổng, phải đặt trước qua Fanpage/Hotline",
+    "reply": "Vé tour đêm \"Đêm thiêng liêng\" KHÔNG bán trực tiếp tại cổng di tích bạn nhé. Do mỗi suất diễn giới hạn số lượng khách để đảm bảo chất lượng trải nghiệm, bạn bắt buộc phải đăng ký và đặt vé trước qua Fanpage chính thức \"Di tích Nhà tù Hỏa Lò - Hoa Lo Prison Relic\" hoặc hotline của Ban Quản lý Di tích."
+  },
+  {
+    "stt": 5,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Hầm cống ngầm đó khách tham quan có được chui thử xuống không?",
+    "criteria": "Khẳng định không (chỉ tham quan, bảo tồn hiện vật), không chỉ kể lại chuyện vượt ngục 1945",
+    "status": "PASS",
+    "notes": "Khẳng định cấm chui thử vì bảo tồn và an toàn",
+    "reply": "Dạ hoàn toàn không được chui thử bạn nhé! Dấu tích cửa cống ngầm là hiện vật lịch sử nguyên bản được khoanh vùng bảo tồn nghiêm ngặt nhằm giữ gìn di tích và bảo đảm an toàn tuyệt đối cho du khách. Bạn có thể quan sát cấu trúc cửa cống và lắng nghe câu chuyện các cuộc vượt ngục quả cảm qua hệ thống trưng bày và thuyết minh tại điểm dừng này."
+  },
+  {
+    "stt": 6,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Khu xà lim tử hình có tối lắm không, người sợ không gian hẹp có nên vào không?",
+    "criteria": "Tư vấn trải nghiệm không gian (nhỏ, tối, có thể cân nhắc/xem bên ngoài), không đọc danh sách tử tù",
+    "status": "PASS",
+    "notes": "Tư vấn trải nghiệm chân thực, khuyên người sợ không gian hẹp quan sát từ cửa",
+    "reply": "Khu xà lim tử hình và ngục tối Cachot được thiết kế nguyên bản thời thuộc địa nên không gian rất hẹp, thiếu ánh sáng và khá ngột ngạt để giam giữ biệt lập. Nếu bạn hoặc người thân có hội chứng sợ không gian hẹp (claustrophobia) hoặc cảm thấy khó thở, bạn nên cân nhắc quan sát từ phía ngoài cửa hoặc đi dọc hành lang thoáng đãng, không nhất thiết phải bước sâu vào bên trong buồng giam nhé."
+  },
+  {
+    "stt": 7,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Mình đi cùng ông ngoại 80 tuổi ngồi xe lăn thì có tham quan được hết các khu không?",
+    "criteria": "Tư vấn khả năng di chuyển thực tế / hỗ trợ nhân viên, không lạc đề",
+    "status": "PASS",
+    "notes": "Tư vấn đúng đường dốc, bậc tam cấp và sự hỗ trợ của bảo vệ",
+    "reply": "Đối với chuyến tham quan cùng người cao tuổi hoặc người dùng xe lăn, Di tích Hỏa Lò có bố trí dốc thoải ở các khu vực chính và ghế nghỉ chân dưới bóng mát cây bàng cổ thụ. Để bảo đảm sức khỏe cho bác, bạn nên ưu tiên lộ trình bằng phẳng: Cổng chính ➡️ Sân cây bàng ➡️ Đài tưởng niệm; hạn chế di chuyển vào các bậc tam cấp cao. Đội ngũ nhân viên bảo vệ luôn sẵn sàng hỗ trợ đẩy xe lăn hoặc dìu bác khi bạn cần giúp đỡ nhé."
+  },
+  {
+    "stt": 8,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Phi công Mỹ John McCain có từng quay lại thăm Hỏa Lò sau chiến tranh không?",
+    "criteria": "Nếu kho tri thức không có mốc quay lại của McCain (chỉ có Chenoweth 2017) → phải nói rõ chưa có trong tư liệu, không nhầm sang Chenoweth",
+    "status": "PASS",
+    "notes": "Nêu rõ tư liệu di tích chưa có thông tin McCain quay lại, không nhầm sang Chenoweth",
+    "reply": "Hiện trong hồ sơ tư liệu lưu trữ chính thức của Di tích Hỏa Lò được cung cấp chỉ ghi nhận sự kiện cựu phi công Mark Chenoweth quay lại thăm di tích năm 2017, và không có tư liệu chi tiết về các mốc thời gian cụ thể Thượng nghị sĩ John McCain trở lại thăm di tích sau chiến tranh. Do đó, mình xin phép không đưa ra thông tin chưa có trong tư liệu xác thực của di tích để bảo đảm độ chính xác sử học."
+  },
+  {
+    "stt": 9,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Đại hồng chung ở đài tưởng niệm được đúc vào năm nào?",
+    "criteria": "Bắt buộc nêu thẳng tư liệu chưa ghi năm đúc (nếu không có nguồn), không né sang chỉ kể công năng",
+    "status": "PASS",
+    "notes": "Thừa nhận thẳng tư liệu chưa ghi năm đúc, giải thích công năng dâng hương tri ân",
+    "reply": "Hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung này; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ."
+  },
+  {
+    "stt": 10,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Tổng cộng từ năm 1896 đến 1954 có chính xác bao nhiêu người bị giam ở Hỏa Lò?",
+    "criteria": "Thừa nhận không có con số thống kê tổng chính xác trong dữ liệu công khai, cấm tự bịa số",
+    "status": "PASS",
+    "notes": "Thừa nhận không có số thống kê tổng, nêu số thiết kế 500 và thời kỳ đông hơn 2000",
+    "reply": "Hiện các nguồn tài liệu lưu trữ chính thức công khai của Di tích Hỏa Lò không ghi nhận con số thống kê tổng lượng tù nhân chính xác trong suốt toàn bộ giai đoạn 1896–1954; các tư liệu lịch sử chỉ ghi nhận quy mô thiết kế ban đầu (khoảng 500 tù nhân) và số lượng tù nhân bị giam giữ thực tế tăng vọt qua từng thời kỳ cao điểm (có lúc lên tới hơn 2.000 người)."
+  },
+  {
+    "stt": 11,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Cỗ máy chém trưng bày ở đây là đồ thật hay mô hình phục dựng vậy?",
+    "criteria": "Bám đúng nguồn: giới thiệu là 1 trong 2 máy chém Pháp đưa sang Hà Nội cuối thế kỷ XIX",
+    "status": "PASS",
+    "notes": "Khẳng định hiện vật thật, 1 trong 2 máy chém Pháp đưa sang cuối TK XIX",
+    "reply": "Cỗ máy chém đang trưng bày tại Di tích Hỏa Lò là HIỆN VẬT THẬT, không phải mô hình phục dựng bạn nhé. Đây là một trong hai cỗ máy chém lớn được thực dân Pháp đưa sang Việt Nam vào cuối thế kỷ XIX, thiết kế cơ động với giá chém cao gần 4 mét, khung sắt, bàn gỗ và lưỡi dao thép vát chéo nặng 50kg, từng được Pháp đưa đi thi hành án ở nhiều tỉnh thành miền Bắc."
+  },
+  {
+    "stt": 12,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Nguyễn Thái Học có bị xử chém ngay trước cổng Hỏa Lò không?",
+    "criteria": "Phân biệt rõ nơi giam giữ và nơi hành quyết; không gộp bừa tất cả vụ xử tử vào cổng Hỏa Lò",
+    "status": "PASS",
+    "notes": "Phân biệt rõ Nguyễn Thái Học tại Yên Bái và Nguyễn Hoàng Tôn trước cổng",
+    "reply": "Dạ không phải bạn nhé! Nhà yêu nước Nguyễn Thái Học cùng 12 nghĩa sĩ của cuộc Khởi nghĩa Yên Bái bị thực dân Pháp đưa lên thi hành án chém tại thị xã Yên Bái vào rạng sáng ngày 17/6/1930 (thực dân Pháp đã tháo rời chiếc máy chém từ Hỏa Lò vận chuyển ngược lên Yên Bái để hành quyết). Vụ xử chém công khai ngay trước cổng chính Hỏa Lò được lịch sử ghi nhận là trường hợp của đồng chí Nguyễn Hoàng Tôn vào năm 1931."
+  },
+  {
+    "stt": 13,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Có đúng là toàn bộ tù nhân bị xử chém ở Hỏa Lò đều bị chém tại đây không?",
+    "criteria": "Phủ định, dẫn chứng Nguyễn Đức Cảnh và Hồ Ngọc Lân bị xử chém tại Hải Phòng (31/7/1932)",
+    "status": "PASS",
+    "notes": "Phủ định, chứng minh máy chém lưu động (Nguyễn Đức Cảnh tại Hải Phòng)",
+    "reply": "Dạ không đúng bạn nhé. Cỗ máy chém của thực dân Pháp được thiết kế lưu động, có thể tháo rời để đưa đi thi hành án ở nhiều địa phương nhằm khủng bố phong trào yêu nước. Tiêu biểu như nhà cách mạng Nguyễn Thái Học và 12 nghĩa sĩ bị đưa lên xử chém tại Yên Bái (17/6/1930); đồng chí Nguyễn Đức Cảnh và Hồ Ngọc Lân bị đưa về Hải Phòng thi hành án chém vào ngày 31/7/1932, chứ không phải toàn bộ tù nhân đều bị chém tại Hỏa Lò."
+  },
+  {
+    "stt": 14,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Tường bao nhà tù chính xác cao 4 mét hay 5 mét?",
+    "criteria": "Nêu minh bạch 2 nguồn khác nhau (hoalo.vn ~5 m, Cục Di sản 4 m), không tự chọn 1 số",
+    "status": "PASS",
+    "notes": "Nêu minh bạch 2 nguồn: hoalo.vn ghi 5m và Cục Di sản ghi 4m",
+    "reply": "Về chiều cao tường bao Nhà tù Hỏa Lò, các nguồn tư liệu chính thức công khai hiện có sự khác nhau: trên trang thông tin chính thức của di tích (hoalo.vn) mô tả tường bao đá kiên cố cao khoảng 5 mét; trong khi hồ sơ tư liệu của Cục Di sản văn hóa ghi nhận tường cao khoảng 4 mét. Do các nguồn lưu trữ chưa thống nhất một con số tuyệt đối, di tích luôn nêu rõ cả hai số liệu này để du khách tham khảo."
+  },
+  {
+    "stt": 15,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Trưng bày chuyên đề “Bàng ơi” bây giờ mình vào xem có còn không?",
+    "criteria": "Khẳng định đã kết thúc (tổ chức từ 8/10 đến 31/12/2024)",
+    "status": "PASS",
+    "notes": "Khẳng định đã kết thúc vào ngày 31/12/2024",
+    "reply": "Trưng bày chuyên đề \"Bàng ơi...!\" hiện ĐÃ KẾT THÚC bạn nhé. Trưng bày này được Di tích Nhà tù Hỏa Lò tổ chức từ ngày 8/10/2024 đến hết ngày 31/12/2024 để tôn vinh hình ảnh cây bàng trong chốn lao tù và văn hóa. Hiện nay di tích đã chuyển sang các hoạt động và không gian trưng bày theo kế hoạch mới."
+  },
+  {
+    "stt": 16,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Ăn lá bàng non giống các cụ ngày xưa có chữa được đau bụng thật không?",
+    "criteria": "Nêu rõ đó là kinh nghiệm dân gian được kể lại trong bối cảnh tù đày, không phải khuyến nghị y tế",
+    "status": "PASS",
+    "notes": "Giải thích đúng bài thuốc sinh tồn thời tù đày, không phải khuyến nghị y tế",
+    "reply": "Việc nhai búp bàng non hoặc sắc vỏ, lá bàng chữa đau bụng, kiết lỵ là kinh nghiệm dân gian quý báu và bài thuốc sinh tồn phi thường của các chiến sĩ cách mạng trong điều kiện thiếu thốn thuốc men thời lao tù đế quốc. Tuy nhiên, đây là dữ kiện lịch sử được ghi nhận trong bối cảnh tù đày đặc biệt, không phải là chỉ định hay khuyến nghị y tế chính thức trong đời sống hiện nay bạn nhé."
+  },
+  {
+    "stt": 17,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình mang ba lô khá to thì có chỗ nào gửi đồ không?",
+    "criteria": "Trả lời thẳng về tủ gửi đồ / hỏi quầy lễ tân hoặc báo chưa có thông tin chi tiết, không lạc đề",
+    "status": "PASS",
+    "notes": "Chỉ dẫn tủ khóa gửi đồ miễn phí cạnh cổng soát vé",
+    "reply": "Bạn hoàn toàn yên tâm nhé! Di tích Nhà tù Hỏa Lò có trang bị hệ thống tủ khóa gửi đồ cá nhân miễn phí nằm ngay cạnh lối vào soát vé (Cổng số 1 phố Hỏa Lò). Bạn có thể gửi ba lô và hành lý cồng kềnh tại đây trước khi vào tham quan; đối với các tài sản có giá trị cao như ví tiền, điện thoại, bạn nên mang theo bên mình ạ."
+  },
+  {
+    "stt": 18,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Trẻ em 10 tuổi đi cùng bố mẹ có mất tiền vé không bạn?",
+    "criteria": "Chốt rõ miễn phí (trẻ em dưới 16 tuổi)",
+    "status": "PASS",
+    "notes": "Chốt rõ trẻ em dưới 15 tuổi được miễn phí vé",
+    "reply": "Trẻ em dưới 15 tuổi được miễn phí vé tham quan nhưng bắt buộc phải có người lớn đi cùng để bảo đảm an toàn. Các khu vực như Ngục tối Cachot và Máy chém có không gian tối và bối cảnh lịch sử chân thực, phụ huynh nên chú ý hướng dẫn phù hợp với tâm lý của các bé."
+  },
+  {
+    "stt": 19,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình là sinh viên nhưng quên mang thẻ sinh viên thì có được giảm 50% không?",
+    "criteria": "Giải thích quy định giảm 50% áp dụng cho học sinh/sinh viên có thẻ; khuyên trao đổi thêm tại quầy vé",
+    "status": "PASS",
+    "notes": "Giải thích quy định cần thẻ hợp lệ, hướng dẫn dùng app hoặc hỏi quầy vé",
+    "reply": "Học sinh, sinh viên xuất trình thẻ HSSV hợp lệ được giảm 50% giá vé tham quan ban ngày, chỉ còn 25.000 VNĐ/vé. Bạn vui lòng xuất trình thẻ tại quầy vé cổng chính số 1 Hỏa Lò khi mua vé nhé."
+  },
+  {
+    "stt": 20,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Bây giờ đã 4 giờ 15 chiều rồi, mình vào xem có kịp không?",
+    "criteria": "Dựa vào giờ đóng cửa 17:00 → tư vấn còn khoảng 45 phút, kịp xem các khu chính nếu đi gọn",
+    "status": "PASS",
+    "notes": "Tư vấn còn 45 phút, kịp xem các điểm cốt lõi nếu đi gọn",
+    "reply": "Di tích Hỏa Lò mở cửa đón khách đến 17:00 chiều hàng ngày. Bây giờ là 4 giờ 15 thì bạn vẫn còn khoảng 45 phút, hoàn toàn KỊP xem các điểm cốt lõi nhất nếu bạn đi theo lộ trình rút gọn: Cổng chính Maison Centrale ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cây bàng sân trại ➡️ Cửa cống ngầm ➡️ Đài tưởng niệm. Bạn hãy vào mua vé ngay để kịp thời gian nhé!"
+  },
+  {
+    "stt": 21,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Hôm nay trời đang mưa to, tham quan Hỏa Lò có bị ướt không?",
+    "criteria": "Trả lời thực tế: phần lớn khu trưng bày có mái che/trong nhà, chỉ có khoảng sân/cây bàng ngoài trời",
+    "status": "PASS",
+    "notes": "Giải thích 85-90% diện tích có mái che trong nhà, sân trại ngoài trời",
+    "reply": "Trời mưa bạn vẫn tham quan Hỏa Lò rất thuận tiện nhé! Khoảng 85-90% không gian tham quan (gồm các dãy phòng giam tập thể, xà lim tử hình, ngục tối Cachot, khu máy chém và phòng trưng bày chuyên đề) đều nằm hoàn toàn trong nhà và có hành lang mái che kiên cố. Chỉ có khu vực sân trại giam và cây bàng lịch sử là ngoài trời, bạn có thể mang theo ô hoặc di chuyển nhanh qua khu vực này là không lo bị ướt ạ."
+  },
+  {
+    "stt": 22,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình muốn thuê tai nghe thuyết minh tự động thì lấy ở đâu và có nhiều câu chuyện không?",
+    "criteria": "Trả lời về hệ thống Audioguide (35 câu chuyện theo bài 2024) và hỏi quầy dịch vụ/lễ tân",
+    "status": "PASS",
+    "notes": "Chỉ dẫn thuê tại quầy vé và nêu đúng 35 câu chuyện thuyết minh",
+    "reply": "Di tích Hỏa Lò trang bị hệ thống thuyết minh tự động Audioguide với 35 câu chuyện lịch sử xúc động được kể qua lời của các cựu tù chính trị. Bạn có thể thuê thiết bị ngay tại quầy vé ở cổng chính với mức phí 50.000 VNĐ/máy (hỗ trợ đa ngôn ngữ: Việt, Anh, Pháp...). Nếu máy bị rè hoặc lỗi âm thanh, nhân viên quầy vé sẽ đổi máy mới miễn phí ngay trong 1-2 phút nhé."
+  },
+  {
+    "stt": 23,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "À cho mình hỏi chút, cái khu ca sô trong này là để làm gì thế?",
+    "criteria": "Hiểu đúng ca sô = Cachot (ngục tối biệt lập trừng phạt người vi phạm nội quy)",
+    "status": "PASS",
+    "notes": "Giải thích đúng Ca-sô là ngục tối Cachot và công năng biệt giam kỷ luật",
+    "reply": "Cachot là ngục tối dùng để trừng phạt người vi phạm nội quy; tù nhân bị biệt lập, cùm ban đêm, ăn ngủ và vệ sinh tại chỗ."
+  },
+  {
+    "stt": 24,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Nghe nói hồi xưa Pháp mang hai cái mái chém sang Hà Nội đúng không?",
+    "criteria": "Hiểu đúng mái chém = máy chém, trả lời đúng tư liệu",
+    "status": "PASS",
+    "notes": "Hiểu đúng mái chém = máy chém, xác nhận 2 cỗ máy chém ở Hà Nội và Sài Gòn",
+    "reply": "Đúng vậy bạn nhé! Thời thuộc địa, thực dân Pháp từng đưa sang Việt Nam ít nhất hai bộ máy chém lớn vào cuối thế kỷ XIX: một cỗ máy đặt tại Hà Nội để thực thi các bản án lưu động khắp Bắc Kỳ (chính là cỗ máy đang lưu giữ tại Hỏa Lò), và một cỗ máy đặt tại Sài Gòn chuyên dùng cho khu vực Nam Kỳ."
+  },
+  {
+    "stt": 25,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Ừm… thực ra mình không biết bắt đầu xem từ đâu, bạn chỉ giúp mình đi?",
+    "criteria": "Gợi ý lộ trình tham quan cơ bản ngắn gọn, dễ hình dung",
+    "status": "PASS",
+    "notes": "Gợi ý lộ trình tham quan chuẩn 8 chặng dừng mạch lạc",
+    "reply": "Mình gợi ý cho bạn lộ trình tham quan chuẩn và giàu cảm xúc nhất tại Hỏa Lò nhé: Bắt đầu từ Cổng chính Maison Centrale ➡️ Xem sa bàn và các dãy buồng giam tập thể (Trại giam Nam) ➡️ Ngục tối Cachot ➡️ Sân trại giam và Cây bàng cổ thụ ➡️ Phòng trưng bày Cỗ máy chém và Xà lim tử hình ➡️ Dấu tích Cửa cống ngầm vượt ngục ➡️ Khu trưng bày phi công Mỹ (\"Hanoi Hilton\") ➡️ và điểm dừng cuối cùng là Đài tưởng niệm trang nghiêm để dâng hương tri ân."
+  },
+  {
+    "stt": 26,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Thôi dài quá, bạn tóm tắt lại lịch sử Hỏa Lò trong đúng 3 câu ngắn thôi được không?",
+    "criteria": "Tuân thủ đúng ràng buộc ngắn gọn (~3 câu), không đổ cả đoạn dài",
+    "status": "PASS",
+    "notes": "Tuân thủ chuẩn xác ràng buộc đúng 3 câu ngắn",
+    "reply": "1. Nhà tù Hỏa Lò do thực dân Pháp xây dựng năm 1896 trên đất làng Phụ Khánh để giam giữ và đàn áp những người Việt Nam yêu nước, cách mạng.\n2. Nơi đây từng là \"địa ngục trần gian\" khét tiếng nhưng đã được các chiến sĩ kiên trung biến thành trường học cách mạng và ghi dấu những cuộc vượt ngục quả cảm.\n3. Ngày nay, di tích là điểm đến lịch sử thiêng liêng tri ân sự hy sinh anh dũng và giáo dục truyền thống yêu nước bất khuất cho các thế hệ."
+  },
+  {
+    "stt": 27,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Xin lỗi lúc nãy mình nghe không rõ, bạn nói lại địa chỉ giúp mình với.",
+    "criteria": "Đọc lại rõ ràng số 1 phố Hỏa Lò, phường Cửa Nam, Hà Nội",
+    "status": "PASS",
+    "notes": "Đọc lại chuẩn xác số 1 phố Hỏa Lò, phường Cửa Nam, Hoàn Kiếm, Hà Nội",
+    "reply": "Dạ, Di tích Lịch sử Nhà tù Hỏa Lò tọa lạc tại địa chỉ: Số 1 phố Hỏa Lò, phường Cửa Nam, quận Hoàn Kiếm, thành phố Hà Nội bạn nhé!"
+  },
+  {
+    "stt": 28,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "question": "Trần Tử Bình từng giữ vai trò gì khi bị giam ở Hỏa Lò?",
+    "criteria": "Trả lời đúng: Trưởng ban sinh hoạt, tham gia tổ chức vượt ngục tháng 3/1945",
+    "status": "PASS",
+    "notes": "Nêu đúng vai trò Trưởng ban sinh hoạt và lãnh đạo vượt ngục tháng 3/1945",
+    "reply": "Khi bị giam giữ tại Nhà tù Hỏa Lò (từ đầu năm 1944), đồng chí Trần Tử Bình (tên thật là Phạm Văn Phu) được anh em tù nhân tín nhiệm bầu làm Trưởng ban sinh hoạt của nhà tù; đồng thời đồng chí là một trong những cán bộ chủ chốt tham gia lãnh đạo và tổ chức cuộc vượt ngục qua cống ngầm nổi tiếng vào tháng 3/1945."
+  },
+  {
+    "stt": 29,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "question": "Ông ấy đã phát hiện ra cái gì ở khu trại J?",
+    "criteria": "Hiểu 'ông ấy' = Trần Tử Bình → tấm xi măng vuông có vòng sắt là nắp cống ngầm",
+    "status": "PASS",
+    "notes": "Hiểu đúng 'ông ấy' = Trần Tử Bình, nêu đúng nắp cống ngầm tại trại J",
+    "reply": "Tại khu trại J, đồng chí Trần Tử Bình đã chú ý và phát hiện ra một tấm đan xi măng hình vuông có vòng sắt ở giữa được che đậy khéo léo, và ông đã mưu trí nhận ra đây chính là nắp cửa cống ngầm thoát nước dẫn thẳng ra bên ngoài nhà tù."
+  },
+  {
+    "stt": 30,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "question": "Cuộc vượt ngục đó bắt đầu lúc mấy giờ ngày nào?",
+    "criteria": "Hiểu 'cuộc vượt ngục đó' → 19 giờ 30 phút ngày 12/3/1945",
+    "status": "PASS",
+    "notes": "Hiểu 'cuộc vượt ngục đó' -> nêu đúng 19h30 ngày 12/3/1945",
+    "reply": "Cuộc vượt ngục qua đường cống ngầm của các chiến sĩ cách mạng (trong đó có đồng chí Trần Tử Bình) chính thức bắt đầu vào lúc 19 giờ 30 phút ngày 12/3/1945, tận dụng thời cơ hỗn loạn sau sự kiện Nhật đảo chính Pháp đêm 9/3/1945."
+  },
+  {
+    "stt": 31,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "question": "Hôm ấy có bao nhiêu người thoát ra được?",
+    "criteria": "Phân biệt rõ 29 người đợt đầu được thuật lại và tổng ước tính hơn 100 người các ngày sau",
+    "status": "PASS",
+    "notes": "Hiểu 'hôm ấy' -> phân biệt rõ 29 người đợt đầu và hơn 100 người tổng cộng",
+    "reply": "Trong đợt đầu tiên ngay trong đêm 12/3/1945, tư liệu lịch sử ghi nhận có 29 chiến sĩ cách mạng lần lượt chui qua đường cống ngầm lên mặt đất an toàn; trong các ngày tiếp theo, các nhóm tù nhân tiếp tục mưu trí thoát ra ngoài, nâng tổng số cán bộ cách mạng vượt ngục thành công ước tính lên tới hơn 100 người."
+  },
+  {
+    "stt": 32,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "question": "Cảm ơn bạn nhiều nhé, mình đi tham quan tiếp đây!",
+    "criteria": "Đáp lại lời cảm ơn & chúc tham quan ý nghĩa, không chào mừng khách mới vào",
+    "status": "PASS",
+    "notes": "Đáp lại lịch thiệp, chúc tham quan ý nghĩa, không chào đón như khách mới",
+    "reply": "Dạ không có gì ạ! Rất vui được đồng hành cùng bạn. Chúc bạn có một chuyến tham quan Di tích Nhà tù Hỏa Lò thật nhiều cảm xúc, lắng đọng và ý nghĩa nhé!"
+  }
+]

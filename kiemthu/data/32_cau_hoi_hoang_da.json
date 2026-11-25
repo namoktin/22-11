@@ -1,0 +1,199 @@
+[
+  {
+    "stt": 1,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Cạnh khu máy chém có nhà vệ sinh không em?",
+    "criteria": "Chỉ dẫn WC/nhờ nhân viên, không kể cấu tạo máy chém"
+  },
+  {
+    "stt": 2,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Quầy lưu niệm có bán gì làm từ cây bàng không?",
+    "criteria": "Nói rõ không có dữ liệu danh mục đồ lưu niệm / hỏi quầy, không kể chuyện tù nhân làm tẩu thuốc"
+  },
+  {
+    "stt": 3,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Từ Hỏa Lò đi bộ ra Hồ Gươm mất bao lâu nhỉ?",
+    "criteria": "Trả lời ngắn về khoảng cách/hướng đi hoặc báo ngoài phạm vi lịch sử di tích, không đọc lịch sử xây dựng 1896"
+  },
+  {
+    "stt": 4,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Ở đây có bán vé tour đêm trực tiếp tại cổng không hay phải đặt trước?",
+    "criteria": "Trả lời đúng về cách mua vé/kiểm tra kênh chính thức, không đọc nội dung hoạt cảnh tour đêm"
+  },
+  {
+    "stt": 5,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Hầm cống ngầm đó khách tham quan có được chui thử xuống không?",
+    "criteria": "Khẳng định không (chỉ tham quan, bảo tồn hiện vật), không chỉ kể lại chuyện vượt ngục 1945"
+  },
+  {
+    "stt": 6,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Khu xà lim tử hình có tối lắm không, người sợ không gian hẹp có nên vào không?",
+    "criteria": "Tư vấn trải nghiệm không gian (nhỏ, tối, có thể cân nhắc/xem bên ngoài), không đọc danh sách tử tù"
+  },
+  {
+    "stt": 7,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Mình đi cùng ông ngoại 80 tuổi ngồi xe lăn thì có tham quan được hết các khu không?",
+    "criteria": "Tư vấn khả năng di chuyển thực tế / hỗ trợ nhân viên, không lạc đề"
+  },
+  {
+    "stt": 8,
+    "group": "Bẫy chứa từ khóa cốt lõi",
+    "question": "Phi công Mỹ John McCain có từng quay lại thăm Hỏa Lò sau chiến tranh không?",
+    "criteria": "Nếu kho tri thức không có mốc quay lại của McCain (chỉ có Chenoweth 2017) → phải nói rõ chưa có trong tư liệu, không nhầm sang Chenoweth"
+  },
+  {
+    "stt": 9,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Đại hồng chung ở đài tưởng niệm được đúc vào năm nào?",
+    "criteria": "Bắt buộc nêu thẳng tư liệu chưa ghi năm đúc (nếu không có nguồn), không né sang chỉ kể công năng"
+  },
+  {
+    "stt": 10,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Tổng cộng từ năm 1896 đến 1954 có chính xác bao nhiêu người bị giam ở Hỏa Lò?",
+    "criteria": "Thừa nhận không có con số thống kê tổng chính xác trong dữ liệu công khai, cấm tự bịa số"
+  },
+  {
+    "stt": 11,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Cỗ máy chém trưng bày ở đây là đồ thật hay mô hình phục dựng vậy?",
+    "criteria": "Bám đúng nguồn: giới thiệu là 1 trong 2 máy chém Pháp đưa sang Hà Nội cuối thế kỷ XIX"
+  },
+  {
+    "stt": 12,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Nguyễn Thái Học có bị xử chém ngay trước cổng Hỏa Lò không?",
+    "criteria": "Phân biệt rõ nơi giam giữ và nơi hành quyết; không gộp bừa tất cả vụ xử tử vào cổng Hỏa Lò"
+  },
+  {
+    "stt": 13,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Có đúng là toàn bộ tù nhân bị xử chém ở Hỏa Lò đều bị chém tại đây không?",
+    "criteria": "Phủ định, dẫn chứng Nguyễn Đức Cảnh và Hồ Ngọc Lân bị xử chém tại Hải Phòng (31/7/1932)"
+  },
+  {
+    "stt": 14,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Tường bao nhà tù chính xác cao 4 mét hay 5 mét?",
+    "criteria": "Nêu minh bạch 2 nguồn khác nhau (hoalo.vn ~5 m, Cục Di sản 4 m), không tự chọn 1 số"
+  },
+  {
+    "stt": 15,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Trưng bày chuyên đề “Bàng ơi” bây giờ mình vào xem có còn không?",
+    "criteria": "Khẳng định đã kết thúc (tổ chức từ 8/10 đến 31/12/2024)"
+  },
+  {
+    "stt": 16,
+    "group": "Bẫy thiếu dữ liệu & Sử liệu",
+    "question": "Ăn lá bàng non giống các cụ ngày xưa có chữa được đau bụng thật không?",
+    "criteria": "Nêu rõ đó là kinh nghiệm dân gian được kể lại trong bối cảnh tù đày, không phải khuyến nghị y tế"
+  },
+  {
+    "stt": 17,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình mang ba lô khá to thì có chỗ nào gửi đồ không?",
+    "criteria": "Trả lời thẳng về tủ gửi đồ / hỏi quầy lễ tân hoặc báo chưa có thông tin chi tiết, không lạc đề"
+  },
+  {
+    "stt": 18,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Trẻ em 10 tuổi đi cùng bố mẹ có mất tiền vé không bạn?",
+    "criteria": "Chốt rõ miễn phí (trẻ em dưới 16 tuổi)"
+  },
+  {
+    "stt": 19,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình là sinh viên nhưng quên mang thẻ sinh viên thì có được giảm 50% không?",
+    "criteria": "Giải thích quy định giảm 50% áp dụng cho học sinh/sinh viên có thẻ; khuyên trao đổi thêm tại quầy vé"
+  },
+  {
+    "stt": 20,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Bây giờ đã 4 giờ 15 chiều rồi, mình vào xem có kịp không?",
+    "criteria": "Dựa vào giờ đóng cửa 17:00 → tư vấn còn khoảng 45 phút, kịp xem các khu chính nếu đi gọn"
+  },
+  {
+    "stt": 21,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Hôm nay trời đang mưa to, tham quan Hỏa Lò có bị ướt không?",
+    "criteria": "Trả lời thực tế: phần lớn khu trưng bày có mái che/trong nhà, chỉ có khoảng sân/cây bàng ngoài trời"
+  },
+  {
+    "stt": 22,
+    "group": "Dịch vụ & Tình huống thực tế",
+    "question": "Mình muốn thuê tai nghe thuyết minh tự động thì lấy ở đâu và có nhiều câu chuyện không?",
+    "criteria": "Trả lời về hệ thống Audioguide (35 câu chuyện theo bài 2024) và hỏi quầy dịch vụ/lễ tân"
+  },
+  {
+    "stt": 23,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "À cho mình hỏi chút, cái khu ca sô trong này là để làm gì thế?",
+    "criteria": "Hiểu đúng ca sô = Cachot (ngục tối biệt lập trừng phạt người vi phạm nội quy)"
+  },
+  {
+    "stt": 24,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Nghe nói hồi xưa Pháp mang hai cái mái chém sang Hà Nội đúng không?",
+    "criteria": "Hiểu đúng mái chém = máy chém, trả lời đúng tư liệu"
+  },
+  {
+    "stt": 25,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Ừm… thực ra mình không biết bắt đầu xem từ đâu, bạn chỉ giúp mình đi?",
+    "criteria": "Gợi ý lộ trình tham quan cơ bản ngắn gọn, dễ hình dung"
+  },
+  {
+    "stt": 26,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Thôi dài quá, bạn tóm tắt lại lịch sử Hỏa Lò trong đúng 3 câu ngắn thôi được không?",
+    "criteria": "Tuân thủ đúng ràng buộc ngắn gọn (~3 câu), không đổ cả đoạn dài"
+  },
+  {
+    "stt": 27,
+    "group": "Lời nói tự nhiên & Lỗi STT",
+    "question": "Xin lỗi lúc nãy mình nghe không rõ, bạn nói lại địa chỉ giúp mình với.",
+    "criteria": "Đọc lại rõ ràng số 1 phố Hỏa Lò, phường Cửa Nam, Hà Nội"
+  },
+  {
+    "stt": 28,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "sessionId": "multi_turn_session_wild_01",
+    "question": "Trần Tử Bình từng giữ vai trò gì khi bị giam ở Hỏa Lò?",
+    "criteria": "Trả lời đúng: Trưởng ban sinh hoạt, tham gia tổ chức vượt ngục tháng 3/1945"
+  },
+  {
+    "stt": 29,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "sessionId": "multi_turn_session_wild_01",
+    "question": "Ông ấy đã phát hiện ra cái gì ở khu trại J?",
+    "criteria": "Hiểu 'ông ấy' = Trần Tử Bình → tấm xi măng vuông có vòng sắt là nắp cống ngầm"
+  },
+  {
+    "stt": 30,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "sessionId": "multi_turn_session_wild_01",
+    "question": "Cuộc vượt ngục đó bắt đầu lúc mấy giờ ngày nào?",
+    "criteria": "Hiểu 'cuộc vượt ngục đó' → 19 giờ 30 phút ngày 12/3/1945"
+  },
+  {
+    "stt": 31,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "sessionId": "multi_turn_session_wild_01",
+    "question": "Hôm ấy có bao nhiêu người thoát ra được?",
+    "criteria": "Phân biệt rõ 29 người đợt đầu được thuật lại và tổng ước tính hơn 100 người các ngày sau"
+  },
+  {
+    "stt": 32,
+    "group": "Chuỗi đa lượt (Multi-turn)",
+    "sessionId": "multi_turn_session_wild_01",
+    "question": "Cảm ơn bạn nhiều nhé, mình đi tham quan tiếp đây!",
+    "criteria": "Đáp lại lời cảm ơn & chúc tham quan ý nghĩa, không chào mừng khách mới vào"
+  }
+]

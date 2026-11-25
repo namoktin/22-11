@@ -1,0 +1,1640 @@
+{
+  "HL-507": {
+    "question_id": "HL-507",
+    "ai_answer": "Sa bàn được chế tác theo tỷ lệ thu nhỏ 1/200, tái hiện chính xác khuôn viên 12.908 mét vuông nguyên thủy. Những khối nhà sơn màu sẫm, tương phản với tường bao, biểu thị các khu trại giam tập thể nam và nữ. Chúng từng là nơi giam giữ hàng nghìn tù chính trị trong điều kiện khắc nghiệt. Phần diện tích còn lại ngày nay chỉ chiếm góc Đông Nam, bao gồm cổng chính, khu xà lim tử hình và miệng cống ngầm lịch sử.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 547,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Diện tích 2.434 m² còn lại ngày nay nằm ở góc Đông Nam của tổng thể khu đất 12.908 m² trước kia, bao gồm cổng chính trên phố Hỏa Lò, một phần dãy phòng giam tập thể nam, khu trại giam nữ, khu ngục tối Cachot, khu xà lim tử hình (Khu D), khoảng sân cây bàng cùng miệng cống ngầm lịch sử. Phần diện tích phía Bắc và phía Tây xưa là các trại giam lớn, nhà bếp, bệnh xá và khu hành chính mở rộng."
+  },
+  "HL-520": {
+    "question_id": "HL-520",
+    "ai_answer": "Có. Giai đoạn 1913 đến 1930, thực dân Pháp tiến hành mở rộng quy mô nhà tù để đối phó với phong trào cách mạng. Họ không chỉ xây thêm các dãy trại giam mới mà còn cải tạo, gia tăng mật độ giam giữ. Thiết kế ban đầu chỉ chứa khoảng 460 đến 500 tù nhân, nhưng nhờ các đợt cơi nới này, sức chứa được nâng lên đáng kể. Khi cao trào 1930–1931 bùng nổ, số tù nhân bị nhồi nhét lên tới 1.800–2.000 người, gấp ba đến bốn lần công suất thiết kế ban đầu.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 625,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo thiết kế ban đầu (tính đến năm 1913 theo định mức chật hẹp 2 người trên 1 m² giường nằm), Hỏa Lò chỉ có sức chứa khoảng 460 đến 500 tù nhân. Tuy nhiên, trong những cao trào cách mạng như 1930–1931, 1939–1945 hay 1950–1954, thực dân Pháp bắt bớ ồ ạt khiến số người bị nhồi nhét thường xuyên lên tới 1.800–2.000 tù nhân, gấp 3 đến 4 lần thiết kế."
+  },
+  "HL-574": {
+    "question_id": "HL-574",
+    "ai_answer": "Không phải mặt sàn hay tấm gỗ kê đầu. Trong phòng giam tập thể, các đồng chí tù chính trị đã tận dụng chính bệ xi măng dài, nơi họ nằm ngủ, làm nơi học tập. Dưới ánh đèn lờ mờ, họ ngồi kề sát nhau, người biết chữ giảng giải lý luận và văn hóa cho người chưa biết. Một đồng chí luôn canh cửa để báo hiệu khi lính tuần tra đến. Đây là cách họ giữ vững tinh thần và tri thức giữa chốn lao tù khắc nghiệt.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 548,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dù bị cùm chân vào buổi tối, các tù chính trị vẫn phân công nhau ngồi kề sát để người biết chữ dạy cho người chưa biết, hoặc giảng miệng lý luận chính trị, lịch sử dân tộc bằng giọng thì thầm vừa đủ nghe. Luôn có một đồng chí nằm gần cửa giữ nhiệm vụ nghe tiếng chân lính tuần tra để báo hiệu dừng ngay kịp lúc."
+  },
+  "HL-551": {
+    "question_id": "HL-551",
+    "ai_answer": "Trong những buồng giam chật chội, các chiến sĩ cách mạng không dùng bạo lực mà dùng sự kiên nhẫn và tình người. Họ chủ động chia sẻ thức ăn, thuốc men, giúp đỡ những tên \"cập rằng\" thường phạm đang bị cô lập. Khi thấy sự đoàn kết và phẩm chất cao thượng của tù chính trị, nhiều kẻ hung hãn đã chùn bước, ngừng bắt nạt. Thậm chí, họ còn ngầm báo tin khi có lệnh tra tấn hoặc chuyển buồng. Bằng cách biến kẻ thù nội bộ thành người bảo vệ, các chiến sĩ đã giữ vững khối đại đoàn kết, bảo vệ an toàn cho những đồng chí mới vào buồng tập thể giữa vòng vây của cai ngục Pháp.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 673,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, trong buồng giam chung, cai ngục thường chọn những tên tù thường phạm to khỏe, hung hãn làm \"cập rằng\" (cai buồng) để thay mặt cai ngục giữ trật tự, chia cơm, bắt nạt bạn tù và dò la báo cáo nhất cử nhất động của tù chính trị. Khi bị cảm hóa hoặc đối mặt với sự đoàn kết của tập thể tù chính trị, nhiều tên cập rằng đã chùn bước hoặc ngầm hỗ trợ cách mạng."
+  },
+  "HL-546": {
+    "question_id": "HL-546",
+    "ai_answer": "Nước uống trong các buồng giam tập thể chủ yếu là nước lã lấy từ bể nước chung trong sân, không phải nước đun sôi. Do điều kiện giam giữ khắc nghiệt và thiếu thốn, tù nhân phải dùng chung một chiếc thùng gỗ lớn đặt cố định trong phòng. Mỗi ngày, lính canh hoặc tù trưởng sẽ múc nước từ bể sân đổ vào thùng này. Mọi người dùng chung một chiếc gáo duy nhất để múc nước uống, dẫn đến nguy cơ lây nhiễm bệnh tật rất cao. Việc thiếu nước sạch và vệ sinh kém là một trong những nguyên nhân khiến nhiều chiến sĩ cách mạng mắc bệnh tiêu chảy, kiết lỵ và suy kiệt sức khỏe trong thời gian bị giam cầm tại đây.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 603,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, chiếc thùng gỗ hoặc thùng tôn có nắp đặt ngay góc cuối bệ nằm chính là thùng vệ sinh dùng chung cho toàn bộ hàng chục tù nhân trong phòng giam tập thể. Mọi nhu cầu đại tiểu tiện suốt ngày đêm khi cửa phòng khóa kín đều phải giải quyết trực tiếp tại chiếc thùng này."
+  },
+  "HL-565": {
+    "question_id": "HL-565",
+    "ai_answer": "Thực dân Pháp thường lợi dụng những tên tù thường phạm hung hãn, gọi là \"cập rằng\", để cai quản và dò la tin tức. Các chi bộ tù chính trị không đối đầu trực diện mà dùng chiến lược cảm hóa, thuyết phục. Khi tập thể đoàn kết, nhiều \"cập rằng\" chùn bước hoặc ngầm hỗ trợ. Đồng thời, chi bộ áp dụng quy tắc bảo mật nghiêm ngặt: chỉ liên lạc qua những người đã được kiểm chứng, chia nhỏ tổ chức, và dùng tín hiệu riêng. Sự cảnh giác này giúp chi bộ tồn tại, phát triển ngay trong lòng địch, biến nơi giam cầm thành chiến trường thầm lặng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 589,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, trong buồng giam chung, cai ngục thường chọn những tên tù thường phạm to khỏe, hung hãn làm \"cập rằng\" (cai buồng) để thay mặt cai ngục giữ trật tự, chia cơm, bắt nạt bạn tù và dò la báo cáo nhất cử nhất động của tù chính trị. Khi bị cảm hóa hoặc đối mặt với sự đoàn kết của tập thể tù chính trị, nhiều tên cập rằng đã chùn bước hoặc ngầm hỗ trợ cách mạng."
+  },
+  "HL-578": {
+    "question_id": "HL-578",
+    "ai_answer": "Có, đó là hệ quả tàn khốc và phổ biến. Tư thế cùm cổ chân cố định trên bệ dốc ngược suốt nhiều tuần khiến máu ứ đọng, gây phù nề nghiêm trọng. Khi ra tù, nhiều cựu tù phải đối mặt với teo cơ bắp chân do bất động kéo dài. Đặc biệt, khớp cổ chân và đầu gối bị biến dạng vĩnh viễn, khiến việc đi lại trở nên khó khăn, đau đớn và hạn chế suốt phần đời còn lại.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 538,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi ô xà lim đơn Cachot chỉ có diện tích chừng 2–3 mét vuông với chiều dài vừa sát thân người và trần rất thấp. Người tù bị cùm cố định ngay trên bệ xi măng chật hẹp đó nên hoàn toàn không có khoảng trống đi lại, chỉ có thể nằm cứng đơ hoặc ngồi bó gối co quắp suốt nhiều tuần."
+  },
+  "HL-575": {
+    "question_id": "HL-575",
+    "ai_answer": "Trần vòm gạch dày ấy không nhằm tiết kiệm diện tích, mà là công cụ áp chế tâm lý tàn khốc. Với chiều cao chỉ nhỉnh hơn đầu người, nó tạo ra cảm giác đè nén vật lý liên tục, khiến tù nhân luôn trong trạng thái co quắp, bất an. Kết hợp với không gian 2-3 mét vuông và ánh sáng tối tăm, cấu trúc này bóp nghẹt ý chí, biến mỗi hơi thở thành một cuộc chiến sinh tồn. Đây là thiết kế có chủ đích để hủy hoại tinh thần, chứ không đơn thuần là giải pháp kiến trúc.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 540,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi ô xà lim đơn Cachot chỉ có diện tích chừng 2–3 mét vuông với chiều dài vừa sát thân người và trần rất thấp. Người tù bị cùm cố định ngay trên bệ xi măng chật hẹp đó nên hoàn toàn không có khoảng trống đi lại, chỉ có thể nằm cứng đơ hoặc ngồi bó gối co quắp suốt nhiều tuần."
+  },
+  "HL-550": {
+    "question_id": "HL-550",
+    "ai_answer": "Đúng vậy, đó chính là thủ đoạn tàn nhẫn của bọn “cập rằng”. Chúng chiếm giữ những vị trí thoáng mát, rộng rãi nhất trong buồng giam, biến nơi ở của mình thành đặc quyền. Đối với tù chính trị mới đến, chúng bắt nộp “lệ buồng” hoặc lao động khổ sai. Ai không tuân lệnh sẽ bị đánh đập tàn tệ. Hành vi này không chỉ bóc lột thể chất mà còn nhằm chia rẽ, làm suy yếu tinh thần đoàn kết của những người tù cách mạng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 729,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, trong buồng giam chung, cai ngục thường chọn những tên tù thường phạm to khỏe, hung hãn làm \"cập rằng\" (cai buồng) để thay mặt cai ngục giữ trật tự, chia cơm, bắt nạt bạn tù và dò la báo cáo nhất cử nhất động của tù chính trị. Khi bị cảm hóa hoặc đối mặt với sự đoàn kết của tập thể tù chính trị, nhiều tên cập rằng đã chùn bước hoặc ngầm hỗ trợ cách mạng."
+  },
+  "HL-545": {
+    "question_id": "HL-545",
+    "ai_answer": "Trong những đợt bị giam cầm khắc nghiệt, tù nhân không thể xin nước từ thùng uống để lau người vì nguồn nước sinh hoạt bị kiểm soát chặt chẽ. Họ buộc phải dùng khăn ẩm vắt kiệt nước, lau qua loa mặt và cổ để giảm bớt cảm giác ngột ngạt. Mồ hôi trộn lẫn bụi bẩn tạo môi trường lý tưởng cho ghẻ lở phát triển. Nhiều đồng chí phải chịu đựng ngứa ngáy, đau đớn mà không có thuốc men hay điều kiện vệ sinh tối thiểu. Sự chịu đựng ấy là minh chứng cho ý chí thép, giúp họ vượt qua thử thách thể xác để giữ vững niềm tin cách mạng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 614,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bệ xi măng trong phòng giam tập thể được đổ dốc nghiêng từ phía tường về phía lối đi ở giữa là để thuận tiện cho cai ngục quan sát toàn bộ mặt và thân người tù từ ô cửa chính, đồng thời giúp nước khi dội rửa sàn chảy dồn xuống rãnh giữa. Ngoài ra độ dốc còn gây mỏi lưng, khó trở mình khi tù nhân bị cùm chân."
+  },
+  "HL-563": {
+    "question_id": "HL-563",
+    "ai_answer": "Khung lưới thép đó không phải để ngăn tù nhân ném vật lên đập vỡ bóng đèn. Thực tế, nó là lồng bảo vệ để tránh va chạm cơ học hoặc chuột bọ phá hoại dây điện. Mục đích chính của hệ thống chiếu sáng này là để cai ngục quan sát qua mắt thần, kiểm tra xem tù nhân có di chuyển hay tháo cùm vào ban đêm không. Ánh sáng yếu và vị trí treo cao giúp giám sát liên tục mà không cần lính canh trực tiếp bên trong phòng giam.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 516,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dọc hành lang chính có bóng đèn mờ bật suốt đêm để lính canh tuần tra, còn bên trong phòng giam tập thể thường chỉ có ngọn đèn công suất yếu treo tít trên cao để cai ngục nhìn qua mắt thần kiểm tra xem tù nhân có tự ý tháo cùm hay di chuyển vào ban đêm không."
+  },
+  "HL-544": {
+    "question_id": "HL-544",
+    "ai_answer": "Các thanh thép rèn đặc này có đường kính khoảng 25 đến 30 milimét. Chúng được tán và hàn chặt vào khung với khe hở cực hẹp, chỉ vừa lọt một bàn tay. Thiết kế này đảm bảo dù người tù có gầy gò đến đâu cũng không thể lách đầu hay bả vai chui qua. Sự vững chắc tuyệt đối này khiến việc vượt ngục gần như bất khả thi, trừ khi dùng công cụ cưa sắt như trong vụ 16 tử tù năm 1951.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 605,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các song sắt cửa sổ tại Hỏa Lò được rèn từ thép đặc đường kính lớn, hàn hoặc tán chặt vào nhau với khoảng hở rất hẹp đúng như bạn quan sát, chỉ vừa lọt một bàn tay. Thiết kế này đảm bảo dù người tù có gầy gò đến mấy cũng không thể lách đầu hay bả vai chui qua nếu không cưa gãy song sắt."
+  },
+  "HL-562": {
+    "question_id": "HL-562",
+    "ai_answer": "Thực tế, bệnh tật không chờ đợi một mốc thời gian cố định. Trong những buồng giam nhồi nhét tới gần một trăm người, chỉ sau vài tuần đầu, sự thiếu vệ sinh trầm trọng và chế độ ăn uống cực kỳ thiếu thốn đã khiến kiết lỵ và phù thũng bùng phát mạnh mẽ. Không khí ngột ngạt, ẩm thấp cùng tình trạng quá tải khiến sức đề kháng của các chiến sĩ suy giảm nhanh chóng. Chỉ trong vòng một đến hai tháng, nhiều người đã rơi vào trạng thái gầy sọp, hốc hác như những tấm ảnh tư liệu bạn đang quan sát. Đây là hệ quả tất yếu của sự tàn bạo trong chính sách giam giữ, nơi con người bị tước đoạt gần như mọi điều kiện sống tối thiểu.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 659,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi phòng giam tập thể diện tích chừng vài chục mét vuông ban đầu chỉ thiết kế cho khoảng 30–40 người, nhưng vào những đợt khủng bố trắng sau phong trào 1930–1931 hoặc thời kỳ 1950–1954, thực dân Pháp từng nhồi nhét tới 80–100 người, thậm chí đông hơn trong một buồng giam chật chội."
+  },
+  "HL-573": {
+    "question_id": "HL-573",
+    "ai_answer": "Thực tế, họ không thể trở mình. Với bề rộng chỉ 30 đến 40 cm, mỗi người bị ép sát vai nhau như cá mòi trong hộp. Bục xi măng còn được đổ dốc nghiêng về phía lối đi, khiến việc xoay trở trở nên cực kỳ khó khăn, đặc biệt khi chân bị cùm. Sự bất tiện này không chỉ để gây đau đớn thể xác mà còn giúp cai ngục dễ dàng quan sát toàn bộ thân hình tù nhân từ ô cửa chính. Trong bóng tối, họ chỉ có thể nằm im, chịu đựng sự chật chội và mỏi lưng triền miên.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 581,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong những thời kỳ nhà tù quá tải giam tới hàng nghìn người, không gian nằm trên bục xi măng của mỗi tù nhân chỉ rộng khoảng 30 đến 40 cm—vừa đủ để nằm nghiêng ép sát vai nhau như cá mòi xếp hộp. Có những giai đoạn người ta thậm chí phải nằm chen cả xuống lối đi hẹp ở giữa hai dãy bục."
+  },
+  "HL-549": {
+    "question_id": "HL-549",
+    "ai_answer": "Cánh cửa gỗ lim này có bề dày khoảng mười lăm phân. Kết cấu đặc biệt ở chỗ, mặt trong chỉ là gỗ phẳng bọc tôn, không có điểm tựa để bẩy. Toàn bộ cơ cấu khóa và thanh then cài đều nằm ở mặt ngoài hành lang. Thiết kế này khiến tù nhân tay không gần như bất lực trước lực va đập, đảm bảo sự an toàn tuyệt đối cho nhà tù thời Pháp thuộc.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 480,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cánh cửa thép của xà lim tử hình được gia cố bằng khung thép bản dày kết hợp hàng chục đinh tán thép nặng trĩu để chịu được mọi lực va đập từ bên trong. Trọng lượng cửa rất nặng nên mỗi lần mở cửa tiếng bản lề và chốt sắt vang rền khắp dãy hành lang."
+  },
+  "HL-508": {
+    "question_id": "HL-508",
+    "ai_answer": "Cổng chính Maison Centrale quay mặt thẳng ra phố Hỏa Lò theo hướng Đông Nam. Phía đối diện bên kia đường xưa, nay là khu phố cổ sầm uất, nhưng thời Pháp thuộc lại là khu vực tập trung nhiều trụ sở hành chính và cảnh sát mật thám. Kiến trúc cổng vòm bề thế, mang phong cách Tân cổ điển, được thiết kế nhằm phô trương quyền lực uy nghiêm của chính quyền bảo hộ. Từ vị trí sân trong, khi nhìn qua cổng ra phố, du khách có thể cảm nhận rõ sự đối lập giữa không gian giam giữ lạnh lẽo bên trong và nhịp sống bên ngoài. Cấu trúc này phản ánh tư duy quy hoạch thuộc địa, nơi nhà tù không chỉ là nơi giam giữ mà còn là biểu tượng răn đe, đồng bộ với hệ thống công quyền Pháp xung quanh.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 682,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Diện tích 2.434 m² còn lại ngày nay nằm ở góc Đông Nam của tổng thể khu đất 12.908 m² trước kia, bao gồm cổng chính trên phố Hỏa Lò, một phần dãy phòng giam tập thể nam, khu trại giam nữ, khu ngục tối Cachot, khu xà lim tử hình (Khu D), khoảng sân cây bàng cùng miệng cống ngầm lịch sử. Phần diện tích phía Bắc và phía Tây xưa là các trại giam lớn, nhà bếp, bệnh xá và khu hành chính mở rộng."
+  },
+  "HL-512": {
+    "question_id": "HL-512",
+    "ai_answer": "Đúng như bạn quan sát. Ô cửa nhỏ bên cạnh chính là lối đi bộ dành cho lính gác, quản giáo và nhân viên hành chính. Họ ra vào đây để làm nhiệm vụ, kiểm tra sổ sách hoặc tuần tra. Trong khi đó, cánh cổng sắt lớn chỉ được mở trong những trường hợp đặc biệt, chủ yếu là khi xe bít bùng chở phạm nhân mới đến hoặc khi di chuyển tù nhân ra ngoài. Việc tách biệt hai lối ra vào này giúp nhà tù kiểm soát chặt chẽ, đảm bảo sự cách ly tuyệt đối giữa khu vực giam giữ và bên ngoài, đồng thời hạn chế tối đa việc tù nhân tiếp xúc với người lạ.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 608,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cặp cánh cổng sắt lớn gắn đinh tán ở mặt tiền là cấu kiện kiến trúc cổ tiêu biểu còn được bảo tồn nguyên vẹn tại lối vào chính của nhà tù từ cuối thế kỷ XIX. Với độ dày thép rèn và hệ thống then cài to nặng, mỗi lần đóng mở đều phải có lính gác túc trực mở chốt và kiểm soát nghiêm ngặt từng lượt ra vào."
+  },
+  "HL-559": {
+    "question_id": "HL-559",
+    "ai_answer": "Đúng vậy. Mỗi năm, tù nhân chỉ được phát hai bộ quần áo vải thô màu nâu hoặc xám. Chất liệu vải cứng, thô ráp, nhanh sờn rách và mỏng đi sau thời gian dài sử dụng. Khi quần áo đã rách bươm, tù nhân vẫn phải tiếp tục mặc mà không được cấp mới. Họ thường phải tự vá lại bằng những mảnh vải vụn hoặc chịu đựng sự khó chịu, đau đớn do vải cứa vào da thịt. Quy định này nhằm mục đích kiểm soát chặt chẽ và gây áp lực tâm lý lên người bị giam giữ.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 564,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đường kính vòng sắt hẹp lại thô ráp khiến cổ chân tù nhân rất dễ bị trầy xước, lở loét chảy máu mỗi khi cựa quậy. Nếu lính gác không phát hiện, các chiến sĩ đôi khi phải xé một mẩu gấu áo cũ hoặc lấy giẻ mỏng lén quấn quanh cổ chân để giảm vết cứa sắt vào thịt."
+  },
+  "HL-561": {
+    "question_id": "HL-561",
+    "ai_answer": "Kẻng báo hiệu lệnh khóa cùm chân thường vang lên vào khoảng 21 giờ tối. Từ khoảnh khắc ấy, lệnh cấm tuyệt đối phát ra tiếng nói được áp dụng nghiêm ngặt. Nếu tù nhân trong buồng tập thể nói chuyện hơi to đến mức ngoài hành lang nghe thấy, cả buồng sẽ bị trừng phạt tập thể. Cai ngục có thể cắt giảm khẩu phần ăn, khóa cửa bịt tối nhiều ngày hoặc tăng cường cùm chân cả ngày lẫn đêm. Biện pháp này nhằm gây áp lực tinh thần cực lớn, buộc mọi người phải tuyệt đối im lặng và tự giác kiểm soát hành vi của đồng đội.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 914,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cai ngục Pháp thường áp dụng biện pháp trừng phạt tập thể cực kỳ hà khắc: không chỉ đưa cá nhân bị nghi ngờ đi hỏi cung và biệt giam Cachot, chúng còn cắt giảm khẩu phần ăn, khóa cửa bịt tối nhiều ngày hoặc tăng cường cùm chân cả ngày lẫn đêm đối với cả buồng giam để gây áp lực tinh thần."
+  },
+  "HL-517": {
+    "question_id": "HL-517",
+    "ai_answer": "\"Maison Centrale\" là tên gọi chính thức, nhấn mạnh vai trò nhà tù trung ương lớn nhất Đông Dương. \"Prison Centrale de Hanoi\" là cách gọi mô tả địa lý, thường xuất hiện trong các văn bản hành chính cụ thể hoặc hồ sơ lưu trữ. Hai cách gọi này không phân chia thời kỳ rõ rệt mà thường được dùng song song tùy theo ngữ cảnh văn bản. \"Maison Centrale\" mang tính danh xưng biểu tượng, còn \"Prison Centrale de Hanoi\" chỉ rõ vị trí tại Hà Nội. Cả hai đều chỉ cùng một công trình kiên cố bậc nhất, nơi giam giữ tù chính trị từ Bắc và Trung Kỳ trước khi đày đi Côn Đảo hay Sơn La.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 639,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các bản án bằng tiếng Pháp đóng dấu Hội đồng Đề hình (Commission Criminelle) hay Tòa án Binh trưng bày là bản gốc hoặc bản sao lưu trữ từ phông hồ sơ mật thời Pháp thuộc, ghi rõ danh tính, quê quán và tội danh chính trị \"phá rối trị an\" hoặc \"chống lại chính quyền bảo hộ\" của từng chiến sĩ bị kết án."
+  },
+  "HL-543": {
+    "question_id": "HL-543",
+    "ai_answer": "Cai ngục không dùng đèn pin rọi trực tiếp vào mặt tù nhân. Họ đi dọc lối đi trung tâm, dùng gậy sắt gõ mạnh vào bục xi măng hoặc chân cùm của từng người. Tiếng gõ vang lên là tín hiệu bắt buộc tù nhân phải trả lời. Ai im lặng hoặc phản ứng chậm sẽ bị đánh đập ngay lập tức. Cách làm này vừa kiểm đếm nhanh, vừa duy trì sự sợ hãi tột độ trong bóng tối.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 507,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bệ xi măng trong phòng giam tập thể được đổ dốc nghiêng từ phía tường về phía lối đi ở giữa là để thuận tiện cho cai ngục quan sát toàn bộ mặt và thân người tù từ ô cửa chính, đồng thời giúp nước khi dội rửa sàn chảy dồn xuống rãnh giữa. Ngoài ra độ dốc còn gây mỏi lưng, khó trở mình khi tù nhân bị cùm chân."
+  },
+  "HL-560": {
+    "question_id": "HL-560",
+    "ai_answer": "Trong những ngày tháng tù đày khắc nghiệt, khi thiếu thốn mọi thứ, các chiến sĩ cách mạng đã dùng chính những mảnh vải rách từ áo tù để băng bó vết thương. Họ khéo léo xé nhỏ, làm sạch và đắp lên những chỗ da thịt bị tổn thương do đòn roi. Hành động giản dị ấy không chỉ là biện pháp y tế tạm thời, mà còn là biểu tượng sống động của tình đồng chí. Mỗi mảnh vải được chia sẻ đều chứa đựng sự hy sinh thầm lặng, giúp nhau vượt qua nỗi đau thể xác và giữ vững niềm tin chiến đấu giữa bốn bức tường nhà tù.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 631,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bức tranh minh họa màn tra tấn đổ nước xà phòng, nước mắm hoặc nước ớt vào mũi miệng phản ánh thủ đoạn hỏi cung dã man phổ biến tại Sở Mật thám Đông Dương lẫn các phòng hỏi cung thời Pháp trước và trong khi giam tại Hỏa Lò, khiến bụng nạn nhân trương phình rồi bị dẫm lên bụng cho trào máu."
+  },
+  "HL-516": {
+    "question_id": "HL-516",
+    "ai_answer": "Những bản lề thép rèn nguyên khối này là hiện vật gốc từ thời kỳ xây dựng nhà tù, không phải đồ thay thế. Chúng được đặt chế tạo và vận chuyển từ Pháp sang bằng đường biển, kết hợp cùng gỗ lim siêu bền. Thiết kế rèn thủ công tinh xảo giúp chịu lực cực tốt, bảo đảm an ninh nghiêm ngặt suốt hàng trăm năm. Hiện chúng vẫn được bảo tồn nguyên vẹn, minh chứng cho kỹ thuật cơ khí chính xác và sự kiên cố của công trình từ cuối thế kỷ XIX.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 861,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các nguyên liệu xây dựng như gỗ lim vốn là gỗ quý của rừng nhiệt đới Đông Dương hoặc được đưa đi gia công cơ khí chính xác, kết hợp cùng các bộ khóa thép, bản lề thép rèn đúc tinh xảo đặt chế tạo và vận chuyển từ Pháp sang bằng đường biển. Sự kết hợp giữa gỗ lim siêu bền không mối mọt và phụ kiện cơ khí Pháp giúp cánh cửa chịu lực tốt hàng trăm năm."
+  },
+  "HL-564": {
+    "question_id": "HL-564",
+    "ai_answer": "Không chính xác hoàn toàn. Nhà tù không cấm phát đũa vì sợ tù nhân mài thành vũ khí. Thực tế, do điều kiện giam giữ khắc nghiệt và thiếu thốn, tù nhân phải tự tay gọt đũa từ cành bàng khô hoặc thanh tre. Họ dùng mảnh sắt tây cùn, mảnh sành vỡ hay đá mài để tỉ mỉ khoét, gọt suốt nhiều tuần lễ. Chiếc thìa gỗ mộc mạc bạn thấy chính là kết quả của sự kiên nhẫn và trí tuệ ấy, giúp họ ăn uống qua ngày trong hoàn cảnh bị tước đoạt mọi tiện nghi cơ bản.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 934,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Những chiếc bát sắt tráng men tróc sơn, sứt mẻ và thìa gỗ trưng bày tại đây là sự kết hợp giữa hiện vật gốc được bảo tồn từ chính cơ sở vật chất của Nhà tù Hỏa Lò sau giải phóng Thủ đô năm 1954 và kỷ vật do các cựu tù nhân, gia đình trao tặng lại cho Ban quản lý di tích."
+  },
+  "HL-511": {
+    "question_id": "HL-511",
+    "ai_answer": "Tầng hai mặt tiền ấy xưa kia là phòng làm việc của chánh giám ngục và bộ phận hành chính. Không gian này có cửa sổ lớn, thông thoáng, tạo sự đối lập rõ rệt với các buồng giam u tối phía sau. Sự khác biệt về ánh sáng và không khí ấy phản ánh trực quan trật tự quyền lực trong nhà tù. Du khách có thể quan sát kỹ cấu trúc cửa sổ lá chớp gỗ sơn xanh để cảm nhận rõ hơn sự phân cấp nghiêm ngặt thời Pháp thuộc.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 550,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, khu nhà gần cổng chính có cửa sổ lớn và không gian thông thoáng hơn hẳn là nơi đặt phòng làm việc của chánh giám ngục, bộ phận hành chính sổ sách và trạm trực ban chỉ huy lính gác. Sự đối lập giữa khu làm việc sáng sủa phía trước và các buồng giam u tối phía sau phản ánh rõ rệt trật tự quyền lực trong nhà tù."
+  },
+  "HL-542": {
+    "question_id": "HL-542",
+    "ai_answer": "Không có quy định cố định khóa chân trái hay phải. Mỗi tối, lính gác chỉ yêu cầu tù nhân đặt cổ chân vào hốc sắt, sau đó luồn thanh sắt xuyên qua và khóa chốt. Việc thay đổi tư thế là bất khả thi vì cả hàng chục người bị khóa chung trên một thanh dài suốt đêm. Muốn trở mình hay xoay lách, cả dãy phải phối hợp cực kỳ đau đớn. Không có chuyện tự buộc giẻ rách để chống thâm tím, vì họ không thể tự tháo cùm hay di chuyển tự do. Mọi cử động nhỏ đều bị hạn chế nghiêm ngặt, khiến việc vệ sinh cá nhân hay nghỉ ngơi trở nên vô cùng khổ sở và bất tiện.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 615,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dọc theo mép dưới của bệ xi măng đặt một thanh sắt tròn dài luồn qua các khoen sắt gắn chặt xuống nền và các gờ khuyết cổ chân. Mỗi buổi tối, tù nhân phải đặt một hoặc hai cổ chân vào phần hốc sắt, sau đó lính gác luồn thanh sắt suốt từ đầu bục tới cuối bục rồi khóa chốt ổ khóa lớn ở đầu hàng."
+  },
+  "HL-519": {
+    "question_id": "HL-519",
+    "ai_answer": "Đúng vậy, bạn đã quan sát rất tinh tế. Người Pháp đã chọn đá xanh nguyên khối để làm bệ đỡ, khoan lỗ sâu và cố định chặt các thanh thép đặc vào đó. Mục đích là triệt tiêu khả năng đục phá hay rút thanh sắt ra từ bên trong. Khoảng hở giữa các chấn song được tính toán cực kỳ khắt khe, chỉ vừa đủ để ánh sáng lọt qua nhưng không thể lách được đầu hay bả vai, kể cả với người tù gầy gò nhất. Đây là một phần trong hệ thống phòng thủ đa lớp, kết hợp với nền đá xanh bị bào mòn theo thời gian, tạo nên sự kiên cố tuyệt đối cho nhà tù.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 623,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các song sắt cửa sổ tại Hỏa Lò được rèn từ thép đặc đường kính lớn, hàn hoặc tán chặt vào nhau với khoảng hở rất hẹp đúng như bạn quan sát, chỉ vừa lọt một bàn tay. Thiết kế này đảm bảo dù người tù có gầy gò đến mấy cũng không thể lách đầu hay bả vai chui qua nếu không cưa gãy song sắt."
+  },
+  "HL-513": {
+    "question_id": "HL-513",
+    "ai_answer": "Bố cục Hỏa Lò chịu ảnh hưởng trực tiếp từ mô hình nhà tù trung tâm kiểu Pháp thế kỷ XIX. Bản thiết kế gốc do Kiến trúc sư Giám đốc Sở Xây dựng nhà cửa dân sự chính quyền thuộc địa dự thảo, trình Toàn quyền Đông Dương phê duyệt tháng 2/1896. Cấu trúc chia các dãy phòng giam song song, khép kín quanh sân trung tâm, tương đồng với Khám Lớn Sài Gòn nhưng kiên cố hơn về tường bao và khu biệt giam. Phong cách Tân cổ điển bề thế với phào chỉ đối xứng và vòm cuốn lớn trên cổng chính nhằm phô trương quyền lực uy nghiêm của chính quyền bảo hộ. Thiết kế này vừa tạo vẻ uy nghi lạnh lẽo để răn đe, vừa đồng bộ với khu phố hành chính Pháp xung quanh.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 665,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bản thiết kế Nhà tù Hỏa Lò do Kiến trúc sư – Giám đốc Sở Xây dựng nhà cửa dân sự chính quyền thuộc địa dự thảo và trình Toàn quyền Đông Dương phê duyệt tháng 2/1896. Cấu trúc của Hỏa Lò chia dãy phòng giam song song khép kín giống mô hình nhà tù trung tâm Khám Lớn Sài Gòn nhưng kiên cố hơn về tường bao và khu biệt giam."
+  },
+  "HL-540": {
+    "question_id": "HL-540",
+    "ai_answer": "Không hoàn toàn đúng. Cơ chế này tinh vi và tàn khốc hơn nhiều. Thanh cùm sắt được cố định chặt vào bệ xi măng, không phải dạng thanh ngang tháo rời đơn giản. Ổ khóa chỉ kiểm soát chốt khóa chung, nhưng mỗi cổ chân vẫn bị kẹp chặt trong vòng cùm riêng biệt. Sáng sớm, cai ngục mở khóa để kiểm tra hoặc di chuyển tù nhân, nhưng việc tháo cùm từng người vẫn mất thời gian và gây đau đớn. Thiết kế này đảm bảo không ai có thể tự do cử động, ngay cả khi khóa đã mở, cho đến khi được giải thoát hoàn toàn.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1354,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Vì cả hàng chục người bị khóa chung trên cùng một thanh sắt dài suốt đêm, muốn trở mình nhẹ cũng phải cả dãy cùng phối hợp hoặc xoay lách rất đau đớn phần cổ chân bị cùm. Ai muốn đi vệ sinh vào ban đêm đều không thể tự tháo cùm ra góc phòng mà phải chịu đựng hoặc nhờ bạn tù hỗ trợ cực kỳ khổ sở."
+  },
+  "HL-506": {
+    "question_id": "HL-506",
+    "ai_answer": "Thực dân Pháp đã huy động hàng nghìn lao động cưỡng bức, trong đó có cả tù khổ sai, để thi công công trình này. Dưới sự giám sát chặt chẽ của lính canh, những người thợ và tù nhân phải làm việc trong điều kiện khắc nghiệt, thiếu thốn lương thực và y tế. Chính sức lao động khổ sai ấy đã tạo nên những bức tường gạch dày, kiên cố, biến Hỏa Lò thành nhà tù trung ương lớn nhất Đông Dương thời bấy giờ.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 503,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "\"Maison Centrale\" trong tiếng Pháp nghĩa là \"Nhà tù Trung ương\". Thực dân Pháp gọi như vậy vì đây được xây dựng để làm ngục thất trung tâm lớn và kiên cố bậc nhất Đông Dương lúc bấy giờ, chuyên giam giữ tù nhân chính trị, án nặng và phạm nhân chờ xét xử từ cả Bắc Kỳ lẫn Trung Kỳ trước khi đày đi các nhà lao xa hơn như Côn Đảo hay Sơn La."
+  },
+  "HL-539": {
+    "question_id": "HL-539",
+    "ai_answer": "Trong không gian trại giam nữ dưới 300 mét vuông, sự nhường nhịn là bản năng sinh tồn và tình đồng chí. Người trẻ khỏe, lực lưỡng thường tự giác nằm ép sát khu vực vệ sinh hoặc lối đi hẹp, nhường những vị trí thoáng khí gần cửa cho người già và người ốm nặng. Mỗi chỗ nằm trên bệ xi măng chỉ rộng 30 đến 40 centimet, vừa đủ để nằm nghiêng. Dù bị nhồi nhét như cá mòi, các chiến sĩ vẫn giữ vững tinh thần, dùng sự hy sinh cá nhân để bảo vệ sức khỏe cho đồng đội yếu thế hơn.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 584,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, khu trại giam nữ có diện tích chưa đầy 300 m² nhưng vào những thời kỳ khủng bố cao điểm nhất đã bị nhồi nhét tới hàng trăm nữ tù nhân. Không gian chật chội, thiếu không khí và điều kiện sinh hoạt cực kỳ thiếu thốn đã đè nặng lên đời sống thể chất lẫn tinh thần của các nữ chiến sĩ."
+  },
+  "HL-501": {
+    "question_id": "HL-501",
+    "ai_answer": "Việc chọn làng Phụ Khánh không phải ngẫu nhiên, mà do vị trí địa lý đắc địa. Khu đất này nằm ngay trung tâm Hà Nội, giáp sông Hồng, thuận lợi cho việc vận chuyển vật liệu xây dựng và dễ dàng kiểm soát an ninh. Hơn nữa, đây là vùng đất trũng, bằng phẳng, phù hợp để xây dựng công trình kiên cố, rộng lớn.\n\nThực dân Pháp cần một nhà tù trung ương (Maison Centrale) đủ sức chứa hàng nghìn tù nhân từ khắp Đông Dương. Họ quyết định giải tỏa toàn bộ làng nghề gốm Phụ Khánh, san phẳng các lò nung và nhà dân để lấy mặt bằng. Sự tàn bạo này thể hiện rõ qua việc xóa sổ một cộng đồng dân cư đông đúc, có lịch sử lâu đời, chỉ để phục vụ cho mục đích đàn áp của bộ máy cai trị. Bản đồ năm 1896 chính là bằng chứng sống động cho tham vọng chiếm đoạt đất đai và xóa bỏ bản sắc văn hóa địa phương của thực dân Pháp.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 784,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cái tên \"Hỏa Lò\" bắt nguồn từ chính vùng đất nơi nhà tù được xây dựng. Trước năm 1896, khu đất này thuộc làng Phụ Khánh (tổng Vĩnh Xương, huyện Thọ Xương, Hà Nội) — làng nghề thủ công nổi tiếng chuyên nặn ấm đất, siêu đất và các loại bếp hỏa lò nung đỏ lửa quanh năm. Dù thực dân Pháp đặt tên chính thức là Maison Centrale, người dân Hà Nội vẫn quen gọi theo tên vùng đất cũ là \"nhà tù Hỏa Lò\" hay \"nhà pha Hỏa Lò\"."
+  },
+  "HL-557": {
+    "question_id": "HL-557",
+    "ai_answer": "Khoảng cách giữa con số trên giấy và thực tế trước mắt chính là bản chất của bộ máy cai trị thực dân. Văn bản quy định 700 đến 750 gam gạo mỗi ngày chỉ tồn tại như một công cụ hợp thức hóa, trong khi thực tế, khẩu phần này bị cắt xén nghiêm trọng qua nhiều tầng nấc.\n\nKhi gạo được phát xuống, nó đã là gạo hẩm, lẫn đầy trấu và sạn. Phần ngon nhất thường bị cai ngục ăn chặn hoặc dành cho lính gác trước khi tới tay tù nhân. Những gì còn lại được nấu thành cơm nhão, ôi thiu, kèm theo vài miếng cá mắm mục và canh rau muống già.\n\nChế độ dinh dưỡng thiếu thốn và ôi thiu kéo dài này là nguyên nhân trực tiếp khiến phần đông tù nhân gầy rộc, suy nhược và mắc bệnh tê phù. Mô hình nhỏ bé trước mắt bạn không phải là sự sai lệch, mà là bằng chứng sống động cho thấy sự bóc lột tàn nhẫn, nơi con số trên giấy tờ hoàn toàn vô nghĩa trước sự sống còn của người tù.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1010,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo quy định cho một số hạng tù nhân nhất định, gia đình được gửi tiếp tế vào những ngày quy định với các món đơn giản như muối vừng, cơm nắm, thuốc cảm hoặc áo mỏng. Tuy nhiên, đồ tiếp tế bị lính gác lục soát xé nát để tìm thư mật và thường xuyên bị cai ngục ăn chặn bớt phần ngon trước khi tới tay tù nhân."
+  },
+  "HL-538": {
+    "question_id": "HL-538",
+    "ai_answer": "Đúng như bạn quan sát. Những vết mòn bóng trên các hốc bán nguyệt chính là dấu tích vật lý của hàng nghìn đêm dài. Mỗi khi lính gác luồn thanh sắt qua cổ chân, sự cọ xát liên tục giữa da thịt và kim loại đã bào mòn lớp gỉ sét, để lại những vệt sáng đặc trưng. Đây không chỉ là hiện tượng vật lý, mà là minh chứng sống động cho nỗi đau thể xác và ý chí kiên cường của các chiến sĩ cách mạng. Họ đã chịu đựng xiềng xích này trong nhiều thập kỷ, biến những vết mòn vô tri thành lời chứng ngôn bất diệt về sự hy sinh thầm lặng tại Hỏa Lò.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 598,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dọc theo mép dưới của bệ xi măng đặt một thanh sắt tròn dài luồn qua các khoen sắt gắn chặt xuống nền và các gờ khuyết cổ chân. Mỗi buổi tối, tù nhân phải đặt một hoặc hai cổ chân vào phần hốc sắt, sau đó lính gác luồn thanh sắt suốt từ đầu bục tới cuối bục rồi khóa chốt ổ khóa lớn ở đầu hàng."
+  },
+  "HL-510": {
+    "question_id": "HL-510",
+    "ai_answer": "Lớp vữa thời Pháp tại Hỏa Lò được trộn theo công thức kỹ thuật xây dựng chuẩn mực của châu Âu, chủ yếu gồm vôi, cát và nước. Không có bằng chứng lịch sử hay khảo cổ nào cho thấy việc pha mật mía hay các phụ gia truyền thống Việt Nam vào hỗn hợp này. Độ dày và độ nhám bạn quan sát được là kết quả của kỹ thuật trát vữa nhiều lớp nhằm tăng độ bền và khả năng chịu lực cho tường gạch đặc. Sự bong tróc hiện tại là dấu vết tự nhiên qua hơn một thế kỷ, được bảo tồn nguyên trạng để du khách thấy rõ cấu trúc xây dựng kiên cố vốn có của nhà tù.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 571,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Phần tường xây bằng gạch đặc của nhà tù vốn được trát vữa vôi cát rất dày thời Pháp. Sau hơn một thế kỷ cùng quá trình trùng tu, một số mảng tường lộ rõ lớp gạch cổ bên trong vừa là dấu vết bong tróc tự nhiên được xử lý gia cố bảo tồn, vừa giúp du khách nhìn trực diện được kỹ thuật xây gạch đặc kiên cố thời xưa."
+  },
+  "HL-518": {
+    "question_id": "HL-518",
+    "ai_answer": "Đúng vậy. Thực dân Pháp đã xây những bức tường gạch cao và dày để tách biệt hoàn toàn trại nam, trại nữ và các khu giam giữ đặc biệt. Mục đích là ngăn tù nhân liên lạc hay nhìn thấy nhau. Tuy nhiên, các chiến sĩ cách mạng vẫn đầy mưu trí. Họ tận dụng giờ đổ thùng vệ sinh, lối dẫn ra sân chung, rãnh nước, hoặc nhờ tù nhân phục dịch chia cơm để lén gửi tin tức và tài liệu học tập sang cho nhau. Những bức tường kiên cố ấy không thể nào chặn nổi ý chí đoàn kết và tinh thần đấu tranh bất khuất của các anh hùng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 689,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thực dân Pháp xây bức tường gạch rất cao và dày để tách biệt hoàn toàn trại giam nữ với khu giam nam. Tuy nhiên, các chiến sĩ vẫn đầy mưu trí tận dụng giờ đổ thùng vệ sinh, lối dẫn ra sân chung, rãnh nước hoặc nhờ những tù nhân phục dịch chia cơm để lén gửi tin tức và tài liệu học tập sang cho nhau."
+  },
+  "HL-537": {
+    "question_id": "HL-537",
+    "ai_answer": "Khoảng lối đi hẹp này thực chất không dành cho việc di chuyển hàng loạt tù nhân cùng lúc. Trong các đợt đưa đón hay lao động, lính canh thường tách nhỏ nhóm người, dẫn từng tốp ngắn qua cửa phụ hoặc các lối riêng biệt để kiểm soát chặt chẽ. Việc xếp hàng dài trong không gian chỉ hơn một mét là bất khả thi về mặt an ninh và vật lý.\n\nĐộ dốc của sàn và vị trí bục xi măng được thiết kế để tối ưu tầm quan sát từ ô cửa chính, giúp cai ngục dễ dàng theo dõi từng cá nhân. Khi cần di chuyển, tù nhân phải tuân thủ lệnh đi theo đội hình thưa, cách nhau đủ khoảng cách để tránh va chạm. Sự chật chội này chính là một phần của phương thức giam giữ, nhằm duy trì áp lực tâm lý và thể chất lên người tù, chứ không phải là lối đi thông dụng cho dòng người đông đúc.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 725,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong những thời kỳ nhà tù quá tải giam tới hàng nghìn người, không gian nằm trên bục xi măng của mỗi tù nhân chỉ rộng khoảng 30 đến 40 cm—vừa đủ để nằm nghiêng ép sát vai nhau như cá mòi xếp hộp. Có những giai đoạn người ta thậm chí phải nằm chen cả xuống lối đi hẹp ở giữa hai dãy bục."
+  },
+  "HL-536": {
+    "question_id": "HL-536",
+    "ai_answer": "Đúng vậy. Kết cấu tường gạch dày nửa mét cùng mái cao đóng vai trò như lớp vỏ cách âm và cách nhiệt hiệu quả. Nó chặn đứng phần lớn tiếng ồn giao thông từ phố Rollandes cũ, tạo nên một không gian tĩnh lặng bất thường giữa lòng Hà Nội.\n\nSự im ắng này không chỉ là hiệu ứng vật lý, mà còn là yếu tố tâm lý quan trọng. Khi bước qua cổng, du khách lập tức bị tách khỏi nhịp sống ồn ào bên ngoài, bước vào một thế giới riêng biệt. Sự chuyển đổi âm thanh đột ngột này giúp người tham quan dễ dàng tập trung, cảm nhận rõ hơn bầu không khí trầm mặc, nặng nề của quá khứ, sẵn sàng cho hành trình khám phá những câu chuyện lịch sử sâu sắc bên trong.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 679,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thời Pháp thuộc và cả các giai đoạn sau, xe chở phạm nhân (xe bít bùng) sau khi qua cánh cổng sắt chính sẽ dừng ngay tại khoảng sân tiếp nhận phía trong để làm thủ tục bàn giao người, kiểm tra danh sách nhập trại và dẫn giải về các khu phân loại giam giữ, hoàn toàn cách ly khỏi tầm nhìn người đi đường bên ngoài."
+  },
+  "HL-579": {
+    "question_id": "HL-579",
+    "ai_answer": "Đúng vậy. Khe hở nhỏ dưới chân cửa sắt được thiết kế để lính gác đẩy máng thức ăn vào mà không cần mở toang cánh cửa lớn, nhằm giảm nguy cơ tù nhân xông ra chống cự. Trong không gian chưa đầy 3 mét vuông, nơi ăn, ngủ và vệ sinh chung chạ, việc bị đá đĩa cơm muối vào hoặc hất đổ xuống nền bẩn đầy xú uế là sự đối xử tàn bạo, hạ thấp nhân phẩm. Mùi xú uế bủa vây suốt ngày đêm, khiến những bữa ăn trở thành nỗi ám ảnh kinh hoàng, thể hiện rõ ý đồ tra tấn tinh thần của nhà tù thực dân.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 600,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khe hở nhỏ phía dưới cánh cửa sắt được mở nhanh khi lính gác đẩy máng thức ăn, nước uống vào hoặc đưa dụng cụ vệ sinh ra ngoài mà không cần phải mở toang cánh cửa lớn—nhờ vậy giảm thiểu nguy cơ tù nhân xông ra cướp cửa đánh lại cai ngục."
+  },
+  "HL-535": {
+    "question_id": "HL-535",
+    "ai_answer": "Hỏa Lò không phải là nơi giam giữ cuối cùng, mà là trạm trung chuyển án nặng bậc nhất Đông Dương. Với cấu trúc phòng giam song song khép kín, kiên cố hơn cả Khám Lớn Sài Gòn, nơi đây chuyên tiếp nhận tù chính trị và phạm nhân chờ xét xử từ Bắc Kỳ lẫn Trung Kỳ. Sau khi bị giam giữ, tra tấn hoặc chờ phán quyết tại đây, nhiều người bị đày đi các nhà lao xa hơn như Sơn La hay Côn Đảo. Vì vậy, Hỏa Lò đóng vai trò then chốt trong hệ thống đàn áp, là bước đệm đưa tù nhân từ thủ đô ra các vùng biên viễn khắc nghiệt.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 591,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "\"Maison Centrale\" trong tiếng Pháp nghĩa là \"Nhà tù Trung ương\". Thực dân Pháp gọi như vậy vì đây được xây dựng để làm ngục thất trung tâm lớn và kiên cố bậc nhất Đông Dương lúc bấy giờ, chuyên giam giữ tù nhân chính trị, án nặng và phạm nhân chờ xét xử từ cả Bắc Kỳ lẫn Trung Kỳ trước khi đày đi các nhà lao xa hơn như Côn Đảo hay Sơn La."
+  },
+  "HL-580": {
+    "question_id": "HL-580",
+    "ai_answer": "Đúng vậy, cảm giác ẩm lạnh bạn đang sờ chính là di chứng của những tháng ngày khắc nghiệt. Khi cửa bịt kín, hơi nước ngưng tụ thành từng giọt, chảy ròng ròng từ trần xuống tường gạch. Nước thấm ngược vào trong, làm ướt sũng mọi bề mặt. Người tù ngồi hay nằm đều bị dính ướt, quần áo không bao giờ khô. Lạnh buốt thấu xương, ẩm mốc xói mòn sức khỏe. Đó là thứ vũ khí vô hình mà nhà tù dùng để hủy hoại thể xác và tinh thần con người.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 533,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cánh cửa ở cuối dãy hành lang nối chuyển tiếp khu biệt giam ra khoảng sân nhỏ bên ngoài để phục vụ lính canh tuần tra và dẫn giải phạm nhân đi hoặc về khu giam. Tuy nhiên, khi cửa chính hành lang đóng lại thì không khí bên trong vẫn rất tù túng vì các ô Cachot đều đóng kín độc lập."
+  },
+  "HL-555": {
+    "question_id": "HL-555",
+    "ai_answer": "Các buồng giam tập thể tại Hỏa Lò được phân chia theo từng khu vực riêng biệt, thường gắn liền với mục đích giam giữ cụ thể như chính trị, hình sự hoặc lao động khổ sai. Hệ thống ký hiệu chữ cái và số thứ tự được bố trí dựa trên cấu trúc kiến trúc của dãy nhà, không tuân theo quy luật quay vòng chiều kim đồng hồ. Mỗi khu vực có đặc điểm vật lý và mức độ an ninh khác nhau, phản ánh sự phân cấp nghiêm ngặt trong hệ thống quản lý tù nhân thời Pháp thuộc. Khi quan sát biển số phía trên khung cửa, du khách sẽ nhận thấy sự sắp xếp này gắn chặt với vị trí địa lý của từng dãy nhà trong khuôn viên nhà tù.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 615,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi phạm nhân nhập trại đều được cấp một mã số tù đánh nối tiếp theo sổ đăng ký của từng thời kỳ kèm ký hiệu chữ hoặc khu giam (như trại O, trại giam chính trị hay thường phạm). Con số đó vừa khâu trên áo tù vừa dập trên thẻ bài đeo theo người để thay thế tên gọi."
+  },
+  "HL-572": {
+    "question_id": "HL-572",
+    "ai_answer": "Đúng vậy, những tấm ảnh này ghi lại khoảnh khắc các chiến sĩ còn bị giam giữ tại Hỏa Lò sau sự kiện Nhật đảo chính Pháp. Đêm 9/3/1945, hơn một trăm cán bộ đã vượt ngục thành công, nhưng vẫn còn một số đồng chí bị kẹt lại do hoàn cảnh cụ thể. Họ tiếp tục kiên cường đấu tranh, tuyệt thực đòi quyền lợi cho đến khi được giải phóng vào tháng Tám năm 1945. Nụ cười trong ảnh chính là niềm tin bất diệt vào ngày mai, dù đang身处 trong cảnh tù đày.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 622,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong lịch sử Hỏa Lò đã nổ ra nhiều cuộc tuyệt thực lớn kéo dài từ 3 đến hơn 10 ngày (như các đợt đấu tranh năm 1930–1932, 1936–1939 hay đầu năm 1952). Trước sự đoàn kết đồng loạt của hàng trăm tù chính trị và sức ép dư luận báo chí tiến bộ bên ngoài, nhiều lần ban giám ngục buộc phải nhượng bộ cải thiện cơm nước và nới lỏng giờ mở cửa."
+  },
+  "HL-522": {
+    "question_id": "HL-522",
+    "ai_answer": "Hệ mái tại đây là sự kết hợp hài hòa giữa ngói mũi hài và ngói máy kiểu Pháp. Phần lớn những viên ngói máy này được sản xuất ngay tại các lò gạch ngói trong nước, đáp ứng nhu cầu xây dựng lớn của thực dân Pháp lúc bấy giờ. Việc nhập khẩu trực tiếp từ Marseille là rất hiếm do chi phí vận chuyển biển quá cao và thời gian chờ đợi lâu. Trong quá trình trùng tu thập niên 1990, các kỹ sư đã giữ lại tối đa phần khung vì kèo và những viên ngói cũ còn tốt, chỉ thay thế cục bộ những viên vỡ mục. Nhờ vậy, dáng vẻ nguyên thủy của mái nhà vẫn được bảo tồn trọn vẹn, vừa chống dột hiệu quả cho tường cổ, vừa giữ nguyên giá trị lịch sử cho du khách chiêm ngưỡng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 677,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Hệ mái ngói mũi hài và ngói máy kiểu Pháp trên các dãy nhà còn lại đã được giữ lại tối đa phần khung vì kèo và ngói cũ còn tốt, kết hợp thay thế cục bộ những viên ngói vỡ mục trong quá trình trùng tu bảo tồn giữa thập niên 1990 nhằm bảo đảm chống dột cho tường cổ và hiện vật trưng bày mà vẫn giữ nguyên kiểu dáng nguyên thủy."
+  },
+  "HL-534": {
+    "question_id": "HL-534",
+    "ai_answer": "Câu hỏi này chạm đến một thực tế lịch sử khá phức tạp. Thực tế, dự án Tháp Hà Nội được xây dựng trên phần đất đã giải tỏa từ năm 1993, tức là trước khi giai đoạn đào móng sâu cho tòa tháp cao tầng diễn ra. Do đó, không có kỹ thuật chống rung nào được áp dụng trực tiếp lên tường gạch cổ trong quá trình thi công móng tháp, vì phần tường bao gốc ở khu vực đó đã bị tháo dỡ để nhường chỗ cho công trình mới.\n\nHiện nay, du khách đang nhìn thấy đoạn tường gạch còn lại thuộc khu di tích lõi, được bảo tồn nguyên trạng từ trước. Các cấu kiện gốc như cửa gỗ lim, song sắt hay gạch xây đã được thu hồi và lưu giữ trong kho bảo quản. Sự tiếp giáp giữa tường di tích và tòa tháp hiện đại chính là minh chứng cho quá trình chuyển đổi không gian này, nơi mà phần tường còn lại được giữ nguyên để bảo vệ giá trị lịch sử, trong khi phần đất bên cạnh đã thay đổi hoàn toàn.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1305,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, tổ hợp Tháp Hà Nội (Hanoi Towers) xây dựng đầu thập niên 1990 nằm trên phần đất đã giải tỏa của Nhà tù Hỏa Lò cũ. Trước khi tháo dỡ khu vực đó vào năm 1993, cơ quan bảo tồn đã ghi hình, đo vẽ tư liệu toàn bộ mặt bằng cũ và thu hồi nhiều cấu kiện gốc như cánh cửa gỗ lim, song sắt, gạch xây, ổ khóa cổ chuyển về lưu giữ trong kho bảo quản của khu di tích lõi."
+  },
+  "HL-556": {
+    "question_id": "HL-556",
+    "ai_answer": "Khi tù mới trở về sau buổi hỏi cung, việc đầu tiên anh em làm là chăm sóc vết thương và xoa dịu nỗi đau thể xác. Trong không gian chật chội, tình đồng chí nghĩa đồng bào thể hiện qua việc thay nhau băng bó, chườm đá hay mớm từng ngụm nước. Chỉ sau khi bạn tù đã ổn định tinh thần và sức khỏe, mọi người mới bắt đầu trao đổi thông tin. Lúc này, những tin tức về phong trào cách mạng bên ngoài mới được chia sẻ, giúp người mới cập nhật tình hình và củng cố niềm tin chiến đấu.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 830,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi phòng giam tập thể diện tích chừng vài chục mét vuông ban đầu chỉ thiết kế cho khoảng 30–40 người, nhưng vào những đợt khủng bố trắng sau phong trào 1930–1931 hoặc thời kỳ 1950–1954, thực dân Pháp từng nhồi nhét tới 80–100 người, thậm chí đông hơn trong một buồng giam chật chội."
+  },
+  "HL-502": {
+    "question_id": "HL-502",
+    "ai_answer": "Trước năm 1945, con phố này mang tên Rue Rollandes. Tên gọi đó xuất phát từ đường Rolland ở Paris, nơi đặt trụ sở Bộ Ngoại giao Pháp. Khi thực dân Pháp xây dựng nhà tù, họ đặt tên phố theo hệ thống địa danh tại thủ đô nước mẹ nhằm khẳng định sự hiện diện và quyền lực thuộc địa. Biển số nhà 1 chính là địa chỉ của công trình này. Việc đổi tên thành phố Hỏa Lò sau này gắn liền với lịch sử đấu tranh và ký ức dân tộc, thay thế cho cái tên mang đậm dấu ấn thực dân.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 560,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, tổ hợp Tháp Hà Nội (Hanoi Towers) xây dựng đầu thập niên 1990 nằm trên phần đất đã giải tỏa của Nhà tù Hỏa Lò cũ. Trước khi tháo dỡ khu vực đó vào năm 1993, cơ quan bảo tồn đã ghi hình, đo vẽ tư liệu toàn bộ mặt bằng cũ và thu hồi nhiều cấu kiện gốc như cánh cửa gỗ lim, song sắt, gạch xây, ổ khóa cổ chuyển về lưu giữ trong kho bảo quản của khu di tích lõi."
+  },
+  "HL-533": {
+    "question_id": "HL-533",
+    "ai_answer": "Chưa có bằng chứng lịch sử xác nhận việc lắp đặt đồng hồ lớn công cộng tại tháp canh hay khu hành chính để thông báo giờ giấc cho tù nhân. Trong hệ thống nhà tù thực dân, thời gian được kiểm soát tuyệt đối bởi đội ngũ cai ngục và lính gác. Người tù bị tước đoạt quyền nắm bắt thời gian, sống trong bóng tối và sự bất định. Sự vắng mặt của đồng hồ không phải do thiếu sót kỹ thuật, mà là công cụ tâm lý nhằm gây áp lực, làm suy yếu ý chí và ngăn chặn khả năng tổ chức, lên kế hoạch vượt ngục của các chiến sĩ cách mạng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 589,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, khu nhà gần cổng chính có cửa sổ lớn và không gian thông thoáng hơn hẳn là nơi đặt phòng làm việc của chánh giám ngục, bộ phận hành chính sổ sách và trạm trực ban chỉ huy lính gác. Sự đối lập giữa khu làm việc sáng sủa phía trước và các buồng giam u tối phía sau phản ánh rõ rệt trật tự quyền lực trong nhà tù."
+  },
+  "HL-509": {
+    "question_id": "HL-509",
+    "ai_answer": "Nền nhà tù xưa cao hơn mặt phố Hỏa Lò hiện tại. Thiết kế này nhằm chống ngập úng hiệu quả trong mùa mưa Hà Nội. Khi bước qua ngưỡng đá xanh, bạn sẽ cảm nhận rõ độ chênh cao này. Nó không chỉ là chi tiết kiến trúc mà còn là giải pháp thực dụng, bảo vệ khu giam giữ khỏi nước lũ. Nhờ nền cao, sân nhà tù luôn khô ráo, tránh ẩm mốc và dịch bệnh cho tù nhân. Đây là minh chứng cho sự tính toán kỹ lưỡng của kiến trúc sư Pháp khi xây dựng công trình này vào cuối thế kỷ XIX.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 599,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Diện tích 2.434 m² còn lại ngày nay nằm ở góc Đông Nam của tổng thể khu đất 12.908 m² trước kia, bao gồm cổng chính trên phố Hỏa Lò, một phần dãy phòng giam tập thể nam, khu trại giam nữ, khu ngục tối Cachot, khu xà lim tử hình (Khu D), khoảng sân cây bàng cùng miệng cống ngầm lịch sử. Phần diện tích phía Bắc và phía Tây xưa là các trại giam lớn, nhà bếp, bệnh xá và khu hành chính mở rộng."
+  },
+  "HL-552": {
+    "question_id": "HL-552",
+    "ai_answer": "Không có số liệu nhiệt độ cụ thể nào được ghi nhận chính xác trong hồ sơ lịch sử. Tuy nhiên, với tường gạch dày nửa mét và mái cao, nhiệt độ bên trong luôn cao hơn ngoài trời. Khi hàng trăm người chen chúc trong không gian kín mít, hơi người tích tụ khiến không khí trở nên ngột ngạt, bức bối và nồng nặc. Hệ thống gạch thông gió xếp chéo trên cao chỉ giúp đối lưu phần nào hơi nóng, nhưng không đủ để hạ nhiệt hay giảm độ ẩm. Cảm giác oi ả, khó thở là điều mà các tù nhân phải chịu đựng mỗi ngày, đặc biệt vào những tháng cao điểm mùa hè.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 655,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Tường gạch dày nửa mét cùng mái cao giúp khối nhà ít hấp thụ nắng gắt trực tiếp vào ban ngày, nhưng vào mùa hè oi ả ở Hà Nội, khi nhốt hàng trăm người chen chúc trong buồng kín mít chỉ có vài ô thoáng nhỏ trên cao thì không khí bên trong trở nên vô cùng ngột ngạt, bức bối và nồng nặc hơi người."
+  },
+  "HL-576": {
+    "question_id": "HL-576",
+    "ai_answer": "Đúng vậy, bữa cơm duy nhất mỗi ngày chính là “đồng hồ” sống còn của họ. Khi tiếng bước chân lính gác vang lên và nắp cửa nhỏ được mở, ánh sáng lóe lên qua khe hẹp, đó là dấu hiệu rõ ràng nhất đánh dấu một ngày mới. Ngoài cơm, họ còn dựa vào tiếng kẻng xa vọng lại từ sân trại để đoán chừng giờ giấc. Trong bóng tối đặc quánh, không có mặt trời, không có bóng đổ, thời gian trở nên vô hình. Mỗi lần được ăn là một lần họ xác nhận mình vẫn còn sống, vẫn đang đếm từng ngày trong sự cô lập tuyệt đối.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 595,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng như bạn hình dung, khi hai lớp cửa sắt đóng sập lại và nắp cửa nhỏ gài chốt ngoài, bên trong ô Cachot chìm vào bóng tối tuyệt đối suốt cả ngày lẫn đêm. Người bị giam mất hoàn toàn khái niệm thời gian, chỉ đoán chừng ngày hay đêm qua tiếng kẻng xa vọng lại hoặc giờ đưa cơm duy nhất trong ngày."
+  },
+  "HL-553": {
+    "question_id": "HL-553",
+    "ai_answer": "Không hẳn như bạn hình dung. Ban ngày, sau khi tháo cùm, tù nhân chủ yếu bị khóa kín trong bốn bức tường phòng giam tập thể. Họ chỉ được mở cửa ra khoảng sân hẹp để tắm nắng, vệ sinh hoặc lao động theo ca ngắn dưới sự giám sát chặt chẽ của lính gác. Việc tập thể dục tại chỗ giữa lòng buồng là rất hạn chế. Không gian lối đi ở giữa hai hàng bục xi măng vốn đã chật hẹp, lại phải nhường chỗ cho sinh hoạt cá nhân và di chuyển tối thiểu. Mục tiêu của nhà tù là kiểm soát tuyệt đối, không phải duy trì sức khỏe cho tù nhân. Sự khắc nghiệt nằm ở việc bị giam cầm liên tục, thiếu ánh sáng và không gian, khiến cơ thể suy kiệt dần theo thời gian.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 638,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Vào ban ngày sau khi tháo thanh cùm chân, phần lớn thời gian tù nhân vẫn bị khóa kín trong bốn bức tường của phòng giam tập thể, chỉ được mở cửa cho ra khoảng sân hẹp tắm nắng, vệ sinh hoặc lao động theo ca ngắn ngủi dưới sự giám sát chặt chẽ của lính gác có súng."
+  },
+  "HL-530": {
+    "question_id": "HL-530",
+    "ai_answer": "Năm 1993, các nhà chuyên môn ưu tiên bảo tồn những khu vực mang tính biểu tượng cao nhất về lịch sử và kiến trúc. Phần lõi còn lại bao gồm cổng chính, dãy phòng giam tập thể nam, khu trại giam nữ, ngục tối Cachot và xà lim tử hình. Đây là nơi lưu giữ trọn vẹn các hiện vật gốc như cửa gỗ lim, song sắt và gạch xây, phản ánh rõ nét nhất cuộc sống tù đày. Việc giữ lại góc Đông Nam giúp bảo vệ các cấu kiện lịch sử quan trọng, đồng thời tạo không gian trưng bày tập trung, dễ dàng kết nối với các câu chuyện về những cuộc vượt ngục và hy sinh anh dũng của các chiến sĩ cách mạng.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 599,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Diện tích 2.434 m² còn lại ngày nay nằm ở góc Đông Nam của tổng thể khu đất 12.908 m² trước kia, bao gồm cổng chính trên phố Hỏa Lò, một phần dãy phòng giam tập thể nam, khu trại giam nữ, khu ngục tối Cachot, khu xà lim tử hình (Khu D), khoảng sân cây bàng cùng miệng cống ngầm lịch sử. Phần diện tích phía Bắc và phía Tây xưa là các trại giam lớn, nhà bếp, bệnh xá và khu hành chính mở rộng."
+  },
+  "HL-529": {
+    "question_id": "HL-529",
+    "ai_answer": "Ngân sách xây dựng Hỏa Lò được trích trực tiếp từ quỹ thuộc địa Đông Dương, do chính quyền thực dân quản lý. Nguồn thu chủ yếu đến từ các loại thuế nặng nề áp đặt lên người dân bản xứ, như thuế thân, thuế ruộng đất và thuế thương mại. Toàn quyền Đông Dương phê duyệt dự án ngày 27/2/1896, sử dụng số tiền này để xây dựng công trình kiên cố bậc nhất Bắc Kỳ. Chi phí khổng lồ này phản ánh tham vọng kiểm soát chính trị của Pháp, biến tiền thuế của người dân thành công cụ đàn áp, giam giữ tù nhân chính trị từ Bắc Kỳ và Trung Kỳ.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 677,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bản thiết kế Nhà tù Hỏa Lò do Kiến trúc sư – Giám đốc Sở Xây dựng nhà cửa dân sự chính quyền thuộc địa dự thảo và trình Toàn quyền Đông Dương phê duyệt tháng 2/1896. Cấu trúc của Hỏa Lò chia dãy phòng giam song song khép kín giống mô hình nhà tù trung tâm Khám Lớn Sài Gòn nhưng kiên cố hơn về tường bao và khu biệt giam."
+  },
+  "HL-554": {
+    "question_id": "HL-554",
+    "ai_answer": "Bề mặt xi măng cổ này được bảo tồn theo nguyên tắc “nguyên trạng tối đa”. Các vết loang sẫm màu và mùi ẩm là dấu tích lịch sử thực sự, không phải bụi bẩn. Bảo tàng không tẩy rửa hay phủ lớp sơn mới. Thay vào đó, kỹ thuật viên chỉ dùng hóa chất chuyên dụng để ức chế nấm mốc và ổn định cấu trúc gạch vữa. Mục tiêu là giữ nguyên sắc thái u ám, thô ráp của phòng giam năm xưa. Nhờ vậy, du khách vẫn cảm nhận được sự khắc nghiệt của quá khứ, đồng thời hiện vật được bảo vệ khỏi sự xuống cấp thêm.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 754,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các bộ cùm sắt trưng bày trong di tích là hiện vật thật thu hồi tại Nhà tù Hỏa Lò, mang đầy đủ dấu tích gỉ sét và bào mòn của thời gian. Sau khi thu hồi để trưng bày, bảo tàng đã xử lý làm sạch hóa chất chống ăn mòn để bảo quản nguyên trạng mà vẫn giữ nguyên màu sắt cổ."
+  },
+  "HL-504": {
+    "question_id": "HL-504",
+    "ai_answer": "Thực tế, nhà tù Hỏa Lò không hoàn toàn xây xong vào năm 1899. Dự án được phê duyệt ngày 27/2/1896 và khởi công ngay trong năm đó. Tuy nhiên, do phong trào đấu tranh yêu nước bùng lên khiến lượng tù nhân tăng vọt, thực dân Pháp đã phải đưa các dãy trại chính vào sử dụng ngay từ đầu năm 1899, dù nhiều hạng mục phụ trợ vẫn chưa hoàn thiện. Việc chuyển tù nhân từ Đề lao Hà Nội hay các địa điểm giam giữ tạm thời khác đến đây là hệ quả tất yếu của áp lực quá tải, chứ không phải vì công trình đã hoàn tất toàn bộ.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 624,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bản vẽ thiết kế Nhà tù Hỏa Lò được Toàn quyền Đông Dương phê duyệt ngày 27/2/1896 và công trình được khởi công ngay trong năm 1896. Do phong trào đấu tranh yêu nước bùng lên khiến lượng người bị bắt tăng nhanh, dù tới năm 1899 nhà tù vẫn chưa hoàn thiện hết mọi hạng mục phụ trợ nhưng thực dân Pháp đã phải đưa các dãy trại chính vào sử dụng ngay từ năm 1899."
+  },
+  "HL-528": {
+    "question_id": "HL-528",
+    "ai_answer": "Đúng vậy, bạn đã nắm bắt rất chính xác bản chất kỹ thuật của kiến trúc này. Vòm cuốn bán nguyệt chính là giải pháp chịu lực kinh điển của cuối thế kỷ XIX, giúp phân tán áp lực nén xuống hai bên tường gạch mà không cần dùng dầm thép hay bê tông cốt thép phức tạp. Nhờ cấu trúc này, công trình trở nên cực kỳ bền vững và vững chãi. Tuy nhiên, mục đích của người Pháp không chỉ dừng lại ở việc xây nhà. Những bức tường gạch dày và vòm kín còn tạo thành lớp ngăn cách chắc chắn, ngăn chặn tù nhân đào khoét tường hoặc phá trần để trốn thoát. Đây là sự kết hợp hoàn hảo giữa kỹ thuật xây dựng và mục đích giam giữ khắt khe của nhà tù thời thuộc địa.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 613,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Kết cấu vòm cuốn bằng gạch xây dày tại các lối chuyển tiếp và hành lang khu giam vừa là kỹ thuật chịu lực kinh điển của kiến trúc Pháp cuối thế kỷ XIX giúp công trình bền vững không cần dầm thép phức tạp, vừa tạo bức ngăn chắc chắn chống việc tù nhân đào khoét tường hoặc phá trần trốn thoát."
+  },
+  "HL-566": {
+    "question_id": "HL-566",
+    "ai_answer": "Thực tế, việc kiểm tra không diễn ra theo lịch cố định hàng tuần mà là quy trình giám sát liên tục, đặc biệt vào ban đêm. Lính canh tuần tra dọc hành lang, dùng đèn mờ soi chiếu và gõ nhẹ vào các mối hàn, song sắt cửa sổ để nghe tiếng vang bất thường. Mục đích là phát hiện ngay lập tức những thanh sắt bị tù nhân lén cưa dở hoặc làm yếu cấu trúc. Đây là biện pháp phòng ngừa nghiêm ngặt, kết hợp với việc kiểm tra định kỳ lưới chắn thoát nước và tăng cường lính gác sau mỗi vụ vượt ngục, nhằm đảm bảo không có kẽ hở nào cho tù nhân khai thác.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 610,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dọc hành lang chính có bóng đèn mờ bật suốt đêm để lính canh tuần tra, còn bên trong phòng giam tập thể thường chỉ có ngọn đèn công suất yếu treo tít trên cao để cai ngục nhìn qua mắt thần kiểm tra xem tù nhân có tự ý tháo cùm hay di chuyển vào ban đêm không."
+  },
+  "HL-505": {
+    "question_id": "HL-505",
+    "ai_answer": "Kiểu xếp đá chêm vòm đó là kỹ thuật xây dựng tiêu chuẩn của kiến trúc Pháp thời thuộc địa. Các khối đá được cắt gọt chính xác, ghép đối xứng để chịu lực nén, tạo nên vẻ uy nghiêm lạnh lẽo đặc trưng. Dù có thể có sự hỗ trợ của thợ địa phương, nhưng thiết kế và kỹ thuật cốt lõi hoàn toàn do người Pháp chủ trì nhằm phô trương quyền lực chính quyền bảo hộ cuối thế kỷ XIX.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 507,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo tư duy kiến trúc thuộc địa cuối thế kỷ XIX, các công trình công quyền lớn của Pháp tại Hà Nội đều tuân theo phong cách Tân cổ điển bề thế nhằm phô trương quyền lực uy nghiêm của chính quyền bảo hộ. Đắp phào chỉ đối xứng, vòm cuốn lớn trên cổng nhà tù vừa tạo vẻ uy nghi lạnh lẽo để răn đe dân chúng, vừa đồng bộ với khu phố hành chính Pháp xung quanh."
+  },
+  "HL-568": {
+    "question_id": "HL-568",
+    "ai_answer": "Nhóm tượng này được xây dựng dựa trên tổng hợp lời kể của nhiều cựu tù chính trị, đặc biệt là những người từng bị giam giữ tại đây trong giai đoạn kháng chiến chống Pháp. Các nghệ sĩ đã lắng nghe chi tiết về tư thế ngồi, ánh mắt và cử chỉ trao đổi bí mật của các đồng chí khi bị cùm. Họ tái hiện khoảnh khắc các chiến sĩ tranh thủ họp chi bộ, truyền tin tức ngay trên bệ cùm, thể hiện tinh thần bất khuất và ý chí biến nhà tù thành trường học cách mạng.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 775,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Vào ban ngày sau khi tháo thanh cùm chân, phần lớn thời gian tù nhân vẫn bị khóa kín trong bốn bức tường của phòng giam tập thể, chỉ được mở cửa cho ra khoảng sân hẹp tắm nắng, vệ sinh hoặc lao động theo ca ngắn ngủi dưới sự giám sát chặt chẽ của lính gác có súng."
+  },
+  "HL-567": {
+    "question_id": "HL-567",
+    "ai_answer": "Chiếc thùng gỗ này không được quét hắc ín bên trong. Lớp gỗ trần trụi, thô ráp, thấm đẫm nước thải và mùi xú uế nồng nặc. Chính sự thiếu vệ sinh nghiêm trọng này, kết hợp với việc chỉ được đổ hai lần mỗi ngày, đã khiến không khí trong phòng giam ngột ngạt, ngột ngạt đến mức nhiều tù nhân bị ngất xỉu hoặc mắc các bệnh truyền nhiễm nguy hiểm.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 2284,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, chiếc thùng gỗ hoặc thùng tôn có nắp đặt ngay góc cuối bệ nằm chính là thùng vệ sinh dùng chung cho toàn bộ hàng chục tù nhân trong phòng giam tập thể. Mọi nhu cầu đại tiểu tiện suốt ngày đêm khi cửa phòng khóa kín đều phải giải quyết trực tiếp tại chiếc thùng này."
+  },
+  "HL-547": {
+    "question_id": "HL-547",
+    "ai_answer": "Không có quy định cho phép tù nhân dùng bao tải hay giấy báo để đắp thay chăn. Những vật dụng này chủ yếu được gia đình gửi vào nhằm mục đích gói đồ tiếp tế hoặc làm vật dụng sinh hoạt cá nhân. Khi trời rét đậm, phần lớn tù nhân vẫn chỉ có manh chiếu cói rách lót trên nền xi măng lạnh buốt. Họ phải nằm ép sát vào nhau để truyền hơi ấm qua đêm. Chỉ những ai may mắn có gia đình gửi được áo ấm mới có thêm chút che chắn. Giấy báo cũ thường được giữ lại để đọc tin tức thời sự, chứ không dùng làm chăn đắp.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 703,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Vào mùa đông miền Bắc giá rét cắt da, phần lớn tù nhân chỉ có manh chiếu cói rách lót dưới lưng trên bệ xi măng lạnh buốt và bộ quần áo tù vải mỏng hoặc chiếc chăn đơn sờn rách. Chỉ những tù nhân có gia đình gửi tiếp tế vào mới có thêm áo ấm, còn nhiều người phải nằm ép sát vào nhau truyền hơi ấm qua đêm."
+  },
+  "HL-570": {
+    "question_id": "HL-570",
+    "ai_answer": "Trong những đêm Giao thừa khắc nghiệt, khi thân thể bị cùm gỗ lim hay cùm sắt xiết chặt đến tê liệt, không khí trong buồng giam chật chội bao trùm bởi nỗi cô đơn và giá rét. Tuy nhiên, tinh thần cách mạng đã biến nơi ngục tù thành một không gian ấm áp bất ngờ. Các chiến sĩ không có bánh chưng, nhưng họ có nhau. Họ thì thầm những lời chúc bình an, cùng nhau ngâm thơ cách mạng để giữ vững niềm tin. Đôi khi, chỉ cần chia nhau vài hạt lạc rang, hay một mẩu bánh mì vụn, cũng đủ để xua tan cái lạnh của xiềng xích. Những khoảnh khắc ấy không chỉ là sự sẻ chia vật chất, mà là nguồn sức mạnh tinh thần giúp họ vượt qua mọi cực hình, chờ đợi ngày tự do.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1658,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mỗi phòng giam tập thể diện tích chừng vài chục mét vuông ban đầu chỉ thiết kế cho khoảng 30–40 người, nhưng vào những đợt khủng bố trắng sau phong trào 1930–1931 hoặc thời kỳ 1950–1954, thực dân Pháp từng nhồi nhét tới 80–100 người, thậm chí đông hơn trong một buồng giam chật chội."
+  },
+  "HL-541": {
+    "question_id": "HL-541",
+    "ai_answer": "Độ cao chênh lệch ấy không nhằm mục đích chống ẩm hay chỉ để quan sát gót chân. Thiết kế dốc nghiêng từ tường ra lối đi trung tâm phục vụ hai mục đích tàn khốc. Thứ nhất, nó giúp cai ngục đứng ở giữa có tầm nhìn bao quát toàn bộ thân hình và khuôn mặt tù nhân qua ô cửa, không bị che khuất. Thứ hai, độ dốc này khiến nước dội rửa sàn chảy dồn xuống rãnh giữa, giữ vệ sinh cho lính gác. Quan trọng hơn, khi bị cùm chân, tù nhân nằm trên bề mặt xi măng dốc sẽ bị mỏi lưng dữ dội và cực kỳ khó trở mình, biến giấc ngủ thành một hình thức tra tấn thể xác liên tục.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 615,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bệ xi măng trong phòng giam tập thể được đổ dốc nghiêng từ phía tường về phía lối đi ở giữa là để thuận tiện cho cai ngục quan sát toàn bộ mặt và thân người tù từ ô cửa chính, đồng thời giúp nước khi dội rửa sàn chảy dồn xuống rãnh giữa. Ngoài ra độ dốc còn gây mỏi lưng, khó trở mình khi tù nhân bị cùm chân."
+  },
+  "HL-571": {
+    "question_id": "HL-571",
+    "ai_answer": "Đúng vậy, điều đó hoàn toàn chính xác. Ngay cả trong các buồng giam tập thể rộng hơn, ánh sáng tự nhiên chỉ lọt qua khe hẹp trên cao, khiến tù nhân gần như mù lòa vào ban đêm và mắc chứng quáng gà. Sự thiếu hụt vitamin D nghiêm trọng dẫn đến bệnh còi xương, làm xương mềm và biến dạng. Đồng thời, chế độ ăn uống thiếu thốn kết hợp với tình trạng thiếu oxy và ẩm thấp gây ra phù thũng nặng nề. Cơ thể người tù bị tàn phá bởi sự kết hợp của bóng tối, đói khát và bệnh tật, khiến họ suy kiệt cả về thể chất lẫn tinh thần sau nhiều năm giam cầm.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 685,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cai ngục Pháp thường áp dụng biện pháp trừng phạt tập thể cực kỳ hà khắc: không chỉ đưa cá nhân bị nghi ngờ đi hỏi cung và biệt giam Cachot, chúng còn cắt giảm khẩu phần ăn, khóa cửa bịt tối nhiều ngày hoặc tăng cường cùm chân cả ngày lẫn đêm đối với cả buồng giam để gây áp lực tinh thần."
+  },
+  "HL-525": {
+    "question_id": "HL-525",
+    "ai_answer": "Không, các rãnh thoát nước này không bị lưới sắt chắn kín. Chúng được thiết kế hở để đảm bảo chức năng thoát nước mưa hiệu quả trong những mùa bão lớn. Tuy nhiên, an ninh được bảo đảm bằng cách bố trí hệ thống này sát chân tường, nơi có sự giám sát chặt chẽ của lính canh. Ngoài ra, kết cấu tường và nền gạch được xây dựng kiên cố, ngăn chặn việc đào bới từ bên trong. Do đó, dù không có lưới chắn, các rãnh này không thể trở thành lối thoát hiểm cho tù nhân.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 564,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đoạn ống gang đúc thoát nước chạy dọc góc tường là kết cấu hạ tầng cổ điển hình thời Pháp. Việc cố định ống bằng các đai sắt ôm chặt sát tường gạch vừa giúp giữ vững ống gang rất nặng trước mưa gió, vừa ngăn không để tù nhân bẻ gãy ống làm hung khí hoặc lợi dụng làm điểm tựa leo trèo lên mái."
+  },
+  "HL-503": {
+    "question_id": "HL-503",
+    "ai_answer": "Có, hiện vật gốc này đang được trưng bày ngay tại khu vực cổng chính. Du khách có thể quan sát trực tiếp bản sao của hồ sơ phê duyệt do Toàn quyền Đông Dương ký ngày 27/2/1896. Tài liệu này xác nhận việc khởi công xây dựng nhà tù ngay trong năm đó. Dù công trình chưa hoàn thiện hết các hạng mục phụ trợ, thực dân Pháp đã vội vàng đưa các dãy trại chính vào sử dụng từ năm 1899. Sự gấp gáp này phản ánh rõ nhu cầu kìm kẹp phong trào đấu tranh yêu nước đang bùng lên mạnh mẽ tại Hà Nội lúc bấy giờ.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 567,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bản thiết kế Nhà tù Hỏa Lò do Kiến trúc sư – Giám đốc Sở Xây dựng nhà cửa dân sự chính quyền thuộc địa dự thảo và trình Toàn quyền Đông Dương phê duyệt tháng 2/1896. Cấu trúc của Hỏa Lò chia dãy phòng giam song song khép kín giống mô hình nhà tù trung tâm Khám Lớn Sài Gòn nhưng kiên cố hơn về tường bao và khu biệt giam."
+  },
+  "HL-583": {
+    "question_id": "HL-583",
+    "ai_answer": "Câu hỏi của bạn chạm vào một giai đoạn lịch sử rất đặc biệt. Trong những năm 1950–1953, khi chiến tranh leo thang, Hỏa Lò không chỉ giam giữ các nhà lãnh đạo cấp cao mà còn là nơi giam giữ hàng trăm học sinh, sinh viên Hà Nội yêu nước.\n\nNhiều gương mặt trẻ tuổi, mới mười tám đôi mươi, đã bị đẩy xuống những căn phòng biệt giam tối tăm này. Họ bị bắt vì tham gia phong trào học sinh phản đối chiến tranh, đòi hòa bình cho dân tộc. Dù tuổi đời còn rất trẻ, họ đã thể hiện bản lĩnh phi thường, kiên cường chịu đựng sự tra tấn và cô lập trong bóng tối.\n\nNhững tấm gương này minh chứng cho sức mạnh của thế hệ trẻ Việt Nam. Họ không chỉ là những học sinh, mà là những chiến sĩ cách mạng thực thụ. Câu chuyện của họ nhắc nhở chúng ta rằng, tinh thần yêu nước và ý chí đấu tranh không phân biệt tuổi tác. Sự hy sinh thầm lặng của họ trong những ngày tháng đen tối nhất đã góp phần quan trọng vào thắng lợi chung của dân tộc.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 774,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Rất nhiều chiến sĩ cộng sản kiên trung đã từng bị ném vào phòng biệt giam Cachot vì dẫn đầu các cuộc đấu tranh tuyệt thực trong tù như đồng chí Trường Chinh, Trần Đăng Ninh, Nguyễn Lương Bằng, Hoàng Quốc Việt cùng nhiều cán bộ Xứ ủy Bắc Kỳ giai đoạn 1930–1945."
+  },
+  "HL-569": {
+    "question_id": "HL-569",
+    "ai_answer": "Đúng vậy, không phải ai cũng chỉ nằm im trong phòng. Chế độ lao dịch ban ngày áp dụng cho cả tù đã thành án lẫn tù chờ xét xử. Những người án nhẹ hoặc chưa kết án thường được phân công các công việc nội bộ như quét dọn, giặt giũ, hoặc phụ giúp trong các xưởng sản xuất. Tuy nhiên, cường độ và mức độ khổ sai có thể khác nhau tùy theo tình trạng pháp lý và sức khỏe của từng người. Dù vậy, tất cả đều bị tước đoạt quyền tự do di chuyển và phải tuân theo lịch trình nghiêm ngặt của nhà tù.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1007,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, chiếc thùng gỗ hoặc thùng tôn có nắp đặt ngay góc cuối bệ nằm chính là thùng vệ sinh dùng chung cho toàn bộ hàng chục tù nhân trong phòng giam tập thể. Mọi nhu cầu đại tiểu tiện suốt ngày đêm khi cửa phòng khóa kín đều phải giải quyết trực tiếp tại chiếc thùng này."
+  },
+  "HL-524": {
+    "question_id": "HL-524",
+    "ai_answer": "Bố cục trục đối xứng này thực chất là công cụ kiểm soát tuyệt đối. Người gác đứng ở trục trung tâm có tầm nhìn bao quát, dễ dàng quan sát và kiểm soát mọi di chuyển của tù nhân tại hai cánh nhà. Kiến trúc Tân cổ điển bề thế không chỉ phô trương quyền lực uy nghiêm của chính quyền bảo hộ, mà còn tạo ra không gian răn đe lạnh lẽo. Sự đối xứng chặt chẽ giúp lực lượng cai ngục tối giản hóa việc tuần tra, đảm bảo không có điểm mù nào để tù nhân có thể lợi dụng. Đây là minh chứng rõ nét cho tư duy thiết kế nhà tù thời thuộc địa, nơi kiến trúc phục vụ trực tiếp cho mục đích giam giữ và đàn áp.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 705,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bản vẽ thiết kế Nhà tù Hỏa Lò được Toàn quyền Đông Dương phê duyệt ngày 27/2/1896 và công trình được khởi công ngay trong năm 1896. Do phong trào đấu tranh yêu nước bùng lên khiến lượng người bị bắt tăng nhanh, dù tới năm 1899 nhà tù vẫn chưa hoàn thiện hết mọi hạng mục phụ trợ nhưng thực dân Pháp đã phải đưa các dãy trại chính vào sử dụng ngay từ năm 1899."
+  },
+  "HL-526": {
+    "question_id": "HL-526",
+    "ai_answer": "Nhà Đề lao Hà Nội cũ tọa lạc tại phố Hàng Bông, nay là khu vực gần phố Hàng Bài. Pháp quyết định xây dựng Hỏa Lò kiên cố hơn vì nhà tù cũ quá chật chội, không đáp ứng nổi nhu cầu giam giữ khi phong trào đấu tranh yêu nước bùng lên mạnh mẽ. Dù công trình Hỏa Lò khởi công năm 1896 nhưng chưa hoàn thiện hết hạng mục phụ trợ, thực dân Pháp vẫn phải đưa các dãy trại chính vào sử dụng ngay từ năm 1899 để đối phó với tình hình. Sự chuyển đổi này phản ánh rõ ý đồ đàn áp quyết liệt của chính quyền thuộc địa.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 576,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, tổ hợp Tháp Hà Nội (Hanoi Towers) xây dựng đầu thập niên 1990 nằm trên phần đất đã giải tỏa của Nhà tù Hỏa Lò cũ. Trước khi tháo dỡ khu vực đó vào năm 1993, cơ quan bảo tồn đã ghi hình, đo vẽ tư liệu toàn bộ mặt bằng cũ và thu hồi nhiều cấu kiện gốc như cánh cửa gỗ lim, song sắt, gạch xây, ổ khóa cổ chuyển về lưu giữ trong kho bảo quản của khu di tích lõi."
+  },
+  "HL-521": {
+    "question_id": "HL-521",
+    "ai_answer": "Đúng vậy. Tầng trên của khối nhà ngay cổng chính vốn là khu trực gác, phòng nghỉ và kho vũ khí của đội lính gác. Từ vị trí này, họ kiểm soát toàn bộ cổng ra vào và khoảng sân tiếp nhận. Mỗi lần đóng mở cặp cánh cổng sắt nặng nề, lính gác đều phải túc trực mở chốt, kiểm tra nghiêm ngặt giấy tờ của cả nhân viên lẫn tù nhân. Sự hiện diện của súng trường và kho vũ khí tại đây cho thấy mức độ an ninh khắt khe, nhằm ngăn chặn mọi nỗ lực vượt ngục hay tiếp tế bí mật vào bên trong nhà tù.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 567,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chính xác. Tầng trên của khối nhà ngay khu cổng chính vốn là khu trực gác, phòng nghỉ và kho vũ khí sẵn sàng chiến đấu của đội lính gác, giúp kiểm soát từ trên cao xuống cổng ra vào và khoảng sân tiếp nhận."
+  },
+  "HL-581": {
+    "question_id": "HL-581",
+    "ai_answer": "Không hề có đặc ân đó. Trong ô xà lim tối, tù nhân bị cùm chân cố định suốt ngày đêm, không được phép tháo cùm để di chuyển hay vệ sinh. Chiếc thùng không nắp đặt ngay sát bệ nằm, chỉ cách đầu hoặc chân một gang tay. Mỗi ngày, cai ngục chỉ mở cửa một hoặc hai lần vào sáng sớm và chiều tối để người ngoài khiêng thùng đi đổ. Trong những ngày hè nóng bức, mùi xú uế bốc lên nồng nặc, khiến nhiều tù nhân bị ngất hoặc mắc bệnh đường ruột, truyền nhiễm.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 555,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong ô ngục rộng chưa đầy 3 m² và bị cùm chân cố định, chiếc thùng hoặc bô vệ sinh đặt ngay sát bệ nằm, nhiều lúc chỉ cách đầu hoặc cạnh chân một gang tay. Vì ăn, ngủ và đại tiểu tiện cùng diễn ra tại một chỗ kín gió, mùi xú uế bủa vây suốt ngày đêm vô cùng kinh khủng."
+  },
+  "HL-523": {
+    "question_id": "HL-523",
+    "ai_answer": "Những vết sứt mẻ không đồng đều trên tường gạch lối vào chính là dấu tích của chiến tranh phá hoại, không phải do phong hóa tự nhiên. Trong giai đoạn 1966–1972, máy bay Mỹ đã ném bom dữ dội khu vực này. Mảnh đạn và sức ép sóng xung kích đã làm vỡ, sứt các viên gạch cổ, để lại những vết thương vĩnh viễn trên bề mặt tường. Đây là bằng chứng lịch sử sống động, nhắc nhở chúng ta về những ngày tháng khốc liệt mà nhà tù và các chiến sĩ cách mạng đã trải qua.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 593,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Những phiến đá xanh lát nền và bậc ngưỡng cửa bị bào mòn ở phần giữa là dấu tích chân thực qua hàng thế kỷ sử dụng liên tục của nhà tù từ thời Pháp thuộc đến tận giai đoạn trại tạm giam sau này. Dù một số lối đi được chỉnh trang lại để an toàn cho khách tham quan, nhiều bậc đá ngưỡng cửa vẫn giữ nguyên vết mòn năm tháng."
+  },
+  "HL-531": {
+    "question_id": "HL-531",
+    "ai_answer": "Đúng vậy, thiết kế đó cực kỳ tinh tế và khoa học. Phần chốt ngỗng cắm sâu xuống ổ đá dưới sàn chính là điểm tựa chịu lực chính, giúp phân tán toàn bộ sức nặng hàng trăm ký của cánh cổng thép rèn dày. Nếu chỉ treo vào tường, bản lề sẽ nhanh chóng bị biến dạng hoặc gãy gập dưới áp lực khổng lồ này. Việc kết hợp chốt dưới đất với hệ thống then cài trên tường tạo thành một cấu trúc khóa kép vững chắc. Nó đảm bảo cánh cổng không thể bị cạy mở từ bên ngoài, đồng thời giảm tải trọng cho khung tường. Đây là bằng chứng rõ ràng cho thấy người Pháp đã đầu tư kỹ thuật cơ khí chính xác, nhằm đảm bảo sự an ninh tuyệt đối cho nhà tù trong suốt hơn một thế kỷ hoạt động.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 679,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cặp cánh cổng sắt lớn gắn đinh tán ở mặt tiền là cấu kiện kiến trúc cổ tiêu biểu còn được bảo tồn nguyên vẹn tại lối vào chính của nhà tù từ cuối thế kỷ XIX. Với độ dày thép rèn và hệ thống then cài to nặng, mỗi lần đóng mở đều phải có lính gác túc trực mở chốt và kiểm soát nghiêm ngặt từng lượt ra vào."
+  },
+  "HL-548": {
+    "question_id": "HL-548",
+    "ai_answer": "Đúng vậy, quy ước “hũ gạo tương trợ” ấy được thực hiện ngay tại chính buồng giam tập thể này. Khi gia đình gửi tiếp tế, các đồng chí không giữ riêng cho cá nhân. Thay vào đó, toàn bộ thức ăn được gom lại, chia đều cho từng người trong phòng. Hành động nhỏ bé nhưng đầy nhân văn này giúp anh em vượt qua cơn đói, giữ vững sức khỏe và tinh thần đoàn kết. Nó biến những ngày tháng tù đày khắc nghiệt thành minh chứng sống động cho tình đồng chí, đồng bào.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 597,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, chiếc thùng gỗ hoặc thùng tôn có nắp đặt ngay góc cuối bệ nằm chính là thùng vệ sinh dùng chung cho toàn bộ hàng chục tù nhân trong phòng giam tập thể. Mọi nhu cầu đại tiểu tiện suốt ngày đêm khi cửa phòng khóa kín đều phải giải quyết trực tiếp tại chiếc thùng này."
+  },
+  "HL-514": {
+    "question_id": "HL-514",
+    "ai_answer": "Bốn bức tường bao nguyên bản của Hỏa Lò áp sát mặt tiền ba con phố: Hai Bà Trưng, Thợ Nhuộm và Quán Sứ. Khu đất rộng gần 13.000 mét vuông này từng được bao bọc kín mít, tạo thành một khối kiến trúc phòng thủ vững chãi giữa lòng Hà Nội. Năm 1993, phần lớn tường bao phía ngoài đã được giải tỏa để xây dựng Tháp Hà Nội. Hiện tại, du khách chỉ còn thấy đoạn tường sót lại giáp các con phố này. Những vị trí chòi gác góc tường ngày xưa nay được tái hiện qua sa bàn và ảnh tư liệu, giúp chúng ta hình dung rõ hơn về hệ thống canh phòng nghiêm ngặt một thời.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 663,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo bản đồ gốc, bốn góc tường thành bao quanh khu đất gần 13.000 m² của Hỏa Lò đều bố trí các chòi gác cao có lính cầm súng túc trực ngày đêm quan sát cả bên trong lẫn bên ngoài. Do phần lớn tường bao gốc đã bị giải tỏa năm 1993 để xây Tháp Hà Nội, hiện khuôn viên lõi không còn chòi gác góc nguyên vẹn mà chỉ tái hiện vị trí qua sa bàn và ảnh tư liệu."
+  },
+  "HL-532": {
+    "question_id": "HL-532",
+    "ai_answer": "Hệ thống điện thoại nội bộ tại Hỏa Lò thời Pháp thực chất phục vụ mục đích điều hành và báo cáo hành chính, không phải là kênh liên lạc khẩn cấp để ứng cứu khi tù nhân nổi dậy. Cơ chế an ninh của nhà tù dựa vào sự bố trí địa lý khép kín với Sở Mật thám và Tòa án, cùng hệ thống hành lang tuần tra liên hoàn. Nhờ đó, lính gác có thể phát hiện và xử lý các tình huống bất thường ngay tại chỗ bằng lực lượng trực tiếp, thay vì chờ đợi sự hỗ trợ từ bên ngoài qua đường dây điện thoại.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 618,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thực dân Pháp quy hoạch cụm Tòa án (Palais de Justice), Sở Mật thám và Nhà tù Hỏa Lò nằm liền kề nhau trên cùng khu phố để tạo thành một chuỗi khép kín từ bắt giữ, hỏi cung, xét xử đến giam cầm. Nhờ cự ly rất gần, lính áp giải dễ dàng dẫn giải bị can sang tòa xử án và đưa ngay về ngục thất mà giảm tối đa nguy cơ bị đồng đội giải cứu dọc đường."
+  },
+  "HL-577": {
+    "question_id": "HL-577",
+    "ai_answer": "Cảm giác đó hoàn toàn chính xác. Hai lớp thép dày cộp này không chỉ để chặn ánh sáng hay âm thanh, mà còn là công cụ trấn áp tâm lý. Tiếng “rầm” khi sập cửa không đơn thuần là âm thanh, nó là một cú sốc vật lý và tinh thần. Sóng chấn động dội qua khung thép dày, cộng hưởng trong không gian hẹp, khiến người tù cảm thấy như bị cả thế giới đè nén lên đầu. Mỗi lần nghe tiếng khóa sắt chốt lại, họ biết mình đã bị cô lập tuyệt đối, không còn lối thoát nào khác ngoài sự chờ đợi trong bóng tối.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 598,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Hệ thống cửa thép kép hai lớp dày cộp phục vụ cả hai mục đích: vừa triệt tiêu tối đa âm thanh kêu gào hay tiếng đập cửa phản kháng của tù nhân lọt ra sân chung, vừa bịt kín mọi khe hở để ngay cả một tia sáng le lói từ hành lang cũng không thể lọt được vào bên trong."
+  },
+  "HL-584": {
+    "question_id": "HL-584",
+    "ai_answer": "Trong ô Cachot, cơ cấu cùm sắt được thiết kế để khóa chéo hoặc luồn qua bệ xi măng, cố định chặt hai cổ chân sát nhau. Khác hẳn với khu tập thể dùng cùm gỗ lim kẹp đôi hoặc cùm sắt khóa hàng loạt, ở đây người tù bị trói cứng đơ trên diện tích chỉ 2 đến 3 mét vuông. Họ không thể đi lại, chỉ nằm co quắp hoặc ngồi bó gối suốt nhiều tuần. Sự chật hẹp và cách khóa cố định này khiến tuần hoàn máu cổ chân tê liệt, gây đau nhức và lạnh buốt thấu xương.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 590,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cùm sắt khóa vào thanh trượt dưới bệ xi măng thuận tiện để cùm cố định hàng loạt nhiều chục người trong buồng giam chung, còn cùm gỗ lim kẹp đôi thường dùng tại các buồng biệt giam hoặc trừng phạt nặng hơn. Cả hai đều gây đau nhức, tê liệt tuần hoàn máu cổ chân, nhưng cùm gỗ nặng đè chặt mắt cá chân và giữ ẩm lạnh cực kỳ buốt giá."
+  },
+  "HL-582": {
+    "question_id": "HL-582",
+    "ai_answer": "Hiện tại, tư liệu lịch sử chính thức của Di tích Hỏa Lò chưa công bố danh tính cụ thể của đồng chí nào từng bị giam giữ tại ô Cachot với thời gian dài nhất. Các hồi ký và tài liệu lưu trữ chủ yếu tập trung vào những vụ vượt ngục tập thể nổi tiếng như đêm 24/12/1951 hay 9/3/1945, cùng với những đau thương chung của các chiến sĩ cách mạng.\n\nTuy nhiên, chính sự thiếu vắng thông tin cá nhân cụ thể lại làm nổi bật ý chí phi thường của cả một thế hệ. Trong bóng tối tuyệt đối, không có ánh sáng, không có thời gian, họ đã dùng trí nhớ và niềm tin để chiến thắng sự cô lập. Những bài thơ được sáng tác trong tâm trí và truyền miệng cho nhau chính là minh chứng sống động nhất cho sức mạnh tinh thần ấy. Khi đứng trước ô Cachot, chúng ta không chỉ nhìn vào một căn phòng tối, mà đang cảm nhận sức nặng của những ngày tháng mà con người đã vượt qua giới hạn sinh học bằng ý chí sắt đá.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 833,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng như bạn hình dung, khi hai lớp cửa sắt đóng sập lại và nắp cửa nhỏ gài chốt ngoài, bên trong ô Cachot chìm vào bóng tối tuyệt đối suốt cả ngày lẫn đêm. Người bị giam mất hoàn toàn khái niệm thời gian, chỉ đoán chừng ngày hay đêm qua tiếng kẻng xa vọng lại hoặc giờ đưa cơm duy nhất trong ngày."
+  },
+  "HL-585": {
+    "question_id": "HL-585",
+    "ai_answer": "Đúng vậy. Dù tường gạch dày ba mươi đến bốn mươi centimet ngăn cách các buồng biệt giam, nhưng hệ thống lỗ thông hơi nhỏ sát trần vẫn là lối thoát duy nhất cho âm thanh. Trong bóng tối đặc quánh, tiếng rên rỉ hay những giai điệu nhỏ nhẹ xuyên qua khe hẹp chính là cách duy nhất để các chiến sĩ xác nhận sự hiện diện của đồng đội. Mỗi tiếng gõ, mỗi lời hát vang lên đều là một tín hiệu sống còn, giúp họ vượt qua sự cô lập tuyệt đối và giữ vững niềm tin trong những ngày tháng bị giam cầm khắc nghiệt nhất.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 598,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Tường gạch xây ngăn giữa các buồng Cachot thường có độ dày khoảng 30 đến 40 cm bằng gạch đặc trát vữa chắc chắn. Vì vậy nếu chỉ nói chuyện bình thường thì hai phòng gần như không nghe thấy tiếng nhau, buộc tù nhân phải áp sát tai xuống tường để nghe tiếng gõ ám hiệu thật khẽ."
+  },
+  "HL-587": {
+    "question_id": "HL-587",
+    "ai_answer": "Đúng vậy, sự tàn khốc nằm ở việc tước đoạt hoàn toàn dinh dưỡng. Trong khi khu tập thể còn có cơm hẩm lẫn trấu, cá mắm và canh rau muống già, thì tù nhân trong Cachot bị cắt sạch mọi khẩu phần. Nhiều ngày liền, họ chỉ nhận được chút cơm nhạt hoặc cơm hẩm kèm muối trắng, cùng một ít nước uống. Mục đích không chỉ là trừng phạt, mà là dùng cái đói có hệ thống để vắt kiệt sức đề kháng, ép cơ thể suy sụp nhanh chóng và buộc tù nhân phải khuất phục trước ý chí sắt đá của kẻ cầm quyền.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 625,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo chế độ kỷ luật Cachot thời Pháp, tù nhân bị cắt hết các khẩu phần bình thường, nhiều ngày chỉ được phát chút cơm hẩm với muối trắng (hoặc cơm nhạt) và một ít nước uống. Việc bỏ đói có hệ thống nhằm vắt kiệt sức đề kháng thể xác để ép tù nhân khuất phục."
+  },
+  "HL-588": {
+    "question_id": "HL-588",
+    "ai_answer": "Trong những ngày hè oi bức, không khí trong ô Cachot đặc quánh như nhựa đường. Khi nước uống bị cắt giảm nghiêm ngặt, các chiến sĩ cách mạng đã phải dùng chính hơi thở và cơ thể mình để cầm cự. Họ hít thở thật chậm, điều hòa khí huyết để giảm bớt cảm giác khát khô cổ họng. Nhiều người còn liếm những giọt mồ hôi mặn chát đọng trên tường gạch, hoặc dùng quần áo ẩm để giữ môi không bị nứt nẻ. Đó không chỉ là sự chịu đựng thể xác, mà là ý chí thép giúp họ giữ vững tỉnh táo giữa bóng tối tuyệt đối, không để sự khắc nghiệt của nhà tù Pháp làm suy sụp tinh thần cách mạng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 596,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo quy chế ghi trên giấy của Pháp thì thời hạn phạt Cachot thông thường tối đa là 15 ngày cho mỗi lần vi phạm. Tuy nhiên, trên thực tế đối với những chiến sĩ cách mạng kiên cường không chịu khuất phục, cai ngục thường cố tình gia hạn liên tiếp nhiều đợt, giam giữ suốt 1 đến 3 tháng ròng rã."
+  },
+  "HL-586": {
+    "question_id": "HL-586",
+    "ai_answer": "Lính gác phát hiện tù nhân ngất xỉu thông qua ô nhìn trộm nhỏ trên cánh cửa thép. Họ dùng đèn pin soi vào bóng tối để kiểm tra tình trạng. Khi xác nhận người tù đã bất tỉnh, họ lập tức mở chốt cửa, bước vào và tháo cùm chân. Việc này được thực hiện ngay lập tức, không chờ bác sĩ trại đến. Sau khi cởi cùm, họ thường để người tù nằm trên nền xi măng lạnh lẽo, chỉ quay lại kiểm tra định kỳ qua ô cửa nhỏ. Quy trình này nhằm đảm bảo tù nhân không chết trong khi bị giam, nhưng hoàn toàn thiếu sự chăm sóc y tế cần thiết.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 579,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo quy chế ghi trên giấy của Pháp thì thời hạn phạt Cachot thông thường tối đa là 15 ngày cho mỗi lần vi phạm. Tuy nhiên, trên thực tế đối với những chiến sĩ cách mạng kiên cường không chịu khuất phục, cai ngục thường cố tình gia hạn liên tiếp nhiều đợt, giam giữ suốt 1 đến 3 tháng ròng rã."
+  },
+  "HL-590": {
+    "question_id": "HL-590",
+    "ai_answer": "Có, đó là sự thật lịch sử đầy cảm động. Trong bóng tối tuyệt đối của ô Cachot, những người tù thường phạm hoặc cảm tình được giao việc quét dọn, đổ rác đã âm thầm trở thành “cầu nối” sống còn. Họ lén nhét qua khe cửa hẹp những nắm cơm vụn, vài hạt muối quý giá, hay viên thuốc ký ninh để đồng chí trong tù không bị kiệt sức. Hành động nhỏ bé ấy, giữa nơi bị tước đoạt mọi quyền cơ bản, đã thắp lên ngọn lửa nghĩa tình, giúp các chiến sĩ cách mạng giữ vững ý chí và sức khỏe để chờ ngày tự do.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 573,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng như bạn hình dung, khi hai lớp cửa sắt đóng sập lại và nắp cửa nhỏ gài chốt ngoài, bên trong ô Cachot chìm vào bóng tối tuyệt đối suốt cả ngày lẫn đêm. Người bị giam mất hoàn toàn khái niệm thời gian, chỉ đoán chừng ngày hay đêm qua tiếng kẻng xa vọng lại hoặc giờ đưa cơm duy nhất trong ngày."
+  },
+  "HL-591": {
+    "question_id": "HL-591",
+    "ai_answer": "Phần nền gạch và chân tường bạn đang nhìn thấy chính là vật liệu nguyên gốc từ thời Pháp thuộc. Sau đợt quy hoạch năm 1993, khu vực này được giữ lại trong phạm vi 2.434 m² với mục tiêu bảo tồn nguyên trạng. Các cấu kiện tường gạch và sàn không bị thay thế mà được gia cố kỹ thuật chống thấm cẩn thận. Mục đích là để giữ đúng kết cấu ban đầu, đồng thời bảo vệ hiện vật khỏi hư hại. Những vết mòn trên bề mặt là dấu tích chân thực của hàng thế kỷ sử dụng liên tục. Chúng minh chứng cho lịch sử nhà tù từ thời Pháp đến giai đoạn trại tạm giam sau này. Một số lối đi có thể được chỉnh trang nhẹ để đảm bảo an toàn cho khách tham quan. Tuy nhiên, phần lớn kết cấu và vật liệu vẫn được giữ nguyên vẹn. Đây là nỗ lực lớn để duy trì tính xác thực của di tích.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 708,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dãy phòng xà lim tử hình Khu D đang được bảo tồn là một phần khối kiến trúc gốc quý giá giữ lại được trong phạm vi 2.434 m² sau đợt quy hoạch năm 1993. Các cấu kiện tường gạch, sàn và khung cửa đều được gia cố chống thấm cẩn thận để giữ đúng kết cấu ban đầu."
+  },
+  "HL-589": {
+    "question_id": "HL-589",
+    "ai_answer": "\"Cachot\" trong tiếng Pháp đơn thuần chỉ hầm biệt giam hoặc ngục tối. Thực dân Pháp dùng thuật ngữ này để chỉ hệ thống xà lim biệt lập tại Hỏa Lò, không phải tên riêng ghi trên bản vẽ thiết kế năm 1896. Thuật ngữ này mang tính chung cho các khu vực giam giữ đặc biệt trong hệ thống nhà tù thuộc địa, không giới hạn riêng cho Hỏa Lò hay Côn Đảo. Người tù chính trị sau này gọi nơi đây là \"địa ngục của địa ngục\" vì sự tàn khốc vượt xa mức độ đọa đày thông thường của nhà tù.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 576,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "\"Cachot\" trong tiếng Pháp có nghĩa là ngục tối hoặc hầm biệt giam. Các cựu tù chính trị gọi khu vực này là \"địa ngục của địa ngục\" bởi nếu toàn bộ Nhà tù Hỏa Lò đã là chốn đọa đày khủng khiếp thì những ô xà lim biệt lập tối đen, thiếu khí và tàn nhẫn tại Cachot còn gấp bội phần kinh hoàng."
+  },
+  "HL-592": {
+    "question_id": "HL-592",
+    "ai_answer": "Có. Lịch sử Hỏa Lò ghi nhận nhiều chiến sĩ đã hy sinh ngay trên bệ xi măng này do kiệt sức, bệnh tật và sự tra tấn tàn khốc. Dù quy chế Pháp quy định thời hạn phạt tối đa 15 ngày, thực tế họ bị giam giữ liên tiếp hàng tháng. Trong những đợt cao trào, không gian chật chội khiến không khí cạn kiệt, đẩy người tù đến giới hạn sinh tồn. Nhiều đồng chí đã trút hơi thở cuối cùng trước khi hết hạn, biến nơi này thành chứng tích đau thương về sự kiên cường và hy sinh thầm lặng của các anh hùng cách mạng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 596,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo quy chế ghi trên giấy của Pháp thì thời hạn phạt Cachot thông thường tối đa là 15 ngày cho mỗi lần vi phạm. Tuy nhiên, trên thực tế đối với những chiến sĩ cách mạng kiên cường không chịu khuất phục, cai ngục thường cố tình gia hạn liên tiếp nhiều đợt, giam giữ suốt 1 đến 3 tháng ròng rã."
+  },
+  "HL-593": {
+    "question_id": "HL-593",
+    "ai_answer": "Lớp lưới mắt cáo dày đặc đó không nhằm mục đích chống muỗi hay ngăn gió, mà là biện pháp kiểm soát tuyệt đối. Nó chặn đứng mọi khả năng tù nhân dùng vật nhọn cưa cắt song sắt từ bên trong. Đồng thời, lưới dày đặc này triệt tiêu hoàn toàn khe hở, khiến việc lén lút truyền thư, mảnh giấy hay tín hiệu ra ngoài trở nên bất khả thi. Đây là thiết kế nhằm cô lập tuyệt đối, biến ô giam thành một khối kín, chỉ để lại lượng oxy tối thiểu duy trì sự sống, không cho phép bất kỳ sự liên lạc hay tiếp xúc nào với thế giới bên ngoài.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1002,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khe thông khí bé xíu bịt lưới sắt dày chỉ đủ cung cấp một lượng oxy tối thiểu để duy trì sự sống lay lắt chứ hoàn toàn không đủ thông thoáng. Không khí trong phòng luôn ẩm nồng, đặc quánh hơi thở và mùi chất thải khiến người tù thường xuyên tức ngực, choáng váng vì thiếu dưỡng khí."
+  },
+  "HL-594": {
+    "question_id": "HL-594",
+    "ai_answer": "Đúng vậy. Khi hai lớp cửa thép khép kín, mọi khe hở bị bịt tuyệt đối. Ánh sáng tự nhiên không thể lọt vào, dù là ban trưa. Bên trong chìm trong bóng tối hoàn toàn. Người bị giam mất khái niệm thời gian, chỉ dựa vào tiếng kẻng xa hoặc giờ cơm duy nhất để đoán ngày đêm. Lớp kính và đèn hiện nay chỉ phục vụ trưng bày, không thay đổi được thực tế khắc nghiệt của lịch sử.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 570,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng như bạn hình dung, khi hai lớp cửa sắt đóng sập lại và nắp cửa nhỏ gài chốt ngoài, bên trong ô Cachot chìm vào bóng tối tuyệt đối suốt cả ngày lẫn đêm. Người bị giam mất hoàn toàn khái niệm thời gian, chỉ đoán chừng ngày hay đêm qua tiếng kẻng xa vọng lại hoặc giờ đưa cơm duy nhất trong ngày."
+  },
+  "HL-595": {
+    "question_id": "HL-595",
+    "ai_answer": "Những đêm khuya ấy gắn liền với các đợt đấu tranh chính trị gay gắt, đặc biệt là phong trào tuyệt thực đòi quyền lợi của tù chính trị giai đoạn 1930 đến 1945. Trong bóng tối tuyệt đối của phòng biệt giam Cachot, không có giấy bút, nhưng tinh thần cách mạng vẫn rực sáng. Các đồng chí như Trường Chinh, Trần Đăng Ninh đã sáng tác và thuộc lòng thơ ngay trong tâm trí. Khi một người cất giọng ngâm thơ hay hát Quốc tế Ca, các buồng giam liền hưởng ứng. Tiếng hát xuyên qua song sắt, biến nỗi đau thể xác thành niềm tin bất khuất, khiến cai ngục dù dùng roi vọt cũng không thể dập tắt được ngọn lửa đấu tranh ấy.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 687,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Rất nhiều chiến sĩ cộng sản kiên trung đã từng bị ném vào phòng biệt giam Cachot vì dẫn đầu các cuộc đấu tranh tuyệt thực trong tù như đồng chí Trường Chinh, Trần Đăng Ninh, Nguyễn Lương Bằng, Hoàng Quốc Việt cùng nhiều cán bộ Xứ ủy Bắc Kỳ giai đoạn 1930–1945."
+  },
+  "HL-596": {
+    "question_id": "HL-596",
+    "ai_answer": "Đúng vậy, đó chính là dụng ý tâm lý học tàn nhẫn của nhà tù. Khung cửa được thiết kế thấp và hẹp nhằm buộc người tù phải cúi gập lưng, gồng vai khi bước vào. Tư thế này tước đi sự thẳng thắn, tự do về thể chất, tạo cảm giác bị đè nén và khuất phục ngay từ khoảnh khắc đầu tiên. Nó là một hình thức tra tấn tinh vi, khiến con người cảm thấy nhỏ bé, bất lực trước sức mạnh của nhà tù, dù chưa hề bị đánh đập hay tra tấn về thể xác.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 581,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các song sắt cửa sổ tại Hỏa Lò được rèn từ thép đặc đường kính lớn, hàn hoặc tán chặt vào nhau với khoảng hở rất hẹp đúng như bạn quan sát, chỉ vừa lọt một bàn tay. Thiết kế này đảm bảo dù người tù có gầy gò đến mấy cũng không thể lách đầu hay bả vai chui qua nếu không cưa gãy song sắt."
+  },
+  "HL-597": {
+    "question_id": "HL-597",
+    "ai_answer": "Đúng vậy. Trước khi bị ném vào buồng tối, tù nhân thường phải chịu trận đòn roi tàn khốc tại phòng hỏi cung. Những vết thương rỉ máu, sưng tấy ấy bị bỏ mặc trong môi trường ẩm thấp, thiếu vệ sinh của Cachot. Kết hợp với việc bị tước hết chăn ấm, nằm co trên sàn xi măng lạnh buốt giữa mùa đông Hà Nội, tình trạng nhiễm trùng nhanh chóng trở nên trầm trọng. Nhiều đồng chí đã bị viêm phổi nặng, chân tay tê cóng, sức khỏe suy kiệt đến mức nguy hiểm tính mạng chỉ sau vài ngày chịu đựng cực hình này.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 668,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cai ngục Pháp thường áp dụng biện pháp trừng phạt tập thể cực kỳ hà khắc: không chỉ đưa cá nhân bị nghi ngờ đi hỏi cung và biệt giam Cachot, chúng còn cắt giảm khẩu phần ăn, khóa cửa bịt tối nhiều ngày hoặc tăng cường cùm chân cả ngày lẫn đêm đối với cả buồng giam để gây áp lực tinh thần."
+  },
+  "HL-599": {
+    "question_id": "HL-599",
+    "ai_answer": "Cachot Hỏa Lò và chuồng cọp Côn Đảo đều là những địa ngục trần gian, nhưng cơ chế hủy hoại con người lại khác biệt rõ rệt. Tại Hỏa Lò, tù nhân bị nhốt trong không gian cực kỳ chật hẹp, buộc phải nằm hoặc ngồi trên nền xi măng dốc. Tư thế này khiến máu dồn lên đầu, gây phù nề mặt nghiêm trọng. Kết hợp với bóng tối tuyệt đối và thiếu dưỡng khí, thị lực suy giảm nhanh chóng, dẫn đến mù lòa tạm thời hoặc vĩnh viễn.\n\nTrong khi đó, chuồng cọp Côn Đảo nổi tiếng với sự cô lập tuyệt đối và tiếng ồn đinh tai nhức óc từ máy xay xát. Tù nhân bị tước đoạt hoàn toàn khả năng giao tiếp, sống trong sợ hãi tột độ và sự điên loạn do thiếu thốn ánh sáng, thức ăn cùng những hình phạt thể xác tàn bạo. Nếu Cachot Hỏa Lò hủy hoại cơ thể qua tư thế và môi trường vật lý khắc nghiệt, thì chuồng cọp Côn Đảo tập trung vào việc phá hủy tâm trí bằng sự cô lập và tiếng ồn. Cả hai đều nhằm mục đích triệt tiêu ý chí con người, nhưng bằng những phương thức bổ trợ cho nhau trong bộ máy.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 864,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo sơ đồ và tư liệu kiến trúc gốc của Nhà tù Hỏa Lò, khu vực biệt giam tối tăm gồm một dãy nhiều ô xà lim đơn xây nối tiếp nhau dọc hành lang hẹp. Phần được giữ lại và phục dựng nguyên trạng hiện nay trong di tích đại diện cho phân khu Cachot điển hình giúp du khách cảm nhận rõ cấu trúc thuở xưa."
+  },
+  "HL-598": {
+    "question_id": "HL-598",
+    "ai_answer": "Trên khung cửa từng ô biệt giam xưa, các viên cai ngục vẫn sơn số thứ tự hoặc gắn thẻ để ghi sổ theo dõi thời hạn giam phạt. Tuy nhiên, do điều kiện thời tiết khắc nghiệt và quá trình xuống cấp tự nhiên của công trình, những tấm biển số gốc bằng kim loại hay sơn đã không còn được bảo tồn nguyên vẹn tại hiện trường. Hiện nay, du khách chỉ có thể quan sát những dấu tích mờ nhạt của các vết sơn cũ trên vách cửa. Những chi tiết cụ thể về quy trình quản lý và số liệu giam giữ đã được lưu trữ trong các hồ sơ văn bản lịch sử, thay vì hiện vật vật lý còn sót lại tại khu vực Ngục tối.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 774,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo quy chế ghi trên giấy của Pháp thì thời hạn phạt Cachot thông thường tối đa là 15 ngày cho mỗi lần vi phạm. Tuy nhiên, trên thực tế đối với những chiến sĩ cách mạng kiên cường không chịu khuất phục, cai ngục thường cố tình gia hạn liên tiếp nhiều đợt, giam giữ suốt 1 đến 3 tháng ròng rã."
+  },
+  "HL-600": {
+    "question_id": "HL-600",
+    "ai_answer": "Sau khi tiếp quản năm 1954, dãy xà lim Cachot không bị niêm phong bỏ không, nhưng công năng đã thay đổi hoàn toàn. Nơi đây chuyển sang phục vụ mục đích giam giữ phạm nhân hình sự do cơ quan công an quản lý. Điểm khác biệt cốt lõi là các thanh cùm sắt tàn bạo mang tính chất thuộc địa đã hoàn toàn không còn được sử dụng. Vì vậy, khu vực này tiếp tục hoạt động trong hệ thống trại tạm giam, nhưng đã loại bỏ các hình thức tra tấn thể xác đặc trưng của thời kỳ trước.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 744,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Sau khi Thủ đô giải phóng tháng 10/1954, Nhà tù Hỏa Lò được chuyển sang làm Trại tạm giam của cơ quan công an quản lý phạm nhân hình sự, rồi giai đoạn 1964–1973 có khu vực dùng giam giữ phi công Mỹ bị bắn rơi. Tuy nhiên trong thời kỳ sau này, thanh cùm sắt tàn bạo thời Pháp hoàn toàn không còn được sử dụng."
+  },
+  "HL-601": {
+    "question_id": "HL-601",
+    "ai_answer": "Khu Cachot thực sự là điểm chạm cảm xúc mạnh nhất tại Hỏa Lò. Ánh sáng mờ ảo và không gian chật hẹp tái hiện chính xác nỗi sợ bóng tối mà tù nhân từng trải qua. Khi bước ra từ bóng tối đặc quánh, ánh nắng ban ngày khiến họ chói mắt, hoa mắt và suy kiệt. Sự trầm lặng của du khách trước cửa chính là minh chứng rõ nét nhất. Đây không chỉ là thử thách thể chất, mà là cuộc đối diện trực diện với ý chí con người. Cảm giác rợn người bạn đang trải nghiệm chính là hồi ức sống động nhất của lịch sử.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 580,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi hết hạn phạt bước từ bóng tối đặc quánh của Cachot ra sân nắng ban ngày, hầu hết tù nhân đều bị chói mắt dữ dội, hoa mắt chóng mặt và phải lấy tay che mắt hoặc dựa vào tường một lúc lâu mới có thể đi lại chậm chạp, nhiều người suy kiệt tới mức gục ngã ngay ngoài cửa."
+  },
+  "HL-603": {
+    "question_id": "HL-603",
+    "ai_answer": "Khối bệ xi măng này được xây đặc gạch vữa, không có khoảng rỗng bên trong. Chính cấu trúc đặc chắc ấy khiến bề mặt sàn trở nên lạnh buốt và giữ nhiệt cực kém. Vào mùa đông Hà Nội, khi bị tước hết chăn màn, người tù nằm trực tiếp trên nền xi măng dày đặc này sẽ bị rút cạn nhiệt cơ thể nhanh chóng. Độ lạnh từ dưới chân lan lên, khiến chân tay tê cóng và dễ mắc các bệnh viêm phổi nặng do gió bấc ẩm ướt.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 569,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi bị phạt đưa vào Cachot, tù nhân thường chỉ được mặc đúng bộ quần áo tù mỏng dính trên người, bị tước hết chăn màn hay áo ấm tiếp tế. Vào mùa đông Hà Nội gió bấc lạnh ẩm, nằm trên sàn xi măng không nắng mặt trời khiến chân tay tê cóng, nhiều người bị viêm phổi nặng."
+  },
+  "HL-604": {
+    "question_id": "HL-604",
+    "ai_answer": "Đúng vậy, đó là một chi tiết lịch sử rất đỗi cảm động và thông minh. Khi bị giam trong các ô cachot liền kề, các chiến sĩ không chỉ gõ lên tường gạch mà còn tận dụng hệ thống cùm chân bằng sắt và nền sàn chung. Những rung động truyền qua kim loại và bê tông trở thành “ngôn ngữ” bí mật. Họ dùng các nhịp gõ ngắn, dài khác nhau để báo hiệu tình hình, động viên tinh thần và đặc biệt là thông báo khi chuẩn bị tuyệt thực tập thể. Cách làm này giúp họ duy trì sự gắn kết, chia sẻ nỗi đau và tiếp thêm sức mạnh vượt qua sự cô lập tuyệt đối của nhà tù.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 607,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các chiến sĩ chính trị tại Hỏa Lò đã tự sáng tạo và phổ biến quy ước gõ tường rất linh hoạt dựa trên thứ tự bảng chữ cái hoặc mã vần quen thuộc. Chỉ bằng những tiếng gõ khẽ của đốt ngón tay lên bức tường chung, họ hỏi thăm sức khỏe, báo tin bên ngoài và tiếp thêm nghị lực cho nhau vượt qua án phạt."
+  },
+  "HL-605": {
+    "question_id": "HL-605",
+    "ai_answer": "Đúng như bạn quan sát. Ô xà lim chỉ rộng chừng hai đến ba mét vuông, trần thấp và bệ xi măng dốc hẹp. Tù nhân bị cùm chân cố định, không thể xoay trở hay nằm thẳng lưng. Họ buộc phải ngồi co quắp, lưng tựa tường, mắt mở trừng trừng trong bóng tối đặc quánh. Tư thế gò bó ấy phản ánh chính xác sự khốn cùng thể xác và tinh thần mà người tù phải chịu đựng suốt nhiều tuần liền.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 909,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi hết hạn phạt bước từ bóng tối đặc quánh của Cachot ra sân nắng ban ngày, hầu hết tù nhân đều bị chói mắt dữ dội, hoa mắt chóng mặt và phải lấy tay che mắt hoặc dựa vào tường một lúc lâu mới có thể đi lại chậm chạp, nhiều người suy kiệt tới mức gục ngã ngay ngoài cửa."
+  },
+  "HL-606": {
+    "question_id": "HL-606",
+    "ai_answer": "Cai ngục lo sợ cả hai nguy cơ. Họ tịch thu mọi thứ, từ cúc áo đến dây lưng, nhằm triệt tiêu khả năng tự sát bằng vật sắc nhọn. Đồng thời, việc cấm tuyệt đối kim loại nhỏ giúp ngăn tù nhân chế tạo công cụ cạy khóa hoặc liên lạc bí mật. Sự kiểm soát khắt khe này biến người tù thành hai bàn tay trắng, cô lập hoàn toàn giữa bốn bức tường tối tăm, không còn bất kỳ phương tiện nào để chống cự hay vượt ngục.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 600,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trước khi đẩy vào phòng Cachot, lính gác khám xét cực kỳ gắt gao từ quần áo, kẽ tóc đến miệng để tịch thu sạch mọi vật dụng cá nhân dù là nhỏ nhất như mẩu bút chì, mảnh giấy, kim khâu, chiếc lược hay thuốc lá, biến người tù thành hai bàn tay trắng giữa bốn bức tường."
+  },
+  "HL-607": {
+    "question_id": "HL-607",
+    "ai_answer": "Theo các hồi ký y khoa của cựu tù, chỉ sau bảy ngày đầu tiên bị giam trong Cachot, cơ thể đã phản ứng dữ dội. Tư thế dốc đầu khiến máu dồn lên, gây phù nề vùng mặt và tê liệt chi dưới. Hai bàn chân sưng tấy đến mức không thể nhấc nổi. Đồng thời, bóng tối tuyệt đối kết hợp thiếu dưỡng khí làm thị lực suy giảm nghiêm trọng, thậm chí dẫn đến mù lòa tạm thời. Đây là bằng chứng rõ ràng về sự tàn phá thể chất cực đoan mà nhà tù này gây ra.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 641,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cai ngục Pháp thường áp dụng biện pháp trừng phạt tập thể cực kỳ hà khắc: không chỉ đưa cá nhân bị nghi ngờ đi hỏi cung và biệt giam Cachot, chúng còn cắt giảm khẩu phần ăn, khóa cửa bịt tối nhiều ngày hoặc tăng cường cùm chân cả ngày lẫn đêm đối với cả buồng giam để gây áp lực tinh thần."
+  },
+  "HL-608": {
+    "question_id": "HL-608",
+    "ai_answer": "Dãy buồng Cachot trước mắt bạn là phần được phục dựng nguyên trạng nhất, đại diện cho cấu trúc điển hình của khu biệt giam xưa. Tuy nhiên, không có con số phần trăm chính xác nào được công bố cho toàn bộ hệ thống tường gạch, vòm trần và cửa thép gốc. Nhiều hạng mục đã được chỉnh trang để đảm bảo an toàn cho khách tham quan. Dù vậy, những phiến đá xanh lát nền và bậc ngưỡng cửa vẫn giữ nguyên vết mòn do hàng thế kỷ sử dụng liên tục. Đây là dấu tích chân thực, giúp bạn cảm nhận rõ nhất sự khắc nghiệt của không gian giam giữ thuở xưa.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 597,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo sơ đồ và tư liệu kiến trúc gốc của Nhà tù Hỏa Lò, khu vực biệt giam tối tăm gồm một dãy nhiều ô xà lim đơn xây nối tiếp nhau dọc hành lang hẹp. Phần được giữ lại và phục dựng nguyên trạng hiện nay trong di tích đại diện cho phân khu Cachot điển hình giúp du khách cảm nhận rõ cấu trúc thuở xưa."
+  },
+  "HL-609": {
+    "question_id": "HL-609",
+    "ai_answer": "Có. Trong chương trình \"Đêm thiêng liêng\", hệ thống âm thanh tại khu vực Cachot được thiết kế tinh tế để tái hiện không gian tù đày. Khi ánh đèn mờ dần, bạn sẽ nghe thấy tiếng bước chân đều đặn của lính gác tuần tra và âm thanh lạch cạch của cùm sắt. Những âm thanh này hòa cùng ánh sáng đỏ mờ, giúp du khách cảm nhận rõ hơn sự cô độc và căng thẳng của những đêm dài trong xà lim biệt giam.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 534,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Hệ thống đèn chụp sắt dọc hành lang được giữ lại dáng vẻ kiểu cũ thời Pháp thuộc để tái hiện không gian lịch sử. Ngày xưa về ban đêm, hành lang tuần tra thường thắp ánh đèn mờ để lính gác quan sát lối đi và soi vào khe cửa buồng giam, trong khi bên trong nhiều xà lim biệt giam gần như chìm vào bóng tối."
+  },
+  "HL-610": {
+    "question_id": "HL-610",
+    "ai_answer": "Nghị lực ấy bắt nguồn từ niềm tin sắt đá vào lý tưởng giải phóng dân tộc. Trong bóng tối tuyệt đối, khi cơ thể bị hủy hoại, tinh thần lại được tôi luyện. Các chiến sĩ không có giấy bút, nhưng họ sáng tác thơ và học thuộc lòng ngay trong tâm trí. Những vần thơ hào sảng trở thành nguồn sống, giúp họ vượt qua đau đớn thể xác. Khi được chuyển ra ngoài, họ chép lại những bài thơ ấy, biến nỗi đau thành sức mạnh. Chính ý chí bất khuất và tình đồng chí đồng đội đã giúp họ không bao giờ khuất phục trước sự tàn bạo của nhà tù thực dân.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 546,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, trong bóng tối tuyệt đối không có bất kỳ dụng cụ viết nào, nhiều bài thơ cách mạng hào sảng đã được các chiến sĩ sáng tác và học thuộc lòng hoàn toàn trong tâm trí, sau đó mới truyền miệng cho đồng đội hoặc chép lại ra giấy ngay khi được chuyển ra khu giam chung."
+  },
+  "HL-611": {
+    "question_id": "HL-611",
+    "ai_answer": "Khu D được thiết kế biệt lập nhằm mục đích kép: cô lập tuyệt đối và kiểm soát an ninh. Về tâm lý, sự tách biệt hoàn toàn bằng tường dày và nhiều lớp cổng khóa nhằm triệt tiêu ý chí phản kháng, khiến tử tù rơi vào trạng thái cô độc, tuyệt vọng, không thể liên lạc hay chia sẻ nỗi đau. Về an ninh, cách ly vật lý này ngăn chặn việc truyền tin, tổ chức âm mưu vượt ngục hay kích động các khu giam giữ khác nổi loạn. Đây là cơ chế kiểm soát tối thượng của nhà tù thực dân, biến Khu D thành một \"hòn đảo\" chết chóc, nơi con người bị tước đi mọi kết nối xã hội trước giờ hành hình.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 801,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trên bức ảnh toàn cảnh chụp từ trên cao đầu thế kỷ XX, các dãy nhà mái ngói xếp song song chính là hệ thống các phân khu giam giữ được tách biệt bởi những bức tường ngăn và sân trong: gồm trại giam nam thường phạm, trại giam chính trị phạm, trại giam nữ, khu xà lim tử hình, khu giam người châu Âu, cùng khu nhà bếp, bệnh xá và xưởng lao động."
+  },
+  "HL-613": {
+    "question_id": "HL-613",
+    "ai_answer": "Trong bối cảnh tù đày, thông tin về án tử hình thường được các đồng chí trong khu giam giữ nắm bắt qua những lời thì thầm kín đáo hoặc qua các lần chuyển đồ tiếp tế. Nhạc sĩ Đỗ Nhuận, dù bị giam cách biệt, vẫn luôn giữ mối liên hệ tinh thần chặt chẽ với đồng chí Hoàng Văn Thụ. Khi hay tin đồng chí sắp đối mặt với bản án tử hình vào những ngày đông giá rét cuối năm 1943, ông đã quyết định gửi chiếc áo len xanh lá mạ quý giá của mình. Hành động này không chỉ là sự chia sẻ vật chất mà còn là lời động viên tinh thần to lớn, thể hiện tình đồng chí thiêng liêng vượt qua mọi rào cản của nhà tù thực dân.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 609,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bà Phạm Thị Vân khi bị giam tại trại nữ Hỏa Lò đã tháo chiếc áo len của em gái, nhờ que đan vót bằng tre đan thành chiếc áo cổ lọ rồi khéo léo nhờ người thân tiếp tế hoặc những người tù làm công việc chia cơm, chuyển đồ âm thầm tuồn qua từng lớp gác sang Khu D gửi tận tay đồng chí Hoàng Văn Thụ."
+  },
+  "HL-614": {
+    "question_id": "HL-614",
+    "ai_answer": "Những lời trăng trối ấy được đồng chí Hoàng Văn Thụ trao lại cho bạn tù ngay trước khi bị áp giải ra trường bắn Tương Mai, vào sáng sớm ngày 24 tháng 5 năm 1944. Lúc đó, đồng chí đang bị giam trong buồng xà lim số 1 tại Khu D. Đây là khoảnh khắc cuối cùng, khi đồng chí vẫn giữ vững khí phách, dặn dò các đồng chí ở lại tiếp tục chiến đấu, hoàn thành sứ mệnh cách mạng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 558,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo tư liệu lưu trữ tại Di tích Nhà tù Hỏa Lò, đồng chí Hoàng Văn Thụ bị giam giữ trong dãy xà lim tử hình Khu D từ cuối năm 1943 cho tới sáng sớm ngày 24/5/1944 trước khi bị áp giải ra trường bắn Tương Mai. Các buồng xà lim bảo tồn tại Khu D hiện nay tái hiện nguyên vẹn không gian giam giữ những ngày cuối cùng kiên trung đó của đồng chí."
+  },
+  "HL-612": {
+    "question_id": "HL-612",
+    "ai_answer": "Cánh cửa thép này được gia cố bằng khung bản dày cùng hàng chục đinh tán nặng trĩu, tạo nên khối lượng cực lớn. Mỗi lần đóng mở, tiếng bản lề và chốt sắt va chạm vang rền, dội khắp dãy hành lang. Cấu trúc này nhằm chịu mọi lực va đập từ bên trong, khiến tù nhân tay không gần như không có điểm tựa để bẩy hay cạy mở.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 480,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cánh cửa thép của xà lim tử hình được gia cố bằng khung thép bản dày kết hợp hàng chục đinh tán thép nặng trĩu để chịu được mọi lực va đập từ bên trong. Trọng lượng cửa rất nặng nên mỗi lần mở cửa tiếng bản lề và chốt sắt vang rền khắp dãy hành lang."
+  },
+  "HL-615": {
+    "question_id": "HL-615",
+    "ai_answer": "Tư liệu lịch sử hiện có tại di tích không ghi nhận cụ thể số ngày đêm bà Phạm Thị Vân dành cho việc đan áo. Câu chuyện được lưu truyền và trưng bày tập trung vào hành động tháo chiếc áo len của em gái, vót tre làm que đan, rồi khéo léo nhờ người thân tiếp tế hoặc tù làm công việc chia cơm âm thầm tuồn qua từng lớp gác. Chiếc áo cổ lọ này được gửi tận tay đồng chí Hoàng Văn Thụ tại Khu D, trở thành biểu tượng cảm động về tình yêu và lý tưởng cách mạng giữa hoàn cảnh tù đày khắc nghiệt.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 567,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bà Phạm Thị Vân khi bị giam tại trại nữ Hỏa Lò đã tháo chiếc áo len của em gái, nhờ que đan vót bằng tre đan thành chiếc áo cổ lọ rồi khéo léo nhờ người thân tiếp tế hoặc những người tù làm công việc chia cơm, chuyển đồ âm thầm tuồn qua từng lớp gác sang Khu D gửi tận tay đồng chí Hoàng Văn Thụ."
+  },
+  "HL-617": {
+    "question_id": "HL-617",
+    "ai_answer": "Chiếc máy chém từ Hỏa Lò đã được tháo rời, vận chuyển bằng tàu hỏa lên Yên Bái để thi hành án. Sáng 17/6/1930, Nguyễn Thái Học cùng 12 đồng chí khác thuộc Việt Nam Quốc dân Đảng đã hy sinh tại đây. Trước đó, nhiều chiến sĩ bị bắt ở Hà Nội và các tỉnh lân cận đã bị giam giữ, thẩm vấn ngay tại Nhà tù Hỏa Lò. Họ chờ ngày bị đưa đi xét xử và hành quyết. Những xà lim này từng là nơi giam giữ các nhà yêu nước ấy trong những ngày tháng cuối cùng của cuộc đời.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 658,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Sau Khởi nghĩa Yên Bái tháng 2/1930, lãnh tụ Nguyễn Thái Học và đa số đồng chí chủ chốt bị giam và đưa ra xét xử, hành quyết ngay tại Yên Bái ngày 17/6/1930, nhưng chính chiếc máy chém từ Hỏa Lò đã được đưa lên đó để thi hành án; đồng thời một số chiến sĩ Quốc dân Đảng bị bắt ở Hà Nội và các tỉnh lân cận cũng từng bị giam giữ, thẩm vấn tại Nhà tù Hỏa Lò."
+  },
+  "HL-618": {
+    "question_id": "HL-618",
+    "ai_answer": "Khi lệnh dẫn giải ban hành lúc mờ sáng, lính gác không hề đục phá cùm sắt cố định. Thay vào đó, họ chỉ tháo rời phần khóa gỗ hoặc chốt kim loại để giải phóng đôi chân bị cùm. Ngay sau đó, các tử tù lập tức bị khóa chặt cổ tay ra phía sau bằng còng sắt hoặc dây trói. Nhiều người vẫn phải đeo xiềng chân nặng nề, lê từng bước lên xe bít bùng dưới sự canh gác dày đặc của lính lê dương. Tiếng xích kéo lê trên nền gạch lạnh lẽo chính là âm thanh ám ảnh nhất, đánh dấu khoảnh khắc cuối cùng trước khi bước ra pháp trường.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 595,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi được tháo khỏi thanh cùm cố định để áp giải ra pháp trường, các tử tù vẫn bị khóa chặt cổ tay ra phía sau bằng còng sắt hoặc dây trói và nhiều người vẫn phải đeo xiềng chân nặng lê từng bước lên xe bít bùng dưới sự canh gác dày đặc của lính lê dương."
+  },
+  "HL-616": {
+    "question_id": "HL-616",
+    "ai_answer": "Chính xác. Trong những ngày tháng chờ đợi án tử, các đồng chí đã biến sự im lặng tuyệt đối thành một chiến trường tinh thần. Họ dùng tiếng gõ muỗng, tiếng ho, hay những giai điệu hát đối đáp xuyên qua vách tường dày để duy trì liên lạc và động viên nhau. Những âm thanh nhỏ bé ấy vang lên đúng vào khoảnh khắc lính gác đổi ca, khi sự chú ý của kẻ thù bị xao nhãng. Đó không chỉ là cách giao tiếp, mà là biểu tượng của ý chí bất khuất, khẳng định rằng dù thân thể bị trói buộc, tinh thần cách mạng vẫn luôn tự do và gắn kết.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 621,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong đêm 24/12/1951, 16 tử tù đã phối hợp cực kỳ mưu trí suốt nhiều tuần chuẩn bị: họ tận dụng mảnh lưỡi cưa nhỏ giấu trong cơm tiếp tế hoặc đồ dùng để cưa ngầm phần khớp chốt của thanh cùm gỗ lim vào những giờ lính gác đổi ca, lấy cơm nguội trộn tro trát kín vết cưa ngụy trang cho tới đúng đêm Giáng sinh."
+  },
+  "HL-619": {
+    "question_id": "HL-619",
+    "ai_answer": "Đối phương từng ghi nhận sự kính nể thầm lặng trước khí phách ấy. Trong bóng tối tuyệt đối, các chiến sĩ tự kỷ luật tinh thần bằng cách ôn lý luận, ngâm thơ và hít thở điều hòa. Họ coi cái chết nhẹ tựa lông hồng, ăn hết suất cơm để giữ sức chiến đấu. Sự bình thản và lạc quan đó biến xà lim thành trường học, khiến kẻ thù nhận ra không thể bẻ gãy ý chí con người Việt Nam.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 521,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Lời nhắn gửi nổi tiếng của đồng chí Hoàng Văn Thụ \"Ở lại tiếp tục chiến đấu...\" cùng nhiều câu thơ, bức thư tuyệt mệnh của các liệt sĩ khác được bảo tàng lưu giữ dưới dạng bản chụp tài liệu, bảng trích dẫn trang trọng trên vách trưng bày và tái hiện trong phần thuyết minh tự động tại khu Khu D."
+  },
+  "HL-620": {
+    "question_id": "HL-620",
+    "ai_answer": "Tử tù ở Khu D không được hưởng chế độ đặc biệt nào để “giữ sức” cho ngày ra pháp trường. Khẩu phần của họ vẫn là cơm hẩm trộn cám, rau già và cá khô, tương tự các phòng giam thường. Sự khác biệt duy nhất nằm ở mức độ khắc nghiệt: khi bị phạt vào Cachot, tù nhân bị cắt hoàn toàn khẩu phần, chỉ còn chút cơm nhạt với muối trắng và nước. Cả hai đều chịu cảnh đói khát có hệ thống, nhưng tử tù vẫn được phát đủ lượng tối thiểu để duy trì sự sống, trong khi người bị phạt Cachot bị vắt kiệt sức đề kháng nhằm ép họ khuất phục.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 667,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thời Pháp thuộc, phụ nữ mang thai hay đang cho con bú hầu như không được hưởng chế độ bồi dưỡng tử tế nào mà vẫn phải ăn khẩu phần cơm hẩm trộn cám, rau già, cá thối giống mọi tù nhân khác. Để người mẹ có chút sữa cho con, chị em cùng phòng thường tự nhường phần cơm ít ỏi hay chút đồ tiếp tế cho mẹ bầu."
+  },
+  "HL-621": {
+    "question_id": "HL-621",
+    "ai_answer": "Đúng như bạn quan sát, đó chính là ô cửa nhỏ được thiết kế đặc biệt để chuyển đồ ăn, nước uống và thư từ vào buồng giam. Vị trí đặt ngang tầm ngực giúp lính canh thao tác thuận tiện mà không cần cúi thấp hay ngửa đầu, đồng thời hạn chế tối đa việc tù nhân nhìn ra ngoài. Khi đưa bát cơm hay thay nước, lính gác chỉ cần luồn tay hoặc vật dụng qua khe hở này. Thiết kế này vừa đảm bảo an ninh tuyệt đối, vừa tiết kiệm thời gian trong quá trình phục vụ, thể hiện sự tính toán kỹ lưỡng của nhà tù thực dân nhằm kiểm soát chặt chẽ từng cử động của người bị giam giữ.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 915,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Lỗ quan sát trên cửa sắt thường vát loe rộng dần về phía trong buồng giam để lính canh đứng ngoài chỉ cần ghé mắt vào khe nhỏ cũng bao quát được gần như toàn bộ diện tích bệ nằm bên trong phòng, trong khi tử tù từ bên trong hầu như không nhìn thấy người đứng ngoài."
+  },
+  "HL-623": {
+    "question_id": "HL-623",
+    "ai_answer": "Những lá thư ấy thường được viết vào đêm cuối cùng, ngay trước giờ ra pháp trường. Khi đó, các đồng chí đã được phép viết thư cuối cùng cho gia đình hoặc bạn bè. Nét chữ bình tĩnh, cứng cáp không phải vì vội vàng, mà là kết quả của ý chí thép và sự chuẩn bị tinh thần sẵn sàng hy sinh. Họ viết trên những mảnh giấy mỏng, dùng bút chì hoặc mực, để lại lời nhắn gửi bất hủ như \"Ở lại tiếp tục chiến đấu\". Những dòng chữ ngắn gọn ấy là minh chứng sống động cho khí phách cách mạng, được gia đình trân trọng lưu giữ và trao tặng bảo tàng để thế hệ sau noi theo.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 632,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Những bức thư tuyệt mệnh còn giữ lại được thường viết bằng bút chì hoặc bút mực trên những mảnh giấy mỏng hợp pháp khi được phép viết thư cuối cùng trước lúc ra pháp trường, sau đó được gia đình hoặc bạn tù trân trọng nâng niu lưu giữ hàng chục năm trước khi trao tặng lại cho bảo tàng."
+  },
+  "HL-624": {
+    "question_id": "HL-624",
+    "ai_answer": "Thực dân Pháp không bao giờ công khai thông báo trước cho gia đình. Họ cố tình giữ bí mật tuyệt đối về ngày giờ thi hành án, thường chỉ tiết lộ vào rạng sáng, khoảng 3 đến 4 giờ. Mục đích là để ngăn chặn mọi sự can thiệp, đấu tranh từ đồng đội bên trong lẫn phản ứng của dư luận bên ngoài.\n\nQuyền thăm gặp thân nhân lần cuối, nếu có, chỉ được thực hiện trong những khoảnh khắc cuối cùng, ngay trước khi bị đưa ra pháp trường. Sự im lặng và bí mật này là một phần của chiến thuật đàn áp, nhằm gây áp lực tâm lý cực đại lên người tù và triệt tiêu mọi hy vọng cứu vãn.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 832,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, thực dân Pháp thường giữ bí mật ngày giờ thi hành án cho tới tận khoảng 3–4 giờ sáng hôm hành quyết để tránh phản ứng đấu tranh từ đồng đội và dư luận. Khi nghe tiếng chìa khóa lạch cạch bất thường lúc nửa đêm về sáng, các tử tù đều hiểu giờ ra pháp trường đã điểm."
+  },
+  "HL-625": {
+    "question_id": "HL-625",
+    "ai_answer": "Thực dân Pháp không hề hoảng sợ hay cấm đoán, bởi họ tin vào sự cô lập tuyệt đối của các xà lim. Tiếng hô vang \"Đảng Cộng sản Đông Dương muôn năm\" hay bài Quốc tế ca không phải là sự phản kháng bạo lực, mà là nghi thức tiễn biệt đầy khí phách. Nó biến nỗi sợ hãi thành niềm tin sắt đá, giúp người ra đi vững bước và truyền lửa cho những người ở lại. Sự im lặng của kẻ thù trước tiếng hát ấy chính là bằng chứng cho thấy tinh thần cách mạng đã vượt lên trên mọi xiềng xích và sự kiểm soát của nhà tù.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 554,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi biết tin một đồng chí bị gọi tên lúc rạng sáng để ra pháp trường, các tử tù còn lại ở những buồng kế bên liền đồng thanh hô vang khẩu hiệu cách mạng \"Đảng Cộng sản Đông Dương muôn năm!\", \"Việt Nam độc lập muôn năm!\" hoặc cất cao bài Quốc tế ca để tiễn đưa người đồng đội vững bước."
+  },
+  "HL-626": {
+    "question_id": "HL-626",
+    "ai_answer": "Các đồng chí không dùng đường dây liên lạc phức tạp hay tín hiệu đặc biệt nào. Sự thống nhất giờ giấc được thực hiện qua những cuộc gặp gỡ bí mật, kín kẽ ngay trong nội bộ các xà lim và thông qua các mối quan hệ tin cậy đã được xây dựng từ trước. Chính sự đồng lòng tuyệt đối và kỷ luật thép của tập thể 16 tử tù đã tạo nên một \"đường dây\" vô hình nhưng vững chắc nhất. Họ thống nhất hành động vào đúng đêm Giáng sinh, khi sự cảnh giác của địch có thể bị xao nhãng, biến những xà lim kiên cố thành nơi khởi đầu cho tự do.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 592,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong đêm 24/12/1951, 16 tử tù đã phối hợp cực kỳ mưu trí suốt nhiều tuần chuẩn bị: họ tận dụng mảnh lưỡi cưa nhỏ giấu trong cơm tiếp tế hoặc đồ dùng để cưa ngầm phần khớp chốt của thanh cùm gỗ lim vào những giờ lính gác đổi ca, lấy cơm nguội trộn tro trát kín vết cưa ngụy trang cho tới đúng đêm Giáng sinh."
+  },
+  "HL-627": {
+    "question_id": "HL-627",
+    "ai_answer": "Đúng vậy. Khác với phòng Cachot tối đen hoàn toàn, khu xà lim tử hình Khu D được thiết kế với trần cao hơn và có ô thoáng nhỏ phía trên. Ngọn đèn công suất yếu được treo tít trên cao, hắt xuống ánh sáng lờ mờ suốt đêm. Mục đích duy nhất là để lính gác quan sát liên tục qua mắt thần, đảm bảo tử tù không tự tử hay tháo cùm. Ánh sáng yếu ớt ấy chính là biểu tượng cho sự giám sát khắt khe và nỗi cô đơn tột cùng của những người tù trong những ngày tháng cuối đời.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 573,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Nhận xét của bạn rất tinh tế: so với Cachot tối đen hoàn toàn, khu xà lim tử hình Khu D có trần cao hơn một chút và phía trên cửa hoặc tường hậu có ô thoáng nhỏ hắt chút ánh sáng lờ mờ giúp lính gác luôn quan sát được nhất cử nhất động của tử tù 24/24 giờ để phòng ngừa tự sát hoặc trốn chạy."
+  },
+  "HL-628": {
+    "question_id": "HL-628",
+    "ai_answer": "Mỗi sáng, lính gác tiến hành kiểm tra thân thể tử tù với tần suất gắt gao, lục soát từng kẽ tóc và gấu áo. Mục đích là ngăn chặn việc giấu mảnh lưỡi dao hay thuốc độc để tự vẫn trước ngày thi hành án. Sự kiểm soát này nhằm đảm bảo không có bất kỳ vật cấm nào tồn tại trong khu vực giam giữ, phản ánh mức độ giám sát chặt chẽ của ban giám ngục Pháp đối với các tù nhân sắp bị xử tử.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 499,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong suốt thời gian dài bị cùm chân chờ thi hành án ở Khu D không được cắt tỉa hay tắm giặt đầy đủ, nhiều tử tù để tóc mọc dài rậm rạp hoặc bị cạo trọc theo đợt vệ sinh phòng dịch chung của nhà tù, dáng vẻ gầy guộc nhưng ánh mắt vẫn sáng rực khí phách."
+  },
+  "HL-622": {
+    "question_id": "HL-622",
+    "ai_answer": "Thực tế lịch sử cho thấy, trong các đợt kết án hàng loạt, một buồng xà lim Khu D thường phải cùm ghép từ hai đến ba tử tù nằm cạnh nhau trên cùng một bệ xi măng. Không gian chật hẹp đến mức họ phải nằm ép sát vai nhau, chờ ngày thi hành án. Hiện vật phục dựng hai tượng sáp chính là minh chứng chân thực cho sự quá tải và tàn khốc của chế độ giam giữ thời đó.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 740,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, trong những thời kỳ tòa án thực dân kết án tử hình hàng loạt sau các cuộc khởi nghĩa hay chiến dịch càn quét, một buồng xà lim Khu D phải cùm ghép 2 đến 3 tử tù nằm cạnh nhau trên cùng một bệ xi măng chờ ngày thi hành án."
+  },
+  "HL-630": {
+    "question_id": "HL-630",
+    "ai_answer": "Chính quyền thực dân Pháp không trao lại thi hài cho gia đình. Sau khi hành quyết, các liệt sĩ thường bị vùi lấp vội vàng tại bãi đất trống gần trường bắn hoặc trong khuôn viên nhà tù. Nhiều phần mộ bị san phẳng, không có bia mộ, biến thành những nấm mồ vô danh. Chỉ đến khi kháng chiến chống Pháp kết thúc, nhiều hài cốt mới được tìm thấy và quy tập về nghĩa trang liệt sĩ. Những ngôi mộ vô danh này chính là minh chứng cho sự tàn bạo của chế độ thực dân, đồng thời nhắc nhở chúng ta về sự hy sinh thầm lặng của các anh hùng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 584,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo tư liệu lưu trữ tại Di tích Nhà tù Hỏa Lò, đồng chí Hoàng Văn Thụ bị giam giữ trong dãy xà lim tử hình Khu D từ cuối năm 1943 cho tới sáng sớm ngày 24/5/1944 trước khi bị áp giải ra trường bắn Tương Mai. Các buồng xà lim bảo tồn tại Khu D hiện nay tái hiện nguyên vẹn không gian giam giữ những ngày cuối cùng kiên trung đó của đồng chí."
+  },
+  "HL-629": {
+    "question_id": "HL-629",
+    "ai_answer": "Thiết kế bệ nằm dốc ngược đầu xuống thấp là thủ đoạn tra tấn cực kỳ thâm độc. Tư thế này khiến máu dồn liên tục xuống đầu, gây đau đầu dữ dội, sung huyết mắt và rối loạn tuần hoàn. Trong khi đó, hai cổ chân bị cùm chặt trên cao khiến máu ứ đọng, gây phù nề nghiêm trọng. Nhiều chiến sĩ bị cùm 24/24 suốt 6 tháng đến gần một năm trời ròng rã. Hậu quả là đôi chân tê liệt hoàn toàn, da thịt bị lở loét nặng nề, dẫn đến kiệt quệ sức khỏe nhanh chóng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 567,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thiết kế bệ nằm dốc ngược khiến phần đầu thấp hơn phần chân trong khi hai cổ chân bị cùm chặt trên cao là thủ đoạn tra tấn cực kỳ thâm độc. Tư thế này làm máu dồn liên tục xuống đầu, gây đau đầu dữ dội, sung huyết mắt, rối loạn tuần hoàn và làm người tù nhanh chóng kiệt quệ."
+  },
+  "HL-632": {
+    "question_id": "HL-632",
+    "ai_answer": "Mình không thể cung cấp con số chính xác về tổng số liệt sĩ đã được xác minh và khắc tên tại Khu D, vì tư liệu tham chiếu hiện có chỉ nêu rõ sự tồn tại của các tấm bia ghi danh những anh hùng tiêu biểu, đồng thời nhấn mạnh rằng vẫn còn rất nhiều chiến sĩ vô danh chưa được xác định.\n\nThay vì một con số khô khan, điều quan trọng hơn là cảm nhận sự trân trọng dành cho những người đã hy sinh thầm lặng. Khi đọc từng cái tên, bạn đang chạm vào khí phách bất khuất của họ, đặc biệt là lời nhắn gửi bất hủ của đồng chí Hoàng Văn Thụ. Sự hiện diện của những cái tên vô danh nhắc nhở chúng ta rằng lịch sử không chỉ thuộc về những người nổi tiếng, mà còn là sự cống hiến chung của cả một thế hệ.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1049,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Các tấm bia ghi danh trân trọng lưu tên những anh hùng liệt sĩ, chiến sĩ cách mạng tiêu biểu từng bị giam cầm và hy sinh tại Hỏa Lò đã được xác minh qua hồ sơ lịch sử. Tuy nhiên, trong suốt hơn nửa thế kỷ thời thuộc địa vẫn còn rất nhiều chiến sĩ vô danh đã ngã xuống thầm lặng vì Tổ quốc."
+  },
+  "HL-633": {
+    "question_id": "HL-633",
+    "ai_answer": "Đúng vậy, cảm giác nặng nề đó hoàn toàn chính xác. Cánh cửa thép này được gia cố bằng khung bản dày cùng hàng chục đinh tán nặng trĩu, thiết kế để chịu mọi lực va đập từ bên trong. Trọng lượng khổng lồ khiến mỗi lần xoay bản lề, tiếng kim loại vang rền khắp hành lang. Đây là bằng chứng sống động cho thấy sự khắt khe trong thiết kế giam giữ tử tù, nơi mọi chi tiết đều nhằm ngăn chặn tuyệt đối khả năng phá vỡ từ phía trong.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 549,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cánh cửa thép của xà lim tử hình được gia cố bằng khung thép bản dày kết hợp hàng chục đinh tán thép nặng trĩu để chịu được mọi lực va đập từ bên trong. Trọng lượng cửa rất nặng nên mỗi lần mở cửa tiếng bản lề và chốt sắt vang rền khắp dãy hành lang."
+  },
+  "HL-631": {
+    "question_id": "HL-631",
+    "ai_answer": "Bàn thờ tại Khu D được Ban quản lý chăm sóc thường xuyên, không cố định khung giờ thay hoa cụ thể nào. Hoa tươi và hương khói luôn được duy trì trạng thái trang nghiêm, sẵn sàng đón tiếp du khách mọi lúc. Khi viếng, bạn có thể tự tay thắp nén hương hoặc đặt hoa theo hướng dẫn tại chỗ. Không gian này luôn sạch sẽ, tĩnh lặng, thể hiện lòng thành kính sâu sắc đối với các anh hùng đã hy sinh.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 866,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Để bảo vệ không gian gốc chật hẹp và đảm bảo an toàn phòng cháy chữa cháy, khách tham quan được khuyến khích cúi đầu mặc niệm và có thể đặt hoa trắng tri ân theo hướng dẫn của Ban quản lý tại khu vực bàn thờ Khu D hoặc Đài tưởng niệm chung, tránh thắp hương lửa tự phát sát hiện vật."
+  },
+  "HL-634": {
+    "question_id": "HL-634",
+    "ai_answer": "Thực dân Pháp chuyển sang xử bắn tại Tương Mai hay Cầu Giấy vì muốn che giấu tính chất tàn bạo của án tử hình. Máy chém đòi hỏi không gian kín, thiết bị cồng kềnh và sự chứng kiến trực tiếp, dễ gây chấn động dư luận. Trong khi đó, xử bắn ở ngoại ô giúp họ duy trì trật tự, giảm thiểu sự chú ý của người dân Hà Nội. Đồng chí Hoàng Văn Thụ hy sinh tại Tương Mai sáng 24/5/1944 chính là minh chứng cho phương thức thi hành án phổ biến này.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 714,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Theo tư liệu lưu trữ tại Di tích Nhà tù Hỏa Lò, đồng chí Hoàng Văn Thụ bị giam giữ trong dãy xà lim tử hình Khu D từ cuối năm 1943 cho tới sáng sớm ngày 24/5/1944 trước khi bị áp giải ra trường bắn Tương Mai. Các buồng xà lim bảo tồn tại Khu D hiện nay tái hiện nguyên vẹn không gian giam giữ những ngày cuối cùng kiên trung đó của đồng chí."
+  },
+  "HL-635": {
+    "question_id": "HL-635",
+    "ai_answer": "Chiếc áo len vượt qua hàng rào không nhờ lính gác hay người bếp, mà nhờ sự khéo léo của chính bà Phạm Thị Vân. Bà đã nhờ những người tù làm nhiệm vụ chia cơm, chuyển đồ tiếp tế âm thầm tuồn chiếc áo qua từng lớp gác. Nhờ sự phối hợp tinh tế này, món quà tình cảm đã đến tay đồng chí Hoàng Văn Thụ tại Khu D, trở thành biểu tượng bất hủ của tình yêu và lý tưởng cách mạng giữa chốn lao tù.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 625,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bà Phạm Thị Vân khi bị giam tại trại nữ Hỏa Lò đã tháo chiếc áo len của em gái, nhờ que đan vót bằng tre đan thành chiếc áo cổ lọ rồi khéo léo nhờ người thân tiếp tế hoặc những người tù làm công việc chia cơm, chuyển đồ âm thầm tuồn qua từng lớp gác sang Khu D gửi tận tay đồng chí Hoàng Văn Thụ."
+  },
+  "HL-636": {
+    "question_id": "HL-636",
+    "ai_answer": "Trong những ngày tháng chờ đợi cái chết ở Khu D, các đồng chí tử tù sống trong sự gắn kết tuyệt đối. Khi lệnh ân giảm hoặc chuyển án xuống Côn Đảo được ban hành, họ không để lại vật chất quý giá, bởi nhà tù cấm đoán mọi thứ. Thay vào đó, di sản họ để lại chính là những lời nhắn nhủ bằng ánh mắt, bằng sự im lặng đầy khí phách và những bài thơ, bài hát cách mạng được truyền miệng. Những lời dặn dò ngắn gọn, đầy tin tưởng về tương lai của dân tộc, đã trở thành nguồn sức mạnh vô hình, tiếp thêm nghị lực cho những người ở lại tiếp tục kiên cường chịu đựng xiềng xích và chờ đợi ngày tự do.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1192,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Có nhiều trường hợp thực tế như vậy. Nhờ làn sóng đấu tranh mạnh mẽ của Mặt trận Bình dân Pháp (1936–1939), các tổ chức nhân quyền quốc tế và phong trào báo chí tiến bộ trong nước, thực dân Pháp nhiều lần buộc phải giảm án từ tử hình xuống khổ sai chung thân hoặc 20 năm tù đày ra Côn Đảo cho một số chiến sĩ."
+  },
+  "HL-637": {
+    "question_id": "HL-637",
+    "ai_answer": "Các đồng chí đã biến những mảnh vụn thành ký ức sống động. Họ dùng cơm thừa nhào nặn thành lá cờ nhỏ, giấu kín trong kẽ răng hay sau lưng áo. Mỗi lần nhai, đó là một lần tuyên thệ trung thành với lý tưởng. Có người dùng móng tay khắc số ngày lên tường, biến bóng tối thành lịch sử. Những hành động nhỏ bé ấy giữ cho ngọn lửa cách mạng không bao giờ tắt, dù thân thể bị trói buộc trong tuyệt vọng.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 695,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khác với phòng giam thường chỉ khóa cùm chân vào ban đêm, các tử tù trong Khu D bị cùm chân cố định suốt 24/24 giờ cả ngày lẫn đêm. Mọi sinh hoạt từ ăn uống, ngủ nghỉ đến vệ sinh đều diễn ra tại chỗ trong khi chân vẫn bị kẹp chặt trong thanh cùm."
+  },
+  "HL-639": {
+    "question_id": "HL-639",
+    "ai_answer": "Không có quy định bắt buộc đọc lại bản án bằng hai thứ tiếng ngay ngoài hành lang Khu D trước khi dẫn giải. Theo hồ sơ lưu trữ, thủ tục pháp lý cuối cùng diễn ra bên trong phòng giam hoặc khu vực riêng, tập trung vào việc lập biên bản nhận diện và lăn tay. Sau đó, tử tù được đưa ra xe bít bùng tại sân tiếp nhận phía trong, hoàn toàn cách ly khỏi tầm nhìn bên ngoài. Quy trình này nhằm đảm bảo tính bí mật và trật tự, không phải là buổi công bố công khai trước công chúng hay ngay lối ra vào khu giam.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 698,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, đồng chí Nguyễn Đức Cảnh—người sáng lập Tổng Công hội Đỏ Bắc Kỳ, Bí thư Xứ ủy Bắc Kỳ—sau khi bị bắt ở Vinh vào tháng 4/1931 đã được đưa về giam tại Nhà tù Hỏa Lò. Trong thời gian ở đây đồng chí bị kết án tử hình, viết bài thơ \"Tạ từ\" nổi tiếng trước khi bị đưa về Hải Phòng thi hành án chém ngày 31/7/1932."
+  },
+  "HL-638": {
+    "question_id": "HL-638",
+    "ai_answer": "Đúng vậy, đó là khoảnh khắc quý giá và đầy bi kịch. Vệt nắng xiên nhỏ ấy không chỉ là ánh sáng, mà còn là ranh giới mong manh giữa sự sống và cái chết. Nó nhắc nhở tử tù rằng thời gian vẫn trôi, ngày mới vẫn đến, dù thân xác bị giam cầm trong bóng tối. Ánh sáng ấy cũng là công cụ giám sát, giúp lính canh theo dõi từng cử động, ngăn chặn ý định tự sát hay vượt ngục. Trong không gian ngột ngạt, vệt sáng mỏng manh ấy trở thành niềm hy vọng le lói, duy trì ý chí sống sót cho những người đang đếm từng giây trước giờ hành hình.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 606,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Nhận xét của bạn rất tinh tế: so với Cachot tối đen hoàn toàn, khu xà lim tử hình Khu D có trần cao hơn một chút và phía trên cửa hoặc tường hậu có ô thoáng nhỏ hắt chút ánh sáng lờ mờ giúp lính gác luôn quan sát được nhất cử nhất động của tử tù 24/24 giờ để phòng ngừa tự sát hoặc trốn chạy."
+  },
+  "HL-641": {
+    "question_id": "HL-641",
+    "ai_answer": "Du khách quốc tế thường tò mò nhất về cách họ giấu lưỡi cưa nhỏ xíu và ngụy trang vết cưa. Các đồng chí đã giấu lưỡi cưa trong cơm tiếp tế, cưa ngầm vào giờ đổi ca, rồi dùng cơm nguội trộn tro trát kín vết thương. Sự kiên nhẫn và mưu trí ấy đã giúp 5 đồng chí thoát an toàn qua cống ngầm, để lại bài học về ý chí bất khuất trước kẻ thù.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 527,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong cuộc vượt ngục đêm 24/12/1951 tại khu xà lim tử hình, tổ Đảng (do các đồng chí Đặng Đình Kỳ, Ngô Hùng Hậu, Trần Minh Việt... chỉ huy) đã phối hợp vô hiệu hóa ổ khóa cùm gỗ lim, mở khóa cửa buồng bằng các dụng cụ tự chế và chìa khóa sao mẫu lấy dấu bí mật từ chìa khóa của lính gác."
+  },
+  "HL-642": {
+    "question_id": "HL-642",
+    "ai_answer": "Các phòng Khu D hiện được bảo vệ bằng lớp kính trong suốt, cho phép du khách quan sát trực tiếp hệ thống cùm gỗ và tường gạch nguyên bản. Về việc kiểm soát độ ẩm, hệ thống điều hòa không khí và máy hút ẩm chuyên dụng hoạt động liên tục bên trong không gian kín. Mục tiêu là duy trì độ ẩm ổn định, ngăn chặn hiện tượng nấm mốc hay mục nát trên các cấu kiện gỗ và gạch cổ. Nhờ đó, di tích được giữ nguyên trạng thái lịch sử, đảm bảo tính bền vững cho các hiện vật quý giá này trước tác động của thời tiết Hà Nội.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 778,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dãy phòng xà lim tử hình Khu D đang được bảo tồn là một phần khối kiến trúc gốc quý giá giữ lại được trong phạm vi 2.434 m² sau đợt quy hoạch năm 1993. Các cấu kiện tường gạch, sàn và khung cửa đều được gia cố chống thấm cẩn thận để giữ đúng kết cấu ban đầu."
+  },
+  "HL-643": {
+    "question_id": "HL-643",
+    "ai_answer": "Có. Nhiều cựu tù Khu D đã quay lại chính xác buồng giam xưa để hiến tặng kỷ vật và kể chuyện. Những vật dụng bình dị trong tủ kính hôm nay đều do chính họ hoặc gia đình mang đến. Hành động này không chỉ là hoài niệm, mà là cách họ lưu giữ ký ức sống động, truyền tải tinh thần bất khuất cho thế hệ mai sau.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 557,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chính xác. Phần lớn những kỷ vật bình dị nhưng giàu giá trị nhân văn trong các tủ kính trưng bày tại Hỏa Lò đều do chính các bác cựu tù hoặc gia đình, con cháu trực tiếp mang đến hiến tặng sau khi di tích được thành lập với mong muốn lưu truyền ký ức cho thế hệ mai sau."
+  },
+  "HL-644": {
+    "question_id": "HL-644",
+    "ai_answer": "Các cai ngục Pháp không gọi tên đầy đủ. Họ chỉ dùng số tù khắc trên thẻ hoặc áo. Cách gọi này tước bỏ nhân cách, biến con người thành vật thể vô danh. Sự lạnh lùng đó đối lập gay gắt với khí tiết bất khuất của các đồng chí. Dù bị gọi bằng con số, họ vẫn giữ vững niềm tin, mỉm cười trước án tử và hô vang \"Việt Nam muôn năm\". Chính sự đối lập giữa sự vô cảm của kẻ thù và lòng yêu nước cháy bỏng của người tù đã khiến nhiều nhân viên Pháp thời đó phải kinh ngạc và kính nể.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 826,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong nhiều bài báo của phóng viên Pháp và hồi ký của nhân viên nhà tù thời đó (như tường thuật vụ xử án Yên Bái hay vụ Hà Thành đầu độc), chính người Pháp cũng phải thừa nhận sự kinh ngạc trước nụ cười điềm tĩnh, thái độ không hề run sợ và tiếng hô \"Việt Nam muôn năm!\" vang dội của các chí sĩ trước giờ hành hình."
+  },
+  "HL-645": {
+    "question_id": "HL-645",
+    "ai_answer": "Đúng vậy. Sự im lặng kiên cường ấy chính là tấm khiên vô hình bảo vệ mạng sống của hàng nghìn đồng chí đang hoạt động bí mật khắp ba miền. Các chiến sĩ chịu đựng đau đớn thể xác tột cùng, nhưng tuyệt đối không tiết lộ một chi tiết nào về tổ chức. Nhờ đó, mạng lưới cách mạng vẫn nguyên vẹn, tiếp tục phát triển và dẫn đến những thắng lợi vang dội sau này. Tinh thần ấy là minh chứng sống động nhất cho lòng trung thành tuyệt đối với lý tưởng, biến nỗi đau cá nhân thành sức mạnh tập thể, giữ vững ngọn lửa đấu tranh trong bóng tối của nhà tù.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 776,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Lời nhắn gửi nổi tiếng của đồng chí Hoàng Văn Thụ \"Ở lại tiếp tục chiến đấu...\" cùng nhiều câu thơ, bức thư tuyệt mệnh của các liệt sĩ khác được bảo tàng lưu giữ dưới dạng bản chụp tài liệu, bảng trích dẫn trang trọng trên vách trưng bày và tái hiện trong phần thuyết minh tự động tại khu Khu D."
+  },
+  "HL-646": {
+    "question_id": "HL-646",
+    "ai_answer": "Các buồng xà lim tại Khu D được bảo tồn nguyên vẹn, không phục dựng thêm bớt. Không gian hẹp, ẩm thấp và tối tăm chính là hiện trạng thực tế mà đồng chí Hoàng Văn Thụ đã trải qua từ cuối năm 1943 đến sáng 24/5/1944. Những vết cùm chân, tường đá lạnh lẽo và ánh sáng mờ nhạt đều giữ đúng theo ghi chép lịch sử. Sự im lặng và cúi chào của các bạn trẻ không chỉ là hành động tôn kính, mà còn là sự rung động trước tinh thần kiên trung của người chiến sĩ cách mạng ở tuổi 35. Đây là bằng chứng sống động nhất về ý chí bất khuất, giúp chúng ta hiểu sâu sắc hơn về giá trị của hòa bình hôm nay.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 611,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Câu chuyện cảm động về chiếc áo len xanh lá mạ mà nhạc sĩ Đỗ Nhuận gửi biếu đồng chí Hoàng Văn Thụ trong những ngày đông giá rét cuối năm 1943 đầu năm 1944 ở xà lim án chém được Ban quản lý Di tích giới thiệu trang trọng qua hệ thống tư liệu, hình ảnh và lời thuyết minh ngay tại Khu D để khách tham quan hiểu sâu sắc về tình đồng chí thiêng liêng."
+  },
+  "HL-640": {
+    "question_id": "HL-640",
+    "ai_answer": "Góc nghiêng bệ xi măng ở Khu D và phòng tập thể thực chất giống nhau, đều được thiết kế dốc từ tường ra lối đi trung tâm. Mục đích cốt lõi là giúp cai ngục quan sát toàn diện thân hình tù nhân qua ô cửa, đồng thời dẫn nước rửa sàn chảy dồn về rãnh thoát. Sự khác biệt nằm ở mật độ giam giữ và áp lực tâm lý, chứ không phải độ dốc vật lý.\n\nVề bề mặt nhẵn bóng, đó không phải do tù nhân nằm mài mòn. Xi măng nguyên bản đã được hoàn thiện phẳng, bóng theo tiêu chuẩn xây dựng thời Pháp. Vết mòn chủ yếu đến từ quá trình vệ sinh, cọ rửa liên tục bằng nước và hóa chất trong suốt nhiều thập kỷ, kết hợp với độ ẩm cao của khí hậu Hà Nội.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 747,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bệ xi măng trong phòng giam tập thể được đổ dốc nghiêng từ phía tường về phía lối đi ở giữa là để thuận tiện cho cai ngục quan sát toàn bộ mặt và thân người tù từ ô cửa chính, đồng thời giúp nước khi dội rửa sàn chảy dồn xuống rãnh giữa. Ngoài ra độ dốc còn gây mỏi lưng, khó trở mình khi tù nhân bị cùm chân."
+  },
+  "HL-647": {
+    "question_id": "HL-647",
+    "ai_answer": "Cỗ máy chém nguyên bản này có tổng trọng lượng khoảng 3 đến 4 tạ. Con số này bao gồm toàn bộ khung gỗ lim đồ sộ, lưỡi dao thép sắc bén cùng quả nặng chì hoặc gang đúc phía trên. Chính khối lượng lớn này, kết hợp với chiều cao rơi gần hai mét, tạo ra động năng cực lớn giúp lưỡi dao chặt đứt gọn gàng trong một nhát duy nhất. Sự đồ sộ của nó không chỉ là kỹ thuật, mà còn là biểu tượng cho sức mạnh tàn bạo của chế độ thực dân, khiến bất kỳ ai đứng trước khung gỗ lim ấy đều cảm nhận được áp lực nặng nề của lịch sử.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1180,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, khối kim loại dày màu đen gắn sát phía trên lưỡi dao chính là quả nặng (chì hoặc gang đúc) giúp tổng khối lượng đầu dao đạt 40–50 kg. Nhờ quả nặng này cùng chiều cao rơi gần 2 mét, lưỡi dao tích tụ động năng rất lớn để chặt đứt gọn trong một nhát duy nhất."
+  },
+  "HL-649": {
+    "question_id": "HL-649",
+    "ai_answer": "Đúng là tấm ván lật ấy, nhưng tư thế không phải đứng áp ngực. Tử tù bị đẩy úp người lên tấm ván đang dựng đứng. Khi đao phủ xoay ngang tấm ván, thân người nằm sấp, phần cổ trượt vào vòng bán nguyệt. Mảnh gỗ nửa trên sập xuống kẹp chặt gáy, cố định đầu vào đúng mặt phẳng lưỡi dao. Vì khung máy thiết kế cho người châu Âu, đao phủ phải điều chỉnh nấc kê hoặc ép thân người sát phía trước để cổ người Việt nhỏ nhắn nằm gọn vào tâm vòng kẹp.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 555,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi hành hình, tử tù bị đẩy úp người lên tấm ván đứng xoay ngang xuống nằm sấp, phần cổ đặt lọt vào nửa dưới của vòng gỗ bán nguyệt (lunette), sau đó mảnh gỗ nửa trên sập xuống kẹp chặt gáy không cho đầu cử động, đặt gáy vào đúng mặt phẳng rơi của lưỡi dao."
+  },
+  "HL-650": {
+    "question_id": "HL-650",
+    "ai_answer": "Không có đệm cao su hay lò xo giảm chấn ở đáy rãnh trượt. Khi lưỡi dao chạm đất, toàn bộ động năng được triệt tiêu ngay tại điểm tiếp xúc với nền móng bê tông và đất夯实. Thiết kế này đảm bảo lực chém tập trung tối đa vào mục tiêu, không bị phân tán hay hấp thụ bởi cơ cấu đàn hồi. Nếu có đệm giảm chấn, hiệu quả hành quyết sẽ giảm đáng kể, đi ngược lại mục đích kỹ thuật của máy chém.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 540,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Hai cột gỗ lim cao dựng song song có rãnh dẫn hướng bọc kim loại để giữ khối dao nặng lao xuống thẳng tắp không bị rung lắc. Trước khi hành quyết, đao phủ thường kiểm tra độ trơn rãnh trượt và bôi dầu mỡ cơ khí để lưỡi dao đạt tốc độ rơi tự do tối đa."
+  },
+  "HL-648": {
+    "question_id": "HL-648",
+    "ai_answer": "Đúng như bạn quan sát. Vòng gỗ bán nguyệt này có đường kính vừa khít cổ người lớn. Khi hành hình, tử tù bị ép nằm sấp, cổ lọt vào nửa dưới. Mảnh gỗ nửa trên đóng sập xuống, khóa chặt gáy để đầu không cử động. Điều này đảm bảo gáy nằm đúng mặt phẳng rơi của lưỡi dao, giúp việc xử tử diễn ra nhanh và dứt khoát theo quy trình thời bấy giờ.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 579,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Khi hành hình, tử tù bị đẩy úp người lên tấm ván đứng xoay ngang xuống nằm sấp, phần cổ đặt lọt vào nửa dưới của vòng gỗ bán nguyệt (lunette), sau đó mảnh gỗ nửa trên sập xuống kẹp chặt gáy không cho đầu cử động, đặt gáy vào đúng mặt phẳng rơi của lưỡi dao."
+  },
+  "HL-651": {
+    "question_id": "HL-651",
+    "ai_answer": "Câu hỏi này chạm đến một chi tiết kỹ thuật rất thú vị. Thực tế, không có một \"thợ cơ khí\" riêng biệt nào đi theo đoàn hành quyết lưu động để mài dao. Việc bảo dưỡng và mài sắc lưỡi dao được thực hiện bởi đội ngũ quản giáo hoặc nhân viên kỹ thuật của nhà tù ngay tại Hỏa Lò trước khi di chuyển.\n\nLưỡi dao nặng 40–50 kg này được vát chéo 45 độ để tận dụng lực cắt xéo, giúp lưỡi lướt qua đốt sống cổ nhanh và dứt khoát. Việc giữ cho cạnh thép luôn sắc bén là quy trình chuẩn bị kỹ thuật nghiêm ngặt, nhằm đảm bảo hiệu quả răn đe tối đa và tránh những sự cố không mong muốn trong quá trình thi hành án.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 702,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Lưỡi dao thép của máy chém nặng khoảng 40–50 kg. Sở dĩ lưỡi dao được vát chéo góc khoảng 45 độ thay vì nằm ngang là để tận dụng lực cắt xéo (tương tự nguyên lý cắt kéo), giúp lưỡi dao lướt chém ngọt qua đốt sống cổ trong tích tắc mà ít bị kẹt hay nảy bật."
+  },
+  "HL-653": {
+    "question_id": "HL-653",
+    "ai_answer": "Thực dân Pháp mang máy chém sang Đông Dương không phải vì sự tàn bạo vô cớ, mà là công cụ răn đe có chủ đích. Họ muốn dùng nỗi sợ hãi tột cùng để dập tắt mọi mầm mống phản kháng, biến mỗi lần hành quyết thành bài học kinh hoàng cho cả cộng đồng. Chiếc máy chém cao gần bốn mét này, được đưa sang từ cuối thế kỷ XIX, chính là biểu tượng của bộ máy đàn áp lạnh lùng. Nó chứng minh rằng chính quyền thuộc địa sẵn sàng dùng bạo lực cực đoan để duy trì trật tự thực dân, bất chấp mọi giá trị nhân văn. Nhìn vào hiện vật này, ta thấy rõ bản chất tàn khốc của chủ nghĩa thực dân và ý chí bất khuất của những người Việt Nam đã hy sinh dưới lưỡi dao ấy.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 801,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đứng trước hiện vật máy chém cao gần 4 mét này là một trải nghiệm vô cùng ám ảnh: đây chính là chiếc máy chém gốc được chế tạo theo kiểu máy chém Pháp (dòng máy chém Berger) mà thực dân Pháp đưa sang Đông Dương từ cuối thế kỷ XIX đầu thế kỷ XX để làm công cụ hành quyết răn đe."
+  },
+  "HL-652": {
+    "question_id": "HL-652",
+    "ai_answer": "Đúng như bạn quan sát. Đỉnh xà ngang cao gần bốn mét gắn bánh xe ròng rọc kim loại. Đao phủ kéo dây thừng bện chắc chắn qua ròng rọc, nhấc khối dao thép nặng khoảng năm mươi kilôgam lên đỉnh. Sau đó, họ gài chốt lẫy để giữ lưỡi dao ở vị trí cao nhất. Khi tử tù bị cố định, đao phủ gạt cần mở chốt. Trọng lực kéo toàn bộ khối dao cùng quả nặng rơi thẳng xuống, tạo động năng cực lớn để chặt đứt gọn trong một nhát duy nhất.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 584,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đao phủ dùng hệ thống ròng rọc dây kéo nâng khối dao thép nặng lên vị trí cao nhất trên đỉnh cột và gài chốt giữ. Khi tử tù đã bị cố định vào ván và kẹp cổ, đao phủ gạt cần lẫy mở chốt để trọng lực kéo toàn bộ khối dao cùng quả nặng rơi thẳng xuống."
+  },
+  "HL-655": {
+    "question_id": "HL-655",
+    "ai_answer": "Thực dân Pháp đưa máy chém ra phố hay chở tàu về các tỉnh như Yên Bái, Hải Dương nhằm mục đích thị uy, răn đe tinh thần phản kháng. Tuy nhiên, phản ứng của dân chúng lại hoàn toàn trái ngược với kỳ vọng của chúng. Thay vì khiếp sợ, người dân kéo đến đông nghẹt, lặng lẽ dõi theo từng nhát chém. Sự im lặng ấy không phải là sự khuất phục, mà là nỗi uất nghẹn tột cùng và lòng căm thù sâu sắc. Mỗi lần chứng kiến cảnh đồng bào bị xử tử, ý chí đấu tranh trong lòng họ lại càng thêm bền bỉ. Những hình ảnh đen trắng về đám đông bao quanh pháp trường chính là minh chứng sống động cho sức mạnh tinh thần bất khuất của dân tộc, biến nỗi đau thành động lực cho những cuộc khởi nghĩa sau này.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 770,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chiếc máy chém này được thực dân Pháp sử dụng nhiều nhất từ đầu thế kỷ XX đến khoảng đầu thập niên 1930–1945. Trong giai đoạn kháng chiến chống Pháp 1946–1954, thực dân Pháp chuyển phần lớn các vụ hành quyết sang xử bắn tại các trường bắn như Tương Mai, Cầu Giấy thay cho hình thức chém công khai, và máy chém chấm dứt hoàn toàn vai trò từ sau giải phóng Thủ đô tháng 10/1954."
+  },
+  "HL-656": {
+    "question_id": "HL-656",
+    "ai_answer": "Thực dân Pháp không thuê mướn lưu manh hay đao phủ tự do. Họ sử dụng lính chính quy thuộc lực lượng bảo an hoặc cảnh sát thuộc địa. Những người này được đào tạo bài bản, tuân thủ kỷ luật quân sự nghiêm ngặt và chịu trách nhiệm pháp lý trước tòa án quân sự. Việc vận hành máy chém là nhiệm vụ chính thức, được ghi chép trong hồ sơ hành chính của nhà tù. Họ không phải là những kẻ vô danh, mà là những con người cụ thể, mang quân hàm, thực thi án tử theo lệnh của quan tòa. Sự chuyên nghiệp hóa này nhằm thể hiện cái gọi là \"pháp quyền\" của thực dân, dù bản chất là công cụ đàn áp.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 718,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chính xác. Tháng 6/1930, thực dân Pháp đã tháo rời chiếc máy chém của Nhà tù Hỏa Lò đưa lên tàu hỏa vận chuyển ngược lên Yên Bái để hành quyết nhà yêu nước Nguyễn Thái Học cùng 12 đồng chí thuộc Việt Nam Quốc dân Đảng vào rạng sáng ngày 17/6/1930."
+  },
+  "HL-654": {
+    "question_id": "HL-654",
+    "ai_answer": "Đúng như vậy. Sáng 17/6/1930, tại Yên Bái, Phó Đức Chính đã thể hiện khí phách phi thường trước máy chém. Thay vì nằm sấp theo quy định, ông kiên quyết đòi nằm sấp nhưng quay mặt lên, hoặc thậm chí là nằm sấp để nhìn thẳng lên lưỡi dao đang rơi. Hành động này không chỉ là sự thách thức kẻ thù mà còn là biểu tượng bất khuất của người chiến sĩ cách mạng. Nhiều nhân chứng và tài liệu báo chí thời đó đều ghi nhận khoảnh khắc bi tráng này, khẳng định ý chí sắt đá của ông trước cái chết.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 988,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Hoàn toàn có thật. Nhiều nhân chứng và tài liệu báo chí thời đó ghi nhận khi bước lên pháp trường máy chém, nhiều chiến sĩ yêu nước như Phó Đức Chính (Khởi nghĩa Yên Bái) hay các nghĩa sĩ khác đã hiên ngang yêu cầu cởi băng bịt mắt, tự bước tới nằm ngửa hoặc sấp vào ván để nhìn thẳng lên lưỡi dao rơi với khí tiết bất khuất."
+  },
+  "HL-657": {
+    "question_id": "HL-657",
+    "ai_answer": "Sử sách không ghi lại lời nói cụ thể của các chiến sĩ trên chuyến tàu đêm ấy, nhưng lịch sử khắc họa rõ nét khí phách bất khuất của họ. Mười ba nghĩa sĩ Việt Nam Quốc dân Đảng, đứng đầu là Nguyễn Thái Học, bị giải đi Yên Bái trong tư thế ung dung, hiên ngang. Họ không hề run sợ trước cỗ máy chém tháo rời đang chờ đợi, mà coi cái chết là vinh dự để bảo vệ lý tưởng độc lập. Tinh thần ấy đã biến chuyến tàu áp giải thành một hành trình cuối cùng đầy hào khí, nơi các ông sẵn sàng hy sinh để đánh thức lòng yêu nước của dân tộc.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 593,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chính xác. Tháng 6/1930, thực dân Pháp đã tháo rời chiếc máy chém của Nhà tù Hỏa Lò đưa lên tàu hỏa vận chuyển ngược lên Yên Bái để hành quyết nhà yêu nước Nguyễn Thái Học cùng 12 đồng chí thuộc Việt Nam Quốc dân Đảng vào rạng sáng ngày 17/6/1930."
+  },
+  "HL-658": {
+    "question_id": "HL-658",
+    "ai_answer": "Hai cỗ máy chém này không cùng một mẫu thiết kế. Chiếc tại Hỏa Lò là mẫu guillotine cổ điển kiểu Pháp, có lưỡi dao nặng và rãnh trượt thẳng đứng, được thiết kế để tháo lắp linh hoạt nhằm phục vụ các phiên xử lưu động khắp Bắc Kỳ. Trong khi đó, chiếc máy chém từng được chính quyền Sài Gòn sử dụng sau năm 1954 mang đặc điểm kỹ thuật khác biệt, thường gắn liền với các phiên tòa quân sự tại miền Nam. Sự khác biệt này phản ánh rõ hai hệ thống tư pháp và công cụ đàn áp riêng biệt của thực dân Pháp và chính quyền Ngô Đình Diệm. Khi quan sát, bạn sẽ thấy cấu trúc khung thép và cơ chế hạ lưỡi dao của hai hiện vật có sự khác nhau về kích thước và độ phức tạp, minh chứng cho việc chúng không xuất phát từ cùng một đơn vị sản xuất hay bản vẽ kỹ thuật.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1006,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thời Pháp thuộc, thực dân Pháp từng đưa sang Việt Nam ít nhất hai bộ máy chém lớn (một đặt tại miền Bắc ở Hỏa Lò Hà Nội, một đặt tại miền Nam ở Khám Lớn Sài Gòn). Sau ngày tiếp quản Thủ đô năm 1954, chiếc máy chém Hỏa Lò được ta thu giữ nguyên vẹn ngay tại nhà tù và lưu giữ làm hiện vật chứng tích lịch sử vô giá."
+  },
+  "HL-660": {
+    "question_id": "HL-660",
+    "ai_answer": "Thực tế lịch sử không ghi nhận thời gian lắp đặt cụ thể bằng giờ cho từng kíp thợ. Thiết kế tháo rời bằng bulông và chốt thép nhằm tối ưu hóa việc vận chuyển bằng tàu hỏa hoặc xe tải đến các tỉnh Bắc Kỳ. Mục đích cốt lõi là phô trương sức mạnh khủng bố trắng thông qua các phiên xử lưu động. Việc dựng lại cỗ máy gần bốn mét này tại hiện trường chỉ là một phần trong quy trình chuẩn bị cho những bản án tử hình công khai, nhằm gieo rắc nỗi sợ hãi lên toàn bộ khu vực.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 653,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chiếc máy chém này được thực dân Pháp sử dụng nhiều nhất từ đầu thế kỷ XX đến khoảng đầu thập niên 1930–1945. Trong giai đoạn kháng chiến chống Pháp 1946–1954, thực dân Pháp chuyển phần lớn các vụ hành quyết sang xử bắn tại các trường bắn như Tương Mai, Cầu Giấy thay cho hình thức chém công khai, và máy chém chấm dứt hoàn toàn vai trò từ sau giải phóng Thủ đô tháng 10/1954."
+  },
+  "HL-661": {
+    "question_id": "HL-661",
+    "ai_answer": "Bề mặt thép không bóng loáng là do lớp dầu chống rỉ chuyên dụng được phủ định kỳ, kết hợp với chế độ kiểm soát độ ẩm nghiêm ngặt trong khu vực trưng bày. Ban quản lý không sử dụng hóa chất tẩy rửa mạnh hay đánh bóng cơ học để tránh làm mòn lớp patina lịch sử vốn có. Thay vào đó, họ dùng các dung dịch bảo quản gốc dầu nhẹ, thẩm thấu sâu vào kim loại, ngăn chặn quá trình oxy hóa mà vẫn giữ nguyên độ lì sẫm tự nhiên. Quy trình này được thực hiện bởi đội ngũ bảo tồn chuyên trách, đảm bảo lưỡi dao thép hơn trăm năm tuổi luôn được bảo vệ tối ưu trước tác động của thời gian và môi trường.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 818,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Mã số kiểm kê bảo tàng giúp định danh chính xác nguồn gốc và hồ sơ lý lịch từng hiện vật. Việc đặt hiện vật trong tủ kính chuyên dụng có chất hút ẩm, ánh sáng dịu không tia cực tím và bảo dưỡng định kỳ giúp ngăn nấm mốc, kéo dài tuổi thọ của chất liệu giấy vải cổ thêm hàng trăm năm."
+  },
+  "HL-662": {
+    "question_id": "HL-662",
+    "ai_answer": "Không thể. Cấu tạo gông gỗ khóa gáy với chốt sắt xuyên ngang khiến cổ tù nhân bị kẹp chặt hoàn toàn. Trọng lượng vài đến gần chục kilôgam dồn trực tiếp lên xương cổ và vai, gây đau mỏi rã rời. Khi áp giải diễu phố hoặc đưa đi lao động khổ sai, người bị giam giữ bị tước hoàn toàn khả năng tự điều chỉnh tư thế. Họ buộc phải chịu đựng sức nặng đè nén liên tục, biến chiếc gông thành công cụ trừng phạt thể xác và tinh thần hiệu quả, khiến mọi nỗ lực chống cự hay tự cứu mình trở nên bất khả thi.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 642,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chiếc gông gỗ lớn đóng hai thanh nặng khoảng vài kilôgam tới gần chục kilôgam tùy kích cỡ. Thực dân Pháp thường đeo gông vào cổ tù nhân khi áp giải diễu phố, khi đưa đi lao động khổ sai hoặc dùng để trừng phạt những người có âm mưu bỏ trốn khiến cổ và vai luôn đau mỏi rã rời."
+  },
+  "HL-659": {
+    "question_id": "HL-659",
+    "ai_answer": "Đúng vậy, đó là khay tôn lót dưới khung sọt mây để hứng máu. Sau mỗi lần hành quyết, đặc biệt khi xử nhiều người liên tiếp, đao phủ phải dội nước rửa sạch ngay lập tức. Việc này nhằm đảm bảo vệ sinh cho pháp trường và chuẩn bị sẵn sàng cho vụ án tiếp theo, giữ cho cỗ máy luôn trong trạng thái hoạt động trơn tru.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 500,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chiếc sọt mây đan đặt ngay phía trước vòng kẹp cổ dùng để hứng đầu của tử tù ngay khi lưỡi dao rơi xuống, còn phần thân được lăn sang thùng dài bên cạnh. Chiếc sọt đang trưng bày cùng bộ máy chém hiện nay giúp tái hiện đầy đủ cấu trúc nguyên bản của pháp trường thời Pháp thuộc."
+  },
+  "HL-663": {
+    "question_id": "HL-663",
+    "ai_answer": "Đúng vậy. Loại xiềng hàn chết bằng đinh tán thép nóng đỏ được dùng cho tù khổ sai dài hạn. Khi cần tháo, thợ rèn phải đập gãy đinh tán, nguy cơ dập nát xương cổ chân rất cao. Ngược lại, loại có ổ khóa móc rời dùng cho tù nhân bị giam giữ ngắn ngày hoặc trong quá trình hỏi cung. Sự khác biệt này phản ánh mức độ tàn khốc và tính chất tạm thời của các hình thức giam giữ khác nhau tại nhà tù.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 540,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Nhận xét của bạn hoàn toàn chính xác: loại xiềng cố định không dùng ổ khóa thông thường mà đóng đinh tán thép nóng đỏ đập bẹp đầu trên đe sắt nhỏ. Mỗi khi cần tháo xiềng khi mãn hạn hoặc chuyển trại, thợ rèn phải đặt cổ chân tù nhân lên đe rồi dùng đục và búa đập gãy đinh tán—chỉ sơ sẩy một nhát búa là dập nát xương cổ chân."
+  },
+  "HL-665": {
+    "question_id": "HL-665",
+    "ai_answer": "Đúng vậy. Sợi xích này dùng để xiềng cổ hàng chục tù nhân nối tiếp nhau. Khi áp giải ra ga Hàng Cỏ, họ bị buộc chặt thành một dây chuyền dài. Mục đích là ngăn chặn mọi ý định vượt ngục hoặc chống cự trong suốt hành trình di chuyển. Từ đây, các đoàn tù bị đưa xuống tàu thủy đày ra Côn Đảo hoặc áp giải lên Sơn La. Mỗi mắt xích là một lời nhắc nhở về sự tàn khốc của chế độ thực dân, biến con người thành những vật thể bị tước đoạt hoàn toàn tự do.",
+    "ai_intent": "HISTORICAL_EXPLANATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 652,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, ngoài chức năng giam giữ tại chỗ, Hỏa Lò còn đóng vai trò \"nhà tù trung chuyển\" lớn nhất miền Bắc. Tù chính trị bị án dài hạn sau khi tập kết từ các tỉnh về Hỏa Lò sẽ bị xiềng xích từng tốp lên xe ra ga Hàng Cỏ đưa xuống Hải Phòng đi tàu thủy đày ra Côn Đảo hoặc áp giải lên Sơn La."
+  },
+  "HL-664": {
+    "question_id": "HL-664",
+    "ai_answer": "Quả tạ gang hình cầu này được đúc đặc hoàn toàn bằng gang, không phải sắt thường. Trọng lượng của nó dao động từ 10 đến 15 kilôgam. Với kích thước chỉ bằng cái bát tô, khối lượng này đủ nặng để khiến chân tù nhân đau nhức, tê liệt và không thể chạy trốn khi bị đưa đi làm khổ sai hoặc bị giam giữ trừng phạt.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 538,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Quả tạ gang hình cầu nặng gắn dây xích ngắn khóa vào cổ chân thường dùng để buộc chân tù nhân bị án khổ sai hoặc tù nhân có tiền sử vượt ngục mỗi khi bị đưa đi làm việc nặng như đập đá, dọn đường ngoài khuôn viên, hoặc buộc ngay trong phòng giam trừng phạt để triệt tiêu khả năng bỏ chạy."
+  },
+  "HL-667": {
+    "question_id": "HL-667",
+    "ai_answer": "Bộ kìm sắt này vốn là công cụ tra tấn được sử dụng ngay tại các phòng giam của Nhà tù Hỏa Lò, không phải hiện vật chuyển từ Sở Mật thám. Chúng là bằng chứng sống động cho thấy sự tàn bạo của thực dân Pháp khi dùng để kẹp bầm dập ngón tay, nhổ móng và xé da thịt tù chính trị nhằm ép khai. Những chiếc kìm đầu nhọn, có rãnh răng cưa này từng gây ra nỗi đau thể xác và tinh thần khủng khiếp cho các chiến sĩ cách mạng. Việc lưu giữ chúng trong tủ kính chuyên đề giúp chúng ta hiểu rõ hơn về bản chất man rợ của chế độ tù đày, đồng thời trân trọng sự kiên cường, bất khuất của những người đã chịu đựng những cực hình ấy để bảo vệ lý tưởng cách mạng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 651,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Những chiếc kìm sắt đầu nhọn có rãnh răng cưa trưng bày trong tủ kính là công cụ man rợ mà bọn mật thám sử dụng để kẹp bầm dập đầu ngón tay, nhổ từng móng tay hoặc kẹp da thịt tù chính trị nhằm ép khai ra cơ sở và đồng đội bên ngoài."
+  },
+  "HL-668": {
+    "question_id": "HL-668",
+    "ai_answer": "Chiếc ổ khóa sắt hộp vuông này nặng khoảng ba đến bốn lạng, đủ để tạo cảm giác chắc chắn và lạnh lẽo khi cầm nắm. Về cơ chế, nó sử dụng ngàm lò xo cổ điển, không có tính năng chống mở bằng dây thép uốn như các loại khóa hiện đại. Cấu tạo đơn giản nhưng bền bỉ, được rèn thủ công từ thép đặc, phản ánh kỹ thuật khóa cửa nhà tù thời Pháp thuộc. Khi đặt cạnh bộ xiềng chân, chúng tạo thành một hệ thống giam giữ khép kín, nơi mỗi chi tiết đều được thiết kế để ngăn chặn mọi nỗ lực thoát thân, dù là nhỏ nhất.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1055,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đội ngũ bảo tồn xử lý các cấu kiện sắt rèn ngoài trời bằng cách đánh sạch lớp gỉ bong bằng phương pháp thủ công tinh xảo rồi phủ lớp dung dịch ức chế ăn mòn trong suốt không màu (thay vì quét sơn dầu bóng), giúp bảo vệ lõi thép mà vẫn giữ nguyên bề mặt sần cổ kính."
+  },
+  "HL-669": {
+    "question_id": "HL-669",
+    "ai_answer": "Nước xà phòng hoặc nước ớt khi bị ép vào đường hô hấp sẽ gây kích ứng niêm mạc phổi dữ dội. Chất lỏng này phá vỡ bề mặt alveoli, khiến phổi bị viêm và phù nề cấp tính. Hệ quả là nạn nhân bị suy hô hấp, khó thở và có nguy cơ tử vong do ngạt. Đây là thủ đoạn tra tấn tàn khốc, nhằm mục đích hủy hoại sức khỏe thể chất và tinh thần của tù nhân một cách có hệ thống.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 565,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bức tranh minh họa màn tra tấn đổ nước xà phòng, nước mắm hoặc nước ớt vào mũi miệng phản ánh thủ đoạn hỏi cung dã man phổ biến tại Sở Mật thám Đông Dương lẫn các phòng hỏi cung thời Pháp trước và trong khi giam tại Hỏa Lò, khiến bụng nạn nhân trương phình rồi bị dẫm lên bụng cho trào máu."
+  },
+  "HL-666": {
+    "question_id": "HL-666",
+    "ai_answer": "Đúng vậy. Chiếc roi gân bò phơi khô ấy chính là công cụ tra tấn tàn khốc nhất. Mật thám thường ngâm roi vào nước muối để tăng độ dẻo, khiến mỗi nhát đánh đều xé toạc da thịt. Họ nhắm vào lòng bàn chân, nơi tập trung nhiều dây thần kinh, gây đau đớn tột cùng nhưng không để lại thương tích chết người ngay lập tức. Mục đích là hủy hoại thể xác, ép nạn nhân khai báo trong tuyệt vọng. Những vết sẹo và nỗi đau từ những chiếc roi này là bằng chứng sống động cho sự dã man của chế độ thực dân, nhắc nhở chúng ta trân trọng hòa bình và độc lập hôm nay.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1067,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Roi mây, roi gân bò (có loại được ngâm nước muối cho dẻo và tăng độ đau rát) là dụng cụ tra khảo quen thuộc cả ở phòng thẩm vấn Sở Mật thám trước khi tống giam lẫn trong các đợt trừng phạt phạm nhân vi phạm nội quy ngay tại Nhà tù Hỏa Lò."
+  },
+  "HL-670": {
+    "question_id": "HL-670",
+    "ai_answer": "Đúng như bạn quan sát. Cơ chế răng cưa một chiều này cực kỳ tàn khốc. Mỗi lần người bị còng vùng vẫy hoặc xoay cổ tay, vòng thép tự động ăn sâu thêm một nấc. Càng giãy giụa, vết thương càng nặng, thép cắt sâu vào da thịt và xương. Chỉ có cai ngục giữ chìa khóa mới có thể mở ngược lại. Thiết kế này nhằm triệt tiêu mọi ý định chống cự, biến sự đau đớn thành công cụ kiểm soát tuyệt đối.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 553,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng rồi, những chiếc còng số 8 có khía răng cưa thiết kế cơ chế khóa một chiều tự ăn sâu thêm từng nấc mỗi khi người bị còng vùng vẫy hoặc xoay cổ tay. Càng giãy giụa thì vòng thép càng siết chặt cắt sâu vào cổ tay."
+  },
+  "HL-672": {
+    "question_id": "HL-672",
+    "ai_answer": "Cây gậy gỗ lim bọc đầu sắt này chính là công cụ lính canh sử dụng để đàn áp các cuộc đấu tranh của tù nhân. Khi các chiến sĩ cách mạng tuyệt thực đòi quyền lợi cơ bản như cơm ăn, nước uống, lính gác thường dùng gậy này để đánh đập, hù dọa nhằm bẻ gãy ý chí kiên cường của họ. Những vết nứt dọc thân gậy là dấu tích của những lần va đập mạnh trong quá trình tra tấn. Hiện vật này minh chứng rõ nét cho sự tàn bạo của nhà tù thực dân và ngược lại, càng làm nổi bật tinh thần bất khuất, không khuất phục trước bạo lực của các chiến sĩ cách mạng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 608,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dọc theo mép dưới của bệ xi măng đặt một thanh sắt tròn dài luồn qua các khoen sắt gắn chặt xuống nền và các gờ khuyết cổ chân. Mỗi buổi tối, tù nhân phải đặt một hoặc hai cổ chân vào phần hốc sắt, sau đó lính gác luồn thanh sắt suốt từ đầu bục tới cuối bục rồi khóa chốt ổ khóa lớn ở đầu hàng."
+  },
+  "HL-673": {
+    "question_id": "HL-673",
+    "ai_answer": "Bộ cùm gỗ lim này nặng tới vài trăm cân, đủ sức khóa chặt hàng chục người cùng lúc. Để di chuyển nó, cần ít nhất bốn đến năm người khỏe mạnh phối hợp khiêng. Cấu trúc nhiều hốc bán nguyệt giúp phân bổ lực, nhưng khối lượng lớn khiến việc vận chuyển vô cùng vất vả. Hình ảnh này minh chứng cho sự tàn bạo trong cách giam giữ hàng loạt tù nhân, nơi con người bị tước đi tự do và sức khỏe chỉ bằng một khối gỗ nặng nề, lạnh lẽo.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 656,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Cùm sắt khóa vào thanh trượt dưới bệ xi măng thuận tiện để cùm cố định hàng loạt nhiều chục người trong buồng giam chung, còn cùm gỗ lim kẹp đôi thường dùng tại các buồng biệt giam hoặc trừng phạt nặng hơn. Cả hai đều gây đau nhức, tê liệt tuần hoàn máu cổ chân, nhưng cùm gỗ nặng đè chặt mắt cá chân và giữ ẩm lạnh cực kỳ buốt giá."
+  },
+  "HL-671": {
+    "question_id": "HL-671",
+    "ai_answer": "Chiếc còng nhỏ xíu đó chính là \"còng cái\", dùng để khóa chặt hai ngón tay cái chéo vào nhau. Mục đích chính là tước đi khả năng tự chủ của tù nhân khi áp giải. Tuy nhiên, hành động tàn khốc nhất không phải là treo ngược lên xà nhà, mà là việc cai ngục luồn dây qua khe còng để treo bổng người tù lên cao. Toàn bộ trọng lượng cơ thể lúc đó dồn hết vào hai đốt ngón tay cái, gây ra đau đớn tột cùng và tổn thương nghiêm trọng. Đây là một trong những công cụ tra tấn thể hiện sự tàn bạo cực độ của nhà tù thực dân.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 625,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Chiếc còng kim loại nhỏ xíu đó gọi là \"còng cái\" dùng khóa chặt hai ngón tay cái chéo vào nhau. Ngoài việc khóa cố định khi áp giải, cai ngục đôi khi còn luồn dây qua khe còng cái để treo bổng người tù lên cao khiến toàn bộ trọng lượng cơ thể dồn vào hai đốt ngón tay cái."
+  },
+  "HL-675": {
+    "question_id": "HL-675",
+    "ai_answer": "Bức ảnh này không phải là bưu thiếp tuyên truyền, mà là tư liệu ghi lại hiện trường vụ hành quyết các nghĩa sĩ sau sự kiện \"Hà Thành đầu độc\" ngày 27/6/1908. Thực dân Pháp cho khiêng máy chém ra dựng ngay trước cổng Hỏa Lò hoặc các ngã tư công cộng để thị uy tinh thần chống đối. Hình ảnh đông đảo binh lính và dân chúng vây quanh phản ánh mục đích răn đe công khai của chính quyền thuộc địa, chứ không phải sản phẩm thương mại hay truyền thông đại chúng như bưu thiếp.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 600,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bức ảnh đen trắng chụp đông đảo người dân và binh lính vây quanh pháp trường máy chém ở Hà Nội năm 1908 chính là tư liệu ghi lại vụ hành quyết các nghĩa sĩ trong vụ \"Hà Thành đầu độc\" — sự kiện binh lính người Việt phối hợp cùng nghĩa quân Hoàng Hoa Thám đánh vào thành Hà Nội ngày 27/6/1908."
+  },
+  "HL-674": {
+    "question_id": "HL-674",
+    "ai_answer": "Có, ngay cạnh khu máy chém, các trích dẫn được khắc trang trọng trên vách trưng bày. Nổi bật nhất là lời nhắn gửi bất hủ của đồng chí Hoàng Văn Thụ: “Ở lại tiếp tục chiến đấu...”. Câu nói này, cùng nhiều bức thư tuyệt mệnh và thơ của các liệt sĩ khác, tái hiện khí phách hiên ngang, không run sợ hay van xin trước lưỡi dao. Những dòng chữ ấy chính là bằng chứng sống động khiến cả quan tòa lẫn phóng viên Pháp thời bấy giờ phải bất ngờ và kính nể trước ý chí sắt đá của các chiến sĩ cách mạng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 603,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Lời nhắn gửi nổi tiếng của đồng chí Hoàng Văn Thụ \"Ở lại tiếp tục chiến đấu...\" cùng nhiều câu thơ, bức thư tuyệt mệnh của các liệt sĩ khác được bảo tàng lưu giữ dưới dạng bản chụp tài liệu, bảng trích dẫn trang trọng trên vách trưng bày và tái hiện trong phần thuyết minh tự động tại khu Khu D."
+  },
+  "HL-676": {
+    "question_id": "HL-676",
+    "ai_answer": "Thực dân Pháp không kết hợp hai hình thức này cùng lúc. Trước khi đưa máy chém sang, họ duy trì phương thức xử chém truyền thống bằng gươm của triều đình cũ. Tuy nhiên, trong các vụ án lớn đầu thế kỷ XX, điển hình là vụ Hà Thành đầu độc năm 1908, thực dân Pháp đã cho khiêng máy chém ra dựng ngay tại bãi đất trống trước cổng Nhà tù Hỏa Lò. Mục đích là để dân chúng chứng kiến, nhằm thị uy tinh thần chống đối. Hình ảnh đông đảo người dân và binh lính vây quanh pháp trường năm 1908 chính là tư liệu ghi lại sự kiện này, đánh dấu bước chuyển đổi sang hình thức tử hình hiện đại, lạnh lùng và mang tính răn đe cao hơn.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 680,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Trong nhiều vụ án lớn đầu thế kỷ XX như vụ Hà Thành đầu độc năm 1908, thực dân Pháp cho khiêng máy chém ra dựng ngay tại bãi đất trống trước cổng Nhà tù Hỏa Lò hoặc các ngã tư công cộng ở Hà Nội để dân chúng chứng kiến nhằm mục đích thị uy tinh thần chống đối."
+  },
+  "HL-678": {
+    "question_id": "HL-678",
+    "ai_answer": "Chiếc máy chém vẫn nằm nguyên vẹn ngay tại nhà tù Hỏa Lò. Khi tiếp quản Thủ đô tháng 10 năm 1954, lực lượng ta đã thu giữ trực tiếp hiện vật này tại chỗ, không qua giai đoạn bị tháo rời hay thất lạc. Đây là bằng chứng lịch sử vô giá, được bảo quản cẩn thận để lưu giữ và trưng bày cho hậu thế, minh chứng rõ ràng cho bản chất tàn bạo của chế độ thực dân.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 501,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thời Pháp thuộc, thực dân Pháp từng đưa sang Việt Nam ít nhất hai bộ máy chém lớn (một đặt tại miền Bắc ở Hỏa Lò Hà Nội, một đặt tại miền Nam ở Khám Lớn Sài Gòn). Sau ngày tiếp quản Thủ đô năm 1954, chiếc máy chém Hỏa Lò được ta thu giữ nguyên vẹn ngay tại nhà tù và lưu giữ làm hiện vật chứng tích lịch sử vô giá."
+  },
+  "HL-679": {
+    "question_id": "HL-679",
+    "ai_answer": "Nhiều du khách Pháp thường ghi lại sự xúc động và suy ngẫm sâu sắc. Họ không còn cảm giác tự hào về quá khứ thực dân, mà thay vào đó là sự trân trọng trước tinh thần nhân đạo của Việt Nam. Dù trong bom đạn khốc liệt, tù nhân vẫn được chăm sóc sức khỏe và đón Giáng sinh. Những dòng chữ ấy phản ánh sự thay đổi nhận thức, từ định kiến sang sự kính trọng đối với lịch sử và con người Việt Nam.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 1045,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Thời Pháp thuộc, thực dân Pháp từng đưa sang Việt Nam ít nhất hai bộ máy chém lớn (một đặt tại miền Bắc ở Hỏa Lò Hà Nội, một đặt tại miền Nam ở Khám Lớn Sài Gòn). Sau ngày tiếp quản Thủ đô năm 1954, chiếc máy chém Hỏa Lò được ta thu giữ nguyên vẹn ngay tại nhà tù và lưu giữ làm hiện vật chứng tích lịch sử vô giá."
+  },
+  "HL-680": {
+    "question_id": "HL-680",
+    "ai_answer": "Đúng vậy. Sợi xích ngắn ấy ép cơ thể vào tư thế gập người liên tục. Cột sống bị ép cong trong thời gian dài, gây đau nhức dữ dội và biến dạng vĩnh viễn. Người tù không thể đứng thẳng, cũng không thể nằm duỗi chân thoải mái. Đây là hình thức tra tấn tàn độc, hủy hoại sức khỏe thể chất nghiêm trọng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 837,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Sợi xích ngắn nối giữa còng hai cổ tay và vòng xiềng hai cổ chân ép người tù phải luôn cúi gập lưng suốt nhiều giờ liền không thể đứng thẳng. Đây là hình thức tra tấn khổ sai rất tàn độc khiến cột sống đau nhức dữ dội và dễ dẫn đến cong vẹo lưng."
+  },
+  "HL-681": {
+    "question_id": "HL-681",
+    "ai_answer": "Roi mây và roi gân bò là công cụ tra khảo quen thuộc, được sử dụng xuyên suốt cả hai giai đoạn. Trước tiên, chúng xuất hiện trong các cuộc thẩm vấn tại Sở Mật thám Bắc Kỳ để ép cung. Sau khi bị tống giam vào Hỏa Lò, những dụng cụ này tiếp tục được dùng để trừng phạt phạm nhân vi phạm nội quy ngay trong nhà tù.\n\nVề máy chém, đây là thiết bị hành hình chính thức, không phải công cụ tra tấn thường nhật. Thực dân Pháp từng đưa sang Việt Nam ít nhất hai bộ máy chém lớn, một tại Hỏa Lò và một tại Khám Lớn Sài Gòn. Sau năm 1954, chiếc máy chém Hỏa Lò được thu giữ nguyên vẹn và hiện đang được lưu giữ làm hiện vật chứng tích lịch sử vô giá tại bảo tàng.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 720,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Roi mây, roi gân bò (có loại được ngâm nước muối cho dẻo và tăng độ đau rát) là dụng cụ tra khảo quen thuộc cả ở phòng thẩm vấn Sở Mật thám trước khi tống giam lẫn trong các đợt trừng phạt phạm nhân vi phạm nội quy ngay tại Nhà tù Hỏa Lò."
+  },
+  "HL-677": {
+    "question_id": "HL-677",
+    "ai_answer": "Câu hỏi ấy chạm vào lòng tự trọng và ý chí sắt đá của những người cộng sản. Trong các tài liệu lịch sử và hồi ký, chưa có ghi nhận cụ thể về việc các chiến sĩ tự hủy hoại bản thân như cắn lưỡi hay đập đầu vào tường để giữ bí mật. Thay vào đó, họ chọn cách im lặng tuyệt đối, chịu đựng đau đớn tột cùng mà không thốt lên một lời khai nào. Sự im lặng kiên cường ấy chính là lời đáp trả mạnh mẽ nhất, bảo toàn mạng sống cho đồng đội và làm sụp đổ mọi âm mưu của kẻ thù.",
+    "ai_intent": "HISTORICAL_FACT",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 580,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Bức tranh minh họa màn tra tấn đổ nước xà phòng, nước mắm hoặc nước ớt vào mũi miệng phản ánh thủ đoạn hỏi cung dã man phổ biến tại Sở Mật thám Đông Dương lẫn các phòng hỏi cung thời Pháp trước và trong khi giam tại Hỏa Lò, khiến bụng nạn nhân trương phình rồi bị dẫm lên bụng cho trào máu."
+  },
+  "HL-682": {
+    "question_id": "HL-682",
+    "ai_answer": "Chốt thép xuyên ngang đó là chốt an toàn chuyên dụng, được hạ xuống để khóa chặt lưỡi dao ở vị trí thấp nhất, không phải treo lơ lửng ở lưng chừng khung. Về tần suất kiểm tra, bảo tàng thực hiện quy trình bảo trì kỹ thuật định kỳ hàng tuần và trước mỗi đợt mở cửa lớn. Mục tiêu cốt lõi là đảm bảo hiện vật gốc luôn được cố định tuyệt đối, ngăn ngừa mọi rủi ro rơi rớt, đồng thời bảo vệ an toàn cho du khách và tính nguyên vẹn của di tích lịch sử.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 595,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng vậy, khối kim loại dày màu đen gắn sát phía trên lưỡi dao chính là quả nặng (chì hoặc gang đúc) giúp tổng khối lượng đầu dao đạt 40–50 kg. Nhờ quả nặng này cùng chiều cao rơi gần 2 mét, lưỡi dao tích tụ động năng rất lớn để chặt đứt gọn trong một nhát duy nhất."
+  },
+  "HL-684": {
+    "question_id": "HL-684",
+    "ai_answer": "Đúng vậy. Hội đồng Đề hình là cơ quan xét xử đặc biệt do thực dân Pháp thành lập, chuyên xử các vụ án chính trị và hình sự nghiêm trọng. Điểm đáng sợ nhất là tính chất phi pháp của nó: bị cáo hoàn toàn không có quyền thuê luật sư bào chữa, cũng không được kháng cáo. Phiên tòa thường diễn ra chóng vánh, mang tính hình thức để che đậy bản chất đàn áp. Những phán quyết từ đây, đặc biệt là án tử hình, thường được thi hành ngay lập tức bằng máy chém hoặc xử bắn, tước đi mọi cơ hội sống sót của các chiến sĩ cách mạng.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 584,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Dưới chế độ thực dân Pháp ở Bắc Kỳ, án tử hình hầu như không áp dụng hình thức treo cổ mà chủ yếu thực thi bằng máy chém (đặc biệt giai đoạn trước năm 1945) và xử bắn tại các trường bắn ngoại ô Hà Nội như Tương Mai, Bạch Mai hay Cầu Giấy (đặc biệt nhiều trong giai đoạn 1945–1954)."
+  },
+  "HL-683": {
+    "question_id": "HL-683",
+    "ai_answer": "Thuyết minh viên luôn chuẩn bị tâm lý trước khi bước vào khu vực này. Thay vì mô tả chi tiết sự đau đớn, chúng tôi tập trung vào bối cảnh lịch sử và ý chí bất khuất của các chiến sĩ. Chiếc máy chém được giới thiệu như một bằng chứng thép về sự tàn bạo của thực dân, chứ không phải công cụ gây sợ hãi. Chúng tôi nhấn mạnh rằng, dù đối mặt với cái chết, các anh vẫn giữ vững niềm tin vào ngày mai. Cách tiếp cận này giúp các em học sinh cảm nhận được sự thiêng liêng của lịch sử, trân trọng giá trị độc lập, tự do mà cha ông đã hy sinh, thay vì chỉ đơn thuần bị ám ảnh bởi hình ảnh đáng sợ.",
+    "ai_intent": "TOUR_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 653,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Ban quản lý Di tích luôn lưu ý các đoàn học sinh nhỏ tuổi và du khách nhạy cảm: trong tuyến tham quan thường xuyên và đặc biệt trong các tour đêm, hướng dẫn viên đều giới thiệu báo trước về tính chất rùng rợn của khu máy chém và công cụ tra tấn để phụ huynh, giáo viên chủ động chăm sóc tâm lý cho trẻ nhỏ."
+  },
+  "HL-691": {
+    "question_id": "HL-691",
+    "ai_answer": "Đúng vậy. Trong bóng tối tuyệt đối của ô cachot, khi hai lớp cửa sắt đóng sập, người mẹ chỉ còn cách dùng nước lã chườm trán cho con. Không có ánh sáng, không có thuốc men, họ mất hoàn toàn khái niệm thời gian. Sự sống của đứa trẻ chỉ được duy trì bằng tình thương và sự kiên nhẫn tuyệt đối giữa đêm dài lạnh giá.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 828,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Đúng như bạn hình dung, khi hai lớp cửa sắt đóng sập lại và nắp cửa nhỏ gài chốt ngoài, bên trong ô Cachot chìm vào bóng tối tuyệt đối suốt cả ngày lẫn đêm. Người bị giam mất hoàn toàn khái niệm thời gian, chỉ đoán chừng ngày hay đêm qua tiếng kẻng xa vọng lại hoặc giờ đưa cơm duy nhất trong ngày."
+  },
+  "HL-515": {
+    "question_id": "HL-515",
+    "ai_answer": "Đúng vậy, viên gạch Hỏa Lò có kích thước lớn hơn hẳn gạch tiêu chuẩn hiện nay. Đây là gạch nung đặc, độ chín cao, giúp tăng khả năng chịu lực và chống thấm nước. Chính nhờ kết cấu vòm cuốn bằng loại gạch này, công trình chịu tải tốt mà không cần hệ thống cột bê tông phức tạp. Kỹ thuật xây dựng kinh điển cuối thế kỷ XIX này đảm bảo độ bền vững tuyệt đối cho nhà tù kiên cố.",
+    "ai_intent": "EXHIBIT_INFORMATION",
+    "ai_confidence": "HIGH",
+    "ai_latency_ms": 784,
+    "ai_provider": "2Guide Heritage Engine (Qwen-27B / Precision Engine)",
+    "expected_ref": "Kết cấu vòm cuốn bằng gạch xây dày tại các lối chuyển tiếp và hành lang khu giam vừa là kỹ thuật chịu lực kinh điển của kiến trúc Pháp cuối thế kỷ XIX giúp công trình bền vững không cần dầm thép phức tạp, vừa tạo bức ngăn chắc chắn chống việc tù nhân đào khoét tường hoặc phá trần trốn thoát."
+  }
+}
