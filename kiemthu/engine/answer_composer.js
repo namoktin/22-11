@@ -173,7 +173,7 @@ class IntelligentAnswerComposer {
             requiresHuman: false
           }, 'VISIT_GUIDANCE', retrievedData);
         }
-        const rescuedExp = knowledgeBase.findExpandedMatch(question, language, 0);
+        const rescuedExp = knowledgeBase.findExpandedMatch(question, language, hasGenuineSiteSignal ? 0 : 95);
         if (rescuedExp) {
           return this.formatResponse({
             reply: rescuedExp.reply,

@@ -78,9 +78,11 @@ const GLOSSARY_BY_LANG = {
     ]
   },
   ko: {
-    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 옌바이 (Yen Bai), 응우옌 타이 혹 (Nguyen Thai Hoc), 호앙 반 투 (Hoang Van Thu), 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 방나무, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검, 쌍룡조일(두 마리 용이 태양을 향하는 문양), 성스러운 밤.',
+    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 옌바이 (Yen Bai), 응우옌 타이 혹 (Nguyen Thai Hoc), 호앙 반 투 (Hoang Van Thu), 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 방나무, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검 (Bảo kiếm Hoàng gia = Royal/Imperial Sword, NEVER Hoang Van Thu), 쌍룡조일(두 마리 용이 태양을 향하는 문양), 성스러운 밤.',
     replacements: [
       [/전투\s*기계|전쟁\s*기계/g, '단두대'],
+      [/호앙\s*반\s*투의\s*보검/g, '응우옌 왕조 황실 보검'],
+      [/호앙\s*반\s*투의\s*궁전/g, '황궁 유물'],
       [/일본의\s*이중\s*용(?:\s*왕조)?\s*양식/g, '쌍룡조일(두 마리 용이 태양을 향하는) 문양'],
       [/Nguyễn\s*왕조/gi, '응우옌 왕조'],
       [/Nhà tù Hỏa Lò/gi, '호아로 수용소'],
