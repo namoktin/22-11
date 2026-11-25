@@ -343,5 +343,33 @@
     "mustMatchAny": ["ke chuyen", "co gi hay", "gioi thieu", "noi gi", "bat dau", "lich su hoa lo", "tong quan", "huong dan", "tom tat", "bo qua", "noi tieng", "dang di", "lan dau", "tong quan", "ngan gon", "trai nghiem", "tour"],
     "answer_vi": "Chào mừng bạn đến với Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, Hoàn Kiếm, Hà Nội) — công trình do thực dân Pháp xây dựng năm 1896 mang tên Maison Centrale. Những điểm nổi bật bạn không thể bỏ qua gồm: Cổng chính và tường đá cổ, Phòng giam tập thể cùm sắt, Ngục tối Cachot, Cỗ máy chém 4m, Sân Cây Bàng lịch sử, Đường cống ngầm vượt ngục 1951, Khu trưng bày phi công Mỹ (1964–1973) và Đài tưởng niệm. Bạn muốn nghe mình giới thiệu chi tiết về khu vực hay hiện vật nào trước nào?",
     "answer_en": "Welcome to Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi), built by the French in 1896 as Maison Centrale. Must-see highlights include the main gate, communal shackled cellblocks, Cachot dark dungeon, the 4m guillotine, the historic Banyan Tree, the 1951 sewer escape, the 1964–1973 US pilots exhibition, and the Memorial. Which exhibit would you like to explore first?"
+  },
+  {
+    "id": "EXP_BLE_001_TRONG_DONG",
+    "category": "EXHIBIT_BLE",
+    "priority": 99,
+    "mustMatchAll": [["trong dong", "dong son", "chim lac", "ngoi sao 14 canh", "bronze drum", "dong son drum", "ma 001", "so 001"]],
+    "mustMatchAny": ["trong dong", "dong son", "chim lac", "14 canh", "sao", "nien dai", "the ky", "hoa van", "bronze drum", "star", "lac bird", "001"],
+    "answer_vi": "Dạ chào bạn, Trống đồng Đông Sơn tại Gian trưng bày số 1 (Mã 001) là bảo vật quốc gia kiệt xuất, biểu trưng cho nền văn minh sông Hồng rực rỡ từ thế kỷ thứ 7 trước Công nguyên. Trên mặt trống nổi bật hình tượng ngôi sao 14 cánh tỏa sáng tượng trưng cho mặt trời, bao quanh là hoa văn chim Lạc tung cánh và các đoàn người hóa trang múa hát thể hiện đời sống tín ngưỡng của cư dân Lạc Việt cổ.",
+    "answer_en": "The Dong Son Bronze Drum at Exhibition Hall No. 1 (Code 001) is an extraordinary Vietnamese National Treasure symbolizing the Red River civilization from the 7th century BCE. Its tympanum features a radiant 14-pointed sun star surrounded by flying Lac birds and costumed festive dancers reflecting ancient Lac Viet beliefs."
+  },
+  {
+    "id": "EXP_BLE_003_DAT_HONG",
+    "category": "EXHIBIT_BLE",
+    "priority": 99,
+    "mustMatchAll": [["dat hong", "dai hong chung", "chuong dai hong", "great bronze bell", "bronze bell", "ma 003", "so 003"]],
+    "mustMatchAny": ["dat hong", "dai hong chung", "chuong", "trieu", "nguyen", "tan", "hoa van", "bat quai", "rong may", "bell", "ton", "motif", "003"],
+    "mustNotMatchAny": ["nam nao", "duc nam", "nam duc", "duc vao nam", "dai tuong niem"],
+    "answer_vi": "Dạ chào bạn, Đạt Hồng (Đại Hồng Chung) tại Gian trưng bày số 3 - Tháp Chuông Di Tích (Mã 003) là chiếc chuông đồng cổ được đúc dưới triều Nguyễn với trọng lượng hơn 2 tấn. Trên thân chuông chạm khắc tinh xảo các bài minh văn, hoa văn bát quái và hình tượng rồng mây uyển chuyển; mỗi hồi chuông ngân vang có thể vọng xa hàng chục dặm, gửi gắm ước nguyện quốc thái dân an.",
+    "answer_en": "Dat Hong, the Great Bronze Bell at Exhibition Hall No. 3 (Code 003), is an ancient bronze bell cast during the Nguyen Dynasty weighing over 2 tons. Its body is intricately engraved with classical inscriptions, Eight Trigrams (Bat Quai) motifs, and graceful dragons amid clouds; each resonant strike carries for dozens of miles symbolizing peace and serenity."
+  },
+  {
+    "id": "EXP_BLE_004_BAO_KIEM",
+    "category": "EXHIBIT_BLE",
+    "priority": 99,
+    "mustMatchAll": [["bao kiem", "kiem hoang gia", "luong long trieu nhat", "royal sword", "imperial sword", "ma 004", "so 004"]],
+    "mustMatchAny": ["bao kiem", "kiem", "hoang gia", "vang", "ngoc bich", "da quy", "thep", "quyen uy", "sword", "gold", "jade", "004"],
+    "answer_vi": "Dạ chào bạn, Bảo kiếm Hoàng gia triều Nguyễn tại Gian trưng bày số 4 - Cổ Vật Hoàng Cung (Mã 004) là biểu trưng quyền uy tối thượng của đấng quân vương xưa. Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật, còn lưỡi kiếm làm bằng thép tôi gia truyền sắc bén, minh chứng cho tài hoa kim hoàn bậc thầy của các nghệ nhân cung đình.",
+    "answer_en": "The Nguyen Dynasty Royal Sword at Exhibition Hall No. 4 (Code 004) symbolizes the supreme authority of the Vietnamese emperor. Its scabbard is crafted from solid gold inlaid with jade and five-colored gemstones in the Twin Dragons Facing the Sun motif, paired with a razor-sharp traditionally tempered steel blade showcasing master royal goldsmithing."
   }
 ]

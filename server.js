@@ -1286,7 +1286,7 @@ const VI_UNIQUE_DIACRITIC_RE = /[ăđơưạảấầẩẫậắằẳẵặẹ
 function isTextInLanguage(text, targetLang) {
   if (!text || !targetLang) return true;
   // Loại bỏ danh từ riêng di tích tiếng Việt thường được trích dẫn nguyên văn trong câu ngoại ngữ (không dùng \b sau chữ có dấu!)
-  const PROPER_NOUNS_VI_RE = /(?:Nhà\s+tù\s+)?Hỏa\s+Lò|Nguyễn\s+Thái\s+Học|Hoàng\s+Văn\s+Thụ|Nguyễn\s+Đức\s+Cảnh|Trần\s+Tử\s+Bình|Phan\s+Bội\s+Châu|Lương\s+Văn\s+Can|Nguyễn\s+Thị\s+Minh\s+Khai|Hà\s+Nội|Hoàn\s+Kiếm|Hồ\s+Gươm|Bắc\s+Kỳ|Đông\s+Sơn|Yên\s+Bái|Côn\s+Đảo|Cây\s+Bàng|Đêm\s+Thiêng\s+Liêng/gi;
+  const PROPER_NOUNS_VI_RE = /(?:Nhà\s+tù\s+)?Hỏa\s+Lò|Nguyễn\s+Thái\s+Học|Hoàng\s+Văn\s+Thụ|Nguyễn\s+Đức\s+Cảnh|Trần\s+Tử\s+Bình|Phan\s+Bội\s+Châu|Lương\s+Văn\s+Can|Nguyễn\s+Thị\s+Minh\s+Khai|Hà\s+Nội|Hoàn\s+Kiếm|Hồ\s+Gươm|Bắc\s+Kỳ|Đông\s+Sơn|Yên\s+Bái|Côn\s+Đảo|Cây\s+Bàng|Đêm\s+Thiêng\s+Liêng|Đạt\s+Hồng|Đại\s+Hồng\s+Chung|Bảo\s+Kiếm|Trống\s+Đồng|Lưỡng\s+Long\s+Triều\s+Nhật|Tương\s+Mai|Trúc\s+Bạch|Quán\s+Sứ|Thợ\s+Nhuộm|Phụ\s+Khánh|Việt\s+Nam|Phở/gi;
   const scrubbedForLatinCheck = String(text).replace(PROPER_NOUNS_VI_RE, 'HoaLoRef');
 
   const hasViDiacritics = VI_ALL_DIACRITIC_RE.test(text);
@@ -1776,7 +1776,7 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
       kiemthuResult.intent === 'CLARIFICATION' ||
       kiemthuResult.intent === 'AMBIGUOUS_QUERY' ||
       kiemthuResult.intent === 'OUT_OF_SCOPE' ||
-      /chưa được ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope/i.test(kiemthuResult.reply || '');
+      /chưa được ghi nhận|chưa ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope|don't have any information|do not have information|数据库中没有|没有关于|情報がありません|정보가 없습니다/i.test(kiemthuResult.reply || '');
 
     if (isAmbiguousOrMissed) {
       const matchedByName = findMatchingBeaconExhibit(lookupQuery);

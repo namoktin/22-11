@@ -73,11 +73,16 @@ class IntentClassifier {
       'tuong niem', 'phu dieu', 'choi gac', 'vong gac', 'trai nu', 'trai nam',
       'cachot', 'dem thieng lieng', 'tra bang', 'thach bang', 'phu khanh',
       'lang hoa lo', 'lang phu khanh', 'khoa co chan', 'cong tay', 'xieng xich',
-      'dong kinh nghia thuc'
+      'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
+      'dai hong chung', 'chuong dai hong', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
+      'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004'
     ];
   }
 
   extractSubject(norm) {
+    if (norm.includes('trong dong') || norm.includes('dong son') || norm.includes('chim lac') || norm.includes('ngoi sao 14 canh') || norm.includes('ma 001') || norm.includes('so 001')) return 'trong_dong';
+    if (norm.includes('dat hong') || norm.includes('dai hong chung') || norm.includes('chuong dai hong') || norm.includes('thap chuong') || norm.includes('ma 003') || norm.includes('so 003')) return 'dat_hong';
+    if (norm.includes('bao kiem') || norm.includes('kiem hoang gia') || norm.includes('luong long trieu nhat') || norm.includes('co vat hoang cung') || norm.includes('ma 004') || norm.includes('so 004')) return 'bao_kiem';
     if (norm.includes('may chem') || norm.includes('guillotine') || norm.includes('luoi dao') || norm.includes('cot go')) return 'may_chem';
     if (norm.includes('cay bang') || norm.includes('la bang') || norm.includes('hat bang') || norm.includes('canh bang') || norm.includes('tra bang') || norm.includes('thach bang')) return 'cay_bang';
     if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong')) return 'cong_ngam';
@@ -873,13 +878,18 @@ class IntentClassifier {
     }
 
     // 10. Thông tin giá vé & Chính sách miễn giảm (TICKET_INFORMATION)
-    const ticketSignals = [
+    // Phân tách tín hiệu vé rõ ràng vs danh xưng ("Em là sinh viên, muốn biết về Trống đồng...") để không bắt nhầm câu hỏi lịch sử!
+    const strongTicketSignals = [
       'gia ve', 've vao cong', 've vao cua', 'mua ve', 'tien ve', 've tham quan', 've xem', 'mua o dau', 'gia bao nhieu',
-      'hoc sinh', 'sinh vien', 'hssv', 'sv', 'uu dai', 'giam gia ve', 'giam gia', 'mien phi ve', 'mien phi', 'dat ve truoc', 'dat ve',
+      'hssv', 'the sinh vien', 'the hoc sinh', 'giam gia ve', 'mien phi ve', 'dat ve truoc', 'dat ve',
       'doi ve', 'tra ve', 'hoan tien ve',
-      'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'discount', 'free admission', 'book ticket', 'buy ticket'
+      'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'free admission', 'book ticket', 'buy ticket'
     ];
-    if (ticketSignals.some(s => hasPhrase(norm, s)) && !hasPhrase(norm, 'thoi tiet') && !hasPhrase(norm, 'may bay') && !hasPhrase(norm, 'taxi') && !hasPhrase(norm, 'airport')) {
+    const personaDiscountSignals = ['hoc sinh', 'sinh vien', 'sv', 'uu dai', 'giam gia', 'mien phi', 'discount'];
+    const hasFeeOrTicketWord = /\b(gia ve|mua ve|ve vao|ve tham quan|tien ve|giam gia|giam ve|duoc giam|giam 50|mien phi|uu dai|bao nhieu tien|mat phi|mat tien|the sinh vien|the hoc sinh|the hssv|quen the|ticket|cost|fee|price|free|discount)\b/.test(norm);
+    const matchesTicket = strongTicketSignals.some(s => hasPhrase(norm, s)) ||
+                          (personaDiscountSignals.some(s => hasPhrase(norm, s)) && hasFeeOrTicketWord);
+    if (matchesTicket && !hasPhrase(norm, 'thoi tiet') && !hasPhrase(norm, 'may bay') && !hasPhrase(norm, 'taxi') && !hasPhrase(norm, 'airport')) {
       return {
         intent: INTENTS.TICKET_INFORMATION,
         subIntent: null,
@@ -942,13 +952,17 @@ class IntentClassifier {
     const recommendationSignals = [
       '15 phut', 'co 15 phut', 'chi co 15 phut', '20 phut', 'co 20 phut', 'xem duoc gi', 'xem duoc nhung gi', 'nen xem gi', 'nen xem nhung gi',
       'nen tham quan gi truoc', 'it thoi gian', 'co 30 phut', 'co 45 phut', 'co 1 tieng',
-      'goi y lo trinh', 'tham quan theo nhom', 'di cung gia dinh', 'co nen di tour dem',
+      'goi y lo trinh', 'co nen di tour dem',
       'lo trinh nao tot nhat', 'tu van giup toi', 'bao nhieu thoi gian',
       'mat bao lau', 'thoi gian tham quan', 'mat bao nhieu phut', 'may tieng',
       'lo trinh phu hop nhat', 'lo trinh tham quan', 'lo trinh nao',
       'what to see', 'recommendation', 'itinerary', 'limited time', '15 minutes', '20 minutes', '30 minutes', '45 minutes', 'must see', 'highlights'
     ];
-    if (!isHistoricalDuration && recommendationSignals.some(s => norm.includes(s))) {
+    const hasFamilyOrGroupContext = norm.includes('di cung gia dinh') || norm.includes('tham quan theo nhom');
+    const asksPlanningWithFamily = hasFamilyOrGroupContext &&
+      (!subject || /\b(lo trinh|nen xem|nen di|goi y|tu van|bao lau|phut|tieng|sap xep|itinerary|route|plan)\b/.test(norm)) &&
+      !/\b(trong dong|dong son|cay bang|dat hong|dai hong chung|bao kiem|may chem|cachot|cong ngam|minh khai|hoang van thu|nguyen thai hoc|mccain|pho|dep lop|rau muong)\b/.test(norm);
+    if (!isHistoricalDuration && (recommendationSignals.some(s => norm.includes(s)) || asksPlanningWithFamily)) {
       return {
         intent: INTENTS.TOUR_RECOMMENDATION,
         subIntent: null,

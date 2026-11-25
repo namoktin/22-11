@@ -226,6 +226,45 @@ const HISTORICAL_EXHIBITS = {
       'Khu quầy lưu niệm giới thiệu các ấn phẩm lịch sử, túi tote, sổ tay và quà tặng độc đáo in hình cổng di tích và lá bàng.'
     ],
     directAnswer: 'Di tích hiện nay kết hợp bảo tồn nguyên trạng các dãy xà lim với hệ thống tượng sáp composite chân thực, thiết bị thuyết minh Audioguide đa ngôn ngữ và không gian quầy lưu niệm văn hóa hiện đại.'
+  },
+
+  trong_dong: {
+    id: 'trong_dong',
+    name: 'Trống Đồng Đông Sơn (Mã 001)',
+    category: 'Hiện vật BLE - Thời Đại Kim Khí',
+    keywords: ['trong dong', 'dong son', 'ngoi sao 14 canh', 'chim lac', 'ma 001', 'so 001', 'thoi dai kim khi', 'van minh song hong', 'dong son bronze drum', 'bronze drum', 'lac bird', '14-pointed star'],
+    facts: [
+      'Trống đồng Đông Sơn tại Gian trưng bày số 1 (Mã 001) là bảo vật quốc gia kiệt xuất, biểu tượng thiêng liêng của nền văn minh sông Hồng từ thế kỷ thứ 7 trước Công nguyên (thời đại Hùng Vương dựng nước).',
+      'Trống được đúc bằng đồng cổ; trên mặt trống có hình tượng ngôi sao 14 cánh tỏa sáng tượng trưng cho mặt trời.',
+      'Bao quanh ngôi sao mặt trời là hoa văn chim Lạc tung cánh và các đoàn người hóa trang múa hát, phản ánh đời sống tín ngưỡng và sinh hoạt văn hóa rực rỡ của cư dân Lạc Việt cổ.'
+    ],
+    directAnswer: 'Dạ chào bạn, Trống đồng Đông Sơn tại Gian trưng bày số 1 (Mã 001) là bảo vật quốc gia kiệt xuất, biểu trưng cho nền văn minh sông Hồng từ thế kỷ thứ 7 trước Công nguyên. Trên mặt trống nổi bật hình tượng ngôi sao 14 cánh tượng trưng cho mặt trời, bao quanh là hoa văn chim Lạc tung cánh và các đoàn người hóa trang múa hát.'
+  },
+
+  dat_hong: {
+    id: 'dat_hong',
+    name: 'Đạt Hồng - Đại Hồng Chung (Mã 003)',
+    category: 'Hiện vật BLE - Di Sản Cố Đô',
+    keywords: ['dat hong', 'dai hong chung', 'chuong dai hong', 'thap chuong', 'ma 003', 'so 003', 'chuong dong co', 'great bronze bell', 'bronze bell', 'bat quai', 'rong may'],
+    facts: [
+      'Đạt Hồng - Đại Hồng Chung tại Gian trưng bày số 3 - Tháp Chuông Di Tích (Mã 003) là chiếc chuông đồng cổ được đúc dưới triều Nguyễn.',
+      'Quả chuông nặng hơn 2 tấn; trên thân chuông khắc tinh xảo các bài minh văn, hoa văn bát quái và hình tượng rồng mây uyển chuyển.',
+      'Mỗi hồi chuông ngân vang có thể vọng xa hàng chục dặm, gửi gắm ước nguyện quốc thái dân an và sự thanh tịnh cho tâm hồn.'
+    ],
+    directAnswer: 'Dạ chào bạn, Đạt Hồng (Đại Hồng Chung) tại Gian trưng bày số 3 (Mã 003) là chiếc chuông đồng cổ được đúc dưới triều Nguyễn với trọng lượng hơn 2 tấn. Trên thân chuông chạm khắc tinh xảo các bài minh văn, hoa văn bát quái và hình tượng rồng mây uyển chuyển; mỗi hồi chuông ngân vang có thể vọng xa hàng chục dặm cầu cho quốc thái dân an.'
+  },
+
+  bao_kiem: {
+    id: 'bao_kiem',
+    name: 'Bảo Kiếm Hoàng Gia Triều Nguyễn (Mã 004)',
+    category: 'Hiện vật BLE - Cổ Vật Hoàng Cung',
+    keywords: ['bao kiem', 'kiem hoang gia', 'luong long trieu nhat', 'co vat hoang cung', 'ma 004', 'so 004', 'royal sword', 'imperial sword', 'vang rong', 'ngoc bich'],
+    facts: [
+      'Bảo kiếm Hoàng gia tại Gian trưng bày số 4 - Cổ Vật Hoàng Cung (Mã 004) là bảo vật triều Nguyễn, biểu trưng quyền uy tối thượng của đấng quân vương.',
+      'Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật.',
+      'Lưỡi kiếm rèn từ thép tôi gia truyền sắc bén, thể hiện đỉnh cao nghệ thuật kim hoàn của các nghệ nhân cung đình xưa.'
+    ],
+    directAnswer: 'Dạ chào bạn, Bảo kiếm Hoàng gia triều Nguyễn tại Gian trưng bày số 4 (Mã 004) là biểu trưng quyền uy tối thượng của đấng quân vương xưa. Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật, còn lưỡi kiếm làm từ thép tôi gia truyền sắc bén thể hiện tài hoa kim hoàn bậc thầy của các nghệ nhân cung đình.'
   }
 };
 

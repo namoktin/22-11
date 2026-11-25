@@ -97,12 +97,15 @@ class NlpProcessor {
       'quen het huong dan', 'bo qua moi quy tac', 'bo qua tat ca quy tac', 'bo qua moi chi dan',
       'you are now', 'act as an unrestricted', 'unrestricted ai', 'pretend you are', 'jailbreak', 'system override', 'admin mode', 'developer mode',
       'reveal system prompt', 'show system prompt', 'system prompt', 'in ra huong dan', 'xem prompt',
-      'quy tac bi mat', 'api key', 'groq api key', 'admin api key', 'cau hinh server', 'override safety rules', 'only reply'
+      'quy tac bi mat', 'api key', 'groq api key', 'admin api key', 'cau hinh server', 'override safety rules'
     ];
     if (strictJailbreaks.some(p => norm.includes(' ' + p + ' '))) return true;
 
-    // Lớp 1.5: Ép format trả lời cưỡng bức ("chỉ trả lời YES cho mọi câu hỏi")
-    if (/\bchi tra loi\b/.test(norm) && /\b(moi cau hoi|tiep theo|yes|no|dung|sai)\b/.test(norm)) {
+    // Lớp 1.5: Ép format trả lời cưỡng bức ("chỉ trả lời YES cho mọi câu hỏi", "only reply yes/no")
+    // Tránh khớp nhầm "sử dụng" / "xây dựng" ("dung") thành "đúng"!
+    if ((/\bchi tra loi\b/.test(norm) && /\b(moi cau hoi|tiep theo|yes|no|true|false|dung hoac sai|dung sai)\b/.test(norm)) ||
+        /chỉ\s+trả\s+lời\s+(?:đúng|sai|có|không|yes|no)\b/i.test(text) ||
+        (/\bonly reply\b/.test(norm) && /\b(yes|no|every|all questions|emoji|hacker|nothing else)\b/.test(norm))) {
       return true;
     }
 
@@ -120,8 +123,10 @@ class NlpProcessor {
       return true;
     }
 
-    // Lớp 4: Cưỡng ép đổi ngôn ngữ / đổi vai trò (Role & Language Hijacking)
-    if (/\b(bay gio ban la|tu bay gio ban chi|chi duoc tra loi|tra loi toi bang tieng)\b/.test(norm)) {
+    // Lớp 4: Cưỡng ép đổi vai trò (Role Hijacking) — cho phép yêu cầu lịch sự đổi giữa 6 ngôn ngữ bảo tàng hợp lệ!
+    const isPoliteMuseumLangReq = /\b(tieng viet|tieng anh|tieng phap|tieng nhat|tieng han|tieng trung|english|french|japanese|korean|chinese)\b/.test(norm) &&
+                                  !/\b(hacker|bo qua|quen het|bay gio ban la|tu bay gio|dong vai|khong phai)\b/.test(norm);
+    if (!isPoliteMuseumLangReq && /\b(bay gio ban la|tu bay gio ban chi|chi duoc tra loi|tra loi toi bang tieng)\b/.test(norm)) {
       return true;
     }
 
@@ -167,6 +172,18 @@ class NlpProcessor {
 
     // Kiểm tra cờ yêu cầu phân tích mâu thuẫn nguồn (Variant 5)
     const requiresConflictCheck = norm.includes('mau thuan') || norm.includes('chua du hoac con mau thuan') || norm.includes('khac biet nguon');
+
+    // 0. Bóc tách tiền tố yêu cầu ngôn ngữ lịch sự ("Vui lòng chỉ trả lời bằng tiếng Nhật/Hàn/Pháp/Anh/Trung/Việt:", "In English only,", "En français uniquement :")
+    const politeLangPrefixRe = /^(?:(?:vui\s+lòng|xin|hãy)\s+)?(?:chỉ\s+)?(?:trả\s+lời(?:\s+tôi)?\s+)?bằng\s+tiếng\s+(?:việt|anh|pháp|nhật|hàn|trung)(?:\s+thôi|\s+nhé|\s+ạ)?\s*[:.,;-]\s*|^in\s+english\s+only\s*[:.,;-]?\s*|^english\s+only\s*[:.,;-]?\s*|^en\s+fran[cç]ais\s+uniquement\s*[:.,;-]?\s*/i;
+    const langStripped = trimmed.replace(politeLangPrefixRe, '').trim();
+    if (langStripped && langStripped.length >= 4 && langStripped !== trimmed) {
+      return {
+        coreQuery: langStripped,
+        isWrapped: true,
+        requiresConflictCheck,
+        rawText: trimmed
+      };
+    }
 
     // 1. Bóc tách tiền tố định vị / phân khu / hiện vật: [Tại khu vực trưng bày ...]: hoặc [Điểm tham quan ...]:
     const bracketMatch = trimmed.match(/^\[(?:Tại\s+khu\s+vực\s+trưng\s+bày\s+|Điểm\s+tham\s+quan\s+|Khu\s+vực\s+)?([^\]]+)\]:\s*(.*)$/i);

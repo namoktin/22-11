@@ -161,8 +161,11 @@ class SemanticRouter {
       'phi cong', 'hanoi hilton', 'mccain', 'peterson', 'hoang van thu', 'nguyen thai hoc',
       'tran tu binh', 'nguyen duc canh', 'nguyen hoang ton', 'phan boi chau', 'luong van can',
       'quang thai', 'minh khai', 'dem thieng lieng', 'audioguide', 'trai giam nu', 'tu nhi',
-      'dai tuong niem', 'dai hong chung', 'vuot nguc', 'tuong bao', 'manh thuy tinh', 'manh sanh',
-      'trai j', 'trai d', 'trai i', 'lap la', 'phong giam', 'buong giam', 'nha tu', 'di tich'
+      'dai tuong niem', 'dai hong chung', 'chuong dai hong', 'dat hong', 'thap chuong',
+      'trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'bao kiem', 'kiem hoang gia',
+      'luong long trieu nhat', 'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
+      'so 001', 'so 002', 'so 003', 'so 004', 'vuot nguc', 'tuong bao', 'manh thuy tinh',
+      'manh sanh', 'trai j', 'trai d', 'trai i', 'lap la', 'phong giam', 'buong giam', 'nha tu', 'di tich'
     ];
     return coreTerms.some(t => hasPhrase(normText, t));
   }
@@ -202,10 +205,14 @@ class SemanticRouter {
    * Phát hiện tín hiệu An toàn & Khẩn cấp đa ngôn ngữ không phụ thuộc cụm từ cứng
    */
   detectSafetyEmergency(normText) {
-    // 1. Trẻ lạc / người thân thất lạc (chủ thể trẻ nhỏ + trạng thái lạc/mất/tuột tay/cần tìm)
-    const childActor = /\b(con|be|chau|tre|kid|child|son|daughter|toddler)\b/.test(normText);
-    const lostState = /\b(lac|chay lac|bi lac|that lac|mat tich|khong thay|tuot tay|di mat|di dau mat|tim giup|missing|lost|separated)\b/.test(normText);
-    if (childActor && lostState && !hasPhrase(normText, 'tu nhi')) {
+    // 1. Trẻ lạc / người thân thất lạc (tách riêng VI và EN để tránh "Đông Sơn" + "chim Lạc" khớp nhầm "son" + "lac"!)
+    const isDongSonCultural = hasPhrase(normText, 'dong son') || hasPhrase(normText, 'chim lac') || hasPhrase(normText, 'lac viet') || hasPhrase(normText, 'trong dong');
+    const viChildActor = /\b(con|be|chau|tre|dua be|em be)\b/.test(normText) && !hasPhrase(normText, 'tu nhi') && !isDongSonCultural;
+    const viLostState = /\b(lac mat|chay lac|bi lac|that lac|di lac|mat tich|khong thay dau|tuot tay|di mat|di dau mat|tim giup|lac con|lac be|lac chau)\b/.test(normText) ||
+                        (/\blac\b/.test(normText) && /\b(cuu|giup|khong thay|hoang|lo|tim|o dau)\b/.test(normText));
+    const enChildActor = /\b(kid|child|children|my son|my daughter|son is|daughter is|toddler|little boy|little girl)\b/.test(normText) && !isDongSonCultural;
+    const enLostState = /\b(missing|lost|separated|cant find|can t find)\b/.test(normText);
+    if ((viChildActor && viLostState) || (enChildActor && enLostState)) {
       return { isEmergency: true, subType: 'LOST_CHILD_URGENT', urgency: 'URGENT' };
     }
 
@@ -281,9 +288,17 @@ class SemanticRouter {
     if (/\b(?:rach\s+ve|ve\s+(?:giay\s+)?(?:bi\s+)?(?:rach|hong|mat)|torn\s+ticket|damaged\s+ticket)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_DAMAGED_TICKET' };
     }
-    // Đăng ký đoàn đông người / đoàn trường học (cấp 1, tiểu học, mầm non, 20+ khách/bé/học sinh)
-    if ((hasPhrase(normText, 'doan') || hasPhrase(normText, 'truong cap 1') || hasPhrase(normText, 'truong tieu hoc') || hasPhrase(normText, 'nha truong') || hasPhrase(normText, 'group')) &&
-        (hasPhrase(normText, 'hoc sinh') || hasPhrase(normText, 'tieu hoc') || hasPhrase(normText, 'cap 1') || hasPhrase(normText, 'tham quan') || hasPhrase(normText, 'dang ky truoc') || /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText))) {
+    // Đăng ký đoàn đông người / đoàn trường học (loại trừ "đoàn kết" + "khách tham quan"!)
+    const isGroupEntity = (hasPhrase(normText, 'doan khach') || hasPhrase(normText, 'doan hoc sinh') || hasPhrase(normText, 'doan truong') ||
+                          hasPhrase(normText, 'doan tham quan') || hasPhrase(normText, 'doan dong') || hasPhrase(normText, 'di theo doan') ||
+                          hasPhrase(normText, 'truong cap 1') || hasPhrase(normText, 'truong tieu hoc') || hasPhrase(normText, 'nha truong') ||
+                          hasPhrase(normText, 'school group') || hasPhrase(normText, 'group booking') ||
+                          (hasPhrase(normText, 'doan') && !hasPhrase(normText, 'doan ket') && !hasPhrase(normText, 'doan nguoi hoa trang') && /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText)));
+    if (isGroupEntity &&
+        (hasPhrase(normText, 'hoc sinh') || hasPhrase(normText, 'tieu hoc') || hasPhrase(normText, 'cap 1') ||
+         hasPhrase(normText, 'dang ky') || hasPhrase(normText, 'dat truoc') || hasPhrase(normText, 'dat lich') ||
+         hasPhrase(normText, 'huong dan vien') || hasPhrase(normText, 'thuyet minh vien') ||
+         /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText))) {
       return { isOps: true, subType: 'OPS_GROUP_BOOKING' };
     }
 
@@ -436,8 +451,13 @@ class SemanticRouter {
   async checkNeuralPromptGuard(rawQuestion, groqApiKey) {
     if (!groqApiKey || Date.now() < this.promptGuardDownUntil) return { flagged: false, score: 0 };
 
-    // Chỉ kích hoạt gọi neural guard nếu câu có dấu hiệu yêu cầu hành động / mệnh lệnh / tiếng Anh dài
+    // Chỉ kích hoạt gọi neural guard nếu câu có dấu hiệu yêu cầu hành động / mệnh lệnh đáng ngờ
+    // Bỏ qua các yêu cầu chọn 1 trong 6 ngôn ngữ bảo tàng lịch sự ("Vui lòng chỉ trả lời bằng tiếng Nhật/Hàn/Pháp/Anh/Trung/Việt")
     const norm = normalizeText(rawQuestion);
+    const isPoliteMuseumLangOnly = /\b(tieng viet|tieng anh|tieng phap|tieng nhat|tieng han|tieng trung|english|french|japanese|korean|chinese)\b/.test(norm) &&
+                                   !/\b(ignore|override|jailbreak|system|prompt|api|key|password|hacker|bo qua|quen het|dong vai|gia vo|script|sql)\b/.test(norm);
+    if (isPoliteMuseumLangOnly) return { flagged: false, score: 0 };
+
     const hasCommandSignal = /\b(hay|quyen|quen|bo qua|dong vai|gia vo|in ra|cho toi xem|viet|dich|chui|ignore|pretend|act as|system|prompt|api|key|password|override|jailbreak|only reply|speak only|chatgpt)\b/.test(norm);
     if (!hasCommandSignal) return { flagged: false, score: 0 };
 

@@ -993,10 +993,10 @@ class IntelligentAnswerComposer {
       subject,
       intent,
       artifactContext,
-      topK: 3
+      topK: 4
     });
 
-    // Nén ngữ cảnh gọn <= 720 ký tự (~210 tokens) để tiết kiệm TPM Groq & tránh 429 khi hỏi dồn!
+    // Nén ngữ cảnh gọn <= 900 ký tự (~260 tokens) để đủ dữ kiện đa khía cạnh mà vẫn tiết kiệm TPM Groq!
     const extraFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
     const mergedSnippets = [...topK.snippets];
     for (const f of extraFacts.slice(0, 2)) {
@@ -1008,9 +1008,9 @@ class IntelligentAnswerComposer {
       }
     }
     let compactContext = '';
-    for (const s of mergedSnippets.slice(0, 4)) {
-      const piece = s.length > 260 ? s.slice(0, 260) + '...' : s;
-      if (compactContext.length + piece.length > 720 && compactContext.length > 160) break;
+    for (const s of mergedSnippets.slice(0, 5)) {
+      const piece = s.length > 300 ? s.slice(0, 300) + '...' : s;
+      if (compactContext.length + piece.length > 900 && compactContext.length > 180) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
@@ -1035,8 +1035,12 @@ class IntelligentAnswerComposer {
       ? ` If unrelated to museum/exhibits/visiting, decline in 1-2 sentences in ${targetLangName}.`
       : '';
 
-    const promptSystem = `You are HOA LO AI GUIDE (Hoa Lo Prison Relic, Hanoi).
-- Reply STRICTLY in ${targetLangName} ONLY.
+    const foreignCleanRule = language !== 'vi'
+      ? ` Write names naturally in ${targetLangName}; do NOT add Vietnamese diacritic translations in parentheses.`
+      : '';
+
+    const promptSystem = `You are HOA LO AI GUIDE (Hoa Lo Prison Relic, Hanoi & its BLE exhibits 001-004).
+- Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}
 - "bạn ở đâu/where are you" = virtual device guide; "tôi đang đứng ở đâu/where am I" = BLE location in CONTEXT; place "ở đâu" = exact spot.
 - Use ONLY CONTEXT facts (never invent dates/numbers; if missing, state honestly).${refusalRule}
 - Style: ${pickedStyle}, ${isStorytelling ? '3-4' : '2-3'} plain spoken sentences (no markdown/bullets/arrows). In Vietnamese use "mình"-"bạn", polite lead-in ("Dạ...", "Mình xin chia sẻ..."), complete subject-predicate sentences.${audienceInstruction}${recentOpens}
@@ -1191,10 +1195,14 @@ ${compactContext}`;
       };
     }
 
-    // 2. Đại hồng chung tại Đài tưởng niệm (nêu rõ tư liệu chưa ghi năm đúc)
-    if (normQ.includes('dai hong chung') || (normQ.includes('chuong') && (normQ.includes('duc vao') || normQ.includes('duc nam') || normQ.includes('nam nao') || normQ.includes('dai tuong niem')))) {
+    // 2. Đại hồng chung tại Đài tưởng niệm (CHỈ kích hoạt khi hỏi đích danh năm đúc của chuông Đài tưởng niệm, KHÔNG chặn hiện vật Mã 003 Đạt Hồng!)
+    const isDatHongBeaconQuery = normQ.includes('dat hong') || normQ.includes('ma 003') || normQ.includes('so 003') || normQ.includes('co do') ||
+                                 normQ.includes('trieu nguyen') || normQ.includes('trieu nao') || normQ.includes('may tan') ||
+                                 normQ.includes('nang bao nhieu') || normQ.includes('hoa van') || normQ.includes('bat quai') || normQ.includes('rong may');
+    const asksExactBellCastYear = normQ.includes('duc vao') || normQ.includes('duc nam') || normQ.includes('nam nao') || normQ.includes('nam duc') || normQ.includes('dai tuong niem');
+    if (!isDatHongBeaconQuery && (normQ.includes('dai hong chung') || normQ.includes('chuong')) && asksExactBellCastYear) {
       return {
-        reply: 'Mình xin thông tin thật với bạn là hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung này; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ.',
+        reply: 'Mình xin thông tin thật với bạn là hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung tại Đài tưởng niệm; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ.',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['DOSSIER_DAI_HONG_CHUNG_YEAR'],
