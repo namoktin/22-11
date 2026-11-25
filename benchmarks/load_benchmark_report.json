@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T10:09:32.272Z",
+  "generated_at": "2026-11-25T06:25:02.783Z",
   "environment": {
     "node": "v22.21.0",
     "platform": "win32",
@@ -10,85 +10,85 @@
     {
       "concurrency": 1,
       "total_requests": 30,
-      "elapsed_sec": 0.194,
-      "rps": 154.99,
+      "elapsed_sec": 0.384,
+      "rps": 78.22,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 3.92,
-        "p95": 17.39,
-        "p99": 53.23,
-        "max": 53.23
+        "p50": 5.78,
+        "p95": 31.26,
+        "p99": 105.35,
+        "max": 105.35
       },
       "memory_mb": {
-        "rss": 41.1,
-        "heapUsed": 7.9
+        "rss": 36.5,
+        "heapUsed": 7.8
       },
       "cpu_ms": {
-        "user": 109,
+        "user": 187,
         "system": 16
       }
     },
     {
       "concurrency": 10,
       "total_requests": 100,
-      "elapsed_sec": 0.987,
-      "rps": 101.33,
+      "elapsed_sec": 0.603,
+      "rps": 165.83,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 41.95,
-        "p95": 218.85,
-        "p99": 233.21,
-        "max": 233.56
+        "p50": 56.93,
+        "p95": 88.63,
+        "p99": 89.82,
+        "max": 103.41
       },
       "memory_mb": {
-        "rss": 43.2,
+        "rss": 38.9,
         "heapUsed": 8
       },
       "cpu_ms": {
-        "user": 391,
-        "system": 63
+        "user": 407,
+        "system": 47
       }
     },
     {
       "concurrency": 50,
       "total_requests": 250,
-      "elapsed_sec": 0.998,
-      "rps": 250.48,
+      "elapsed_sec": 0.8,
+      "rps": 312.58,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 177.48,
-        "p95": 257.5,
-        "p99": 380.72,
-        "max": 380.91
+        "p50": 137.3,
+        "p95": 210.24,
+        "p99": 312.01,
+        "max": 312.94
       },
       "memory_mb": {
-        "rss": 48.8,
-        "heapUsed": 7.7
+        "rss": 44.4,
+        "heapUsed": 7.8
       },
       "cpu_ms": {
-        "user": 593,
+        "user": 781,
         "system": 125
       }
     },
     {
       "concurrency": 100,
       "total_requests": 400,
-      "elapsed_sec": 3.093,
-      "rps": 129.31,
+      "elapsed_sec": 1.054,
+      "rps": 379.5,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 809.37,
-        "p95": 1139.31,
-        "p99": 1149.22,
-        "max": 1152.2
+        "p50": 254.33,
+        "p95": 412.6,
+        "p99": 459.69,
+        "max": 460.82
       },
       "memory_mb": {
-        "rss": 51.9,
-        "heapUsed": 7.2
+        "rss": 48,
+        "heapUsed": 11.7
       },
       "cpu_ms": {
-        "user": 1016,
-        "system": 328
+        "user": 890,
+        "system": 219
       }
     }
   ],
@@ -96,85 +96,85 @@
     {
       "concurrency": 1,
       "total_requests": 10,
-      "elapsed_sec": 2.343,
-      "rps": 4.27,
+      "elapsed_sec": 1.43,
+      "rps": 7,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 245.78,
-        "p95": 419.1,
-        "p99": 419.1,
-        "max": 419.1
+        "p50": 41.45,
+        "p95": 448.61,
+        "p99": 448.61,
+        "max": 448.61
       },
       "memory_mb": {
-        "rss": 136.2,
-        "heapUsed": 34.8
+        "rss": 124.1,
+        "heapUsed": 32.9
       },
       "cpu_ms": {
-        "user": 657,
-        "system": 203
+        "user": 578,
+        "system": 94
       }
     },
     {
       "concurrency": 10,
       "total_requests": 40,
-      "elapsed_sec": 5.162,
-      "rps": 7.75,
+      "elapsed_sec": 2.108,
+      "rps": 18.98,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 395.56,
-        "p95": 2880.71,
-        "p99": 3014.11,
-        "max": 3014.11
+        "p50": 197.74,
+        "p95": 1244.14,
+        "p99": 1710.7,
+        "max": 1710.7
       },
       "memory_mb": {
-        "rss": 173.7,
-        "heapUsed": 32
+        "rss": 156.2,
+        "heapUsed": 40.9
       },
       "cpu_ms": {
-        "user": 2032,
-        "system": 843
+        "user": 984,
+        "system": 281
       }
     },
     {
       "concurrency": 50,
       "total_requests": 100,
-      "elapsed_sec": 10.915,
-      "rps": 9.16,
+      "elapsed_sec": 2.311,
+      "rps": 43.27,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 1948.36,
-        "p95": 9011.83,
-        "p99": 9233.89,
-        "max": 9396.76
+        "p50": 954.09,
+        "p95": 2021.89,
+        "p99": 2063.56,
+        "max": 2064.62
       },
       "memory_mb": {
-        "rss": 252.5,
-        "heapUsed": 28.8
+        "rss": 186.8,
+        "heapUsed": 36.6
       },
       "cpu_ms": {
-        "user": 2984,
-        "system": 1422
+        "user": 1813,
+        "system": 329
       }
     },
     {
       "concurrency": 100,
       "total_requests": 200,
-      "elapsed_sec": 11.634,
-      "rps": 17.19,
+      "elapsed_sec": 3.345,
+      "rps": 59.79,
       "error_rate_pct": 0,
       "latency_ms": {
-        "p50": 2680.3,
-        "p95": 4523.27,
-        "p99": 7908.81,
-        "max": 9128.15
+        "p50": 1410.78,
+        "p95": 2989.88,
+        "p99": 2990.59,
+        "max": 2997.56
       },
       "memory_mb": {
-        "rss": 385,
-        "heapUsed": 29.3
+        "rss": 259.8,
+        "heapUsed": 31
       },
       "cpu_ms": {
-        "user": 5437,
-        "system": 2266
+        "user": 3562,
+        "system": 546
       }
     }
   ]

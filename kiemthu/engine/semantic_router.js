@@ -256,7 +256,9 @@ class SemanticRouter {
       return { isOps: true, subType: 'OPS_COMMERCIAL_INAPPROPRIATE' };
     }
     // Sạc pin / ổ cắm / sạc dự phòng
-    if (hasPhrase(normText, 'sac du phong') || hasPhrase(normText, 'o cam') || hasPhrase(normText, 'het pin') || hasPhrase(normText, 'sac dien thoai') || hasPhrase(normText, 'power bank') || hasPhrase(normText, 'charge my phone')) {
+    if (hasPhrase(normText, 'sac du phong') || hasPhrase(normText, 'o cam') || hasPhrase(normText, 'het pin') ||
+        hasPhrase(normText, 'sac dien thoai') || hasPhrase(normText, 'sac pin') || hasPhrase(normText, 'cho sac') ||
+        hasPhrase(normText, 'diem sac') || hasPhrase(normText, 'power bank') || hasPhrase(normText, 'charge my phone')) {
       return { isOps: true, subType: 'OPS_PHONE_CHARGING' };
     }
     // WiFi / Mật khẩu WiFi
@@ -267,8 +269,8 @@ class SemanticRouter {
     if (hasPhrase(normText, 'credit card') || hasPhrase(normText, 'us dollars') || hasPhrase(normText, 'usd') || hasPhrase(normText, 'the tin dung') || hasPhrase(normText, 'the visa') || hasPhrase(normText, 'quet the') || hasPhrase(normText, 'chuyen khoan') || hasPhrase(normText, 'thanh toan qr') || (hasPhrase(normText, 'accept') && hasPhrase(normText, 'dollar'))) {
       return { isOps: true, subType: 'OPS_PAYMENT_METHODS' };
     }
-    // Rách vé / Hỏng vé giấy
-    if ((hasPhrase(normText, 'rach ve') || hasPhrase(normText, 've bi rach') || hasPhrase(normText, 'mat ve')) && (hasPhrase(normText, 've giay') || hasPhrase(normText, 'vao') || hasPhrase(normText, 'tham quan'))) {
+    // Rách vé / Hỏng vé giấy / Mất vé giấy
+    if (/\b(?:rach\s+ve|ve\s+(?:giay\s+)?(?:bi\s+)?(?:rach|hong|mat)|torn\s+ticket|damaged\s+ticket)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_DAMAGED_TICKET' };
     }
     // Đăng ký đoàn đông người / đoàn trường học (cấp 1, tiểu học, mầm non, 20+ khách/bé/học sinh)

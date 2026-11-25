@@ -25,7 +25,7 @@ const SEMANTIC_STOPWORDS = new Set([
 const CONCEPT_CLUSTERS = {
   C_MATERIAL: ['chat lieu', 'vat lieu', 'lam bang', 'duc bang', 'ren bang', 'xay bang', 'cau tao', 'kim loai', 'thep', 'vang rong', 'go lim', 'gach da', 'gach dac', 'xi mang', 'be tong', 'sat thep', 'dong co', 'material', 'made of', 'built with', 'constructed from'],
   C_SIZE_DIM: ['kich thuoc', 'cao bao nhieu', 'chieu cao', 'nang bao nhieu', 'nang may', 'trong luong', 'to bao nhieu', 'to co nao', 'rong bao nhieu', 'chieu rong', 'day bao nhieu', 'duong kinh', 'bao nhieu met', 'bao nhieu cm', 'bao nhieu kg', 'bao nhieu tan', 'how tall', 'how heavy', 'how big', 'how wide', 'size', 'weight', 'height', 'dimensions'],
-  C_AGE_DATE: ['nien dai', 'nam nao', 'khi nao', 'bao gio', 'song duoc bao lau', 'bao nhieu nam', 'tuoi doi', 'co tu bao gio', 'xay dung nam', 'khoi cong', 'thanh lap', 'when was', 'what year', 'how old', 'built in', 'century', 'the ky'],
+  C_AGE_DATE: ['nien dai', 'nam nao', 'khi nao', 'bao gio', 'song duoc bao lau', 'bao nhieu nam', 'tuoi doi', 'co tu bao gio', 'xay dung nam', 'khoi cong', 'khoi dung', 'dung xay', 'thanh lap', 'when was', 'what year', 'how old', 'built in', 'century', 'the ky'],
   C_MEANING: ['y nghia', 'bieu tuong', 'gia tri', 'thong diep', 'vai tro', 'dac biet', 'quan trong', 'tai sao noi tieng', 'vi sao goi', 'vi sao lai', 'ly do', 'nguyen nhan', 'significance', 'meaning', 'symbol', 'why is it', 'why called', 'purpose'],
   C_COMPARE: ['so sanh', 'khac nhau', 'khac gi', 'giong nhau', 'khac biet', 'doi chieu', 'compare', 'difference', 'versus', 'vs'],
   C_DAILY_FOOD: ['an uong', 'an com', 'bua com', 'bua an', 'khau phan', 'nuoc uong', 'thuc an', 'tam giat', 'sinh hoat', 'doi song', 'ngu nghi', 'food', 'eat', 'drink', 'water', 'daily life', 'meals'],
@@ -71,7 +71,7 @@ function extractConceptSet(normSpaced) {
   return found;
 }
 
-function buildSparseVector(text, idfMap = null) {
+function buildSparseVector(text, idfMap = null, avgDocLen = 12) {
   const norm = nlp.normalize(text || '');
   const normSpaced = ' ' + norm + ' ';
   const rawTokens = norm.split(' ').filter(Boolean);
@@ -80,10 +80,20 @@ function buildSparseVector(text, idfMap = null) {
   const vec = new Map();
   const addWeight = (key, w) => vec.set(key, (vec.get(key) || 0) + w);
 
-  // 1. Word Unigrams
+  // Đếm Term Frequency cho BM25 saturation (tránh từ lặp nhiều làm lệch vector dài)
+  const tfMap = new Map();
   for (const t of tokens) {
+    tfMap.set(t, (tfMap.get(t) || 0) + 1);
+  }
+  const k1 = 1.2;
+  const b = 0.75;
+  const lenNorm = Math.max(0.3, tokens.length / Math.max(1, avgDocLen));
+
+  // 1. Word Unigrams với BM25 saturation + IDF
+  for (const [t, tf] of tfMap.entries()) {
     const idf = idfMap ? (idfMap.get('w:' + t) || 1.5) : 1.5;
-    addWeight('w:' + t, idf);
+    const bm25Tf = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * lenNorm));
+    addWeight('w:' + t, idf * bm25Tf);
   }
 
   // 2. Word Bigrams (bắt cụm từ tự nhiên chính xác hơn hẳn từ đơn)
@@ -134,12 +144,13 @@ class LocalSemanticIndex {
     this.docs = []; // { id, source, question, aliases, answer, lang, stationCode, intent, vector, entitySet }
     this.docFreq = new Map();
     this.idfMap = new Map();
+    this.avgDocLen = 12;
   }
 
   addDocument(doc) {
     if (!doc || !doc.question || !doc.answer) return;
     const textForIndex = [doc.question, ...(doc.aliases || [])].join(' | ');
-    const vector = buildSparseVector(textForIndex, this.idfMap.size > 0 ? this.idfMap : null);
+    const vector = buildSparseVector(textForIndex, this.idfMap.size > 0 ? this.idfMap : null, this.avgDocLen);
     this.docs.push({
       id: doc.id || `SEM_${this.docs.length + 1}`,
       source: doc.source || 'LOCAL_KB',
@@ -157,21 +168,25 @@ class LocalSemanticIndex {
   rebuildIdf() {
     this.docFreq.clear();
     const N = Math.max(1, this.docs.length);
+    let totalTokens = 0;
     for (const d of this.docs) {
       const norm = nlp.normalize([d.question, ...(d.aliases || [])].join(' '));
-      const uniq = new Set(norm.split(' ').filter(t => t.length >= 2 && !SEMANTIC_STOPWORDS.has(t)));
+      const filtered = norm.split(' ').filter(t => t.length >= 2 && !SEMANTIC_STOPWORDS.has(t));
+      totalTokens += filtered.length;
+      const uniq = new Set(filtered);
       for (const t of uniq) {
         this.docFreq.set('w:' + t, (this.docFreq.get('w:' + t) || 0) + 1);
       }
     }
+    this.avgDocLen = Math.max(4, totalTokens / N);
     this.idfMap.clear();
     for (const [k, df] of this.docFreq.entries()) {
       this.idfMap.set(k, Math.log(1 + N / (df + 1)) + 0.5);
     }
-    // Tính lại vector với trọng số IDF chuẩn xác
+    // Tính lại vector với trọng số BM25 + IDF chuẩn xác
     for (const d of this.docs) {
       const textForIndex = [d.question, ...(d.aliases || [])].join(' | ');
-      d.vector = buildSparseVector(textForIndex, this.idfMap);
+      d.vector = buildSparseVector(textForIndex, this.idfMap, this.avgDocLen);
     }
   }
 
@@ -180,7 +195,7 @@ class LocalSemanticIndex {
    */
   search(query, { lang = null, stationCode = null, topK = 5, minScore = 0.42 } = {}) {
     if (!query || this.docs.length === 0) return [];
-    const qVec = buildSparseVector(query, this.idfMap);
+    const qVec = buildSparseVector(query, this.idfMap, this.avgDocLen);
     if (qVec.vec.size === 0) return [];
 
     const results = [];

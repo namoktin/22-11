@@ -106,8 +106,12 @@ class NlpProcessor {
       return true;
     }
 
-    // Lớp 2: Ép sinh ngôn từ thù hận / thô tục
-    if (/\b(chui|chui boi|tho tuc|xuc pham|chui rua)\b/.test(norm) && /\b(hay|giup|bang|loi le|nang ne)\b/.test(norm)) {
+    // Lớp 2: Ép sinh ngôn từ thù hận / thô tục (tránh bắt nhầm "chui xuống cống ngầm" thành "chửi"!)
+    const lowerRaw = text.toLowerCase();
+    const isSewerCrawlContext = norm.includes(' cong ngam ') || norm.includes(' chui xuong ') || norm.includes(' chui qua ') || norm.includes(' chui thu ') || norm.includes(' chui vao ');
+    const hasExplicitSwear = /chửi\s*(?:bới|rủa|thề|bậy|mắng)?/i.test(lowerRaw) ||
+      (/\b(chui boi|tho tuc|xuc pham|chui rua|chui the|chui bay)\b/.test(norm) && !isSewerCrawlContext);
+    if (hasExplicitSwear && /\b(hay|giup|bang|loi le|nang ne|bat chuoc|viet)\b/.test(norm)) {
       return true;
     }
 
@@ -295,8 +299,9 @@ class NlpProcessor {
 
     // 2. Lọc bỏ các cụm mở đầu đệm thoại đời thường
     const voicePrefixes = [
+      /^(?:à\s+)?(?:ad\s*ơi|admin\s*ơi|bot\s*ơi|bạn\s+giải\s+đáp\s+giúp|mình\s+muốn\s+tìm\s+hiểu\s+rõ|xin\s+hỏi\s+hướng\s+dẫn\s+viên|cho\s+mình\s+hỏi|mình\s+muốn\s+biết)[:,\s]*/i,
       /^(?:à\s+)?(?:cho\s+mình|cho\s+tôi|cho\s+em|làm\s+ơn\s+cho\s+mình|phiền\s+bạn\s+cho|bạn\s+cho\s+mình|tiện\s+thể\s+cho\s+mình|bạn\s+ơi\s+cho\s+mình)\s*(?:hỏi|biết)?\s*(?:chút|một\s+chút|với)?[:,\s]*/i,
-      /^(?:nghe\s+nói|thấy\s+bảo|mọi\s+người\s+bảo)\s+(?:ở\s+đây|ở\s+Hỏa\s+Lò|tại\s+di\s+tích|trong\s+này)?\s*(?:có|là)?[:,\s]*/i,
+      /^(?:nghe\s+nói|thấy\s+bảo|mọi\s+người\s+bảo|có\s+thật\s+không\s+khi\s+nói|nghe\s+đồn\s+rằng|xác\s+nhận\s+giúp\s+mình)\s*(?:ở\s+đây|ở\s+Hỏa\s+Lò|tại\s+di\s+tích|trong\s+này)?\s*(?:có|là)?[:,\s]*/i,
       /^(?:bạn\s+ơi|anh\s+ơi|chị\s+ơi|hướng\s+dẫn\s+viên\s+ơi|cho\s+hỏi)[,:\s]*/i,
       /^(?:vậy\s+thì|thế\s+thì|thế\s+còn)[,:\s]*/i
     ];

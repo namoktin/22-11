@@ -135,13 +135,14 @@ bool isAudioPlaying = false;
 bool micInitialized = false;
 String currentArtifactCode = "001";
 
-// Bộ lọc EMA + Hysteresis theo từng beacon trong Whitelist
-float emaRssi[4] = { -120.0f, -120.0f, -120.0f, -120.0f };
-bool emaInit[4]  = { false, false, false, false };
+// Bộ lọc EMA + Hysteresis hỗ trợ tối đa MAX_BEACONS trạm BLE (tránh tràn mảng khi mở rộng > 4 hiện vật)
+#define MAX_BEACONS 32
+float emaRssi[MAX_BEACONS];
+bool emaInit[MAX_BEACONS];
 int activeBeaconIdx = -1;
 int candidateIdx = -1;
 int candidateHits = 0;
-unsigned long lastTriggerByIdx[4] = { 0, 0, 0, 0 };
+unsigned long lastTriggerByIdx[MAX_BEACONS];
 
 struct ScanBest {
   String mac;
@@ -342,7 +343,8 @@ void captureAndSendMicWav() {
 // 6. BLE SCANNER + EMA + HYSTERESIS + HEARTBEAT TELEMETRY
 // =========================================================================================
 int matchAllowedBeaconIndex(BLEAdvertisedDevice& dev, const String& macUpper) {
-  for (int i = 0; i < ALLOWED_BEACON_COUNT; i++) {
+  int macLimit = min(ALLOWED_BEACON_COUNT, MAX_BEACONS);
+  for (int i = 0; i < macLimit; i++) {
     if (macUpper.equalsIgnoreCase(ALLOWED_BEACON_MACS[i])) return i;
   }
   if (dev.haveManufacturerData()) {
@@ -350,6 +352,10 @@ int matchAllowedBeaconIndex(BLEAdvertisedDevice& dev, const String& macUpper) {
     if (mfg.length() >= 25 && (uint8_t)mfg[0] == 0x4C && (uint8_t)mfg[1] == 0x00 &&
         (uint8_t)mfg[2] == 0x02 && (uint8_t)mfg[3] == 0x15 &&
         memcmp((const uint8_t*)mfg.data() + 4, TARGET_IBEACON_UUID, 16) == 0) {
+      uint16_t minor = ((uint16_t)(uint8_t)mfg[22] << 8) | (uint16_t)(uint8_t)mfg[23];
+      if (minor >= 1 && minor <= macLimit) {
+        return minor - 1;
+      }
       return 0;
     }
   }
@@ -365,7 +371,7 @@ class HeritageBleCallbacks : public BLEAdvertisedDeviceCallbacks {
     Serial.printf("🔍 [BLE] MAC=%s RSSI=%d Name=%s\n", mac.c_str(), rssi, dev.getName().c_str());
 #endif
     int idx = matchAllowedBeaconIndex(dev, mac);
-    if (idx < 0) return;
+    if (idx < 0 || idx >= MAX_BEACONS) return;
 
     // Lọc mượt EMA ngay trên ESP32
     emaRssi[idx] = emaInit[idx] ? (0.35f * rssi + 0.65f * emaRssi[idx]) : (float)rssi;
@@ -443,6 +449,11 @@ void sendHeartbeat() {
 void setup() {
   Serial.begin(115200);
   delay(500);
+  for (int i = 0; i < MAX_BEACONS; i++) {
+    emaRssi[i] = -120.0f;
+    emaInit[i] = false;
+    lastTriggerByIdx[i] = 0;
+  }
   esp_task_wdt_init(WDT_TIMEOUT_SEC, true);
   esp_task_wdt_add(NULL);
 

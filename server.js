@@ -183,7 +183,7 @@ const MIME_TYPES = {
 // =========================================================================================
 // BỘ NHỚ ĐỆM ÂM THANH SIÊU TỐC & HTTPS KEEP-ALIVE AGENT
 // =========================================================================================
-const httpsKeepAliveAgent = new https.Agent({ keepAlive: true, maxSockets: 10 });
+const httpsKeepAliveAgent = new https.Agent({ keepAlive: true, maxSockets: 24, keepAliveMsecs: 15000 });
 const audioCache = new Map(); // hash -> filename
 
 // =========================================================================================
@@ -268,7 +268,26 @@ const SUPPORTED_LANGUAGES = {
   zh: { code: 'zh', label: '中文', nativeName: 'Simplified Chinese', ttsCode: 'zh-CN' }
 };
 
+const MAX_TRANSLATION_CACHE = 1500;
 const translationCache = new Map();
+
+function getTranslationCache(key) {
+  if (!translationCache.has(key)) return undefined;
+  const val = translationCache.get(key);
+  translationCache.delete(key);
+  translationCache.set(key, val);
+  return val;
+}
+
+function setTranslationCache(key, value) {
+  if (translationCache.has(key)) {
+    translationCache.delete(key);
+  } else if (translationCache.size >= MAX_TRANSLATION_CACHE) {
+    const oldest = translationCache.keys().next().value;
+    if (oldest !== undefined) translationCache.delete(oldest);
+  }
+  translationCache.set(key, value);
+}
 
 function normalizeLangCode(lang) {
   const raw = (lang || '').toString().toLowerCase().trim().split(/[-_]/)[0];
@@ -846,9 +865,35 @@ function fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, timeoutMs = 3500) {
   });
 }
 
-// Giải mã MP3 -> PCM 16kHz Mono 100% TRONG RAM (pipe:0 -> pipe:1, KHÔNG ghi/đọc đĩa tạm!)
-function decodeMp3BufferToPcmRam(mp3Buffer) {
+// Hàng đợi giới hạn luồng giải mã FFmpeg (tránh bão tiến trình OS khi 50+ CCU cùng hỏi!)
+const MAX_FFMPEG_CONCURRENT = Math.max(2, Math.min(os.cpus().length || 2, 4));
+let activeFfmpegJobs = 0;
+const ffmpegWaitQueue = [];
+
+function runWithFfmpegSemaphore(fn) {
   return new Promise((resolve, reject) => {
+    const startJob = () => {
+      activeFfmpegJobs++;
+      Promise.resolve()
+        .then(fn)
+        .then(resolve, reject)
+        .finally(() => {
+          activeFfmpegJobs--;
+          const next = ffmpegWaitQueue.shift();
+          if (next) next();
+        });
+    };
+    if (activeFfmpegJobs < MAX_FFMPEG_CONCURRENT) {
+      startJob();
+    } else {
+      ffmpegWaitQueue.push(startJob);
+    }
+  });
+}
+
+// Giải mã MP3 -> PCM 16kHz Mono 100% TRONG RAM (pipe:0 -> pipe:1, KHÔNG ghi/đọc đĩa tạm, có semaphore + timeout diệt zombie!)
+function decodeMp3BufferToPcmRam(mp3Buffer) {
+  return runWithFfmpegSemaphore(() => new Promise((resolve, reject) => {
     const ff = spawn(FFMPEG_BIN, [
       '-hide_banner',
       '-loglevel', 'error',
@@ -859,19 +904,34 @@ function decodeMp3BufferToPcmRam(mp3Buffer) {
       'pipe:1'
     ]);
     const out = [];
+    let settled = false;
+    const finish = (err, pcmBuf = null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(killTimer);
+      if (err) reject(err);
+      else resolve(pcmBuf);
+    };
+
+    const killTimer = setTimeout(() => {
+      try { ff.kill('SIGKILL'); } catch (e) {}
+      finish(new Error('FFmpeg RAM decode timeout (>5s)'));
+    }, 5000);
+    if (typeof killTimer.unref === 'function') killTimer.unref();
+
     ff.stdout.on('data', d => out.push(d));
     ff.on('close', (code) => {
       const pcm = Buffer.concat(out);
       if (code === 0 && pcm.length > 100) {
-        resolve(trimRawPcmSilence(pcm));
+        finish(null, trimRawPcmSilence(pcm));
       } else {
-        reject(new Error(`FFmpeg RAM decode exit ${code}`));
+        finish(new Error(`FFmpeg RAM decode exit ${code}`));
       }
     });
-    ff.on('error', reject);
+    ff.on('error', err => finish(err));
     ff.stdin.on('error', () => {});
     ff.stdin.end(mp3Buffer);
-  });
+  }));
 }
 
 /**
@@ -911,6 +971,8 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
   return s;
 }
 
+const MAX_PCM_CACHE = 800;
+
 async function fastTextToPcm(text, lang = 'vi') {
   const langInfo = SUPPORTED_LANGUAGES[normalizeLangCode(lang) || 'vi'];
   const ttsCode = langInfo.ttsCode;
@@ -920,7 +982,10 @@ async function fastTextToPcm(text, lang = 'vi') {
 
   const cacheKey = crypto.createHash('md5').update(`${ttsCode}:${cleanText.toLowerCase()}`).digest('hex');
   if (pcmCache.has(cacheKey)) {
-    return pcmCache.get(cacheKey);
+    const hit = pcmCache.get(cacheKey);
+    pcmCache.delete(cacheKey);
+    pcmCache.set(cacheKey, hit);
+    return hit;
   }
 
   // Bounded retry (tối đa 2 lượt) để chống lỗi mạng thoáng qua khi tải Google TTS
@@ -928,7 +993,7 @@ async function fastTextToPcm(text, lang = 'vi') {
     try {
       const mp3Buffer = await fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, 3500);
       const cleanPcm = await decodeMp3BufferToPcmRam(mp3Buffer);
-      if (pcmCache.size > 400) {
+      if (pcmCache.size >= MAX_PCM_CACHE) {
         const oldest = pcmCache.keys().next().value;
         if (oldest) pcmCache.delete(oldest);
       }
@@ -954,10 +1019,11 @@ async function fastTextToWav(text, outputFilename, lang = 'vi') {
 }
 
 function fallbackToDefaultWav(outputPath, resolve, outputFilename) {
-  const fallbackSource = path.join(AUDIO_DIR, 'trong_dong_dong_son.wav');
-  if (fs.existsSync(fallbackSource)) {
-    try { fs.copyFileSync(fallbackSource, outputPath); } catch (e) {}
-  }
+  // Tuyệt đối KHÔNG chép nhầm audio Trống Đồng khi TTS câu hỏi bất kỳ lỗi — tạo file WAV rỗng hợp lệ để player không bị phát nhầm hiện vật!
+  try {
+    const silentPcm = Buffer.alloc(3200); // 100ms @ 16kHz 16-bit mono
+    fs.writeFileSync(outputPath, Buffer.concat([buildWavHeader(silentPcm.length), silentPcm]));
+  } catch (e) {}
   resolve(outputFilename);
 }
 
@@ -1240,7 +1306,8 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
   if (!langInfo) return text;
 
   const cacheKey = `${mode}:${targetLang}:${crypto.createHash('md5').update(text.trim()).digest('hex')}`;
-  if (translationCache.has(cacheKey)) return translationCache.get(cacheKey);
+  const cachedTrans = getTranslationCache(cacheKey);
+  if (cachedTrans !== undefined) return cachedTrans;
 
   if (GROQ_API_KEY) {
     const sysPrompt = mode === 'query'
@@ -1281,8 +1348,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
           const json = await res.json();
           const translated = (json.choices?.[0]?.message?.content || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
           if (translated) {
-            if (translationCache.size > 500) translationCache.clear();
-            translationCache.set(cacheKey, translated);
+            setTranslationCache(cacheKey, translated);
             return translated;
           }
         }
@@ -1295,8 +1361,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
   // Fallback Tier 2: Google Translate GTX (bảo đảm không bao giờ trả sai ngôn ngữ!)
   const gtxTranslated = await translateViaGoogleGTX(text, targetLang);
   if (gtxTranslated) {
-    if (translationCache.size > 500) translationCache.clear();
-    translationCache.set(cacheKey, gtxTranslated);
+    setTranslationCache(cacheKey, gtxTranslated);
     return gtxTranslated;
   }
   return text;
@@ -2006,7 +2071,8 @@ const server = http.createServer(async (req, res) => {
       const remainingPcmPromises = chunks.length > 1
         ? chunks.slice(1).map(c => fastTextToPcm(c, lockedLang))
         : null;
-      const pcm1 = await pcm1Promise;
+      const rawPcm1 = await pcm1Promise;
+      const pcm1 = (rawPcm1 && rawPcm1.length > 0) ? rawPcm1 : Buffer.alloc(3200);
       const tFirstAudioSoundReady = Date.now();
 
       const mergedFilename = `${baseName}.wav`;
@@ -2459,6 +2525,11 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(404, { 'Content-Type': 'text/plain' });
   res.end('404 Not Found');
 });
+
+// Tối ưu HTTP keep-alive & timeout tương thích chuẩn với Nginx Reverse Proxy (chống 502 và nghẽn socket kéo dài nhiều năm)
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+server.requestTimeout = 35000;
 
 if (require.main === module) {
   server.listen(PORT, () => {

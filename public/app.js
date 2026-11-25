@@ -516,8 +516,14 @@ async function convertBlobToPcm16kWav(blob) {
     const ratio = srcRate / dstRate;
     const dstLen = Math.max(1, Math.floor(srcData.length / ratio));
 
+    // Quét biên độ cực đại để bù âm lượng an toàn (tránh crash maxVal is not defined và tránh chia cho 0!)
+    let maxVal = 0;
+    for (let i = 0; i < srcData.length; i++) {
+      const absSample = Math.abs(srcData[i]);
+      if (absSample > maxVal) maxVal = absSample;
+    }
     // Giữ nguyên độ trung thực âm sắc tự nhiên của micro (chỉ bù âm nhẹ nếu cực kỳ nhỏ < 0.1, tuyệt đối không làm méo vỡ phụ âm "B", "Đ", "T")
-    const gain = maxVal < 0.1 ? Math.min(2.0, 0.4 / maxVal) : 1.0;
+    const gain = (maxVal > 0.001 && maxVal < 0.1) ? Math.min(2.0, 0.4 / maxVal) : 1.0;
 
     const samples = new Int16Array(dstLen);
     for (let i = 0; i < dstLen; i++) {

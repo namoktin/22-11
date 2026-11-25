@@ -448,7 +448,8 @@ class KnowledgeBase {
 
   findSemanticLocalMatch(question, { language = 'vi', stationCode = null, minScore = 0.68 } = {}) {
     if (!question || !this.localSemanticIndex) return null;
-    const hits = this.localSemanticIndex.search(question, {
+    const cleanQ = nlp.cleanVoiceSpokenInput(question) || question;
+    const hits = this.localSemanticIndex.search(cleanQ, {
       lang: language,
       stationCode,
       topK: 1,

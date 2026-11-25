@@ -74,6 +74,17 @@ class ProductionSmartTourGuideServer {
     this.modelCooldowns = new Map(); // model -> cooldownUntilMs (Failover riêng từng model, tổng 24.000 TPM!)
     this.recentPhrasings = new Map(); // key -> string[] (lưu tới 120 cách diễn đạt đã nói để hỏi 100 lần đều khác nhau!)
     this.verifiedBaseReplies = new Map(); // key -> { reply, extraFacts, intent, sources, responseType } (dữ liệu gốc để lắp ghép local 0-token!)
+
+    // Định kỳ giải phóng IP rate-limit & model cooldowns hết hạn để vận hành ổn định 1+ năm không phình RAM
+    setInterval(() => {
+      const now = Date.now();
+      for (const [ip, rec] of this.rateLimitMap.entries()) {
+        if (!rec || now > rec.resetTime) this.rateLimitMap.delete(ip);
+      }
+      for (const [m, until] of this.modelCooldowns.entries()) {
+        if (now >= until) this.modelCooldowns.delete(m);
+      }
+    }, 5 * 60 * 1000).unref();
   }
 
   getRecentPhrasings(key) {
@@ -113,6 +124,10 @@ class ProductionSmartTourGuideServer {
     const now = Date.now();
     let record = this.rateLimitMap.get(ip);
     if (!record || now > record.resetTime) {
+      if (!this.rateLimitMap.has(ip) && this.rateLimitMap.size >= 10000) {
+        const oldestIp = this.rateLimitMap.keys().next().value;
+        if (oldestIp) this.rateLimitMap.delete(oldestIp);
+      }
       record = { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS };
       this.rateLimitMap.set(ip, record);
       return true;
@@ -127,10 +142,10 @@ class ProductionSmartTourGuideServer {
   async callGroq(question, systemPrompt, conversationHistory = [], options = {}) {
     if (!GROQ_API_KEY) return null;
 
-    // Cắt gọn lịch sử hội thoại (tối đa 2 lượt gần nhất, mỗi lượt <= 160 ký tự) để tiết kiệm ~70% token TPM!
-    const compactHistory = (conversationHistory || []).slice(-2).map(m => ({
+    // Giữ tối đa 4 lượt hội thoại gần nhất (user <= 220, assistant <= 340 ký tự) để nối mạch đối thoại sâu mà vẫn tiết kiệm TPM
+    const compactHistory = (conversationHistory || []).slice(-4).map(m => ({
       role: m.role,
-      content: String(m.content || '').slice(0, 160)
+      content: String(m.content || '').slice(0, m.role === 'assistant' ? 340 : 220)
     }));
     const messages = [
       { role: 'system', content: systemPrompt },
@@ -655,7 +670,7 @@ class ProductionSmartTourGuideServer {
 
     // TẦNG 5: ANSWER GENERATION (Adaptive Answer Composer V2 + Universal Grounded RAG + Human Natural Variation)
     const composerResult = await composer.compose({
-      question: coreQuery,
+      question: activeQuery,
       intent,
       subIntent,
       urgency,
@@ -680,7 +695,7 @@ class ProductionSmartTourGuideServer {
     let finalReply = composerResult.reply;
     const relatedExtraFacts = isSensitiveIntent ? [] : [
       ...(Array.isArray(retrievedData?.facts) ? retrievedData.facts : []),
-      ...((knowledgeBase.retrieveTopKContext(coreQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
+      ...((knowledgeBase.retrieveTopKContext(activeQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
     ];
 
     // 6.1. THẨM ĐỊNH THỰC SỰ ĐẦU RA LLM RAG BẰNG REAL ANSWER VALIDATOR (chống bịa đặt mốc năm/số liệu & mâu thuẫn!)

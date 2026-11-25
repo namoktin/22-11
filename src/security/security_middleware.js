@@ -108,6 +108,7 @@ function isOriginAllowedForRequest(req) {
 class RateLimiter {
   constructor() {
     this.buckets = new Map(); // key -> number[] timestamps
+    this.maxBuckets = 10000;  // Chặn phình RAM khi bị flood từ hàng nghìn IP giả mạo
     setInterval(() => this.cleanup(), 60 * 1000).unref();
   }
 
@@ -122,6 +123,10 @@ class RateLimiter {
     };
     const limit = customLimit || defaults[tier] || 120;
     const key = `${tier}:${ip}`;
+    if (!this.buckets.has(key) && this.buckets.size >= this.maxBuckets) {
+      const oldestKey = this.buckets.keys().next().value;
+      if (oldestKey) this.buckets.delete(oldestKey);
+    }
     const arr = (this.buckets.get(key) || []).filter(ts => now - ts < windowMs);
     arr.push(now);
     this.buckets.set(key, arr);

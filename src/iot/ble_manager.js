@@ -27,6 +27,9 @@ class BleAndDeviceManager {
 
     // Trạng thái cách ly theo từng thiết bị: deviceId -> DeviceContext
     this.devices = new Map();
+    this.maxDevices = Number(process.env.MAX_BLE_DEVICES) || 2000;
+    this.deviceTtlMs = Number(process.env.BLE_DEVICE_TTL_MS) || 24 * 60 * 60 * 1000;
+    setInterval(() => this.cleanupStaleDevices(), 10 * 60 * 1000).unref();
     // Khóa hiệu chỉnh môi trường theo từng beaconId: beaconId -> { rssiOffset, threshold }
     this.calibrationStore = new SafeJsonStore(
       options.calibrationPath || path.join(__dirname, '..', '..', 'data', 'ble_calibration.json'),
@@ -35,10 +38,32 @@ class BleAndDeviceManager {
     this.calibration = this.calibrationStore.readSync();
   }
 
+  cleanupStaleDevices() {
+    const now = Date.now();
+    for (const [id, dev] of this.devices.entries()) {
+      // Giữ lại thiết bị cứng đã từng gửi heartbeat hoặc hoạt động trong 24h gần nhất
+      const isStaleGuest = !dev.lastHeartbeatAt && (now - (dev.lastSeenAt || 0) > this.deviceTtlMs);
+      const isVeryOld = now - (dev.lastSeenAt || 0) > this.deviceTtlMs * 7;
+      if (isStaleGuest || isVeryOld) {
+        this.devices.delete(id);
+      }
+    }
+    if (this.devices.size > this.maxDevices) {
+      const sorted = Array.from(this.devices.entries()).sort((a, b) => (a[1].lastSeenAt || 0) - (b[1].lastSeenAt || 0));
+      const excess = this.devices.size - this.maxDevices;
+      for (let i = 0; i < excess; i++) {
+        this.devices.delete(sorted[i][0]);
+      }
+    }
+  }
+
   getOrCreateDevice(deviceId) {
     const cleanId = String(deviceId || 'GUEST_CLIENT').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 64);
     let dev = this.devices.get(cleanId);
     if (!dev) {
+      if (this.devices.size >= this.maxDevices) {
+        this.cleanupStaleDevices();
+      }
       dev = {
         deviceId: cleanId,
         firstSeenAt: Date.now(),

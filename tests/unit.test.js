@@ -14,6 +14,9 @@ const validator = require(path.join(kiemthuRoot, 'engine', 'answer_validator'));
 const { AutoLearningStoreV2 } = require(path.join(kiemthuRoot, 'engine', 'auto_learning_store'));
 const { LocalSemanticIndex } = require(path.join(kiemthuRoot, 'engine', 'local_semantic_index'));
 const { composeLocalHumanVariation } = require(path.join(kiemthuRoot, 'engine', 'local_human_composer'));
+const nlp = require(path.join(kiemthuRoot, 'engine', 'nlp_processor'));
+const { semanticRouter } = require(path.join(kiemthuRoot, 'engine', 'semantic_router'));
+const { StructuredSessionManager } = require(path.join(kiemthuRoot, 'engine', 'session_manager'));
 
 function makeTmpDir(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -229,4 +232,44 @@ test('Security validators: audio magic-byte detection & beacon schema validation
   assert.equal(validateBeaconPayload({ mac: 'AA:BB:CC:DD:EE:01', cooldown_seconds: 45 }).valid, true);
   assert.equal(timingSafeEqualStr('abc123', 'abc123'), true);
   assert.equal(timingSafeEqualStr('abc123', 'abc124'), false);
+});
+
+test('Regression guards: Vietnamese boundaries, false-positive injection, bounded caches & device eviction', () => {
+  // 1. Unicode word boundaries must not mangle 'ng' inside Vietnamese syllables
+  const expanded = nlp.standardizeTypos('Đồng chí Hoàng Văn Thụ vượt ngục bằng đường nào?');
+  assert.equal(expanded, 'Đồng chí Hoàng Văn Thụ vượt ngục bằng đường nào?');
+
+  // 2. Sewer crawl question must NOT trip swear-word prompt injection detector
+  assert.equal(nlp.detectPromptInjection('Xác nhận giúp mình: du khách có được chui thử xuống cửa cống ngầm chụp ảnh không?'), false);
+
+  // 3. Word-boundary exhibition signals must not match 'trai dat' -> 'trai d'
+  assert.equal(classifier.classify('Khoảng cách từ Trái Đất đến Mặt Trời').intent, 'OUT_OF_SCOPE');
+
+  // 4. Time-constrained route must win over generic highlights
+  assert.equal(classifier.classify('chi co 20 phut nen xem gi').intent, 'TOUR_RECOMMENDATION');
+
+  // 5. Phone charging & torn ticket variants must route to SITE_OPERATIONS
+  assert.equal(semanticRouter.detectSiteOperations('sac pin dien thoai cho nao').subType, 'OPS_PHONE_CHARGING');
+  assert.equal(semanticRouter.detectSiteOperations('ve giay bi rach roi lam sao').subType, 'OPS_DAMAGED_TICKET');
+
+  // 6. SessionManager enforces maxSessions LRU bound
+  const sm = new StructuredSessionManager(60000);
+  sm.maxSessions = 10;
+  for (let i = 0; i < 18; i++) sm.getOrCreateSession(`sess_cap_${i}`);
+  assert.ok(sm.sessions.size <= 10, `Expected <= 10 sessions, got ${sm.sessions.size}`);
+
+  // 7. BleAndDeviceManager prunes stale inactive guest devices while preserving active heartbeat units
+  const dir = makeTmpDir('ble-gc-');
+  const mgr = new BleAndDeviceManager({ calibrationPath: path.join(dir, 'cal.json') });
+  mgr.maxDevices = 3;
+  const stale = mgr.getOrCreateDevice('GUEST_OLD');
+  stale.lastSeenAt = Date.now() - 48 * 60 * 60 * 1000;
+  const hw = mgr.getOrCreateDevice('ESP32_REAL');
+  mgr.recordHeartbeat('ESP32_REAL', { free_heap: 120000 });
+  mgr.getOrCreateDevice('GUEST_NEW_1');
+  mgr.getOrCreateDevice('GUEST_NEW_2');
+  mgr.cleanupStaleDevices();
+  assert.equal(mgr.devices.has('GUEST_OLD'), false, 'Stale guest should be pruned');
+  assert.equal(mgr.devices.has('ESP32_REAL'), true, 'Active hardware device must stay');
+  assert.ok(mgr.devices.size <= 3, `Expected <= 3 devices, got ${mgr.devices.size}`);
 });

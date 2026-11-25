@@ -553,6 +553,19 @@ class IntentClassifier {
       };
     }
 
+    // Câu hỏi lộ trình có ràng buộc thời gian ngắn ("chỉ có 20 phút nên xem gì") -> TOUR_RECOMMENDATION ưu tiên trước HIGHLIGHTS_REQUEST!
+    const hasShortTimeLimit = /\b(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) || hasPhrase(norm, 'it thoi gian') || hasPhrase(norm, 'co it thoi gian');
+    if (hasShortTimeLimit && !norm.includes('xay dung') && !norm.includes('thi cong')) {
+      return {
+        intent: INTENTS.TOUR_RECOMMENDATION,
+        subIntent: 'TIME_CONSTRAINED_ROUTE',
+        subject: 'lo_trinh_tham_quan',
+        aspect: 'TOUR_PLANNING',
+        confidence: 0.96,
+        reason: 'Khách có giới hạn thời gian ngắn cần gợi ý lộ trình tinh gọn'
+      };
+    }
+
     if ((norm.includes('dang xem nhat') || norm.includes('nen xem gi') || norm.includes('xem gi nhat') || norm.includes('noi bat nhat') || norm.includes('co gi hay nhat') || norm.includes('dac sac nhat')) && !norm.includes('vi sao')) {
       return {
         intent: INTENTS.HIGHLIGHTS_REQUEST,
@@ -988,7 +1001,7 @@ class IntentClassifier {
       'di nhu the nao', 'loi di vao', 'loi di ra', 'huong di nao', 'tim khu vuc', 'cach quan sat',
       'quy dinh tham quan', 'trang phuc tham quan', 'trang phuc', 'mac do gi'
     ];
-    if (guidanceSignals.some(s => norm.includes(s))) {
+    if (guidanceSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.VISIT_GUIDANCE,
         subIntent: null,
@@ -1007,7 +1020,7 @@ class IntentClassifier {
       'bao chi bi mat', 'to bao lao tu', 'bua liem', 'ao len', 'hien vat', 'vat dung',
       'nang bao nhieu', 'cao bao nhieu', 'lam bang gi', 'chat lieu', 'cau tao'
     ];
-    if (exhibitSignals.some(s => norm.includes(s))) {
+    if (exhibitSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.EXHIBIT_INFORMATION,
         subIntent: null,
@@ -1018,13 +1031,13 @@ class IntentClassifier {
       };
     }
 
-    // 18. Thông tin không gian, khu vực, phòng trưng bày (EXHIBITION_INFORMATION)
+    // 18. Thông tin không gian, khu vực, phòng trưng bày (EXHIBITION_INFORMATION — bắt buộc word-boundary tránh "trai d" khớp "trai dat"!)
     const exhibitionSignals = [
       'khu ngoai', 'khu trong', 'trai d', 'trai j', 'trai i', 'trai nu', 'xa lim tu hinh',
       'buong giam', 'phong giam', 'dai tuong niem', 'phu dieu', 'thap canh', 'tuong bao',
       'dien tich', 'trung bay thuong xuyen', 'khu trung bay', 'gian trung bay'
     ];
-    if (exhibitionSignals.some(s => norm.includes(s))) {
+    if (exhibitionSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.EXHIBITION_INFORMATION,
         subIntent: null,
@@ -1041,7 +1054,7 @@ class IntentClassifier {
       'y nghia la gi', 'muc dich', 'vi sao lai goi la', 'tai sao co ten',
       'so sanh', 'phan biet', 'khac nhau', 'mau thuan', 'khac biet nguon'
     ];
-    if (explanationSignals.some(s => norm.includes(s))) {
+    if (explanationSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.HISTORICAL_EXPLANATION,
         subIntent: null,

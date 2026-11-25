@@ -63,11 +63,21 @@
     "answer_en": "Not from 1896. According to relic records, political prisoners brought a young banyan sapling from forced labor to plant in the yard before 1930, while the current banyan tree in the women's courtyard was planted in early spring 2001."
   },
   {
+    "id": "EXP_EXHIBITION_BANG_OI",
+    "category": "TOUR_DEM",
+    "priority": 99,
+    "mustMatchAll": [["bang oi"]],
+    "mustMatchAny": ["trung bay", "chuyen de", "mo cua", "xem duoc", "khi nao", "ket thuc", "con khong"],
+    "answer_vi": "Trưng bày chuyên đề “Bàng ơi…!” tại Di tích Nhà tù Hỏa Lò được tổ chức từ ngày 8/10 đến hết ngày 31/12/2024, nên chuyên đề này ĐÃ KẾT THÚC và hiện không còn mở cửa đón khách tham quan chuyên đề. Tuy nhiên, du khách đến thăm di tích vẫn có thể trực tiếp ngắm nhìn cây bàng cổ thụ lịch sử xanh tốt ngay tại sân trại giam.",
+    "answer_en": "The special exhibition 'Oh Banyan Tree!' ('Bàng ơi…!') at Hoa Lo Prison Relic ran from October 8 to December 31, 2024, so it has ALREADY CONCLUDED and is no longer open. Visitors can still see the real historic banyan tree standing in the prison courtyard today."
+  },
+  {
     "id": "EXP_TRAP_LUNCH_CLOSED",
     "category": "FACT_CHECK_TRAP",
     "priority": 96,
     "mustMatchAll": [["nghi trua", "nghi khong", "nghi ko", "xuyen trua", "dong cua", "chu nhat", "thu hai", "thu 2", "lunch", "may h mo cua", "mo cua"]],
     "mustMatchAny": ["mo cua", "dong cua", "nghi trua", "xuyen trua", "lunch", "open", "trua", "may h"],
+    "mustNotMatchAny": ["bang oi", "trung bay chuyen de", "chuyen de"],
     "answer_vi": "Di tích Lịch sử Nhà tù Hỏa Lò mở cửa liên tục từ 8:00 đến 17:00 tất cả các ngày trong tuần (từ Thứ Hai đến Chủ Nhật, kể cả ngày Lễ, Tết) và KHÔNG đóng cửa nghỉ trưa bạn nhé.",
     "answer_en": "Hoa Lo Prison Relic is open daily from 8:00 AM to 5:00 PM (Monday through Sunday, including holidays) with NO lunch break closure."
   },
@@ -296,6 +306,16 @@
     "mustMatchAny": ["tell me", "who was", "what is", "where is", "about", "story", "height", "located"],
     "answer_vi": "Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, Hà Nội) do Pháp xây năm 1896, nổi bật với cỗ máy chém cao gần 4m nặng 50kg, ngục tối Cachot, cây bàng cổ thụ cứu giúp tù nhân và khu trưng bày phi công Mỹ 1964–1973 (John McCain, biệt danh Hanoi Hilton).",
     "answer_en": "Hoa Lo Prison Relic (No. 1 Hoa Lo St., Hanoi) was built by the French in 1896 (Maison Centrale). Key highlights include the nearly 4m-tall guillotine (50kg blade), the harsh Cachot solitary dungeon, the historic Banyan Tree that provided medicine and hope to political prisoners, the 1951 underground sewer escape, and the 1964–1973 exhibition on American pilots including John McCain ('Hanoi Hilton')."
+  },
+  {
+    "id": "EXP_HIST_ESCAPE_1945",
+    "category": "HISTORICAL",
+    "priority": 98,
+    "mustMatchAll": [["1945"], ["su kien nao", "vuot nguc", "cong ngam", "nhat dao chinh", "thang 3"]],
+    "mustMatchAny": ["su kien", "vuot nguc", "nhat dao chinh", "thang 3", "chien si"],
+    "mustNotMatchAny": ["1951", "16 tu tu", "5 dong chi", "29 nguoi", "muon hoi", "nho gop"],
+    "answer_vi": "Cuộc vượt ngục tháng 3/1945 tại Nhà tù Hỏa Lò diễn ra ngay sau sự kiện Nhật đảo chính Pháp (đêm 9/3/1945). Lợi dụng tình thế hỗn loạn chuyển giao quân quản, hơn 100 chiến sĩ cách mạng đã mưu trí vượt ngục bằng hai đường chính: vượt qua đường cống ngầm (bắt đầu từ đêm 11–12/3/1945) và trèo tường cải trang thoát ra ngoài để kịp thời bổ sung lực lượng lãnh đạo Tổng khởi nghĩa Cách mạng Tháng Tám 1945.",
+    "answer_en": "The March 1945 mass escape from Hoa Lo Prison occurred during the Japanese coup against French colonial forces (March 9, 1945). More than 100 Vietnamese revolutionaries escaped through underground drainage sewers (starting March 11–12, 1945) as well as wall-scaling and disguises to rejoin the revolution."
   },
   {
     "id": "EXP_HIST_ESCAPE_ROUTES",
