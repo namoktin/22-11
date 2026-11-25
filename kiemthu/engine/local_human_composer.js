@@ -60,41 +60,41 @@ const EN_SAFE_SYNONYMS = [
 const VI_OPENERS = {
   BLE_LOCATION: [
     '', '',
-    'Dạ tại vị trí này, ',
-    'Ngay trước mắt bạn lúc này, ',
-    'Mình xin giới thiệu điểm bạn đang đứng: '
+    'Dạ ngay tại điểm dừng này, ',
+    'Trước mắt bạn lúc này, ',
+    'Mình xin giới thiệu vị trí bạn đang đứng: '
   ],
   SERVICE: [
     '', '',
-    'Dạ mình xin thông tin tới bạn: ',
-    'Dạ chào bạn, theo quy định tại di tích, ',
-    'Mình xin chia sẻ thông tin hỗ trợ bạn: '
+    'Dạ mình xin gửi tới bạn thông tin chi tiết: ',
+    'Dạ theo quy định hiện hành tại di tích, ',
+    'Mình xin chia sẻ thông tin hỗ trợ tham quan cho bạn: '
   ],
   HISTORY: [
     '', '', '',
-    'Dạ chào bạn, mình xin chia sẻ cùng bạn: ',
-    'Theo tư liệu lịch sử tại di tích, mình xin chia sẻ với bạn: ',
-    'Mình xin kể cùng bạn về nội dung này: ',
-    'Dạ về hiện vật và dấu tích lịch sử này, ',
-    'Theo hồ sơ lưu trữ tại di tích, mình xin thông tin: '
+    'Dạ mình xin chia sẻ cùng bạn câu chuyện lịch sử này: ',
+    'Theo tư liệu lưu trữ tại di tích, ',
+    'Mình xin kể cùng bạn về dấu tích này: ',
+    'Dạ nhắc đến hiện vật giàu giá trị lịch sử này, ',
+    'Theo hồ sơ tư liệu tại Di tích Hỏa Lò, '
   ]
 };
 
 const EN_OPENERS = {
   BLE_LOCATION: [
     '', '', '', '',
-    'At your current stop, ',
-    'Looking right in front of you, '
+    'Right here at your current stop, ',
+    'Standing right before you, '
   ],
   SERVICE: [
     '', '', '', '',
-    'Visitor information: ',
-    'According to relic regulations, '
+    'For your visit planning, ',
+    'According to current site guidelines, '
   ],
   HISTORY: [
     '', '', '', '', '', '',
-    'According to historical records, ',
-    'Historically speaking, '
+    'According to our historical archives, ',
+    'Looking back at the historical record, '
   ]
 };
 
@@ -104,27 +104,27 @@ const VI_CONNECTORS = [
   ' ',
   ' ',
   ' Bên cạnh đó, ',
-  ' Ngoài ra, '
+  ' Đáng chú ý hơn, '
 ];
 
 const EN_CONNECTORS = [
   ' ',
   ' ',
   ' ',
-  ' Additionally, ',
-  ' Furthermore, '
+  ' Notably, ',
+  ' Beyond that, '
 ];
 
 const VI_CLOSINGS = [
   '', '', '', '', '', '', '', '',
-  ' Bạn có muốn tìm hiểu thêm chi tiết nào nữa không?',
-  ' Mình luôn sẵn sàng giải đáp thêm nếu bạn có câu hỏi nhé.'
+  ' Nếu bạn muốn tìm hiểu sâu hơn về chi tiết nào, mình luôn sẵn lòng chia sẻ thêm.',
+  ' Bạn muốn mình dẫn chuyện tiếp sang hiện vật hay câu chuyện nào nữa không?'
 ];
 
 const EN_CLOSINGS = [
   '', '', '', '', '', '', '', '',
-  ' Would you like to explore any other details?',
-  ' Feel free to ask if you have any further questions!'
+  ' Would you like to delve deeper into any part of this story?',
+  ' Feel free to ask whenever another exhibit catches your curiosity.'
 ];
 
 function splitIntoSentences(text) {

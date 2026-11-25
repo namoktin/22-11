@@ -420,3 +420,65 @@ test('500-Question Live Report Regressions: Dong Son, Dat Hong, Bao Kiem, person
   assert.ok(/vàng|ngọc bích|Lưỡng Long|quyền uy/i.test(q004.reply), `004 expected Bao Kiem details, got: ${q004.reply}`);
   assert.ok(!/búp và lá bàng/i.test(q004.reply), `004 must NOT bleed into Cay Bang: ${q004.reply}`);
 });
+
+test('9.5+ Docent Upgrade: 6-language glossary, mature tone, graceful OOS bridge & deep heritage dossiers', async () => {
+  const { getGlossaryPromptHint, postPolishForeignTerms } = require(path.join(kiemthuRoot, 'engine', 'heritage_glossary'));
+  const { queryKiemThuAI } = require('../server');
+
+  // 1. Canonical 6-language glossary & MT slip cleaner
+  assert.ok(getGlossaryPromptHint('ko').includes('응우옌 왕조'));
+  assert.equal(
+    postPolishForeignTerms('Nguyễn 왕조의 전투기계는 호아로 수용소 (Nhà tù Hỏa Lò)에 있습니다.', 'ko'),
+    '응우옌 왕조의 단두대는 호아로 수용소에 있습니다.'
+  );
+  assert.equal(
+    postPolishForeignTerms('La machine à couper a été utilisée à Yên Bái (Nhà tù Hỏa Lò).', 'fr'),
+    'La guillotine a été utilisée à Yen Bai.'
+  );
+  assert.equal(
+    postPolishForeignTerms('1930年在延边使用了断头台 (Cỗ máy chém)。', 'zh'),
+    '1930年在安沛使用了断头台。'
+  );
+
+  // 2. Mature docent tone: zero teen slang ("đâu nè", "nè!", "đấy!")
+  const whoAmI = await queryKiemThuAI('Tôi là ai?', null, 't95_id', 'vi');
+  assert.ok(!/(đâu nè|nè!|đấy!)/i.test(whoAmI.reply), `Slang found in USER_IDENTITY reply: ${whoAmI.reply}`);
+
+  // 3. Graceful out-of-scope handling keeps OUT_OF_SCOPE intent, mentions Hoa Lo, and never hijacks to BLE exhibit!
+  const oosBtc = await queryKiemThuAI('Giá Bitcoin hôm nay bao nhiêu tiền vậy?', { code: '001', artifact_name: 'Trống Đồng Đông Sơn' }, 't95_btc', 'vi');
+  assert.equal(oosBtc.intent, 'OUT_OF_SCOPE');
+  assert.ok(/Hỏa Lò/i.test(oosBtc.reply), `Expected natural bridge to Hỏa Lò, got: ${oosBtc.reply}`);
+  assert.ok(!/14 cánh|Đông Sơn/i.test(oosBtc.reply), `OOS must not bleed into BLE beacon: ${oosBtc.reply}`);
+
+  const oosConDao = await queryKiemThuAI('Nhà tù Côn Đảo nằm ở tỉnh nào?', { code: '001', artifact_name: 'Trống Đồng Đông Sơn' }, 't95_cd', 'vi');
+  assert.equal(oosConDao.intent, 'OUT_OF_SCOPE');
+  assert.ok(/Côn Đảo/i.test(oosConDao.reply) && /Hỏa Lò/i.test(oosConDao.reply));
+
+  const oosWeatherEn = await queryKiemThuAI('What is the weather in Tokyo right now? Is it raining here?', { code: '001', artifact_name: 'Trống Đồng Đông Sơn' }, 't95_wx', 'en');
+  assert.equal(oosWeatherEn.intent, 'OUT_OF_SCOPE');
+  assert.ok(/Hoa Lo/i.test(oosWeatherEn.reply), `Expected EN bridge to Hoa Lo, got: ${oosWeatherEn.reply}`);
+  assert.ok(!/Bronze Drum/i.test(oosWeatherEn.reply), `EN OOS with "it/here" must not hijack to BLE beacon: ${oosWeatherEn.reply}`);
+
+  // 4. Historical prisoner meals must NOT trigger visitor food ban (OPS_FOOD_DRINK_PROHIBITED)
+  assert.equal(
+    semanticRouter.detectSiteOperations(
+      nlp.normalize('Ngày xưa thức ăn và bữa ăn của tù nhân trong Nhà tù Hỏa Lò như thế nào?'),
+      'Ngày xưa thức ăn và bữa ăn của tù nhân trong Nhà tù Hỏa Lò như thế nào?'
+    ).isOps,
+    false,
+    'Historical prisoner meal query must NOT trigger visitor food ban'
+  );
+
+  // 5. New deep heritage dossiers: prisoner meals / dép lốp, female prisoners, secret press, 1896 Phu Khanh architecture, Hoa Lo vs Con Dao
+  const mealAns = await queryKiemThuAI('Ngày xưa bữa ăn của tù nhân trong Nhà tù Hỏa Lò ra sao và đôi dép lốp có ý nghĩa gì?', null, 't95_meal', 'vi');
+  assert.ok(/gạo hẩm|rau muống|dép lốp/i.test(mealAns.reply), `Expected prison meals & dep lop dossier, got: ${mealAns.reply}`);
+
+  const pressAns = await queryKiemThuAI('Các chiến sĩ đã viết báo bí mật và biến Nhà tù Hỏa Lò thành trường học cách mạng như thế nào?', null, 't95_press', 'vi');
+  assert.ok(/Đuốc Đưa Đường|Suối Reo|trường học cách mạng/i.test(pressAns.reply), `Expected secret press dossier, got: ${pressAns.reply}`);
+
+  const archAns = await queryKiemThuAI('Kiến trúc Nhà tù Hỏa Lò xây năm 1896 trên đất làng Phụ Khánh có tường đá cao mấy mét?', null, 't95_arch', 'vi');
+  assert.ok(/Phụ Khánh|4 mét|13\.000/i.test(archAns.reply), `Expected 1896 architecture dossier, got: ${archAns.reply}`);
+
+  const cmpAns = await queryKiemThuAI('So sánh Nhà tù Hỏa Lò có điểm gì đặc biệt so với Nhà tù Côn Đảo?', null, 't95_cmp', 'vi');
+  assert.ok(/Hà Nội|1964|1973|Hanoi Hilton/i.test(cmpAns.reply), `Expected Hoa Lo vs Con Dao comparison dossier, got: ${cmpAns.reply}`);
+});

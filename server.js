@@ -35,6 +35,7 @@ const {
   safeErrorResponse
 } = require('./src/security/security_middleware');
 const { BleAndDeviceManager } = require('./src/iot/ble_manager');
+const { getGlossaryPromptHint, postPolishForeignTerms } = require('./kiemthu/engine/heritage_glossary');
 
 // BẢO VỆ TIẾN TRÌNH CHUẨN PRODUCTION:
 // - Chỉ bỏ qua lỗi ngắt kết nối socket/stream bình thường (EPIPE, ECONNRESET...)
@@ -231,13 +232,15 @@ if (!IS_RENDER && process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'p
 }
 
 // =========================================================================================
-// 🧹 TỰ ĐỘNG DỌN FILE ÂM THANH TẠM (CHỐNG ĐẦY Ổ ĐĨA TRÊN RENDER)
+// 🧹 TỰ ĐỘNG DỌN FILE ÂM THANH TẠM (CHỐNG ĐẦY Ổ ĐĨA KHI CHẠY 10.000+ CÂU HỎI)
 // =========================================================================================
-function cleanupTempAudioFiles(maxAgeMs = 20 * 60 * 1000) {
+const MAX_TEMP_AUDIO_FILES = 400;
+function cleanupTempAudioFiles(maxAgeMs = 8 * 60 * 1000) {
   try {
     const now = Date.now();
     const files = fs.readdirSync(AUDIO_DIR);
     let removed = 0;
+    const survivors = [];
     for (const f of files) {
       if (f.startsWith('reply_') || f.startsWith('hub_rec_')) {
         const fullPath = path.join(AUDIO_DIR, f);
@@ -246,7 +249,20 @@ function cleanupTempAudioFiles(maxAgeMs = 20 * 60 * 1000) {
           if (now - stat.mtimeMs > maxAgeMs) {
             fs.unlinkSync(fullPath);
             removed++;
+          } else {
+            survivors.push({ fullPath, mtimeMs: stat.mtimeMs });
           }
+        } catch (e) {}
+      }
+    }
+    // Giới hạn trần tối đa 400 file tạm gần nhất để chịu tải burst lớn mà không bao giờ phình đĩa
+    if (survivors.length > MAX_TEMP_AUDIO_FILES) {
+      survivors.sort((a, b) => a.mtimeMs - b.mtimeMs);
+      const excess = survivors.slice(0, survivors.length - MAX_TEMP_AUDIO_FILES);
+      for (const item of excess) {
+        try {
+          fs.unlinkSync(item.fullPath);
+          removed++;
         } catch (e) {}
       }
     }
@@ -256,7 +272,7 @@ function cleanupTempAudioFiles(maxAgeMs = 20 * 60 * 1000) {
     }
   } catch (err) {}
 }
-setInterval(() => cleanupTempAudioFiles(), 10 * 60 * 1000).unref();
+setInterval(() => cleanupTempAudioFiles(), 5 * 60 * 1000).unref();
 
 // Trạng thái máy chủ
 const SUPPORTED_LANGUAGES = {
@@ -1536,9 +1552,11 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
   }
 
   const runTranslate = async () => {
+    const glossaryHint = mode === 'answer' ? getGlossaryPromptHint(targetLang) : '';
+    const glossaryLine = glossaryHint ? ` ${glossaryHint}` : '';
     const groqSysPrompt = mode === 'query'
       ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
-      : `You are a professional museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY. Keep all historical dates, numbers, and proper names (Hoa Lo, Maison Centrale, Cachot, John McCain, etc.) accurate. Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no markdown, no notes.`;
+      : `You are a refined senior museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY with a poised, natural spoken docent tone. Keep all historical dates, numbers, and proper names accurate.${glossaryLine} Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no parenthetical Vietnamese translations, no markdown, no notes.`;
 
     if (mode === 'query') {
       // Chiến lược tiết kiệm Groq tối đa: dịch câu hỏi đầu vào bằng MyMemory / GTX TRƯỚC (0 token Groq!)
@@ -1569,23 +1587,26 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
       const groqAns = await callLightGroqMessages([
         { role: 'system', content: groqSysPrompt },
         { role: 'user', content: text }
-      ], 0.1, 320, 3500);
+      ], 0.1, 340, 3500);
       if (groqAns && (targetLang === 'vi' || isTextInLanguage(groqAns, targetLang))) {
-        setTranslationCache(cacheKey, groqAns);
-        return groqAns;
+        const polished = postPolishForeignTerms(groqAns, targetLang);
+        setTranslationCache(cacheKey, polished);
+        return polished;
       }
     }
 
     const mmAns = await translateViaMyMemory(text, targetLang);
     if (mmAns && (targetLang === 'vi' || isTextInLanguage(mmAns, targetLang))) {
-      setTranslationCache(cacheKey, mmAns);
-      return mmAns;
+      const polished = postPolishForeignTerms(mmAns, targetLang);
+      setTranslationCache(cacheKey, polished);
+      return polished;
     }
 
     const gtxAns = await translateViaGoogleGTX(text, targetLang);
     if (gtxAns && (targetLang === 'vi' || isTextInLanguage(gtxAns, targetLang))) {
-      setTranslationCache(cacheKey, gtxAns);
-      return gtxAns;
+      const polished = postPolishForeignTerms(gtxAns, targetLang);
+      setTranslationCache(cacheKey, polished);
+      return polished;
     }
 
     // TUYỆT ĐỐI KHÔNG trả về tiếng Việt thô gắn nhãn ngoại ngữ nếu đang khóa khác 'vi'!
@@ -1621,17 +1642,19 @@ async function normalizeForeignQueryForLookup(rawQuery) {
 async function answerFromBeaconData(question, beacon, targetLang = 'vi') {
   const baseText = beacon.dialogue?.text || beacon.dialogue?.short_cue || '';
   const langInfo = SUPPORTED_LANGUAGES[targetLang] || SUPPORTED_LANGUAGES.vi;
+  const glossaryHint = getGlossaryPromptHint(targetLang);
+  const glossaryLine = glossaryHint ? `\n${glossaryHint}` : '';
   if (GROQ_API_KEY) {
     const ans = await callLightGroqMessages([
       {
         role: 'system',
-        content: `You are a museum tour guide. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer concisely in 2-3 complete, natural sentences based on the artifact info below. Never cut off mid-sentence. No markdown.\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
+        content: `You are a seasoned, dignified museum docent. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer in 2-3 poised, complete, natural spoken sentences based faithfully on the artifact info below. Never cut off mid-sentence. No markdown, no parenthetical Vietnamese translations.${glossaryLine}\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
       },
       { role: 'user', content: question }
-    ], 0.2, 260, 4200);
+    ], 0.25, 270, 4200);
     if (ans) {
       return {
-        reply: ans,
+        reply: postPolishForeignTerms(ans, targetLang),
         intent: 'EXHIBIT_INFORMATION',
         source: `Data Hiện Vật (Mã ${beacon.code}) + Groq AI [${targetLang.toUpperCase()}]`,
         latencyMs: 250
@@ -1691,6 +1714,7 @@ async function callKiemThuOnce(queryText, sessionId = null, targetLang = 'vi', a
           return {
             reply: result.data.reply,
             intent: result.data.intent || 'HISTORICAL_FACT',
+            responseType: result.data.responseType || null,
             source: result.data.provider || '2Guide KiemThu AI Engine v8.0 (In-Process Embedded)',
             latencyMs: result.data.latencyMs || 15
           };
@@ -1740,6 +1764,9 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
     } else if (lockedLang !== 'vi' && !String(resObj.source || '').includes('🔒')) {
       resObj.source = `${resObj.source} ${tag}`;
     }
+    if (lockedLang !== 'vi' && resObj.reply) {
+      resObj.reply = postPolishForeignTerms(resObj.reply, lockedLang);
+    }
     resObj.language = lockedLang;
     return resObj;
   };
@@ -1778,6 +1805,10 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
       kiemthuResult.intent === 'OUT_OF_SCOPE' ||
       /chưa được ghi nhận|chưa ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope|don't have any information|do not have information|数据库中没有|没有关于|情報がありません|정보가 없습니다/i.test(kiemthuResult.reply || '');
 
+    const isGracefulDocentOos =
+      kiemthuResult.responseType === 'DOCENT_GRACEFUL_OUT_OF_SCOPE' ||
+      kiemthuResult.responseType === 'OUT_OF_SCOPE_ARCHIVE_BOUNDARY';
+
     if (isAmbiguousOrMissed) {
       const matchedByName = findMatchingBeaconExhibit(lookupQuery);
       if (matchedByName) {
@@ -1785,8 +1816,9 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
         return await enforceStrictLang(await answerFromBeaconData(rawQuery, matchedByName, lockedLang));
       }
 
+      // Không để từ chỉ định đời thường ("quanh đây", "hôm nay", "it", "this") ghi đè câu trả lời ngoài lề tinh tế thành bài thuyết minh Beacon!
       const hasDeicticPronoun = /\b(cai nay|hien vat nay|vat nay|cho nay|khu nay|o day|tai day|tai cho nay|cay nay|trong nay|chuong nay|kiem nay|truoc mat|no|day|this|it|here)\b/.test(normQ);
-      if (hasDeicticPronoun && artifactContext) {
+      if (!isGracefulDocentOos && kiemthuResult.intent !== 'OUT_OF_SCOPE' && hasDeicticPronoun && artifactContext) {
         const normArtifact = normalizeVnText(artifactName);
         const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|chỗ này|cho nay|khu này|khu nay|tại đây|tai day|ở đây|o day|\bnó\b)/gi, artifactName);
         const contextualQuery = replacedQuery !== lookupQuery ? replacedQuery : `${artifactName}: ${lookupQuery}`;

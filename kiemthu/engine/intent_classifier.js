@@ -75,7 +75,8 @@ class IntentClassifier {
       'lang hoa lo', 'lang phu khanh', 'khoa co chan', 'cong tay', 'xieng xich',
       'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
       'dai hong chung', 'chuong dai hong', 'dathong', 'chuong lon', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
-      'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004', 'so 001', 'so 002', 'so 003', 'so 004'
+      'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'bao bi mat', 'truong hoc cach mang',
+      'ma 001', 'ma 002', 'ma 003', 'ma 004', 'so 001', 'so 002', 'so 003', 'so 004'
     ];
   }
 

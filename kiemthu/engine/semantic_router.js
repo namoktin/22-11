@@ -160,10 +160,11 @@ class SemanticRouter {
       'xa lim', 'cum sat', 'cum chan', 'tu hinh', 'tu chinh tri', 'tu binh my', 'phi cong my',
       'phi cong', 'hanoi hilton', 'mccain', 'peterson', 'hoang van thu', 'nguyen thai hoc',
       'tran tu binh', 'nguyen duc canh', 'nguyen hoang ton', 'phan boi chau', 'luong van can',
-      'quang thai', 'minh khai', 'dem thieng lieng', 'audioguide', 'trai giam nu', 'tu nhi',
+      'quang thai', 'minh khai', 'pham thi van', 'le lien', 'dem thieng lieng', 'audioguide', 'trai giam nu', 'tu nhi',
       'dai tuong niem', 'dai hong chung', 'chuong dai hong', 'dat hong', 'dathong', 'chuong lon', 'thap chuong',
       'trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'bao kiem', 'kiem hoang gia',
-      'luong long trieu nhat', 'dep lop', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
+      'luong long trieu nhat', 'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo',
+      'bao bi mat', 'truong hoc cach mang', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
       'so 001', 'so 002', 'so 003', 'so 004', 'vuot nguc', 'tuong bao', 'manh thuy tinh',
       'manh sanh', 'trai j', 'trai d', 'trai i', 'lap la', 'phong giam', 'buong giam', 'nha tu', 'di tich'
     ];
@@ -246,9 +247,11 @@ class SemanticRouter {
     const hasExplicitAccentedSnack = /\b(kẹo|bánh)\b/.test(rawLower);
     const hasFoodOrDrinkCompound = /\b(do an|thuc an|thuc pham|nuoc uong|do uong|an uong|ruou bia|uong bia|lon bia|chai bia|nuoc ngot|keo cao su|banh keo|banh mi|banh ngot|tra sua|ca phe|food|drink|drinks|beverage|snack|snacks)\b/.test(normText);
     const hasHistoricalExecutionOrPlaque = /\b(may chem|tu hinh|xu tu|hanh quyet|tuong niem|bia da|bia tuong niem|keo dai|keo le)\b/.test(normText);
+    const hasPrisonerHistoricalMeal = /\b(tu nhan|tu chinh tri|chien si|ngay xua|thoi phap|trong tu|bua an tu|com tu|rau muong|ca mam|prisoners|inmates|rations)\b/.test(normText);
 
     if ((hasFoodOrDrinkCompound || hasExplicitAccentedSnack) &&
         !hasHistoricalExecutionOrPlaque &&
+        !hasPrisonerHistoricalMeal &&
         /\b(mang|dem|duoc khong|co duoc|cho phep|cam|quy dinh|vao|trong|bring|inside|allowed|prohibited)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_FOOD_DRINK_PROHIBITED' };
     }

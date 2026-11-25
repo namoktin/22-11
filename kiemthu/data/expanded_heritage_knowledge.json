@@ -371,5 +371,62 @@
     "mustMatchAny": ["bao kiem", "kiem", "hoang gia", "vang", "ngoc bich", "da quy", "thep", "quyen uy", "sword", "gold", "jade", "004"],
     "answer_vi": "Dạ chào bạn, Bảo kiếm Hoàng gia triều Nguyễn tại Gian trưng bày số 4 - Cổ Vật Hoàng Cung (Mã 004) là biểu trưng quyền uy tối thượng của đấng quân vương xưa. Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật, còn lưỡi kiếm làm bằng thép tôi gia truyền sắc bén, minh chứng cho tài hoa kim hoàn bậc thầy của các nghệ nhân cung đình.",
     "answer_en": "The Nguyen Dynasty Royal Sword at Exhibition Hall No. 4 (Code 004) symbolizes the supreme authority of the Vietnamese emperor. Its scabbard is crafted from solid gold inlaid with jade and five-colored gemstones in the Twin Dragons Facing the Sun motif, paired with a razor-sharp traditionally tempered steel blade showcasing master royal goldsmithing."
+  },
+  {
+    "id": "EXP_HIST_PRISON_MEALS_DEP_LOP",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["tu nhan", "tu chinh tri", "chien si", "hoa lo", "trong tu", "khang chien"], ["bua an", "com tu", "an uong", "thuc an", "rau muong", "ca mam", "dep lop", "sandals", "tire sandals", "prison food", "prison meals"]],
+    "mustMatchAny": ["bua an", "com tu", "an uong", "thuc an", "rau muong", "ca mam", "dep lop", "sandals", "prison food", "meals"],
+    "mustNotMatchAny": ["mang vao", "duoc mang", "cam mang", "nha hang", "quan an", "pho ngon", "bun cha", "mang do an"],
+    "answer_vi": "Dạ mình xin chia sẻ cùng bạn về đời sống sinh hoạt vô cùng gian khổ của tù nhân chính trị tại Hỏa Lò: khẩu phần ăn hằng ngày dưới chế độ thực dân hết sức đạm bạc, thường chỉ có cơm gạo hẩm lẫn sạn, cá mắm mục và rau muống già nấu nước muối loãng khiến nhiều chiến sĩ bị kiết lỵ, suy kiệt thể lực. Chính trong hoàn cảnh khắc nghiệt ấy, tinh thần tự lực và sáng tạo bền bỉ của người Việt càng tỏa sáng—từ việc tự chế vật dụng sinh hoạt giản dị trong tù cho đến hình ảnh đôi dép lốp cao su huyền thoại được tận dụng từ lốp xe cũ xuyên suốt hai cuộc kháng chiến.",
+    "answer_en": "Daily life for political prisoners inside colonial Hoa Lo Prison was extraordinarily harsh: meager rations consisted mostly of moldy gritty rice, spoiled salted fish, and tough water spinach boiled in salty water, frequently causing dysentery and exhaustion. Yet hardship forged remarkable Vietnamese ingenuity—from crafting rudimentary tools behind prison walls to the iconic rubber tire sandals fashioned from recycled tires throughout the resistance wars."
+  },
+  {
+    "id": "EXP_HIST_FEMALE_PRISONERS",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["trai giam nu", "nu tu", "nu chien si", "phu nu", "minh khai", "quang thai", "pham thi van", "le lien", "tu nhi", "female prisoners", "women prisoners"]],
+    "mustMatchAny": ["trai giam nu", "nu tu", "nu chien si", "phu nu", "minh khai", "quang thai", "pham thi van", "le lien", "tu nhi", "nuoi con", "female", "women"],
+    "answer_vi": "Dạ Khu Trại giam Nữ tại Nhà tù Hỏa Lò ghi dấu tấm gương kiên trung đầy xúc động của nhiều nữ chiến sĩ cách mạng như Nguyễn Thị Minh Khai, Nguyễn Thị Quang Thái, Phạm Thị Vân hay Lê Liên. Dù phải chịu xiềng xích hà khắc và nhiều người còn mang theo con nhỏ vào ngục (được gọi là 'tù nhi'), các nữ tù nhân luôn nhường cơm sẻ áo để bảo vệ các em bé, bền bỉ đấu tranh tuyệt thực đòi cải thiện chế độ giam giữ và nhiều chị đã mưu trí tham gia cuộc vượt ngục lịch sử tháng 3/1945.",
+    "answer_en": "The Female Cellblock of Hoa Lo Prison preserves the deeply moving legacy of steadfast women revolutionaries including Nguyen Thi Minh Khai, Nguyen Thi Quang Thai, Pham Thi Van, and Le Lien. Despite harsh confinement—with some mothers bringing infants into prison—the women shared scarce rations to protect the children, staged hunger strikes demanding humane treatment, and courageously joined the historic March 1945 escape."
+  },
+  {
+    "id": "EXP_HIST_SECRET_PRESS_POETRY",
+    "category": "HISTORICAL",
+    "priority": 96,
+    "mustMatchAll": [["bao bi mat", "duoc dua duong", "suoi reo", "lao tu tap chi", "truong hoc cach mang", "lop hoc", "tho ca", "viet bao", "gach non", "muoi than", "secret newspaper", "revolutionary school"]],
+    "mustMatchAny": ["bao bi mat", "duoc dua duong", "suoi reo", "lao tu", "truong hoc", "lop hoc", "tho ca", "viet bao", "gach non", "muoi than", "canh bang", "newspaper", "poetry", "school"],
+    "answer_vi": "Dạ một trong những nét son rực rỡ nhất tại Nhà tù Hỏa Lò là tinh thần 'biến nhà tù thành trường học cách mạng'. Ngay trong những phòng giam ngột ngạt, các chiến sĩ đã bí mật mở lớp xóa mù chữ, giảng dạy lý luận chính trị, sáng tác thơ ca và xuất bản các tờ báo cách mạng lưu hành nội bộ như Đuốc Đưa Đường, Suối Reo, Lao Tù Tạp Chí; bút viết được vót từ cành bàng, còn mực được pha chế từ gạch non mài nhuyễn, nhựa lá cây và muội than.",
+    "answer_en": "One of Hoa Lo Prison’s most inspiring chapters is how Vietnamese patriots turned the colonial jail into a 'revolutionary school.' Even inside stifling cells, prisoners secretly held literacy and political classes, composed patriotic poetry, and produced clandestine newspapers such as Duoc Dua Duong and Suoi Reo—carving pens from banyan twigs and making ink from crushed soft brick, plant sap, and soot."
+  },
+  {
+    "id": "EXP_HIST_ARCHITECTURE_PHU_KHANH",
+    "category": "HISTORICAL",
+    "priority": 95,
+    "mustMatchAll": [["kien truc", "xay dung", "lang phu khanh", "phu khanh", "tuong da", "tuong bao", "manh thuy tinh", "dien tich", "quy mo", "architecture", "wall"]],
+    "mustMatchAny": ["kien truc", "phu khanh", "tuong da", "tuong bao", "manh thuy tinh", "day dien", "dien tich", "quy mo", "suc chua", "architecture", "stone wall", "broken glass"],
+    "mustNotMatchAny": ["1954", "my xay", "tphcm", "sai gon", "tong so tu nhan", "tong cong", "hien con bao nhieu"],
+    "answer_vi": "Dạ Nhà tù Hỏa Lò (Maison Centrale) do thực dân Pháp khởi công năm 1896 trên đất làng nghề gốm Phụ Khánh xưa, với tổng diện tích ban đầu gần 13.000 mét vuông và được coi là một trong những nhà tù kiên cố bậc nhất Đông Dương. Bao quanh trại là bức tường đá cao 4 mét, dày 0,5 mét cắm dày đặc mảnh thủy tinh sắc nhọn cùng hệ thống dây điện cao thế, còn cùm sắt và ổ khóa được đưa từ Pháp sang; thiết kế ban đầu chỉ giam khoảng 450 đến 500 người nhưng các thời kỳ cao điểm đã bị nhồi nhét lên tới hơn 2.000 tù nhân.",
+    "answer_en": "Built by the French colonial administration starting in 1896 on the ancestral pottery village of Phu Khanh, Maison Centrale (Hoa Lo Prison) originally spanned nearly 13,000 square meters and ranked among Indochina’s most heavily fortified prisons. Reinforced 4-meter-high, 0.5-meter-thick stone walls topped with jagged glass shards and high-voltage wires surrounded iron shackles and locks imported from France; designed for 450 to 500 inmates, overcrowding often exceeded 2,000 prisoners."
+  },
+  {
+    "id": "EXP_HIST_HOA_LO_VS_CON_DAO_UNIQUE",
+    "category": "HISTORICAL",
+    "priority": 95,
+    "mustMatchAll": [["hoa lo"], ["con dao", "phu quoc", "nha tu khac", "khac gi", "khac biet", "dac biet nhat", "so sanh", "compared to", "unique", "difference"]],
+    "mustMatchAny": ["con dao", "phu quoc", "khac gi", "khac biet", "dac biet", "so sanh", "unique", "difference", "compared"],
+    "answer_vi": "Dạ điểm đặc biệt làm nên dấu ấn riêng của Di tích Nhà tù Hỏa Lò so với các nhà tù ngoài hải đảo như Côn Đảo hay Phú Quốc là vị trí nằm ngay giữa trung tâm thủ đô Hà Nội—nơi các chiến sĩ phải đấu tranh trực diện ngay trong lòng bộ máy cai trị thực dân. Bên cạnh đó, Hỏa Lò còn mang hai tầng ký ức lịch sử đặc thù: giai đoạn 1896–1954 giam giữ chiến sĩ yêu nước Việt Nam, và giai đoạn 1964–1973 giam giữ phi công Mỹ bị bắn rơi trên miền Bắc (với biệt danh 'Hanoi Hilton').",
+    "answer_en": "What distinguishes Hoa Lo Prison from remote island prisons like Con Dao or Phu Quoc is its striking location right in the heart of Hanoi, where Vietnamese patriots resisted directly inside the colonial capital. Equally unique is its dual historical legacy: imprisoning Vietnamese revolutionaries from 1896 to 1954, and later housing downed American pilots from 1964 to 1973 under the nickname 'Hanoi Hilton.'"
+  },
+  {
+    "id": "EXP_HIST_MEMORIAL_MONUMENT",
+    "category": "HISTORICAL",
+    "priority": 95,
+    "mustMatchAll": [["dai tuong niem", "phu dieu", "tuong niem", "dang huong", "memorial", "monument"]],
+    "mustMatchAny": ["dai tuong niem", "phu dieu", "y nghia", "tuong niem", "dang huong", "tri an", "memorial", "monument", "incense"],
+    "mustNotMatchAny": ["chup anh cuoi", "livestream"],
+    "answer_vi": "Dạ Đài tưởng niệm tại Di tích Lịch sử Nhà tù Hỏa Lò là không gian thiêng liêng và trang trọng nhất ở chặng cuối hành trình tham quan, nơi tôn vinh ý chí bất khuất và sự hy sinh cao cả của các anh hùng liệt sĩ từng bị giam cầm tại đây. Trên bức phù điêu khắc họa hình tượng những chiến sĩ kiên cường cùng hình ảnh cánh chim hòa bình vươn lên từ chốn lao tù, để mỗi du khách dừng chân dâng hương và bày tỏ lòng tri ân sâu sắc.",
+    "answer_en": "The Memorial Monument at the conclusion of the Hoa Lo Prison tour is the site’s most solemn space of remembrance, honoring the unyielding spirit and sacrifice of patriotic martyrs imprisoned here. Its sculpted relief depicts steadfast revolutionaries alongside symbols of peace rising from hardship, offering visitors a quiet moment to pay tribute and offer incense."
   }
 ]
