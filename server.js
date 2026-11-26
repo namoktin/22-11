@@ -1866,16 +1866,20 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
 }
 
 function generateFallbackAnswer(question, code) {
-  if (code === '001') {
-    return 'Dạ chào bạn, Trống đồng Đông Sơn có niên đại khoảng thế kỷ thứ 7 trước Công nguyên, là bảo vật quốc gia đúc bằng đồng tượng trưng cho quyền uy và văn minh sông Hồng ạ.';
-  } else if (code === '002') {
-    return 'Dạ chào bạn, Cây bàng cổ thụ Hỏa Lò gắn bó với các tù nhân chính trị; lá và vỏ cây từng được dùng làm thuốc chữa bệnh còn búp bàng làm thức ăn bồi dưỡng cho các đồng chí ốm nặng.';
-  } else if (code === '003') {
-    return 'Dạ chào bạn, Đạt Hồng là Đại Hồng Chung nặng hơn hai tấn đúc thời Nguyễn; tiếng chuông ngân vang xa hàng chục dặm cầu cho quốc thái dân an ạ.';
-  } else if (code === '004') {
-    return 'Dạ chào bạn, Bảo kiếm hoàng gia triều Nguyễn được đúc bằng vàng ròng nạm đá quý ngũ sắc, là biểu trưng cho quyền uy tối thượng của thiên tử xưa.';
+  const normQ = normalizeVnText(question || '');
+  const asksCurrentExhibit = /\b(hien vat nay|cai nay|vat nay|cho nay|day la dau|trong dong|dong son|cay bang|dat hong|dai hong chung|bao kiem|kiem hoang gia)\b/.test(normQ);
+  if (asksCurrentExhibit) {
+    if (code === '001') {
+      return 'Dạ chào bạn, Trống đồng Đông Sơn có niên đại khoảng thế kỷ thứ 7 trước Công nguyên, là bảo vật quốc gia đúc bằng đồng tượng trưng cho quyền uy và văn minh sông Hồng ạ.';
+    } else if (code === '002') {
+      return 'Dạ chào bạn, Cây bàng cổ thụ Hỏa Lò gắn bó với các tù nhân chính trị; lá và vỏ cây từng được dùng làm thuốc chữa bệnh còn búp bàng làm thức ăn bồi dưỡng cho các đồng chí ốm nặng.';
+    } else if (code === '003') {
+      return 'Dạ chào bạn, Đạt Hồng là Đại Hồng Chung nặng hơn hai tấn đúc thời Nguyễn; tiếng chuông ngân vang xa hàng chục dặm cầu cho quốc thái dân an ạ.';
+    } else if (code === '004') {
+      return 'Dạ chào bạn, Bảo kiếm hoàng gia triều Nguyễn được đúc bằng vàng ròng nạm đá quý ngũ sắc, là biểu trưng cho quyền uy tối thượng của thiên tử xưa.';
+    }
   }
-  return 'Mình xin giới thiệu với bạn: hiện vật này là di sản văn hóa quý giá với nhiều tầng ý nghĩa lịch sử sâu sắc tại khu di tích ạ.';
+  return 'Dạ mình là hướng dẫn viên ảo tại Di tích Lịch sử Nhà tù Hỏa Lò. Bạn muốn tìm hiểu về khu trưng bày, câu chuyện lịch sử hay thông tin tham quan nào để mình chia sẻ chi tiết ạ?';
 }
 
 // Chắt lọc 1-2 câu quan trọng nhất để nghe qua tai nghe cực nhanh (trọn câu, không cắt đứt từ)

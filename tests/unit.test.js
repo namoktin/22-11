@@ -554,4 +554,35 @@ test('Universal Drop-In Auto-Brain & dataset_hoa_lo_vi: 14 zones, Z10/Z13 depth 
       }
     } catch {}
   }
+
+  // 5. Substring collision & OOS Banyan-tree leak guards (from live 500-Q VM logs)
+  assert.notEqual(
+    classifier.classify('Di tích Nhà tù Hỏa Lò liên tục được bình chọn vào top các bảo tàng hấp dẫn nhất — yếu tố nào tạo nên bước đột phá ấn tượng như vậy?').intent,
+    'PARKING_SUPPORT',
+    '"vào top" + "đột phá" must NOT match "o to" + "do" -> PARKING_SUPPORT'
+  );
+  assert.notEqual(
+    classifier.classify('Với độ ẩm mùa nồm Hà Nội, bảo tàng giữ độ ẩm chuẩn bảo tồn khoảng 45–55% phải không?').intent,
+    'PARKING_SUPPORT',
+    '"bảo tồn" + "độ ẩm" must NOT match "o to" + "do" -> PARKING_SUPPORT'
+  );
+  assert.notEqual(
+    classifier.classify('Trong ảnh chụp phòng giam tù binh Mỹ thấy có giường gỗ, chiếu mới, chăn bông dày và màn tuyn vào năm 1970–1972 có phải chụp nguyên bản không?').intent,
+    'OUT_OF_SCOPE',
+    '"chăn bông dày" must NOT match "bong da" -> OUT_OF_SCOPE'
+  );
+  assert.notEqual(
+    classifier.classify('Ngay khu vực sảnh ra tôi thấy đặt hòm thư góp ý — vì suất Đêm thiêng liêng hết rất nhanh cần đặt trước bao lâu để chắc chắn có vé?').intent,
+    'CUSTOMER_COMPLAINT',
+    'Night tour ticket booking mentioning feedback box must NOT route to CUSTOMER_COMPLAINT'
+  );
+  const composer = require(path.join(kiemthuRoot, 'engine', 'answer_composer'));
+  const offlineOos = await composer.composeGracefulOutOfScopeDocent({
+    question: 'Hành tinh nào lớn nhất hệ Mặt Trời?',
+    normQ: ' hanh tinh nao lon nhat he mat troi ',
+    language: 'vi',
+    groqCaller: null,
+    previousPhrasings: []
+  });
+  assert.ok(!/cây bàng/i.test(offlineOos.reply), `Offline OOS fallback must NOT repetitively plug Cây bàng: ${offlineOos.reply}`);
 });

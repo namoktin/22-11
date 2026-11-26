@@ -266,7 +266,9 @@ class IntentClassifier {
     const hasHoaLoAnchor = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') ||
       hasPhrase(norm, 'may chem') || hasPhrase(norm, 'cay bang') || hasPhrase(norm, 'cachot') ||
       hasPhrase(norm, 'cong ngam') || hasPhrase(norm, 'hanoi hilton') || hasPhrase(norm, 'dem thieng lieng') ||
-      hasPhrase(norm, 'tham quan trong nha') || hasPhrase(norm, 'di tich');
+      hasPhrase(norm, 'tham quan trong nha') || hasPhrase(norm, 'di tich') ||
+      hasPhrase(norm, 'tu binh') || hasPhrase(norm, 'phi cong my') || hasPhrase(norm, 'phong giam') ||
+      hasPhrase(norm, 'buong giam') || hasPhrase(norm, 'cum chan') || hasPhrase(norm, 'xa lim');
 
     const hardOosPatterns = [
       // Tài chính, tiền số, ngân hàng, bất động sản
@@ -298,7 +300,8 @@ class IntentClassifier {
       'hoang thanh thang long', 'bao tang dan toc hoc', 'cong vien thu le', 'san bay noi bai', 'van mieu quoc tu giam'
     ];
 
-    const isHardOos = hardOosPatterns.some(p => hasPhrase(norm, p) || norm.includes(p));
+    // Bắt buộc ranh giới từ nghiêm ngặt (hasPhrase) để tránh "chăn bông dày" -> "bong da", "bảo tồn" -> "o to"!
+    const isHardOos = hardOosPatterns.some(p => hasPhrase(norm, p));
     if (isHardOos && !hasHoaLoAnchor) {
       return {
         intent: INTENTS.OUT_OF_SCOPE,
@@ -587,14 +590,14 @@ class IntentClassifier {
     }
 
     if (
-      norm.includes('gui xe') || norm.includes('do xe') || norm.includes('bai xe') || norm.includes('cho de xe') ||
-      norm.includes('cho gui xe') || norm.includes('bai do xe') || norm.includes('gui o to') || norm.includes('gui xe may') ||
-      norm.includes('cho dau xe') || ((norm.includes('xe may') || norm.includes('o to')) && (norm.includes('gui') || norm.includes('do'))) ||
+      hasPhrase(norm, 'gui xe') || hasPhrase(norm, 'do xe') || hasPhrase(norm, 'bai xe') || hasPhrase(norm, 'cho de xe') ||
+      hasPhrase(norm, 'cho gui xe') || hasPhrase(norm, 'bai do xe') || hasPhrase(norm, 'gui o to') || hasPhrase(norm, 'gui xe may') ||
+      hasPhrase(norm, 'cho dau xe') || ((hasPhrase(norm, 'xe may') || hasPhrase(norm, 'o to')) && (hasPhrase(norm, 'gui') || hasPhrase(norm, 'do') || hasPhrase(norm, 'dau'))) ||
       hasPhrase(norm, 'park') || hasPhrase(norm, 'parking')
     ) {
       return {
         intent: INTENTS.PARKING_SUPPORT,
-        subIntent: (norm.includes('o to') || hasPhrase(norm, 'car')) ? 'PARKING_CAR' : 'PARKING_BIKE',
+        subIntent: (hasPhrase(norm, 'o to') || hasPhrase(norm, 'car')) ? 'PARKING_CAR' : 'PARKING_BIKE',
         subject: 'bai_gui_xe',
         aspect: 'SERVICE',
         confidence: 0.98,
@@ -746,9 +749,13 @@ class IntentClassifier {
       'dissatisfied', 'bad experience', 'terrible', 'awful', 'complaint', 'rude staff',
       'poor service', 'not satisfied', 'unhappy', 'noisy', 'crowded', 'broken headphone', 'audio crackling', 'feedback'
     ];
-    const isFeedbackOrComplaint = complaintSignals.some(s => norm.includes(s)) ||
+    const isNightTourBookingMentioningBox = hasPhrase(norm, 'dem thieng lieng') &&
+      (hasPhrase(norm, 'dat lich') || hasPhrase(norm, 'dat truoc') || hasPhrase(norm, 'dang ky') || hasPhrase(norm, 'co ve'));
+    const isFeedbackOrComplaint = !isNightTourBookingMentioningBox && (
+      complaintSignals.some(s => norm.includes(s)) ||
       (norm.includes('nhan vien') && (norm.includes('gat') || norm.includes('quat') || norm.includes('mang') || norm.includes('kem') || norm.includes('kho chiu') || norm.includes('thai do'))) ||
-      (norm.includes('ban quan ly') && (norm.includes('gap') || norm.includes('gop y') || norm.includes('y kien') || norm.includes('phan anh') || norm.includes('dong gop')));
+      (norm.includes('ban quan ly') && (norm.includes('gap') || norm.includes('gop y') || norm.includes('y kien') || norm.includes('phan anh') || norm.includes('dong gop')))
+    );
 
     if (isFeedbackOrComplaint) {
       let subIntent = 'SERVICE_QUALITY';

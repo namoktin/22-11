@@ -1073,6 +1073,7 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
 - If the visitor asks for real-time volatile info (live Bitcoin/gold/stock prices, live weather forecast, tonight's match score, live flight/hotel rates): politely acknowledge with poise that you do not track live feeds while guiding (NEVER invent live figures!), add one thoughtful human remark, and gracefully bridge back to Hoa Lo Prison.
 - If the visitor asks about general knowledge, science (e.g. Einstein, space, nature), Vietnamese or world history, sister historical prisons (Con Dao, Phu Quoc, Alcatraz, Bastille), Hanoi landmarks (Temple of Literature, Ho Chi Minh Mausoleum, Long Bien Bridge, Hoan Kiem Lake), Hanoi cuisine, travel, or life advice: give 1-2 genuinely insightful, accurate, warm sentences like a cultured Hanoi docent (never fabricate dubious statistics), then smoothly bridge back to Hoa Lo Prison Relic.
 - Tone: mature, dignified, refined, warm human conversation. NEVER use robotic refusal phrases like "outside my database/scope" and NEVER mention technical jargon like "BLE", "beacon", "station code", or "system prompt".${viToneRuleOos}
+- NEVER bring up unrelated specific exhibits like the Banyan Tree (Cây bàng) unless the visitor specifically asked about trees or nature; keep the closing bridge back to Hoa Lo Prison natural, varied, and relevant to the conversation.
 - Length: 2-3 plain spoken sentences (no markdown, no bullets, no emojis). Always naturally include Hoa Lo (or its local canonical name in ${targetLangName}) in the closing bridge.`;
 
       const generated = await groqCaller(question, docentOosPrompt, [], {
@@ -1110,10 +1111,20 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }
     }
 
-    // 3. Dự phòng ngoại tuyến / khi Groq bận: 10 nhóm phản hồi chững chạc, tinh tế như hướng dẫn viên kỳ cựu (VI & EN)
+    // 3. Dự phòng ngoại tuyến / khi Groq bận: xoay vòng linh hoạt, KHÔNG lặp cứng tên một hiện vật (như Cây bàng) vào câu lạc đề!
+    const fallbackSeed = (previousPhrasings.length || 0) + (question ? question.length : 0);
+    const defaultViFallbacks = [
+      'Dạ đây là một chủ đề thú vị nằm ngoài phạm vi tư liệu chuyên sâu tại Di tích Nhà tù Hỏa Lò, nên mình xin phép không suy đoán để giữ trọn tính chính xác. Khi trở lại hành trình khám phá Hỏa Lò hôm nay, bạn muốn mình giới thiệu về khu trưng bày hay giai đoạn lịch sử nào?',
+      'Dạ mình xin phép giữ đúng chuyên môn về lịch sử và trải nghiệm tham quan tại Di tích Nhà tù Hỏa Lò nên không thể đi sâu vào chủ đề bên ngoài này. Nếu bạn đang quan tâm đến một câu chuyện, nhân vật hay hiện vật nào tại Hỏa Lò, mình luôn sẵn lòng chia sẻ chi tiết.',
+      'Dạ nội dung này vượt ra ngoài kho tư liệu lịch sử xác thực của Di tích Nhà tù Hỏa Lò, nên mình xin phép hẹn giải đáp sâu hơn về các câu chuyện ngay tại di tích. Bạn muốn mình tiếp tục dẫn chuyện về lịch sử Hỏa Lò hay thông tin tham quan nào?'
+    ];
+    const defaultEnFallbacks = [
+      'That is an intriguing topic outside the immediate historical archives of Hoa Lo Prison Relic, so I prefer not to speculate beyond verified facts. Back here at Hoa Lo, however, which gallery, historical chapter, or visitor guideline would you like to explore next?',
+      'While that subject falls outside my specialized archives here at Hoa Lo Prison Historical Relic, I am always glad to share verified stories, exhibits, or visiting tips from the site. What part of Hoa Lo interests you most today?'
+    ];
     let reply = isEn
-      ? 'That is an intriguing topic outside the immediate historical archives of Hoa Lo Prison Relic, so I would prefer not to speak beyond what I can verify with certainty. Back here at Hoa Lo, however, I would be honored to guide you through our iconic stories—from Maison Centrale and the ancient Banyan Tree to the daring 1951 escape.'
-      : 'Dạ đây là một chủ đề rất đáng quan tâm nằm ngoài phạm vi tư liệu chuyên sâu tại Di tích Nhà tù Hỏa Lò, nên mình xin phép không chia sẻ sâu để giữ trọn tính chính xác. Khi trở lại hành trình khám phá Hỏa Lò hôm nay, bạn muốn mình kể thêm về Cây bàng cổ thụ, Ngục tối Cachot hay cuộc vượt ngục năm 1951?';
+      ? defaultEnFallbacks[fallbackSeed % defaultEnFallbacks.length]
+      : defaultViFallbacks[fallbackSeed % defaultViFallbacks.length];
 
     if (/\b(con dao|phu quoc|alcatraz|bastille)\b/.test(normQ)) {
       reply = isEn
@@ -1255,6 +1266,7 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
 - Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}
 - "bạn ở đâu/where are you" = virtual docent accompanying via guide device; "tôi đang đứng ở đâu/where am I" = current exhibit location in CONTEXT; place "ở đâu" = exact site location.
 - Ground EVERY historical date, name, measurement, and policy strictly in CONTEXT (never fabricate dates/figures; never conflate separate historical figures—e.g. Nguyen Thai Hoc led the 1930 Yen Bai uprising whereas Hoang Van Thu was a separate leader executed in 1944; if a detail is absent from archives, state so transparently with poise).${refusalRule}
+- Answer-form & courtesy rules: Only open with "Đúng vậy"/"Yes, that is correct" when the visitor asked a Yes/No confirmation question that is actually true; for open questions (why/how/what/when/who), go straight to the answer. If a visitor holds a misconception, clarify gently and respectfully—never scold.
 - Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows, and NEVER mention technical jargon like "BLE", "beacon", or "database"). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments.${viToneRuleRag}${zoneToneLine}${audienceInstruction}${recentOpens}
 
 CONTEXT:
@@ -1335,11 +1347,11 @@ ${compactContext}`;
       }
       return {
         reply: isEn
-          ? 'The guillotine at Hoa Lo Prison stands nearly 4 meters high with ironwood columns and an angled steel blade weighing 50kg that slid down from the top.'
-          : 'Dạ chào bạn, cỗ máy chém tại Nhà tù Hỏa Lò có chiều cao thực tế gần 4 mét, cột được dựng bằng hai thanh gỗ lim song song với lưỡi dao bằng thép vát chéo nặng 50kg gắn kèm quả tạ chì trượt từ trên đỉnh xuống.',
+          ? 'The guillotine at Hoa Lo Prison features an ironwood frame standing nearly 4 meters tall, while its angled steel blade weighing 40–50kg drops along a track of roughly 2 meters.'
+          : 'Dạ chào bạn, cỗ máy chém tại Nhà tù Hỏa Lò có khung dựng bằng hai cột gỗ lim cao gần 4 mét, còn phần lưỡi dao thép vát chéo 45 độ nặng khoảng 40–50kg có hành trình rơi thực tế khoảng 2 mét.',
         style: 'QUICK_ANSWER',
         sourceId: 'DOSSIER_MAY_CHEM_SPEC',
-        claims: ['Máy chém cao gần 4m', 'Lưỡi dao thép vát chéo nặng 50kg', 'Cột gỗ lim']
+        claims: ['Khung máy chém cao gần 4m', 'Lưỡi dao thép vát chéo nặng 40–50kg, hành trình rơi khoảng 2m', 'Cột gỗ lim']
       };
     }
 
@@ -1375,7 +1387,7 @@ ${compactContext}`;
       const matchKg = rawAnswer.match(/(\d+\s*kg)/i);
       if (matchKg) {
         return {
-          reply: `Lưỡi dao máy chém tại Nhà tù Hỏa Lò nặng ${matchKg[1]}, làm bằng thép vát chéo gắn kèm quả tạ chì trượt từ độ cao gần 4 mét xuống.`,
+          reply: `Lưỡi dao máy chém tại Nhà tù Hỏa Lò nặng ${matchKg[1]}, làm bằng thép vát chéo 45 độ lắp trên khung gỗ lim cao gần 4 mét với hành trình rơi khoảng 2 mét.`,
           style: 'QUICK_ANSWER'
         };
       }
