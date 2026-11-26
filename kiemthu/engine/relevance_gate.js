@@ -14,7 +14,7 @@
  * 4. Token-Overlap & Semantic Relevance Floor: Ngăn mọi câu trả lời lạc đề vượt qua Validator.
  */
 
-const { hasPhrase, normalizeText } = require('./semantic_router');
+const { hasPhrase, normalizeText, hasVietnameseDiacritics, normalizeAccentedLower } = require('./semantic_router');
 
 class RelevanceGate {
   constructor() {
@@ -27,8 +27,9 @@ class RelevanceGate {
     ];
 
     // Các chỉ số / thuộc tính lưu trữ đặc thù hiếm khi có trong fact tổng quát
+    // Nguyên lý: CHỈ chặn khi câu hỏi THỰC SỰ HỎI CHỈ SỐ (interrogative), không chặn khi khách nêu nhiệt độ/tỷ lệ làm bối cảnh!
     this.specificArchiveMetrics = [
-      { id: 'ENVIRONMENTAL_METRIC', qPatterns: ['nhiet do', 'do c', 'bao nhieu do', 'do am', 'bao nhieu phan tram'], ansRequired: ['nhiet do', 'do c', 'do am', '%'] },
+      { id: 'ENVIRONMENTAL_METRIC', qPatterns: ['nhiet do bao nhieu', 'nhiet do trung binh', 'nhiet do nam', 'bao nhieu do', 'do am bao nhieu', 'bao nhieu phan tram do am'], ansRequired: ['nhiet do', 'do c', 'do am', '%'] },
       { id: 'FULL_ROSTER_LIST', qPatterns: ['liet ke day du', 'day du ho ten', 'toan bo 29', 'danh sach day du'], ansRequired: ['danh sach day du', '29 nguoi gom', 'khong ghi nhan day du'] },
       { id: 'CURRENCY_CONVERSION', qPatterns: ['quy doi ra tien', 'bao nhieu ty', 'ngan sach phap'], ansRequired: ['ty dong', 'ngan sach', 'quy doi', 'franc'] },
       { id: 'ANNUAL_STATS', qPatterns: ['nam ngoai', 'bao nhieu nghin luot', 'luot khach quoc te', 'thong ke nam'], ansRequired: ['luot khach', 'thong ke nam'] },
@@ -38,17 +39,31 @@ class RelevanceGate {
   }
 
   /**
-   * Trích xuất TỔNG QUÁT nhân vật/danh xưng ngoại lai (Tổng thống X, Vua Y, Chủ tịch Z...) mà không cần liệt kê sẵn từng tên
+   * Trích xuất TỔNG QUÁT nhân vật/danh xưng ngoại lai (Tổng thống X, Vua Y, Chủ tịch Z...)
+   * BẢO TOÀN DẤU TIẾNG VIỆT: Tuyệt đối không nhận nhầm "vừa" ("vừa hơn đầu người", "vừa hẹp vừa thấp") thành "vua" (King)!
    */
-  detectGenericForeignPersonOrRuler(normQ) {
+  detectGenericForeignPersonOrRuler(normQ, rawQ = '') {
     // Các nhân vật lịch sử Hỏa Lò hợp lệ không bị chặn
-    const hoaLoKnown = ['nguyen thai hoc', 'hoang van thu', 'tran tu binh', 'phan boi chau', 'luong van can', 'nguyen duc canh', 'nguyen hoang ton', 'quang thai', 'minh khai', 'john mccain', 'mccain', 'peterson', 'le kha phieu', 'phan lang', 'nguyen huy hoa', 'tran van cu', 'hoang ngan'];
+    const hoaLoKnown = [
+      'nguyen thai hoc', 'hoang van thu', 'tran tu binh', 'phan boi chau', 'luong van can',
+      'nguyen duc canh', 'nguyen hoang ton', 'quang thai', 'minh khai', 'john mccain',
+      'mccain', 'peterson', 'le kha phieu', 'phan lang', 'nguyen huy hoa', 'tran van cu',
+      'hoang ngan', 'truong chinh', 'le duan', 'do muoi', 'nguyen van linh', 'ton duc thang'
+    ];
     if (hoaLoKnown.some(k => hasPhrase(normQ, k))) return null;
 
-    // Bắt cấu trúc danh xưng tổng quát: "tong thong <ten>", "vua <ten>", "chu tich <ten>", "hoang de <ten>"
-    const titleMatch = normQ.match(/\b(tong thong|vua|chu tich|hoang de|thu tuong)\s+([a-z]+(?:\s+[a-z]+){0,3})/);
-    if (titleMatch) {
-      return titleMatch[0].trim();
+    // Bắt cấu trúc danh xưng tổng quát trên chuỗi CÓ DẤU gốc (nếu có dấu tiếng Việt) để tránh "vừa" -> "vua", "chú thích" -> "chủ tịch"!
+    if (hasVietnameseDiacritics(rawQ)) {
+      const rawNorm = normalizeAccentedLower(rawQ);
+      const accentedTitle = rawNorm.match(/\b(tổng\s+thống|vua|chủ\s+tịch|hoàng\s+đế|thủ\s+tướng)\s+([a-zàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]+(?:\s+[a-zàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]+){0,3})/);
+      if (accentedTitle) {
+        return normalizeText(accentedTitle[0]);
+      }
+    } else {
+      const titleMatch = normQ.match(/\b(tong thong|vua|chu tich|hoang de|thu tuong)\s+([a-z]+(?:\s+[a-z]+){0,3})/);
+      if (titleMatch) {
+        return titleMatch[0].trim();
+      }
     }
     // Bắt cấu trúc hầm ngầm nhiều tầng phi thực tế ("3 tang ham", "5 tang ham")
     const basementMatch = normQ.match(/\b\d+\s+tang\s+ham\b/);
@@ -91,7 +106,7 @@ class RelevanceGate {
 
     // 1. KIỂM TRA CHÉO THỰC THỂ NGOẠI LAI (Foreign Entity & Generic Ruler/President Alignment)
     const matchedForeign = this.foreignSubjectMarkers.filter(m => hasPhrase(normQ, m));
-    const genericForeign = this.detectGenericForeignPersonOrRuler(normQ);
+    const genericForeign = this.detectGenericForeignPersonOrRuler(normQ, question);
     if (genericForeign && !matchedForeign.includes(genericForeign)) {
       matchedForeign.push(genericForeign);
     }
@@ -104,6 +119,13 @@ class RelevanceGate {
       );
 
       if (!answerMentionsForeign && !answerHasExplicitRefutation) {
+        // Nếu đang ở PRE_LLM và câu hỏi thực sự hỏi so sánh về hiện vật Hỏa Lò (VD: so sánh máy chém Hỏa Lò với nơi khác):
+        // Cho phép RAG trả lời sâu về hiện vật Hỏa Lò thay vì cắt ngang từ chối!
+        const hasSpecificHoaLoExhibit = hasPhrase(normQ, 'may chem') || hasPhrase(normQ, 'cay bang') || hasPhrase(normQ, 'cachot') || hasPhrase(normQ, 'cong ngam') || hasPhrase(normQ, 'xa lim') || hasPhrase(normQ, 'phi cong');
+        if (sourceType === 'PRE_LLM' && hasPhrase(normQ, 'so sanh') && hasSpecificHoaLoExhibit) {
+          return { passed: true, reason: 'ALLOW_RAG_COMPARISON_GROUNDED' };
+        }
+
         // Nếu là câu hỏi so sánh với công trình ngoài Hỏa Lò (Bastille, Chùa Một Cột...)
         if (hasPhrase(normQ, 'so sanh')) {
           return {
@@ -206,8 +228,10 @@ class RelevanceGate {
         }
       }
 
-    // 4. KIỂM TRA CÂU HỎI PHI LỊCH SỬ VỀ CÔNG NGHỆ HIỆN ĐẠI TRONG TÙ XƯA (vd: điện thoại thời Pháp)
-    if ((hasPhrase(normQ, 'thoi phap') || hasPhrase(normQ, 'tu nhan')) && (hasPhrase(normQ, 'dien thoai') || hasPhrase(normQ, 'internet') || hasPhrase(normQ, 'wifi'))) {
+    // 4. KIỂM TRA CÂU HỎI PHI LỊCH SỬ VỀ CÔNG NGHỆ HIỆN ĐẠI TRONG TÙ XƯA (vd: tù nhân dùng điện thoại thời Pháp; loại trừ đường dây điện thoại bàn của phòng giám ngục!)
+    if ((hasPhrase(normQ, 'thoi phap') || hasPhrase(normQ, 'tu nhan')) &&
+        (hasPhrase(normQ, 'dien thoai') || hasPhrase(normQ, 'internet') || hasPhrase(normQ, 'wifi')) &&
+        !hasPhrase(normQ, 'giam nguc') && !hasPhrase(normQ, 'duong day dien thoai')) {
       return {
         passed: false,
         reason: 'ANACHRONISTIC_PREMISE',

@@ -586,3 +586,90 @@ test('Universal Drop-In Auto-Brain & dataset_hoa_lo_vi: 14 zones, Z10/Z13 depth 
   });
   assert.ok(!/cây bàng/i.test(offlineOos.reply), `Offline OOS fallback must NOT repetitively plug Cây bàng: ${offlineOos.reply}`);
 });
+
+test('Systemic 4-Principle Architecture: Accent-Consistent Homographs, Historical Discourse Gate & RAG-First Fallback', async () => {
+  const { matchAccentConsistentPhrase, analyzeDiscourseMode } = require(path.join(kiemthuRoot, 'engine', 'semantic_router'));
+  const composer = require(path.join(kiemthuRoot, 'engine', 'answer_composer'));
+  const relevanceGate = require(path.join(kiemthuRoot, 'engine', 'relevance_gate'));
+  const { knowledgeBase } = require(path.join(kiemthuRoot, 'engine', 'knowledge_base'));
+
+  // Principle 1: Accent-Consistent Token-Window Homograph Guards
+  assert.equal(matchAccentConsistentPhrase('thơ cổ động của ông trên tờ báo viết tay', 'đóng cửa'), false, '"động của" must NEVER match "đóng cửa"');
+  assert.equal(matchAccentConsistentPhrase('hôm nay mấy giờ đóng cửa vậy', 'đóng cửa'), true);
+  assert.equal(matchAccentConsistentPhrase('hom nay may gio dong cua vay', 'đóng cửa'), true);
+  assert.equal(matchAccentConsistentPhrase('co nghi trua không ban', 'nghỉ trưa'), true, 'Mixed unaccented/accented must still match');
+  assert.equal(matchAccentConsistentPhrase('dầm mình nhiều giờ trong dòng nước cống lạnh', 'trống đồng'), false, '"trong dòng" must NEVER match "trống đồng"');
+  assert.equal(matchAccentConsistentPhrase('cuốn sổ cái còn giữ hay thất lạc', 'con'), false, '"còn" must NEVER match "con"');
+
+  // Principle 1 & 2: Zero hijacks on historical narratives (homographs + actor/tense pragmatics)
+  assert.notEqual(
+    classifier.classify('Đồng chí Trường Chinh lúc làm chủ bút báo trong tù mới ngoài hai mươi tuổi—phong cách viết bình luận sắc sảo hay thơ cổ động của ông có ảnh hưởng thế nào?').intent,
+    'OPENING_HOURS',
+    '"cổ động của" must NOT hijack to OPENING_HOURS'
+  );
+  assert.notEqual(
+    classifier.classify('Nghe nói có những đêm khuya giữa dãy Cachot, có đồng chí cất giọng ngâm thơ truyền cảm hứng cho phòng bên phải không?').intent,
+    'SITE_OPERATIONS',
+    'Vietnamese "cất" must NOT trigger English \\bcat\\b -> OPS_PETS_PROHIBITED'
+  );
+  assert.notEqual(
+    classifier.classify('Khi tù nhân trong Cachot bị ngất lịm vì mất nước và tụt huyết áp, lính gác xử lý thế nào?').intent,
+    'EMERGENCY_SUPPORT',
+    'Historical prisoner fainting must NOT hijack to live MEDICAL_EMERGENCY'
+  );
+  assert.notEqual(
+    classifier.classify('Cuốn sổ cái gốc thời Pháp ghi danh sách tù nhân đến nay còn giữ đầy đủ hay đã thất lạc?').intent,
+    'EMERGENCY_SUPPORT',
+    '"còn ... thất lạc" must NOT hijack to LOST_CHILD_URGENT'
+  );
+  assert.notEqual(
+    classifier.classify('Thùng vệ sinh chung bằng gỗ đặt ở góc cuối bệ nằm trong phòng giam tập thể xưa có cấu tạo thế nào?').intent,
+    'FACILITY_INFORMATION',
+    'Historical wooden toilet bucket must NOT hijack to visitor WC location'
+  );
+  assert.notEqual(
+    classifier.classify('Trong các cuộc vượt ngục lịch sử ở Hỏa Lò, đồng chí nào đóng vai trò tổ chức cốt lõi?').intent,
+    'PROMPT_INJECTION',
+    '"đóng vai trò" must NOT trigger PROMPT_INJECTION'
+  );
+
+  // Live visitor ops MUST still route 100% cleanly!
+  assert.equal(classifier.classify('Mẹ tôi vừa bị ngất xỉu do say nắng ở sân Hỏa Lò, gọi cấp cứu giúp!').intent, 'EMERGENCY_SUPPORT');
+  assert.equal(classifier.classify('Con tôi bị lạc ở khu trưng bày, tìm giúp tôi với!').intent, 'EMERGENCY_SUPPORT');
+  assert.equal(classifier.classify('roi vi tien o san cay bang').intent, 'LOST_AND_FOUND');
+  assert.equal(classifier.classify('Where can I park my motorbike or car near Hoa Lo?').intent, 'PARKING_SUPPORT');
+  assert.equal(analyzeDiscourseMode('Hôm nay Nhà tù Hỏa Lò mở cửa mấy giờ?').isHistoricalDiscourse, false);
+
+  // RelevanceGate accent guard: "vừa" must NOT trigger foreign ruler "vua"
+  const gateVua = relevanceGate.verifyCandidate(
+    'Trần của mỗi ô Cachot chỉ cao vừa hơn đầu người một chút và đổ vòm cuốn bằng gạch dày, có phải để tăng cảm giác ngột ngạt không?',
+    '',
+    { intent: 'EXHIBIT_INFORMATION', sourceType: 'PRE_LLM', language: 'vi' }
+  );
+  assert.equal(gateVua.passed, true, '"vừa hơn đầu người" must NOT trigger foreign ruler "vua"');
+
+  // Principle 3 & 4: RAG-First (no broad historical short-circuit) + Unified Semantic Vector Fallback when Groq is offline/429
+  const qDeep = 'Nhìn bề mặt lưỡi dao thép vát chéo của máy chém thấy có độ lì sẫm tự nhiên, bảo tàng bảo quản chống gỉ như thế nào?';
+  const clsDeep = classifier.classify(qDeep);
+  const resRag = await composer.compose({
+    question: qDeep,
+    intent: clsDeep.intent,
+    subject: clsDeep.subject,
+    aspect: clsDeep.aspect,
+    retrievedData: { groundTruthMatch: knowledgeBase.findGroundTruthMatch(qDeep), exhibitMatch: knowledgeBase.findHistoricalExhibit(qDeep), facts: [] },
+    language: 'vi',
+    groqCaller: async () => 'Dạ nhóm kỹ thuật bảo tồn sử dụng dung dịch ức chế oxy hóa và lớp phủ mờ chuyên dụng để bảo vệ bề mặt thép cổ.'
+  });
+  assert.equal(resRag.responseType, 'LLM_GROUNDED_SYNTHESIS', 'Deep exhibit question must reach Universal Grounded RAG instead of aspect short-circuit');
+
+  const resOff = await composer.compose({
+    question: qDeep,
+    intent: clsDeep.intent,
+    subject: clsDeep.subject,
+    aspect: clsDeep.aspect,
+    retrievedData: { groundTruthMatch: knowledgeBase.findGroundTruthMatch(qDeep), exhibitMatch: knowledgeBase.findHistoricalExhibit(qDeep), facts: [] },
+    language: 'vi',
+    groqCaller: null
+  });
+  assert.equal(resOff.responseType, 'LOCAL_SEMANTIC_VECTOR_HIT', 'Offline/429 fallback must hit 3,128 Unified Semantic Vector before canned summaries');
+});

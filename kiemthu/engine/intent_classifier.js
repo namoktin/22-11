@@ -9,7 +9,13 @@
  */
 
 const nlp = require('./nlp_processor');
-const { semanticRouter, hasPhrase } = require('./semantic_router');
+const {
+  semanticRouter,
+  hasPhrase,
+  hasRawPhrase,
+  matchAccentSafe,
+  analyzeDiscourseMode
+} = require('./semantic_router');
 
 const INTENTS = {
   HISTORICAL_FACT: 'HISTORICAL_FACT',
@@ -180,6 +186,7 @@ class IntentClassifier {
 
     const subject = this.extractSubject(norm) || context?.lastTopic || null;
     const aspect = this.extractAspect(norm);
+    const earlyDiscourse = analyzeDiscourseMode(raw, norm);
 
     // 0. Kiểm tra Prompt Injection / Phá rào bảo mật
     if (nlp.detectPromptInjection(rawQuestion)) {
@@ -263,12 +270,14 @@ class IntentClassifier {
     }
 
     // 0.07. CỔNG CHẶN NGOÀI LỀ TOÀN DIỆN (chạy TRƯỚC SITE_OPERATIONS để 'Giá Bitcoin' không nhảy vào vé 50k!)
-    const hasHoaLoAnchor = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') ||
-      hasPhrase(norm, 'may chem') || hasPhrase(norm, 'cay bang') || hasPhrase(norm, 'cachot') ||
-      hasPhrase(norm, 'cong ngam') || hasPhrase(norm, 'hanoi hilton') || hasPhrase(norm, 'dem thieng lieng') ||
-      hasPhrase(norm, 'tham quan trong nha') || hasPhrase(norm, 'di tich') ||
-      hasPhrase(norm, 'tu binh') || hasPhrase(norm, 'phi cong my') || hasPhrase(norm, 'phong giam') ||
-      hasPhrase(norm, 'buong giam') || hasPhrase(norm, 'cum chan') || hasPhrase(norm, 'xa lim');
+    // Lưu ý: Không coi từ chung "nha tu" là mỏ neo Hỏa Lò khi khách đang hỏi đích danh nhà tù bên ngoài (Alcatraz, Bastille, Côn Đảo, Phú Quốc)!
+    const hasSpecificExternalPrison = hasPhrase(norm, 'alcatraz') || hasPhrase(norm, 'bastille') || hasPhrase(norm, 'con dao') || hasPhrase(norm, 'phu quoc');
+    const hasExplicitHoaLoSite = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') || hasPhrase(norm, 'hanoi hilton');
+    const hasHoaLoAnchor = (hasSpecificExternalPrison && !hasExplicitHoaLoSite)
+      ? false
+      : (semanticRouter.hasHoaLoCoreEntity(norm) ||
+         hasPhrase(norm, 'tham quan trong nha') ||
+         (earlyDiscourse.isHistoricalDiscourse && earlyDiscourse.historicalScore >= 4.5));
 
     const hardOosPatterns = [
       // Tài chính, tiền số, ngân hàng, bất động sản
@@ -327,7 +336,9 @@ class IntentClassifier {
     }
 
     // 0.085. Ngoại lệ tiện ích cốt lõi (Nhà vệ sinh / Restroom / Toilet) luôn thuộc phạm vi di tích (VI + EN)
-    if (hasPhrase(norm, 'restroom') || hasPhrase(norm, 'restrooms') || hasPhrase(norm, 'washroom') || hasPhrase(norm, 'toilets') || hasPhrase(norm, 'toilet') || hasPhrase(norm, 'nha ve sinh') || hasPhrase(norm, 'di ve sinh')) {
+    // Nguyên lý 2: Không cướp luồng câu hỏi lịch sử về thùng/xô vệ sinh trong buồng giam xưa!
+    if (!earlyDiscourse.isHistoricalDiscourse &&
+        (hasPhrase(norm, 'restroom') || hasPhrase(norm, 'restrooms') || hasPhrase(norm, 'washroom') || hasPhrase(norm, 'toilets') || hasPhrase(norm, 'toilet') || hasPhrase(norm, 'nha ve sinh') || hasPhrase(norm, 'di ve sinh'))) {
       return {
         intent: INTENTS.FACILITY_INFORMATION,
         subIntent: 'RESTROOM_LOCATION',
@@ -363,8 +374,10 @@ class IntentClassifier {
       };
     }
 
-    // 0.2. CỔNG PHÂN MIỀN NGỮ NGHĨA V7.0 (5-Zone Semantic Domain Gate)
+    // 0.2. CỔNG PHÂN MIỀN NGỮ NGHĨA V7.0 + DISCOURSE MODE GATE V8.0
     const semRoute = semanticRouter.route(rawQuestion, norm);
+    const discourse = semRoute.discourse || earlyDiscourse;
+    const isHist = Boolean(discourse.isHistoricalDiscourse);
 
     // Tầng 0 ưu tiên tuyệt đối: An toàn khẩn cấp (Trẻ lạc, Y tế, Bệnh viện gần nhất - VI & EN)
     if (semRoute.domain === 'SAFETY_EMERGENCY') {
@@ -554,7 +567,13 @@ class IntentClassifier {
       };
     }
 
-    if (norm.includes('chuyen cuoi') || norm.includes('ke chuyen vui') || norm.includes('tau hai') || norm.includes('hai huoc') || norm.includes('ke tro vui') || hasPhrase(norm, 'joke') || hasPhrase(norm, 'funny joke')) {
+    const isExplicitJokeRequest = !isHist && (
+      hasPhrase(norm, 'chuyen cuoi') || hasPhrase(norm, 'ke chuyen vui') || hasPhrase(norm, 'tau hai') ||
+      hasPhrase(norm, 'ke tro vui') || hasPhrase(norm, 'tell me a joke') || hasPhrase(norm, 'funny joke') ||
+      (discourse.isEnglishInput && hasPhrase(norm, 'joke')) ||
+      (hasPhrase(norm, 'hai huoc') && (hasPhrase(norm, 'ke') || hasPhrase(norm, 'noi') || hasPhrase(norm, 'chuyen')) && !hasPhrase(norm, 'bai dang') && !hasPhrase(norm, 'mang xa hoi') && !hasPhrase(norm, 'biet danh'))
+    );
+    if (isExplicitJokeRequest) {
       return {
         intent: INTENTS.JOKE_REQUEST,
         subIntent: null,
@@ -565,8 +584,8 @@ class IntentClassifier {
       };
     }
 
-    // Câu hỏi lộ trình có ràng buộc thời gian ngắn ("chỉ có 20 phút nên xem gì") -> TOUR_RECOMMENDATION ưu tiên trước HIGHLIGHTS_REQUEST!
-    const hasShortTimeLimit = /\b(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) || hasPhrase(norm, 'it thoi gian') || hasPhrase(norm, 'co it thoi gian');
+    // Câu hỏi lộ trình có ràng buộc thời gian ngắn ("chỉ có 20 phút nên xem gì") -> CHỈ khi không phải diễn ngôn lịch sử!
+    const hasShortTimeLimit = !isHist && (/\b(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) || hasPhrase(norm, 'it thoi gian') || hasPhrase(norm, 'co it thoi gian'));
     if (hasShortTimeLimit && !norm.includes('xay dung') && !norm.includes('thi cong')) {
       return {
         intent: INTENTS.TOUR_RECOMMENDATION,
@@ -578,7 +597,7 @@ class IntentClassifier {
       };
     }
 
-    if ((norm.includes('dang xem nhat') || norm.includes('nen xem gi') || norm.includes('xem gi nhat') || norm.includes('noi bat nhat') || norm.includes('co gi hay nhat') || norm.includes('dac sac nhat')) && !norm.includes('vi sao')) {
+    if (!isHist && (norm.includes('dang xem nhat') || norm.includes('nen xem gi') || norm.includes('xem gi nhat') || norm.includes('noi bat nhat') || norm.includes('co gi hay nhat') || norm.includes('dac sac nhat')) && !norm.includes('vi sao')) {
       return {
         intent: INTENTS.HIGHLIGHTS_REQUEST,
         subIntent: 'MUST_SEE_HIGHLIGHTS',
@@ -589,15 +608,18 @@ class IntentClassifier {
       };
     }
 
-    if (
-      hasPhrase(norm, 'gui xe') || hasPhrase(norm, 'do xe') || hasPhrase(norm, 'bai xe') || hasPhrase(norm, 'cho de xe') ||
-      hasPhrase(norm, 'cho gui xe') || hasPhrase(norm, 'bai do xe') || hasPhrase(norm, 'gui o to') || hasPhrase(norm, 'gui xe may') ||
-      hasPhrase(norm, 'cho dau xe') || ((hasPhrase(norm, 'xe may') || hasPhrase(norm, 'o to')) && (hasPhrase(norm, 'gui') || hasPhrase(norm, 'do') || hasPhrase(norm, 'dau'))) ||
-      hasPhrase(norm, 'park') || hasPhrase(norm, 'parking')
-    ) {
+    const hasViParking = matchAccentSafe(raw, norm,
+      ['gửi xe', 'đỗ xe', 'bãi xe', 'chỗ để xe', 'chỗ gửi xe', 'bãi đỗ xe', 'gửi ô tô', 'gửi xe máy', 'chỗ đậu xe'],
+      ['gui xe', 'do xe', 'bai xe', 'cho de xe', 'cho gui xe', 'bai do xe', 'gui o to', 'gui xe may', 'cho dau xe']
+    ) || (
+      matchAccentSafe(raw, norm, ['xe máy', 'ô tô'], ['xe may', 'o to']) &&
+      matchAccentSafe(raw, norm, ['gửi', 'đỗ', 'đậu'], ['gui', 'do', 'dau'])
+    );
+    const hasEnParking = discourse.isEnglishInput && (hasPhrase(norm, 'park') || hasPhrase(norm, 'parking'));
+    if (!isHist && (hasViParking || hasEnParking)) {
       return {
         intent: INTENTS.PARKING_SUPPORT,
-        subIntent: (hasPhrase(norm, 'o to') || hasPhrase(norm, 'car')) ? 'PARKING_CAR' : 'PARKING_BIKE',
+        subIntent: (matchAccentSafe(raw, norm, ['ô tô'], ['o to']) || (discourse.isEnglishInput && hasPhrase(norm, 'car'))) ? 'PARKING_CAR' : 'PARKING_BIKE',
         subject: 'bai_gui_xe',
         aspect: 'SERVICE',
         confidence: 0.98,
@@ -606,7 +628,7 @@ class IntentClassifier {
     }
 
     const isBuyingCameraOutside = (hasPhrase(norm, 'mua may anh') || hasPhrase(norm, 'may anh cu') || hasPhrase(norm, 'sua may anh') || hasPhrase(norm, 'ban may anh'));
-    if (!isBuyingCameraOutside && (hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') || hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash') || hasPhrase(norm, 'take photos') || hasPhrase(norm, 'take pictures') || hasPhrase(norm, 'photos inside'))) {
+    if (!isHist && !isBuyingCameraOutside && (hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') || hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash') || hasPhrase(norm, 'take photos') || hasPhrase(norm, 'take pictures') || hasPhrase(norm, 'photos inside'))) {
       return {
         intent: INTENTS.PHOTOGRAPHY_POLICY,
         subIntent: 'PHOTO_RULE',
@@ -617,7 +639,7 @@ class IntentClassifier {
       };
     }
 
-    const isDining = !hasPhrase(norm, 'quay luu niem') && !hasPhrase(norm, 'luu niem') && (
+    const isDining = !isHist && !hasPhrase(norm, 'quay luu niem') && !hasPhrase(norm, 'luu niem') && (
       hasPhrase(norm, 'quan pho') || hasPhrase(norm, 'quan an') || hasPhrase(norm, 'an gi') ||
       hasPhrase(norm, 'an trua') || hasPhrase(norm, 'an toi') || hasPhrase(norm, 'quan ngon') ||
       hasPhrase(norm, 'quan ca phe') || hasPhrase(norm, 'ca phe gan') || hasPhrase(norm, 'mon ngon') ||
@@ -705,13 +727,25 @@ class IntentClassifier {
     }
 
     // 3. Ngoài phạm vi di tích (Out Of Scope)
+    const strictArchiveBounds = [
+      'tong so tu nhan suot lich su', 'tong so tu nhan bi giam suot lich su', 'tong so tu nhan trong lich su', 'chinh xac bao nhieu tu nhan trong suot'
+    ];
+    if (strictArchiveBounds.some(s => norm.includes(s))) {
+      return {
+        intent: INTENTS.OUT_OF_SCOPE,
+        subIntent: null,
+        subject: null,
+        aspect: 'OUT_OF_BOUNDS',
+        confidence: 0.95,
+        reason: 'Chủ đề nằm ngoài phạm vi hoặc không có dữ liệu lưu trữ công khai tại Di tích Hỏa Lò'
+      };
+    }
     const strictOutOfScope = [
       'quan an', 'nha hang', 'quan ca phe', 'an uong quanh', 'an gi quanh', 'quan ngon',
       'thoi tiet', 'du bao thoi tiet', 'gia vang', 'chung khoan', 'bitcoin', 'crypto',
-      'con dao', 'nha tu con dao', 'nha tu phu quoc',
-      'tong so tu nhan suot lich su', 'tong so tu nhan bi giam suot lich su', 'tong so tu nhan trong lich su', 'chinh xac bao nhieu tu nhan trong suot'
+      'con dao', 'nha tu con dao', 'nha tu phu quoc'
     ];
-    if (strictOutOfScope.some(s => norm.includes(s))) {
+    if (!isHist && !hasPhrase(norm, 'hoa lo') && strictOutOfScope.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.OUT_OF_SCOPE,
         subIntent: null,
@@ -722,9 +756,9 @@ class IntentClassifier {
       };
     }
 
-    const hasHoaLoWhitelist = this.hoaLoWhitelist.some(w => norm.includes(' ' + w + ' ') || norm.includes(w));
+    const hasHoaLoWhitelist = isHist || this.hoaLoWhitelist.some(w => hasPhrase(norm, w));
     if (!hasHoaLoWhitelist) {
-      const isOutOfScope = this.outOfScopeEntities.some(e => norm.includes(' ' + e + ' ') || norm.includes(e));
+      const isOutOfScope = this.outOfScopeEntities.some(e => hasPhrase(norm, e));
       if (isOutOfScope) {
         return {
           intent: INTENTS.OUT_OF_SCOPE,
@@ -738,39 +772,42 @@ class IntentClassifier {
     }
 
     // 4. Khiếu nại, phản ánh không hài lòng & Đóng góp ý kiến (Customer Complaint)
+    // Nguyên lý 1 & 2: Bảo toàn dấu ("bị rè" ≠ "bị rêu"), loại từ đơn mơ hồ ("đóng góp", "thái độ"), khóa khi là diễn ngôn lịch sử!
     const complaintSignals = [
       'khong hai long', 'khong tot', 'trai nghiem te', 'dich vu te', 'that vong',
       'buc minh', 'kho chiu', 'thai do nhan vien', 'thieu nhiet tinh', 'thai do khong tot',
-      'thai do kem', 'phuc vu kem', 'qua dong', 'chen chuc', 'on ao', 'khieu nai',
+      'thai do kem', 'thai do phuc vu', 'phuc vu kem', 'qua dong', 'chen chuc', 'on ao', 'khieu nai',
       'gop y phan anh', 'mat tien oan', 'rat te', 'khong dang tien', 'hoan tien', 'tra ve',
-      'bi re', 're mot ben', 're tai', 're tieng', 'hong tai nghe', 'tai nghe bi', 'khong nghe duoc', 'tai nghe hong', 'loi tai nghe',
-      'dong gop y kien', 'dong gop', 'gap ban quan ly', 'gap to truong', 'so gop y', 'phan anh', 'y kien ve dich vu', 'gop y',
-      'gat gong', 'quat mang', 'kho tinh', 'bat lich su', 'thieu ton trong', 'thai do',
+      're mot ben', 're tai', 're tieng', 'hong tai nghe', 'tai nghe bi', 'khong nghe duoc', 'tai nghe hong', 'loi tai nghe',
+      'dong gop y kien', 'gap ban quan ly', 'gap to truong', 'so gop y', 'phan anh', 'y kien ve dich vu', 'gop y',
+      'gat gong', 'quat mang', 'kho tinh', 'bat lich su', 'thieu ton trong',
       'dissatisfied', 'bad experience', 'terrible', 'awful', 'complaint', 'rude staff',
       'poor service', 'not satisfied', 'unhappy', 'noisy', 'crowded', 'broken headphone', 'audio crackling', 'feedback'
     ];
+    const hasAccentedAudioStatic = matchAccentSafe(raw, norm, ['bị rè', 'rè một bên', 'rè tai', 'rè tiếng'], ['bi re', 're mot ben', 're tai', 're tieng']);
     const isNightTourBookingMentioningBox = hasPhrase(norm, 'dem thieng lieng') &&
       (hasPhrase(norm, 'dat lich') || hasPhrase(norm, 'dat truoc') || hasPhrase(norm, 'dang ky') || hasPhrase(norm, 'co ve'));
-    const isFeedbackOrComplaint = !isNightTourBookingMentioningBox && (
-      complaintSignals.some(s => norm.includes(s)) ||
-      (norm.includes('nhan vien') && (norm.includes('gat') || norm.includes('quat') || norm.includes('mang') || norm.includes('kem') || norm.includes('kho chiu') || norm.includes('thai do'))) ||
-      (norm.includes('ban quan ly') && (norm.includes('gap') || norm.includes('gop y') || norm.includes('y kien') || norm.includes('phan anh') || norm.includes('dong gop')))
+    const isFeedbackOrComplaint = !isHist && !isNightTourBookingMentioningBox && (
+      hasAccentedAudioStatic ||
+      complaintSignals.some(s => hasPhrase(norm, s)) ||
+      (hasPhrase(norm, 'nhan vien') && (hasPhrase(norm, 'gat') || hasPhrase(norm, 'quat') || hasPhrase(norm, 'mang') || hasPhrase(norm, 'kem') || hasPhrase(norm, 'kho chiu') || hasPhrase(norm, 'thai do'))) ||
+      (hasPhrase(norm, 'ban quan ly') && (hasPhrase(norm, 'gap') || hasPhrase(norm, 'gop y') || hasPhrase(norm, 'y kien') || hasPhrase(norm, 'phan anh') || hasPhrase(norm, 'dong gop')))
     );
 
     if (isFeedbackOrComplaint) {
       let subIntent = 'SERVICE_QUALITY';
       let urgency = 'NORMAL';
-      if (norm.includes('thai do') || norm.includes('nhan vien') || norm.includes('thieu nhiet tinh') || norm.includes('gat gong') || norm.includes('quat') || norm.includes('rude')) {
+      if (hasPhrase(norm, 'thai do') || hasPhrase(norm, 'nhan vien') || hasPhrase(norm, 'thieu nhiet tinh') || hasPhrase(norm, 'gat gong') || hasPhrase(norm, 'quat') || hasPhrase(norm, 'rude')) {
         subIntent = 'STAFF_ATTITUDE';
         urgency = 'HIGH';
-      } else if (norm.includes('bi re') || norm.includes('re mot ben') || norm.includes('hong tai nghe') || norm.includes('tai nghe bi') || norm.includes('audioguide')) {
+      } else if (hasAccentedAudioStatic || hasPhrase(norm, 'hong tai nghe') || hasPhrase(norm, 'tai nghe bi') || hasPhrase(norm, 'audioguide')) {
         subIntent = 'AUDIO_DEVICE';
         urgency = 'IMMEDIATE_ACTION';
-      } else if (norm.includes('qua dong') || norm.includes('chen chuc') || norm.includes('on ao') || norm.includes('ngot ngat') || norm.includes('crowded')) {
+      } else if (hasPhrase(norm, 'qua dong') || hasPhrase(norm, 'chen chuc') || hasPhrase(norm, 'on ao') || hasPhrase(norm, 'ngot ngat') || hasPhrase(norm, 'crowded')) {
         subIntent = 'OVERCROWDING';
-      } else if (norm.includes('hoan tien') || norm.includes('tra ve') || norm.includes('doi ve') || norm.includes('refund')) {
+      } else if (hasPhrase(norm, 'hoan tien') || hasPhrase(norm, 'tra ve') || hasPhrase(norm, 'doi ve') || hasPhrase(norm, 'refund')) {
         subIntent = 'REFUND_REQUEST';
-      } else if (norm.includes('ban quan ly') || norm.includes('so gop y') || norm.includes('gop y') || norm.includes('dong gop') || norm.includes('y kien') || norm.includes('khieu nai')) {
+      } else if (hasPhrase(norm, 'ban quan ly') || hasPhrase(norm, 'so gop y') || hasPhrase(norm, 'gop y') || hasPhrase(norm, 'dong gop y kien') || hasPhrase(norm, 'y kien') || hasPhrase(norm, 'khieu nai')) {
         subIntent = 'MANAGEMENT_FEEDBACK';
       }
 
@@ -786,16 +823,16 @@ class IntentClassifier {
     }
 
     // 5. Thất lạc tài sản & Hỗ trợ mất đồ (LOST_AND_FOUND)
-    const isLostItem = (
+    const isLostItem = !isHist && (
       !norm.includes('ban roi') && !norm.includes('may bay') && !norm.includes('phi cong') &&
       (
         /\b(?:bi roi|danh roi|lam roi|bi mat|that lac|de quen|bo quen|quen)\b.*?\b(?:vi tien|chiec vi|cai vi|bop tien|bop|dien thoai|ao khoac|tui xach|balo|giay to|tai san|do dac|do ca nhan)\b/i.test(norm) ||
-        norm.includes('mat do') || norm.includes('that lac') || norm.includes('quen do') ||
-        norm.includes('roi vi') || norm.includes('roi do') || norm.includes('danh roi') ||
-        norm.includes('lam roi') || norm.includes('mat vi') || norm.includes('mat dien thoai') ||
-        norm.includes('mat giay to') || norm.includes('mat vi tien') || norm.includes('roi vi tien') ||
-        norm.includes('bi roi vi') || norm.includes('roi tien') ||
-        norm.includes('lost item') || norm.includes('lost my') || norm.includes('lost phone') || norm.includes('lost wallet')
+        hasPhrase(norm, 'mat do') || hasPhrase(norm, 'that lac') || hasPhrase(norm, 'quen do') ||
+        hasPhrase(norm, 'roi vi') || hasPhrase(norm, 'roi do') || hasPhrase(norm, 'danh roi') ||
+        hasPhrase(norm, 'lam roi') || hasPhrase(norm, 'mat vi') || hasPhrase(norm, 'mat dien thoai') ||
+        hasPhrase(norm, 'mat giay to') || hasPhrase(norm, 'mat vi tien') || hasPhrase(norm, 'roi vi tien') ||
+        hasPhrase(norm, 'bi roi vi') || hasPhrase(norm, 'roi tien') ||
+        hasPhrase(norm, 'lost item') || hasPhrase(norm, 'lost my') || hasPhrase(norm, 'lost phone') || hasPhrase(norm, 'lost wallet')
       )
     );
     if (isLostItem) {
@@ -812,14 +849,14 @@ class IntentClassifier {
 
     // 6. Cấp cứu y tế & Tình huống khẩn cấp (EMERGENCY_SUPPORT)
     const isHistoricalLeafMedicalQuestion = norm.includes('la bang') || norm.includes('cay bang') || norm.includes('bup bang');
-    const isEmergency = !isHistoricalLeafMedicalQuestion && [
-      'cap cuu', 'say nang', 'ngat xiu', ' ngat ', 'chong mat', 'so cuu', ' y te ', 'phong y te',
+    const isEmergency = !isHist && !isHistoricalLeafMedicalQuestion && [
+      'cap cuu', 'say nang', 'ngat xiu', 'ngat', 'chong mat', 'so cuu', 'y te', 'phong y te',
       'lac con', 'lac tre', 'tim be', 'tim con', 'lac chau', 'lac be', 'tim chau', 'lost child', 'medical emergency', 'first aid'
-    ].some(s => norm.includes(s));
+    ].some(s => hasPhrase(norm, s));
     if (isEmergency) {
       let subIntent = 'MEDICAL_EMERGENCY';
       let urgency = 'CRITICAL';
-      if (norm.includes('lac con') || norm.includes('lac tre') || norm.includes('tim be') || norm.includes('tim con') || norm.includes('lac chau') || norm.includes('lost child')) {
+      if (hasPhrase(norm, 'lac con') || hasPhrase(norm, 'lac tre') || hasPhrase(norm, 'tim be') || hasPhrase(norm, 'tim con') || hasPhrase(norm, 'lac chau') || hasPhrase(norm, 'lost child')) {
         subIntent = 'LOST_CHILD_URGENT';
         urgency = 'URGENT';
       }
@@ -838,7 +875,7 @@ class IntentClassifier {
     const assistanceSignals = [
       'can giup do', 'gap nhan vien', 'gap bao ve', 'lien he ban quan ly', 'can ho tro', 'huong dan vien giup'
     ];
-    if (assistanceSignals.some(s => norm.includes(s))) {
+    if (!isHist && assistanceSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.CUSTOMER_ASSISTANCE,
         subIntent: 'GENERAL_SUPPORT',
@@ -857,7 +894,7 @@ class IntentClassifier {
       'loi di rieng', 'co cho ngoi nghi khong', 'ghe ngoi nghi', 'khiem thi', 'khiem thinh', 'nguoi mu', 'gay dan duong',
       'wheelchair', 'disabled', 'handicapped', 'elderly', 'senior', 'baby stroller', 'children', 'kids', 'ramp'
     ];
-    if (accessibilitySignals.some(s => hasPhrase(norm, s))) {
+    if (!isHist && accessibilitySignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.ACCESSIBILITY_SUPPORT,
         subIntent: null,
@@ -869,15 +906,17 @@ class IntentClassifier {
     }
 
     // 9. Giờ mở cửa & Lịch hoạt động (OPENING_HOURS)
+    // Nguyên lý 1 & 2: Bắt buộc bảo toàn dấu "đóng cửa" ≠ "động của" (sửa dứt điểm HL-788!), tách luật EN & khóa khi isHist!
     const isHistoricalOpening = (norm.includes('nam nao') || norm.includes('khi nao') || norm.includes('moc thoi gian')) && (norm.includes('cai tao') || norm.includes('xep hang') || norm.includes('di tich') || norm.includes('bao tang'));
     const isTemporaryExhibitionStatus = norm.includes('bang oi') || (norm.includes('chuyen de') && norm.includes('con mo'));
-    const hoursSignals = [
-      'gio mo cua', 'mo cua luc may gio', 'mo cua may gio', 'may gio mo cua', 'dong cua', 'may gio dong cua',
-      'co nghi trua khong', 'ngay le co mo khong', 'tet co mo khong', 'ngay le', 'tet nguyen dan', 'quoc khanh',
-      'thu hai co mo khong', 'gio tham quan', 'lich hoat dong', 'mo cua don khach',
-      'opening hours', 'opening time', 'open today', 'when does it open', 'closing time', 'what time does it close', 'schedule'
-    ];
-    if (!isHistoricalOpening && !isTemporaryExhibitionStatus && hoursSignals.some(s => norm.includes(s))) {
+    const hasViHoursSignal = matchAccentSafe(raw, norm,
+      ['giờ mở cửa', 'mở cửa lúc mấy giờ', 'mở cửa mấy giờ', 'mấy giờ mở cửa', 'đóng cửa', 'mấy giờ đóng cửa', 'có nghỉ trưa không', 'nghỉ trưa', 'ngày lễ có mở không', 'tết có mở không', 'ngày lễ', 'tết nguyên đán', 'quốc khánh', 'thứ hai có mở không', 'giờ tham quan', 'lịch hoạt động', 'mở cửa đón khách'],
+      ['gio mo cua', 'mo cua luc may gio', 'mo cua may gio', 'may gio mo cua', 'dong cua', 'may gio dong cua', 'co nghi trua khong', 'nghi trua', 'ngay le co mo khong', 'tet co mo khong', 'ngay le', 'tet nguyen dan', 'quoc khanh', 'thu hai co mo khong', 'gio tham quan', 'lich hoat dong', 'mo cua don khach']
+    );
+    const enHoursSignals = ['opening hours', 'opening time', 'open today', 'when does it open', 'closing time', 'what time does it close', 'schedule'];
+    const hasEnHoursSignal = (discourse.isEnglishInput && enHoursSignals.some(s => hasPhrase(norm, s))) ||
+      hasPhrase(norm, 'opening hours') || hasPhrase(norm, 'opening time') || hasPhrase(norm, 'closing time');
+    if (!isHist && !isHistoricalOpening && !isTemporaryExhibitionStatus && (hasViHoursSignal || hasEnHoursSignal)) {
       return {
         intent: INTENTS.OPENING_HOURS,
         subIntent: null,
@@ -889,18 +928,17 @@ class IntentClassifier {
     }
 
     // 10. Thông tin giá vé & Chính sách miễn giảm (TICKET_INFORMATION)
-    // Phân tách tín hiệu vé rõ ràng vs danh xưng ("Em là sinh viên, muốn biết về Trống đồng...") để không bắt nhầm câu hỏi lịch sử!
     const strongTicketSignals = [
-      'gia ve', 've vao cong', 've vao cua', 'mua ve', 'tien ve', 've tham quan', 've xem', 'mua o dau', 'gia bao nhieu',
+      'gia ve', 've vao cong', 've vao cua', 'mua ve', 'tien ve', 've xem', 'mua o dau', 'gia bao nhieu',
       'hssv', 'the sinh vien', 'the hoc sinh', 'giam gia ve', 'mien phi ve', 'dat ve truoc', 'dat ve',
       'doi ve', 'tra ve', 'hoan tien ve',
       'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'free admission', 'book ticket', 'buy ticket'
     ];
-    const personaDiscountSignals = ['hoc sinh', 'sinh vien', 'sv', 'uu dai', 'giam gia', 'mien phi', 'discount'];
-    const hasFeeOrTicketWord = /\b(gia ve|mua ve|ve vao|ve tham quan|tien ve|giam gia|giam ve|duoc giam|giam 50|mien phi|uu dai|bao nhieu tien|mat phi|mat tien|the sinh vien|the hoc sinh|the hssv|quen the|ticket|cost|fee|price|free|discount)\b/.test(norm);
+    const personaDiscountSignals = ['hoc sinh', 'sinh vien', 'sv', 'uu dai', 'giam gia', 'mien phi', 'discount', 've tham quan'];
+    const hasFeeOrTicketWord = /\b(gia ve|mua ve|ve vao|tien ve|giam gia|giam ve|duoc giam|giam 50|mien phi|uu dai|bao nhieu tien|bao nhieu|mat phi|mat tien|the sinh vien|the hoc sinh|the hssv|quen the|ticket|cost|fee|price|free|discount)\b/.test(norm);
     const matchesTicket = strongTicketSignals.some(s => hasPhrase(norm, s)) ||
                           (personaDiscountSignals.some(s => hasPhrase(norm, s)) && hasFeeOrTicketWord);
-    if (matchesTicket && !hasPhrase(norm, 'thoi tiet') && !hasPhrase(norm, 'may bay') && !hasPhrase(norm, 'taxi') && !hasPhrase(norm, 'airport')) {
+    if (!isHist && matchesTicket && !hasPhrase(norm, 'thoi tiet') && !hasPhrase(norm, 'may bay') && !hasPhrase(norm, 'taxi') && !hasPhrase(norm, 'airport')) {
       return {
         intent: INTENTS.TICKET_INFORMATION,
         subIntent: null,
@@ -916,7 +954,7 @@ class IntentClassifier {
       'dia chi hien nay', 'dia chi o dau', 'dia chi nha tu', 'so dien thoai', 'hotline',
       'website', 'email', 'trang web', 'so 1 pho hoa lo', 'thong tin lien he', 'dia chi cu the'
     ];
-    if (contactSignals.some(s => norm.includes(s)) && !norm.includes('lang phu khanh') && !norm.includes('xay tren dat')) {
+    if (!isHist && contactSignals.some(s => hasPhrase(norm, s)) && !norm.includes('lang phu khanh') && !norm.includes('xay tren dat')) {
       return {
         intent: INTENTS.CONTACT_INFORMATION,
         subIntent: null,
@@ -931,7 +969,7 @@ class IntentClassifier {
     const audioGuideSignals = [
       'audioguide', 'thuyet minh tu dong', 'tai nghe thuyet minh', 'may thuyet minh', '35 cau chuyen'
     ];
-    if (audioGuideSignals.some(s => norm.includes(s))) {
+    if (!isHist && audioGuideSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.AUDIO_GUIDE_SUPPORT,
         subIntent: null,
@@ -947,7 +985,7 @@ class IntentClassifier {
       'tour dem', 'dem thieng lieng', 'sang ngoi tinh than viet', 'song nhu nhung doa hoa',
       'lua thanh xuan', 'trung bay chuyen de', 'tam son chi thep', 'but thep long son'
     ];
-    if (tourInfoSignals.some(s => norm.includes(s))) {
+    if (!isHist && tourInfoSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.TOUR_INFORMATION,
         subIntent: null,
@@ -973,7 +1011,7 @@ class IntentClassifier {
     const asksPlanningWithFamily = hasFamilyOrGroupContext &&
       (!subject || /\b(lo trinh|nen xem|nen di|goi y|tu van|bao lau|phut|tieng|sap xep|itinerary|route|plan)\b/.test(norm)) &&
       !/\b(trong dong|dong son|cay bang|dat hong|dai hong chung|bao kiem|may chem|cachot|cong ngam|minh khai|hoang van thu|nguyen thai hoc|mccain|pho|dep lop|rau muong)\b/.test(norm);
-    if (!isHistoricalDuration && (recommendationSignals.some(s => norm.includes(s)) || asksPlanningWithFamily)) {
+    if (!isHist && !isHistoricalDuration && (recommendationSignals.some(s => hasPhrase(norm, s)) || asksPlanningWithFamily)) {
       return {
         intent: INTENTS.TOUR_RECOMMENDATION,
         subIntent: null,
@@ -992,7 +1030,7 @@ class IntentClassifier {
       'mua qua', 'chup anh', 'quay phim', 'co duoc chup anh khong', 'wifi',
       'flycam', 'may quay', 'dang huong', 'hoat dong trai nghiem'
     ];
-    if (facilitySignals.some(s => norm.includes(s))) {
+    if (!isHist && facilitySignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.FACILITY_INFORMATION,
         subIntent: null,
@@ -1009,7 +1047,7 @@ class IntentClassifier {
       'o day la dau', 'cho nay la gi', 'khu nay la gi', 'toi dang lam gi', 'minh dang o dau',
       'minh dang dung dau', 'cho nay co gi', 'o day co gi'
     ];
-    if (orientationSignals.some(s => norm.includes(s))) {
+    if (!isHist && orientationSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.VISIT_GUIDANCE,
         subIntent: 'LOCATION_ORIENTATION',
@@ -1026,7 +1064,7 @@ class IntentClassifier {
       'di nhu the nao', 'loi di vao', 'loi di ra', 'huong di nao', 'tim khu vuc', 'cach quan sat',
       'quy dinh tham quan', 'trang phuc tham quan', 'trang phuc', 'mac do gi'
     ];
-    if (guidanceSignals.some(s => hasPhrase(norm, s))) {
+    if (!isHist && guidanceSignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.VISIT_GUIDANCE,
         subIntent: null,
@@ -1091,7 +1129,7 @@ class IntentClassifier {
     }
 
     // 20. Phân luồng cuối: Không mặc định đẩy câu ngoài miền vào HISTORICAL_FACT
-    if (!semRoute.hasHoaLo && !subject && !context?.lastTopic) {
+    if (!semRoute.hasHoaLo && !isHist && !subject && !context?.lastTopic) {
       return {
         intent: INTENTS.OUT_OF_SCOPE,
         subIntent: 'OOD_UNMATCHED_DOMAIN',

@@ -53,7 +53,11 @@ const CONCEPT_CLUSTERS = {
   E_SWORD: ['bao kiem', 'kiem hoang gia', 'luong long trieu nhat', 'thanh kiem', 'cay kiem', 'royal sword'],
   E_WALL: ['tuong bao', 'tuong nha tu', 'buc tuong', 'tuong da', 'manh thuy tinh', 'prison wall'],
   E_DEATHROW: ['xa lim', 'khu d', 'hoang van thu', 'ao len', 'death row'],
-  E_MAISON: ['maison centrale', 'phu khanh', 'cong chinh', 'lang gom', 'kien truc']
+  E_MAISON: ['maison centrale', 'phu khanh', 'cong chinh', 'lang gom', 'kien truc'],
+  E_PRESS: ['bao bi mat', 'duoc dua duong', 'suoi reo', 'truong hoc cach mang', 'truong chinh', 'tho ca', 'viet bao'],
+  E_WOMEN: ['trai giam nu', 'trai nu', 'nu tu', 'tu nhi', 'minh khai', 'quang thai', 'pham thi van', 'hoang ngan'],
+  E_MEMORIAL: ['dai tuong niem', 'phu dieu', 'le lien', 'dinh dong', 'lu huong', 'so luu but'],
+  E_CONSERVATION: ['sa ban', 'tuong sap', 'composite', 'bao ton', 'phuc dung', 'quay luu niem', 'tui tote']
 };
 
 const ENTITY_KEYS = Object.keys(CONCEPT_CLUSTERS).filter(k => k.startsWith('E_'));
@@ -104,10 +108,10 @@ function buildSparseVector(text, idfMap = null, avgDocLen = 12) {
     }
   }
 
-  // 3. Semantic Concept Dimensions (cầu nối đồng nghĩa khác từ nhưng cùng ý — trọng số cao!)
+  // 3. Semantic Concept Dimensions (cầu nối đồng nghĩa khác từ nhưng cùng ý — trọng số cân bằng giữa thực thể & khía cạnh!)
   const concepts = extractConceptSet(normSpaced);
   for (const c of concepts) {
-    addWeight('c:' + c, c.startsWith('E_') ? 4.8 : 3.8);
+    addWeight('c:' + c, c.startsWith('E_') ? 4.2 : 3.6);
   }
 
   // 4. Character 3-grams cho các từ >= 4 ký tự (chịu lỗi chính tả & không dấu, giữ trọng số nhẹ tránh loãng cosine)

@@ -13,6 +13,7 @@ const customerCareScenarios = require('./customer_care_scenarios');
 const relevanceGate = require('./relevance_gate');
 const { knowledgeBase, HISTORICAL_EXHIBITS } = require('./knowledge_base');
 const { getGlossaryPromptHint, postPolishForeignTerms } = require('./heritage_glossary');
+const { analyzeDiscourseMode, hasVietnameseDiacritics, hasRawPhrase } = require('./semantic_router');
 
 class IntelligentAnswerComposer {
   constructor() {
@@ -38,8 +39,11 @@ class IntelligentAnswerComposer {
     groqCaller = null
   }) {
     const normQ = ' ' + nlp.normalize(question) + ' ';
+    const qWordCount = normQ.trim() ? normQ.trim().split(' ').filter(Boolean).length : 0;
+    const discourse = analyzeDiscourseMode(question, normQ);
     const activeUserProfile = userProfile || session?.state?.userProfile || {};
     if (!retrievedData) retrievedData = {};
+    if (!Array.isArray(retrievedData.facts)) retrievedData.facts = [];
     retrievedData.question = question;
 
     // =========================================================================
@@ -81,25 +85,45 @@ class IntelligentAnswerComposer {
     }
 
     // 0.3. Xử lý câu hỏi bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (FACT_CORRECTIONS & CORE_TRAPS)
-    const trapReply = this.checkFactualTraps(normQ, language, session);
+    // Nguyên lý 3 (Evidence Feeding): Nếu câu hỏi phân tích sâu dài (> 24 từ) và Groq online,
+    // các rule giải thích không phải bẫy khẩn cấp/cấm chui/tâm linh sẽ được nạp vào CONTEXT cho RAG thay vì cắt ngang!
+    const trapReply = this.checkFactualTraps(normQ, language, session, question);
     if (trapReply) {
-      return this.formatResponse(trapReply, intent, retrievedData);
+      const hardTrapTypes = new Set(['FACTUAL_TRAP_CORRECTED', 'POLICY_PROHIBITION', 'STATUS_CONFIRMATION', 'TRANSPARENT_CONFLICT_RESOLUTION', 'AUTHENTIC_ABSTENTION']);
+      const isLongAnalyticalNonHardTrap = qWordCount > 24 && Boolean(groqCaller) && !hardTrapTypes.has(trapReply.responseType);
+      if (isLongAnalyticalNonHardTrap) {
+        retrievedData.facts.push(trapReply.reply);
+      } else {
+        return this.formatResponse(trapReply, intent, retrievedData);
+      }
     }
 
-    // 0.35. Kiểm tra kho Fact-Check Traps ưu tiên cao (Hoàng Văn Thụ, Phi công Mỹ Cachot, 1945 vs 1951, 500kg, 1954 Mỹ xây, TP.HCM, nghỉ trưa, trẻ em 10 tuổi...)
+    // 0.35. Nguyên lý 3 (RAG-First + Evidence Feeding):
+    // Chỉ cho phép cắt ngang tức thời với FACT_CHECK_TRAP / TOUR_DEM / SERVICE / CSKH / REGULATION / EXHIBIT_BLE thực thụ;
+    // KHÔNG BAO GIỜ để các bài tổng quan category === 'HISTORICAL' cắt ngang chặn trước Universal Grounded RAG!
     if (intent !== 'OUT_OF_SCOPE' && intent !== 'EMERGENCY_SUPPORT' && intent !== 'CLARIFICATION') {
-      const highPriorityExp = knowledgeBase.findExpandedMatch(question, language, 94);
+      const highPriorityExp = knowledgeBase.findExpandedMatch(question, language, 94, {
+        discourse,
+        excludeCategories: ['HISTORICAL']
+      });
       if (highPriorityExp) {
-        return this.formatResponse({
-          reply: highPriorityExp.reply,
-          style: 'CUSTOMER_CARE',
-          confidence: 'HIGH',
-          confidenceScore: 0.96,
-          sources: [`EXPANDED_VERIFIED_${highPriorityExp.id}`],
-          claims: [highPriorityExp.category],
-          responseType: 'VERIFIED_EXPANDED_FACT',
-          requiresHuman: false
-        }, intent, retrievedData);
+        const isPolarCheck = /\b(dung khong|phai khong|co phai|co that|nghe don|500kg|500 kg|10 met|10m|my xay|1954|tphcm|tp hcm|sai gon)\b/.test(normQ);
+        const isLongAnalyticalTrap = highPriorityExp.category === 'FACT_CHECK_TRAP' && qWordCount > 24 && !isPolarCheck && Boolean(groqCaller);
+        if (isLongAnalyticalTrap) {
+          // Câu hỏi phân tích sâu dài: nạp sự thật chuẩn vào ngữ liệu để RAG tổng hợp đúng trọng tâm câu hỏi!
+          retrievedData.facts.push(highPriorityExp.reply);
+        } else {
+          return this.formatResponse({
+            reply: highPriorityExp.reply,
+            style: 'CUSTOMER_CARE',
+            confidence: 'HIGH',
+            confidenceScore: 0.96,
+            sources: [`EXPANDED_VERIFIED_${highPriorityExp.id}`],
+            claims: [highPriorityExp.category],
+            responseType: 'VERIFIED_EXPANDED_FACT',
+            requiresHuman: false
+          }, intent, retrievedData);
+        }
       }
     }
 
@@ -683,9 +707,11 @@ class IntelligentAnswerComposer {
     // =========================================================================
     // 1. KỊCH BẢN CHĂM SÓC KHÁCH HÀNG, CÁ NHÂN HÓA & TRỢ NĂNG (CUSTOMER CARE & PERSONALIZATION V6.2)
     // =========================================================================
-    // 1.0. Cá nhân hóa theo nhu cầu thực tế (Personalization Engine V6.2)
+    // 1.0. Cá nhân hóa theo nhu cầu thực tế — Nguyên lý 2: CHỈ kích hoạt cho ý định du khách hiện tại, KHÔNG cướp luồng lịch sử!
+    const isPlanningOrAccessIntent = !discourse.isHistoricalDiscourse &&
+      ['TOUR_RECOMMENDATION', 'VISIT_GUIDANCE', 'ACCESSIBILITY_SUPPORT'].includes(intent);
     // Trường hợp 1: Khách chỉ có ít thời gian (15-20 phút)
-    if ((activeUserProfile.timeConstraint != null && activeUserProfile.timeConstraint <= 20) || normQ.includes('20 phut') || normQ.includes('15 phut') || normQ.includes('chi co 20')) {
+    if (isPlanningOrAccessIntent && ((activeUserProfile.timeConstraint != null && activeUserProfile.timeConstraint <= 20) || normQ.includes('20 phut') || normQ.includes('15 phut') || normQ.includes('chi co 20'))) {
       const reply = language === 'en'
         ? 'For a quick 20-minute visit, here is the recommended express highlights route: Main Gate Maison Centrale ➡️ Ancient Banyan Tree courtyard ➡️ Dark Cell Cachot ➡️ The Guillotine ➡️ Escape Sewer exit ➡️ Memorial Monument. This concise path allows you to experience the core heritage without feeling rushed.'
         : 'Với thời gian 20 phút, mình gợi ý lộ trình tham quan nhanh các điểm di tích quan trọng nhất: Cổng chính Maison Centrale ➡️ Cây bàng cổ thụ tại sân trại ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cửa cống ngầm vượt ngục ➡️ Đài tưởng niệm để dâng hương tri ân. Lộ trình này giúp bạn cảm nhận được trọn vẹn tinh thần bất khuất của các chiến sĩ cách mạng mà vẫn đảm bảo kịp thời gian.';
@@ -702,7 +728,7 @@ class IntelligentAnswerComposer {
     }
 
     // Trường hợp 2: Khách đi cùng người cao tuổi / xe lăn
-    if (!retrievedData?.groundTruthMatch && (activeUserProfile.hasElderly || activeUserProfile.hasWheelchair || normQ.includes(' me lon tuoi ') || normQ.includes(' nguoi cao tuoi ') || normQ.includes(' ong ba ') || normQ.includes(' ong ngoai ')) && (normQ.includes(' di cung ') || normQ.includes(' dan theo ') || normQ.includes(' ho tro xe lan ') || normQ.includes(' xe lan '))) {
+    if (isPlanningOrAccessIntent && !retrievedData?.groundTruthMatch && (activeUserProfile.hasElderly || activeUserProfile.hasWheelchair || normQ.includes(' me lon tuoi ') || normQ.includes(' nguoi cao tuoi ') || normQ.includes(' ong ba ') || normQ.includes(' ong ngoai ')) && (normQ.includes(' di cung ') || normQ.includes(' dan theo ') || normQ.includes(' ho tro xe lan ') || normQ.includes(' xe lan '))) {
       const reply = language === 'en'
         ? 'For visitors accompanied by elderly family members or wheelchair users, Hoa Lo provides gentle ramps across major paths and shaded resting benches under the ancient banyan tree. We recommend prioritizing flat areas (Main Gate ➡️ Banyan Courtyard ➡️ Memorial Monument) and avoiding steep steps. Relic security staff are always ready to assist with walking or pushing wheelchairs.'
         : 'Đối với chuyến tham quan cùng người cao tuổi hoặc người dùng xe lăn, Di tích Hỏa Lò có bố trí dốc thoải ở các khu vực chính và ghế nghỉ chân dưới bóng mát cây bàng cổ thụ. Để bảo đảm sức khỏe cho bác, bạn nên ưu tiên lộ trình bằng phẳng: Cổng chính ➡️ Sân cây bàng ➡️ Đài tưởng niệm; hạn chế di chuyển vào các bậc tam cấp cao. Đội ngũ nhân viên bảo vệ luôn sẵn sàng hỗ trợ đẩy xe lăn hoặc dìu bác khi bạn cần giúp đỡ nhé.';
@@ -759,31 +785,40 @@ class IntelligentAnswerComposer {
     }
 
     // =========================================================================
-    // 2. KHẢ NĂNG THÍCH ỨNG THEO KHÍA CẠNH & Ý ĐỊNH (ADAPTIVE ASPECT GENERATION)
+    // 2. NGUYÊN LÝ 3 (EVIDENCE FEEDING): Đưa tri thức theo khía cạnh làm bằng chứng cho RAG thay vì cắt ngang!
+    // Chỉ trả trực tiếp ở chế độ offline khi câu hỏi ngắn/tổng quát và kho 3.128 vector không có bản khớp sát hơn.
     // =========================================================================
     if (!retrievedData?.groundTruthMatch && subject && aspect && aspect !== 'GENERAL') {
       const aspectAnswer = this.composeAspectSpecificAnswer(subject, aspect, language);
       if (aspectAnswer) {
-        return this.formatResponse({
-          reply: aspectAnswer.reply,
-          style: aspectAnswer.style,
-          confidence: 'HIGH',
-          confidenceScore: 0.96,
-          sources: [aspectAnswer.sourceId],
-          claims: aspectAnswer.claims,
-          responseType: 'ADAPTIVE_ASPECT_ANSWER',
-          requiresHuman: false
-        }, intent, retrievedData);
+        if (groqCaller || qWordCount > 13) {
+          retrievedData.facts.push(aspectAnswer.reply);
+        } else {
+          const closerVec = knowledgeBase.findSemanticLocalMatch(question, {
+            language: language === 'en' ? 'en' : 'vi',
+            stationCode: artifactContext?.code || null,
+            minScore: 0.54
+          });
+          if (!closerVec) {
+            return this.formatResponse({
+              reply: aspectAnswer.reply,
+              style: aspectAnswer.style,
+              confidence: 'HIGH',
+              confidenceScore: 0.96,
+              sources: [aspectAnswer.sourceId],
+              claims: aspectAnswer.claims,
+              responseType: 'ADAPTIVE_ASPECT_ANSWER',
+              requiresHuman: false
+            }, intent, retrievedData);
+          }
+        }
       }
     }
 
     // =========================================================================
-    // 3. KHÁI QUÁT HÓA DỮ LIỆU TỪ GROUND TRUTH / HỒ SƠ LỊCH SỬ (FACTUAL SYNTHESIS)
+    // 3. KIẾN TRÚC RAG-FIRST + UNIFIED SEMANTIC FALLBACK (NGUYÊN LÝ 3 & 4)
     // =========================================================================
-    // 3.0. Nếu câu hỏi KHÔNG khớp nguyên văn 100% (EXACT) và có Groq LLM online:
-    //      Chạy UNIVERSAL TOP-K GROUNDED RAG trước để trả lời ĐÚNG TRỌNG TÂM 1000+ kiểu hỏi khác nhau
-    //      (chất liệu, kích thước, ý nghĩa, so sánh, nguyên nhân, diễn đạt đời thường, tiếng Anh/Pháp/Nhật/Hàn/Trung...)
-    //      thay vì xả 1 đoạn văn mẫu tĩnh lệch câu hỏi!
+    // 3.0. Chạy UNIVERSAL TOP-K GROUNDED RAG trước cho mọi câu không khớp EXACT 100% khi Groq online!
     const isExactGroundTruth = retrievedData?.groundTruthMatch?.type === 'EXACT';
     if (!isExactGroundTruth && groqCaller) {
       const preRagGate = relevanceGate.verifyCandidate(question, '', { intent, sourceType: 'PRE_LLM', language });
@@ -809,6 +844,47 @@ class IntelligentAnswerComposer {
         allowOutOfScopeRefusal: false
       });
       if (ragAnswer) return ragAnswer;
+    }
+
+    // 3.05. NGUYÊN LÝ 4 (UNIFIED SEMANTIC VECTOR FIRST KHI GROQ 429 / COOLDOWN / OFFLINE):
+    // Khi không phải EXACT match và Groq bận/offline -> ưu tiên tra kho 3.128 vector ngữ nghĩa (dataset_hoa_lo_vi + custom/ + facts100 + GT500)
+    // TRƯỚC khi rơi về các đoạn văn mẫu tổng quan 1 dòng ở Bước 3.1 / 4.0 / 5.5!
+    // Nếu có GroundTruth SEMANTIC_FACT điểm cao (>=0.95 trên câu ngắn <=18 từ như lịch tour đêm / công dụng cây bàng),
+    // chỉ để vector đè khi vector khớp thực sự sát (>=0.78)!
+    const hasHighConfShortFact = Boolean(retrievedData?.groundTruthMatch && retrievedData.groundTruthMatch.score >= 0.95 && qWordCount <= 18);
+    if (!isExactGroundTruth) {
+      const unifiedSemHit = knowledgeBase.findSemanticLocalMatch(question, {
+        language: language === 'en' ? 'en' : 'vi',
+        stationCode: artifactContext?.code || null,
+        minScore: hasHighConfShortFact ? 0.78 : (qWordCount >= 12 ? 0.42 : 0.50)
+      });
+      if (unifiedSemHit && unifiedSemHit.doc?.answer) {
+        const semGate = relevanceGate.verifyCandidate(question, unifiedSemHit.doc.answer, {
+          intent,
+          sourceType: 'LOCAL_SEMANTIC_VECTOR',
+          language
+        });
+        if (!semGate.passed && semGate.overrideResponse) {
+          return this.formatResponse({
+            ...semGate.overrideResponse,
+            style: 'HISTORICAL_EXPLANATION',
+            claims: [semGate.reason],
+            requiresHuman: false
+          }, intent, retrievedData);
+        }
+        if (semGate.passed) {
+          return this.formatResponse({
+            reply: unifiedSemHit.doc.answer,
+            style: 'DEEP_EXPLANATION',
+            confidence: unifiedSemHit.score >= 0.65 ? 'HIGH' : 'MEDIUM',
+            confidenceScore: Number(Math.min(0.95, unifiedSemHit.score + 0.12).toFixed(2)),
+            sources: [`LOCAL_SEMANTIC_VECTOR_${unifiedSemHit.doc.id} (sim=${unifiedSemHit.score.toFixed(2)})`],
+            claims: [unifiedSemHit.doc.zoneName || unifiedSemHit.doc.topic || 'Truy xuất ngữ nghĩa thống nhất (0 Groq)'],
+            responseType: 'LOCAL_SEMANTIC_VECTOR_HIT',
+            requiresHuman: false
+          }, intent, retrievedData);
+        }
+      }
     }
 
     if (retrievedData?.groundTruthMatch) {
@@ -1202,10 +1278,10 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       subject,
       intent,
       artifactContext,
-      topK: 4
+      topK: 5
     });
 
-    // Nén ngữ cảnh gọn <= 1150 ký tự để đủ dữ kiện chuyên sâu mà vẫn tiết kiệm TPM Groq!
+    // Nén ngữ cảnh gọn <= 1650 ký tự để giữ trọn Top-3 Vector chuyên sâu + Hồ sơ nền mà vẫn tiết kiệm TPM Groq!
     const extraFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
     const mergedSnippets = [...topK.snippets];
     for (const f of extraFacts.slice(0, 2)) {
@@ -1218,9 +1294,9 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
     }
     let compactContext = '';
     for (const s of mergedSnippets.slice(0, 6)) {
-      const cap = s.startsWith('[Hồ sơ ') || s.startsWith('[Tài liệu mới') ? 640 : 400;
+      const cap = s.startsWith('[Hồ sơ ') || s.startsWith('[Tài liệu mới') || s.startsWith('[Tư liệu ') ? 640 : 420;
       const piece = s.length > cap ? s.slice(0, cap) + '...' : s;
-      if (compactContext.length + piece.length > 1380 && compactContext.length > 320) break;
+      if (compactContext.length + piece.length > 1650 && compactContext.length > 400) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
@@ -1412,7 +1488,7 @@ ${compactContext}`;
   /**
    * Kiểm tra và xử lý toàn diện các bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (Core Factual Traps V6.2)
    */
-  checkFactualTraps(normQ, language = 'vi', session = null) {
+  checkFactualTraps(normQ, language = 'vi', session = null, rawQuestion = '') {
     // 0. Câu hỏi tâm linh / có ma không tại di tích (VI + EN)
     if (/\b(co ma khong|nhieu ma khong|bi am khong|ma am|hon ma|haunted|ghosts|ghost)\b/i.test(normQ)) {
       return {
@@ -1427,8 +1503,8 @@ ${compactContext}`;
       };
     }
 
-    // 1. Bẫy phi công Mỹ có bị tử hình không
-    if ((normQ.includes('phi cong') || normQ.includes('tu binh my')) && (normQ.includes('tu hinh') || normQ.includes('xu ban') || normQ.includes('bi giet') || normQ.includes('bi chem') || normQ.includes('chet trong tu') || normQ.includes('co bi'))) {
+    // 1. Bẫy phi công Mỹ có bị tử hình không (CHỈ khớp tín hiệu tử hình/hành quyết — KHÔNG bắt nhầm cụm "có bị" chung chung!)
+    if ((normQ.includes('phi cong') || normQ.includes('tu binh my')) && (normQ.includes('tu hinh') || normQ.includes('xu ban') || normQ.includes('bi giet') || normQ.includes('bi chem') || normQ.includes('chet trong tu') || normQ.includes('hanh quyet'))) {
       return {
         reply: 'Dạ hoàn toàn không có phi công hay tù binh Mỹ nào bị tử hình tại Hỏa Lò bạn nhé. Trong giai đoạn 1964–1973, Chính phủ Việt Nam đã thực hiện nhất quán chính sách nhân đạo và khoan hồng: các tù binh phi công Mỹ được đảm bảo điều kiện ăn ở, chữa trị y tế khi bị thương, được nhận thư từ bưu phẩm gia đình, và toàn bộ đã được trao trả về nước an toàn sau Hiệp định Paris năm 1973.',
         confidence: 'HIGH',
@@ -1441,12 +1517,14 @@ ${compactContext}`;
       };
     }
 
-    // 2. Đại hồng chung tại Đài tưởng niệm (CHỈ kích hoạt khi hỏi đích danh năm đúc của chuông Đài tưởng niệm, KHÔNG chặn hiện vật Mã 003 Đạt Hồng!)
+    // 2. Đại hồng chung tại Đài tưởng niệm (bảo toàn dấu "chuông" ≠ "chương trình", KHÔNG chặn hiện vật Mã 003 Đạt Hồng!)
     const isDatHongBeaconQuery = normQ.includes('dat hong') || normQ.includes('ma 003') || normQ.includes('so 003') || normQ.includes('co do') ||
                                  normQ.includes('trieu nguyen') || normQ.includes('trieu nao') || normQ.includes('may tan') ||
                                  normQ.includes('nang bao nhieu') || normQ.includes('hoa van') || normQ.includes('bat quai') || normQ.includes('rong may');
-    const asksExactBellCastYear = normQ.includes('duc vao') || normQ.includes('duc nam') || normQ.includes('nam nao') || normQ.includes('nam duc') || normQ.includes('dai tuong niem');
-    if (!isDatHongBeaconQuery && (normQ.includes('dai hong chung') || normQ.includes('chuong')) && asksExactBellCastYear) {
+    const asksExactBellCastYear = normQ.includes('duc vao') || normQ.includes('duc nam') || normQ.includes('nam nao') || normQ.includes('nam duc');
+    const mentionsBellAccented = normQ.includes('dai hong chung') || normQ.includes('qua chuong') || normQ.includes('chuong dong') ||
+      (hasVietnameseDiacritics(rawQuestion) ? hasRawPhrase(rawQuestion, 'chuông') : (!normQ.includes('chuong trinh') && normQ.includes(' chuong ')));
+    if (!isDatHongBeaconQuery && mentionsBellAccented && asksExactBellCastYear) {
       return {
         reply: 'Mình xin thông tin thật với bạn là hiện các nguồn tài liệu lưu trữ chính thức của Di tích Nhà tù Hỏa Lò chưa ghi nhận năm đúc chính xác của quả Đại hồng chung tại Đài tưởng niệm; tư liệu chỉ ghi nhận quả chuông đồng lớn được Ban Quản lý Di tích trang trọng đặt tại không gian Đài tưởng niệm để du khách thành kính thỉnh chuông và dâng hương tri ân các anh hùng liệt sĩ.',
         confidence: 'HIGH',
@@ -1529,8 +1607,11 @@ ${compactContext}`;
       };
     }
 
-    // 8. Tường bao nhà tù chính xác cao 4 mét hay 5 mét
-    if (normQ.includes('tuong bao') && (normQ.includes('4 met') || normQ.includes('4m') || normQ.includes('5 met') || normQ.includes('5m') || normQ.includes('hay 5') || normQ.includes('hay 4'))) {
+    // 8. Tường bao nhà tù chính xác cao 4 mét hay 5 mét (CHỈ kích hoạt khi thực sự hỏi so sánh/xác minh chiều cao 4m vs 5m!)
+    const asksWallHeightConflict = normQ.includes('hay 5') || normQ.includes('hay 4') || normQ.includes('chinh xac cao') ||
+      (normQ.includes('cao bao nhieu') && normQ.includes('tuong bao')) ||
+      ((normQ.includes('4 met') || normQ.includes('4m')) && (normQ.includes('5 met') || normQ.includes('5m')));
+    if (normQ.includes('tuong bao') && asksWallHeightConflict) {
       return {
         reply: 'Về chiều cao tường bao Nhà tù Hỏa Lò, các nguồn tư liệu chính thức công khai hiện có sự khác nhau: trên trang thông tin chính thức của di tích (hoalo.vn) mô tả tường bao đá kiên cố cao khoảng 5 mét; trong khi hồ sơ tư liệu của Cục Di sản văn hóa ghi nhận tường cao khoảng 4 mét. Do các nguồn lưu trữ chưa thống nhất một con số tuyệt đối, di tích luôn nêu rõ cả hai số liệu này để du khách tham khảo.',
         confidence: 'HIGH',

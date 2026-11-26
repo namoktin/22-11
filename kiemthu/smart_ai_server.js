@@ -552,7 +552,7 @@ class ProductionSmartTourGuideServer {
       const learnedHit = autoLearningStore.findSemanticLearnedMatch(coreQuery, {
         language,
         stationCode: artifactContext?.code || null,
-        minScore: 0.56
+        minScore: 0.78
       });
       if (learnedHit && learnedHit.record?.answer) {
         const baseAns = learnedHit.record.answer;

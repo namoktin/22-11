@@ -135,12 +135,14 @@ class NlpProcessor {
     }
 
     // Lớp 5: Đóng vai nhân vật tạo nội dung tưởng tượng / Bỏ qua quy tắc
+    // Lưu ý nguyên lý: KHÔNG bắt nhầm cụm tiếng Việt học thuật "đóng vai trò" (plays a role) thành lệnh giả mạo "đóng vai"!
     const injectionPatterns = [
       'bo qua huong dan', 'bo qua quy tac',
-      'dong vai', 'tro thanh mot ai khac', 'khong can tuan thu',
+      'tro thanh mot ai khac', 'khong can tuan thu',
       'noi rang hoa lo khong co that', 'noi rang may chem khong ton tai', 'bip bom'
     ];
     if (injectionPatterns.some(p => norm.includes(' ' + p + ' '))) return true;
+    if (/\bdong vai\b(?!\s+tro\b)/.test(norm)) return true;
 
     if (/\bbo qua\b/.test(norm) && !norm.includes('bo quan') && (norm.includes('quy tac') || norm.includes('huong dan') || norm.includes('chi dan') || norm.includes('cau lenh') || norm.includes('lenh'))) {
       return true;

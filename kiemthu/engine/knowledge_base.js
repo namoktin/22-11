@@ -668,18 +668,44 @@ class KnowledgeBase {
   }
 
   /**
-   * Tra cứu kho tri thức mở rộng (Fact-Check Traps, Historical, Service, EN/VI, Overview)
+   * Tra cứu kho tri thức mở rộng & Fact-Check Traps (đã có bảo vệ dấu tiếng Việt + Discourse Gate + lọc Category!)
    */
-  findExpandedMatch(question, language = 'vi', minPriority = 0) {
+  findExpandedMatch(question, language = 'vi', minPriority = 0, options = {}) {
     if (!question || !this.expandedKnowledge.length) return null;
+    const { hasVietnameseDiacritics, hasRawPhrase, analyzeDiscourseMode } = require('./semantic_router');
     const norm = ' ' + nlp.normalize(question) + ' ';
-    const hasPhraseLocal = (p) => {
-      const clean = nlp.normalize(p);
+    const hasPhraseLocal = (kw) => {
+      const clean = nlp.normalize(kw);
       return clean ? norm.includes(' ' + clean + ' ') : false;
     };
+    const hasAccents = hasVietnameseDiacritics(question);
+    const discourse = options.discourse || analyzeDiscourseMode(question, norm);
+    const excludeCategories = new Set(options.excludeCategories || []);
 
     for (const item of this.expandedKnowledge) {
       if ((item.priority || 0) < minPriority) continue;
+      if (excludeCategories.size > 0 && excludeCategories.has(item.category)) continue;
+
+      // Nguyên lý 2: Không để các mẫu dịch vụ / nội quy / giờ mở cửa cướp luồng câu hỏi diễn ngôn lịch sử!
+      const isOpsItem = ['SERVICE', 'CSKH', 'REGULATION', 'EN_SERVICE', 'EMPATHY'].includes(item.category) ||
+        item.id === 'EXP_TRAP_LUNCH_CLOSED' || item.id === 'EXP_TRAP_CHILD_TICKET';
+      if (isOpsItem && discourse.isHistoricalDiscourse) continue;
+
+      // Nguyên lý 1: Bảo vệ đồng âm "đóng cửa" ≠ "động của" trong EXP_TRAP_LUNCH_CLOSED và "trống đồng" ≠ "trong dòng" trong EXP_BLE_001_TRONG_DONG!
+      const { matchAccentConsistentPhrase } = require('./semantic_router');
+      if (item.id === 'EXP_TRAP_LUNCH_CLOSED') {
+        const hasRealHoursPhrase = ['đóng cửa', 'mở cửa', 'nghỉ trưa', 'xuyên trưa', 'mấy giờ', 'mấy h', 'trưa', 'lunch', 'open'].some(p => matchAccentConsistentPhrase(question, p));
+        if (!hasRealHoursPhrase) continue;
+      }
+      if (item.id === 'EXP_BLE_001_TRONG_DONG') {
+        const hasRealDrumPhrase = ['trống đồng', 'đông sơn', 'chim lạc', 'ngôi sao 14 cánh', 'bronze drum', 'dong son drum', 'mã 001', 'số 001'].some(p => matchAccentConsistentPhrase(question, p));
+        if (!hasRealDrumPhrase) continue;
+      }
+
+      // Bảo vệ so sánh hiện vật (VD: so sánh máy chém Hỏa Lò với máy chém ở TP.HCM không phải hiểu nhầm địa chỉ Hỏa Lò!)
+      if (item.id === 'EXP_TRAP_ADDR_HCM' && (hasPhraseLocal('so sanh') || hasPhraseLocal('may chem') || hasPhraseLocal('bao tang'))) {
+        continue;
+      }
 
       const allGroups = item.mustMatchAll || [];
       const allOk = allGroups.every(group =>
@@ -1090,29 +1116,32 @@ class KnowledgeBase {
         return { item, score: 0.99, type: 'EXACT', isFact100: true, requiresConflictCheck: unwrap.requiresConflictCheck };
       }
 
-      // 1.25. Entity & Key Phrase Guided Retrieval
+      // 1.25. Entity & Key Phrase Guided Retrieval (chỉ áp dụng cho câu hỏi trực diện/ngắn, KHÔNG đè câu hỏi phân tích sâu dài!)
       const qNormSpaced = ' ' + normCore + ' ';
-      if (qNormSpaced.includes(' nguyen duc canh ')) {
+      const coreWordCount = normCore ? normCore.split(' ').filter(Boolean).length : 0;
+      if (qNormSpaced.includes(' nguyen duc canh ') && coreWordCount <= 16) {
         const item = this.facts100BySeed.get('F037') || this.facts100BySeed.get('F094');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' nguyen hoang ton ') || (qNormSpaced.includes(' chem ') && (qNormSpaced.includes(' cong chinh ') || qNormSpaced.includes(' truoc cong ')))) {
+      if (qNormSpaced.includes(' nguyen hoang ton ') || (coreWordCount <= 16 && qNormSpaced.includes(' chem ') && (qNormSpaced.includes(' cong chinh ') || qNormSpaced.includes(' truoc cong ')))) {
         const item = this.facts100BySeed.get('F036');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' tau thuoc ') || qNormSpaced.includes(' tau hut thuoc ')) {
+      if ((qNormSpaced.includes(' tau thuoc ') || qNormSpaced.includes(' tau hut thuoc ')) && coreWordCount <= 14) {
         const item = this.facts100BySeed.get('F040');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' tran tu binh ') && (qNormSpaced.includes(' vuot nguc ') || qNormSpaced.includes(' 1945 ') || qNormSpaced.includes(' cach nao '))) {
+      if (qNormSpaced.includes(' tran tu binh ') && coreWordCount <= 16 && (qNormSpaced.includes(' vuot nguc ') || qNormSpaced.includes(' 1945 ') || qNormSpaced.includes(' cach nao '))) {
         const item = this.facts100BySeed.get('F050') || this.facts100BySeed.get('F051');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' may chem ') && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
+      if (qNormSpaced.includes(' may chem ') && coreWordCount <= 14 && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
         const item = this.facts100BySeed.get('F033');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' cachot ') || qNormSpaced.includes(' nguc toi ')) {
+      // Chỉ trả lời tóm tắt F023 cho câu hỏi định nghĩa ngắn về Cachot (tránh lặp 24 lần cho mọi câu hỏi chuyên sâu về Cachot!)
+      if ((qNormSpaced.includes(' cachot ') || qNormSpaced.includes(' nguc toi ')) &&
+          (coreWordCount <= 10 || qNormSpaced.includes(' cachot la gi ') || qNormSpaced.includes(' nguc toi la gi ') || qNormSpaced.includes(' gioi thieu cachot '))) {
         const item = this.facts100BySeed.get('F023');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
@@ -1120,16 +1149,16 @@ class KnowledgeBase {
         const item = this.facts100BySeed.get('F005') || this.groundTruth500.find(x => x.id === 'HL-001');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: !!item.seed_id };
       }
-      if ((qNormSpaced.includes(' manh thuy tinh ') || qNormSpaced.includes(' manh sanh ') || qNormSpaced.includes(' thuy tinh ')) && qNormSpaced.includes(' tuong ')) {
+      if (coreWordCount <= 16 && (qNormSpaced.includes(' manh thuy tinh ') || qNormSpaced.includes(' manh sanh ') || qNormSpaced.includes(' thuy tinh ')) && qNormSpaced.includes(' tuong ')) {
         const item = this.groundTruth500.find(x => x.id === 'HL-008');
         if (item) return { item, score: 0.97, type: 'SEMANTIC', isFact100: false };
       }
-      if (qNormSpaced.includes(' kien truc su ') || (qNormSpaced.includes(' ai ') && qNormSpaced.includes(' thiet ke ') && (qNormSpaced.includes(' nha tu ') || qNormSpaced.includes(' hoa lo ')))) {
+      if (coreWordCount <= 16 && (qNormSpaced.includes(' kien truc su ') || (qNormSpaced.includes(' ai ') && qNormSpaced.includes(' thiet ke ') && (qNormSpaced.includes(' nha tu ') || qNormSpaced.includes(' hoa lo '))))) {
         const item = this.groundTruth500.find(x => x.id === 'HL-034');
         if (item) return { item, score: 0.97, type: 'SEMANTIC', isFact100: false };
       }
-      // Disambiguation: Vượt ngục đêm Noel 24/12/1951 (16 tử tù, 5 đồng chí thoát) vs 1945
-      if ((qNormSpaced.includes(' 1951 ') || qNormSpaced.includes(' noel ')) && (qNormSpaced.includes(' vuot nguc ') || qNormSpaced.includes(' cong ngam ') || qNormSpaced.includes(' tu tu '))) {
+      // Disambiguation: Vượt ngục đêm Noel 24/12/1951 (chỉ cho câu tóm tắt/ngắn, không đè câu hỏi chi tiết sâu!)
+      if (coreWordCount <= 16 && (qNormSpaced.includes(' 1951 ') || qNormSpaced.includes(' noel ')) && (qNormSpaced.includes(' vuot nguc ') || qNormSpaced.includes(' cong ngam ') || qNormSpaced.includes(' tu tu '))) {
         return {
           item: {
             seed_id: 'F_NOEL_1951',
@@ -1142,7 +1171,7 @@ class KnowledgeBase {
         };
       }
       // Disambiguation: Nguyễn Thái Học bị đưa lên Yên Bái hành quyết ngày 17/6/1930
-      if (qNormSpaced.includes(' nguyen thai hoc ') && (qNormSpaced.includes(' 1930 ') || qNormSpaced.includes(' dua len dau ') || qNormSpaced.includes(' hanh quyet ') || qNormSpaced.includes(' o dau '))) {
+      if (coreWordCount <= 16 && qNormSpaced.includes(' nguyen thai hoc ') && (qNormSpaced.includes(' 1930 ') || qNormSpaced.includes(' dua len dau ') || qNormSpaced.includes(' hanh quyet ') || qNormSpaced.includes(' o dau '))) {
         return {
           item: {
             seed_id: 'F_NGUYEN_THAI_HOC_1930',
@@ -1154,8 +1183,8 @@ class KnowledgeBase {
           isFact100: true
         };
       }
-      // Disambiguation: Công dụng cây bàng với tù nhân chính trị
-      if (qNormSpaced.includes(' cay bang ') && (qNormSpaced.includes(' giup ich ') || qNormSpaced.includes(' cong dung ') || qNormSpaced.includes(' dung de lam gi ') || qNormSpaced.includes(' tu nhan '))) {
+      // Disambiguation: Công dụng cây bàng với tù nhân chính trị (cho câu hỏi ngắn/tổng quát <= 18 từ)
+      if (coreWordCount <= 18 && qNormSpaced.includes(' cay bang ') && (qNormSpaced.includes(' giup ich ') || qNormSpaced.includes(' cong dung ') || qNormSpaced.includes(' dung de lam gi ') || qNormSpaced.includes(' tu nhan '))) {
         return {
           item: {
             seed_id: 'F_CAY_BANG_USES',
@@ -1549,7 +1578,49 @@ class KnowledgeBase {
       );
     }
 
-    // 2. Hồ sơ phân khu lịch sử liên quan (13 phân khu Hỏa Lò - lấy toàn bộ facts[])
+    // 2. XẾP HẠNG TRUY XUẤT NGỮ NGHĨA THỐNG NHẤT TRÊN TOÀN BỘ 3.128 VECTOR (Unified Semantic Ranking First!)
+    // Đưa Top-3 tư liệu khớp ngữ nghĩa sâu nhất (từ custom/, dataset_hoa_lo_vi, facts100, groundTruth500, dataset1000)
+    // lên ĐẦU ngữ cảnh RAG để LLM trả lời đúng trọng tâm câu hỏi cụ thể thay vì bị hồ sơ tổng quan chiếm chỗ!
+    let matchedToneLevel = null;
+    let hasCustomDropInMatch = false;
+    let hasDynamicArchiveMatch = false;
+    if (this.localSemanticIndex && this.localSemanticIndex.docs.length > 0) {
+      const cleanQ = nlp.cleanVoiceSpokenInput(question) || question;
+      // Ưu tiên tài liệu thả file custom/ trước nếu khớp
+      if (this.customStats?.customDocs > 0) {
+        const userHits = this.localSemanticIndex.search(cleanQ, {
+          lang: null,
+          topK: 2,
+          minScore: 0.34,
+          onlyUserCustom: true
+        });
+        for (const hit of userHits) {
+          const doc = hit.doc;
+          if (hit.score >= 0.40) hasCustomDropInMatch = true;
+          addSnippet(`Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`, doc.answer);
+        }
+      }
+      // Tìm kiếm thống nhất trên toàn kho 3.128 vector ngữ nghĩa
+      const unifiedHits = this.localSemanticIndex.search(cleanQ, {
+        lang: null,
+        topK: 4,
+        minScore: 0.32
+      });
+      for (const hit of unifiedHits) {
+        const doc = hit.doc;
+        if (!matchedToneLevel) {
+          matchedToneLevel = doc.toneLevel || (doc.zoneId ? this.zoneTones.get(doc.zoneId) : null) || null;
+        }
+        if (doc.isUserCustom && hit.score >= 0.40) hasCustomDropInMatch = true;
+        if (doc.isDynamic && hit.score >= 0.36) hasDynamicArchiveMatch = true;
+        const label = doc.isUserCustom
+          ? `Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`
+          : (doc.zoneName ? `Tư liệu ${doc.zoneName} (${doc.id})` : `Tư liệu xác thực ${doc.id}`);
+        addSnippet(label, doc.answer);
+      }
+    }
+
+    // 2.5. Hồ sơ phân khu lịch sử liên quan (13 phân khu Hỏa Lò - cung cấp nền bối cảnh sau Top-K cụ thể)
     const matchedExhibit = this.findHistoricalExhibit(question) ||
       (subject && HISTORICAL_EXHIBITS[subject] ? { exhibit: HISTORICAL_EXHIBITS[subject] } : null);
     if (matchedExhibit && matchedExhibit.exhibit) {
@@ -1558,33 +1629,6 @@ class KnowledgeBase {
         addSnippet(`Hồ sơ ${ex.name}`, ex.facts.join(' '));
       } else if (ex.directAnswer) {
         addSnippet(`Hồ sơ ${ex.name}`, ex.directAnswer);
-      }
-    }
-
-    // 2.5. Truy xuất Top-3 tri thức chuẩn từ gói dataset_hoa_lo_vi (14 phân khu + 1.000 Q&A + chuyện nhỏ + Golden Facts)
-    //      & thư mục thả file tự nạp `custom/` (ưu tiên cao nhất cho tài liệu người dùng mới thả vào!)
-    let matchedToneLevel = null;
-    let hasCustomDropInMatch = false;
-    let hasDynamicArchiveMatch = false;
-    if (this.localSemanticIndex && this.customDocs.length > 0) {
-      const cleanQ = nlp.cleanVoiceSpokenInput(question) || question;
-      const dynHits = this.localSemanticIndex.search(cleanQ, {
-        lang: null,
-        topK: 3,
-        minScore: 0.36,
-        onlyDynamic: true
-      });
-      for (const hit of dynHits) {
-        const doc = hit.doc;
-        if (!matchedToneLevel) {
-          matchedToneLevel = doc.toneLevel || (doc.zoneId ? this.zoneTones.get(doc.zoneId) : null) || null;
-        }
-        if (doc.isUserCustom && hit.score >= 0.42) hasCustomDropInMatch = true;
-        if (hit.score >= 0.42) hasDynamicArchiveMatch = true;
-        const label = doc.isUserCustom
-          ? `Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`
-          : (doc.zoneName ? `Tư liệu ${doc.zoneName} (${doc.id})` : `Tư liệu chuẩn ${doc.id}`);
-        addSnippet(label, doc.answer);
       }
     }
 
