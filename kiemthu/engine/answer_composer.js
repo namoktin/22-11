@@ -122,6 +122,41 @@ class IntelligentAnswerComposer {
 
     // 0.4. Ngoài phạm vi di tích (OUT_OF_SCOPE)
     if (intent === 'OUT_OF_SCOPE') {
+      // 0.4.0. Plug-and-Play Custom Drop-In Brain Priority:
+      // Nếu người dùng đã thả file kiến thức mới vào `kiemthu/data/custom/` và câu hỏi khớp mạnh tài liệu đó
+      // -> ưu tiên giải cứu NGAY thành câu trả lời tri thức (kể cả chủ đề mới chưa từng có trong danh sách Hỏa Lò)!
+      if (knowledgeBase.customStats?.customDocs > 0) {
+        const customDirect = knowledgeBase.findDynamicMatch(question, { language: null, minScore: 0.48, onlyUserCustom: true });
+        if (customDirect && customDirect.doc?.answer) {
+          if (groqCaller) {
+            const ragCustom = await this.runUniversalGroundedRAG({
+              question,
+              intent: 'HISTORICAL_FACT',
+              subject,
+              retrievedData,
+              language,
+              session,
+              artifactContext,
+              previousPhrasings,
+              groqCaller,
+              allowOutOfScopeRefusal: false
+            });
+            if (ragCustom) return ragCustom;
+          }
+          return this.formatResponse({
+            reply: customDirect.doc.answer,
+            style: 'DEEP_EXPLANATION',
+            confidence: 'HIGH',
+            confidenceScore: Math.min(0.96, customDirect.score + 0.1),
+            sources: [`CUSTOM_DROPIN_${customDirect.doc.fileLabel || customDirect.doc.id}`],
+            claims: [customDirect.doc.topic || customDirect.doc.fileLabel || 'Tri thức thả file custom/'],
+            responseType: 'CUSTOM_DROPIN_RESCUE',
+            resolvedIntent: 'HISTORICAL_FACT',
+            requiresHuman: false
+          }, 'HISTORICAL_FACT', retrievedData);
+        }
+      }
+
       // Nếu chỉ bị router phân loại mờ sang OUT_OF_SCOPE (không phải hard OOS), chỉ thử cứu bằng Universal RAG
       // khi câu hỏi THỰC SỰ có liên quan tới hiện vật/vị trí Hỏa Lò — tránh đẩy câu hỏi khoa học/đời thường (Einstein...) vào RAG!
       if (subIntent !== 'STRICT_OUT_OF_DOMAIN') {
@@ -129,12 +164,12 @@ class IntelligentAnswerComposer {
           !/\b(ban o dau|em o dau|where are you|nha ve sinh|toilet|wc|quay ve)\b/.test(normQ) &&
           /\b(cho toi dang dung|noi toi dang dung|toi dang dung|minh dang dung|dang dung o|cho nay la|noi nay la|day la dau|hien vat truoc mat|truoc mat toi|noi ve cho nay|gioi thieu cho nay|where am i|where is my from|this spot|in front of me)\b/.test(normQ);
 
-        const quickTopK = groqCaller
-          ? knowledgeBase.retrieveTopKContext(question, { subject, intent: 'HISTORICAL_FACT', artifactContext, topK: 2 })
-          : null;
+        const quickTopK = knowledgeBase.retrieveTopKContext(question, { subject, intent: 'HISTORICAL_FACT', artifactContext, topK: 3 });
         const hasGenuineSiteSignal = Boolean(
           isAboutVisitorCurrentSpot ||
           quickTopK?.hasMatchedExhibit ||
+          quickTopK?.hasCustomDropInMatch ||
+          quickTopK?.hasDynamicArchiveMatch ||
           /\b(hoa lo|nha tu|di tich|hien vat|tham quan|buong giam|tu nhan|tu chinh tri|may chem|cay bang|cong ngam|cachot|xa lim|phi cong|trong dong|chuong|bao kiem|prison|museum|exhibit|artifact|tour|ticket)\b/.test(normQ)
         );
 
@@ -152,6 +187,25 @@ class IntelligentAnswerComposer {
             allowOutOfScopeRefusal: true
           });
           if (ragRescued) return ragRescued;
+        }
+        // Cứu hộ trực tiếp từ thư mục thả file `custom/` hoặc gói chuẩn `dataset_hoa_lo_vi` khi offline / không gọi Groq!
+        const rescuedDynamic = knowledgeBase.findDynamicMatch(question, {
+          language: language === 'en' ? 'en' : 'vi',
+          minScore: quickTopK?.hasCustomDropInMatch ? 0.44 : 0.60,
+          onlyUserCustom: false
+        });
+        if (rescuedDynamic && rescuedDynamic.doc?.answer && (rescuedDynamic.doc.isUserCustom || hasGenuineSiteSignal)) {
+          return this.formatResponse({
+            reply: rescuedDynamic.doc.answer,
+            style: 'DEEP_EXPLANATION',
+            confidence: 'HIGH',
+            confidenceScore: Math.min(0.95, rescuedDynamic.score + 0.08),
+            sources: [`DYNAMIC_BRAIN_${rescuedDynamic.doc.id}`],
+            claims: [rescuedDynamic.doc.zoneName || rescuedDynamic.doc.topic || rescuedDynamic.doc.fileLabel || 'Kho tri thức tự nạp'],
+            responseType: rescuedDynamic.doc.isUserCustom ? 'CUSTOM_DROPIN_RESCUE' : 'HOA_LO_DATASET_RESCUE',
+            resolvedIntent: 'HISTORICAL_FACT',
+            requiresHuman: false
+          }, 'HISTORICAL_FACT', retrievedData);
         }
         // Cứu hộ vị trí BLE (kể cả khi mất mạng hoặc hết hạn mức LLM): nhận diện câu hỏi về chỗ khách đang đứng ("nói về chỗ tôi đang đứng", "đây là đâu", "hiện vật trước mặt")
         if (isAboutVisitorCurrentSpot) {
@@ -1152,10 +1206,10 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }
     }
     let compactContext = '';
-    for (const s of mergedSnippets.slice(0, 5)) {
-      const cap = s.startsWith('[Hồ sơ ') ? 620 : 360;
+    for (const s of mergedSnippets.slice(0, 6)) {
+      const cap = s.startsWith('[Hồ sơ ') || s.startsWith('[Tài liệu mới') ? 640 : 400;
       const piece = s.length > cap ? s.slice(0, cap) + '...' : s;
-      if (compactContext.length + piece.length > 1150 && compactContext.length > 260) break;
+      if (compactContext.length + piece.length > 1380 && compactContext.length > 320) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
@@ -1193,11 +1247,15 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       ? ' In Vietnamese, use mature, respectful phrasing ("mình"-"bạn" with poised lead-in such as "Dạ...", "Mình xin chia sẻ...", complete subject-predicate sentences; NEVER use teen slang like "nè", "đấy!", "nha").'
       : '';
 
+    const zoneToneLine = topK.matchedToneLevel
+      ? `\n- Emotional register for this gallery/zone: ${topK.matchedToneLevel}.`
+      : '';
+
     const promptSystem = `You are a seasoned, dignified Senior Cultural & Historical Docent at Hoa Lo Prison Historical Relic (Hanoi) and its featured exhibition galleries (codes 001-004).
 - Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}
 - "bạn ở đâu/where are you" = virtual docent accompanying via guide device; "tôi đang đứng ở đâu/where am I" = current exhibit location in CONTEXT; place "ở đâu" = exact site location.
 - Ground EVERY historical date, name, measurement, and policy strictly in CONTEXT (never fabricate dates/figures; never conflate separate historical figures—e.g. Nguyen Thai Hoc led the 1930 Yen Bai uprising whereas Hoang Van Thu was a separate leader executed in 1944; if a detail is absent from archives, state so transparently with poise).${refusalRule}
-- Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows, and NEVER mention technical jargon like "BLE", "beacon", or "database"). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments.${viToneRuleRag}${audienceInstruction}${recentOpens}
+- Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows, and NEVER mention technical jargon like "BLE", "beacon", or "database"). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments.${viToneRuleRag}${zoneToneLine}${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;

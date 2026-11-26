@@ -1,0 +1,133 @@
+{
+  "zone_id": "Z14",
+  "filename": "Z14_dem_thieng_lieng_bao_ton.json",
+  "zone_vi": "Đêm thiêng liêng & Bảo tồn hiện nay",
+  "tone_level": "Cấp 3 — Hóm hỉnh Duyên dáng, Thông minh & Nhiệt tình (Độ dí dỏm 40–60%)",
+  "summary": "Hoạt động vận hành hiện đại biến Hỏa Lò thành điểm đến di sản hàng đầu châu Á: Tour Đêm thiêng liêng 3 phiên bản, hệ thống Audioguide 35 điểm, công nghệ bảo tồn không tia UV, trải nghiệm ẩm thực lá bàng, truyền thông sáng tạo và văn minh tham quan.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z14_F01",
+      "topic": "Thông tin tham quan, Tour Đêm thiêng liêng & Thiết bị hỗ trợ",
+      "verified_facts": [
+        "Di tích mở cửa hằng ngày từ 8:00 đến 17:00 (trọn tuần kể cả buổi trưa); giá vé tham quan phổ thông là 50.000 VNĐ/lượt (có chính sách miễn giảm cho học sinh, sinh viên, người cao tuổi, người có công).",
+        "Cung cấp thiết bị thuyết minh tự động Audioguide đa ngôn ngữ đánh số ~35 điểm dừng theo lộ trình một chiều khoa học, cùng tủ gửi đồ miễn phí, dốc phụ cho xe lăn qua bậc cửa đá cao và các chuyên đề luân phiên ở tầng trên.",
+        "Tour trải nghiệm buổi tối có 3 phiên bản nổi tiếng: Đêm thiêng liêng 1 ('Sáng ngời tinh thần Việt'), Đêm thiêng liêng 2 ('Sống như những đóa hoa' — tôn vinh nữ tù) và Đêm thiêng liêng 3 ('Lửa thanh xuân' — tôn vinh thanh niên); kết hợp ánh sáng, âm thanh lập thể, hoạt cảnh diễn viên và thưởng thức trà/bánh thạch lá bàng cuối tour (nên đặt vé trước 1–2 tuần qua kênh chính thức vì thường kín chỗ cuối tuần)."
+      ],
+      "pitfalls_to_avoid": [
+        "KHÔNG lấy giờ mở cửa 8:00–17:00 hoặc túi tote để trả lời cho các câu hỏi về lịch sử hay hiện vật kho (tránh lặp lỗi HL-478, HL-497)."
+      ]
+    },
+    {
+      "card_id": "Z14_F02",
+      "topic": "Kỹ thuật bảo tồn hiện đại, tượng composite & văn hóa tham quan",
+      "verified_facts": [
+        "Chiếu sáng bằng hệ thống LED chuyên dụng cắt tia UV/hồng ngoại giúp bảo vệ giấy quyến, ảnh gốc, vải thô không phai mục.",
+        "Tủ kính kín tích hợp cảm biến độ ẩm/hút ẩm giữ độ ẩm ổn định bất chấp mùa nồm 85–90%; xử lý chống thấm ngược cho tường gạch 130 năm tuổi và phủ chất chống oxy hóa giữ màu gỉ lì cho song sắt cổ.",
+        "Hệ thống tượng tù nhân dùng chất liệu composite kết hợp kỹ thuật điêu khắc giải phẫu thay cho sáp ong truyền thống để bền vững dưới khí hậu nhiệt đới nóng ẩm.",
+        "Bảng chú thích gắn nghiêng vừa tầm mắt, phông chữ không chân dễ đọc; bên cạnh đó đội ngũ truyền thông trẻ phát triển Podcast (Spotify/Apple Podcasts), nội dung mạng xã hội sáng tạo, quầy lưu niệm (túi tote, huy hiệu, nam châm, sách nghiên cứu) và phát động thông điệp 'Check-in có văn hóa, không phản cảm' (cấm đèn flash và tạo dáng thiếu tôn trọng)."
+      ],
+      "pitfalls_to_avoid": [
+        "Nếu khách hỏi kích thước, ngân sách hoặc số liệu kho kiểm kê không công bố công khai, thẳng thắn nêu rõ giới hạn tư liệu và cung cấp thông tin quy trình bảo tồn/luân phiên trưng bày xác thực."
+      ]
+    }
+  ],
+  "notable_people": [
+    "Đội ngũ Ban Quản lý Di tích Nhà tù Hỏa Lò, thuyết minh viên & tình nguyện viên sinh viên"
+  ],
+  "artifact_count_vi": 68,
+  "artifacts_catalog_vi": [
+    "Ba chủ đề tour đêm nổi tiếng: Đêm thiêng liêng 1, 2 và 3",
+    "Chiến dịch truyền thông trẻ trung của đội ngũ trẻ Di tích Hỏa Lò trên mạng xã hội",
+    "Chính sách vé miễn giảm cho học sinh, sinh viên, người cao tuổi và người có công",
+    "Chế độ hút ẩm và cảm biến nhiệt độ ẩn bên trong tủ kính chứa hiện vật gốc",
+    "Chế độ phụ đề và thiết bị hỗ trợ cho khách khiếm thính tại các trạm nghe nhìn",
+    "Chứng nhận giải thưởng du lịch uy tín của Di tích Nhà tù Hỏa Lò",
+    "Các bức tượng sáp/composite tù nhân được chế tác thế nào",
+    "Các món quà lưu niệm thiết kế trẻ trung lấy cảm hứng từ di tích",
+    "Các thước phim tài liệu ngắn chiếu trong phòng chiếu phim nhỏ",
+    "Các đợt trưng bày chuyên đề luân phiên trong năm",
+    "Các ấn phẩm sách nghiên cứu, bưu ảnh và đồ lưu niệm đặc trưng",
+    "Cách bảo quản các chi tiết sắt rèn cổ (song cửa, khóa, xích) khỏi gỉ sâu",
+    "Cách xử lý chống thấm ngược cho chân tường gạch 130 năm tuổi trong khu bảo tồn",
+    "Cách đánh số điểm dừng trên từng hiện vật và vách phòng giam",
+    "Công tác diễn tập phòng cháy chữa cháy bảo vệ kiến trúc gỗ cổ và hệ thống điện",
+    "Cảm giác đối lập khi bước từ cánh cổng di tích ra phố phường sầm uất",
+    "Cửa gió điều hòa âm trần khéo léo bảo đảm mát dịu mà giữ nguyên nét cổ kính",
+    "Dịch vụ ghép đoàn nghe thuyết minh viên trực tiếp cho khách đi lẻ",
+    "Giải thưởng du lịch uy tín quốc tế và vị trí trong top điểm đến hấp dẫn châu Á",
+    "Hoạt cảnh diễn viên đóng vai chiến sĩ cách mạng ngay tại sân và buồng giam buổi tối",
+    "Hoạt cảnh sân khấu hóa trực tiếp ngay trong xà lim và sân tù",
+    "Hoạt động truyền thông sáng tạo thu hút giới trẻ đến di tích",
+    "Hoạt động tình nguyện viên sinh viên hỗ trợ hướng dẫn và phiên dịch đa ngữ",
+    "Hành trình số hóa 3D toàn bộ hiện vật và phòng giam Nhà tù Hỏa Lò",
+    "Hòm thư góp ý chất lượng dịch vụ và kênh đăng ký vé đoàn tránh hết suất cuối tuần",
+    "Hương vị ẩm thực trải nghiệm gắn với câu chuyện cây bàng trong tour đêm",
+    "Hương vị ẩm thực trải nghiệm: trà lá bàng và bánh thạch lá bàng cuối tour",
+    "Hệ thống thuyết minh tự động (Audioguide) tại quầy đón tiếp",
+    "Hệ thống ánh sáng vàng dịu bảo vệ thị giác và tạo cảm xúc trang trọng",
+    "Hệ thống điều hòa và thông gió khéo léo trong khu trưng bày kín",
+    "Kho lưu trữ hiện vật dự phòng chưa trưng bày hết",
+    "Không gian check-in văn minh và việc giữ trật tự nơi di tích",
+    "Kênh Podcast kể chuyện lịch sử phát hành trên Spotify và Apple Podcasts",
+    "Ký ức của người dân sống quanh phố Hỏa Lò từ thời bao cấp tới nay",
+    "Kịch bản âm thanh lập thể mô phỏng tiếng cùm, tiếng mưa và giọng đọc truyền cảm",
+    "Kỹ thuật chế tác tượng sáp/composite đạt tỷ lệ giải phẫu và thần thái chân thực",
+    "Lối dốc phụ và giải pháp hỗ trợ xe lăn, người cao tuổi qua bậc cửa đá cao",
+    "Lối đi một chiều khoa học chống ùn tắc trong các hành lang giam hẹp",
+    "Lớp vữa trát bảo tồn và chống thấm ngược cho tường gạch cổ",
+    "Lời khuyên cho lần quay trở lại tham quan chuyên sâu hơn",
+    "Phân biệt hiện vật gốc, hiện vật phục chế và mô hình tái hiện",
+    "Phòng chiếu phim tài liệu ngắn phát liên tục giới thiệu bối cảnh tổng quan",
+    "Phòng trưng bày chuyên đề luân phiên ở tầng trên theo từng cột mốc lịch sử",
+    "Phủ lớp sáp/hóa chất chống oxy hóa giữ nguyên màu gỉ lì cho song sắt cổ",
+    "Quy trình bảo quản hiện vật gốc nhạy cảm (giấy, vải, da, gỗ)",
+    "Quy trình mở rộng tìm kiếm và hồi hương thêm tư liệu Hỏa Lò từ kho lưu trữ tại Pháp",
+    "Quy trình đào tạo và bồi dưỡng kiến thức chuyên sâu cho thuyết minh viên trẻ",
+    "Quy định không dùng đèn flash chụp ảnh và không chạm tay vào tượng, tường vữa bở",
+    "Quy định quay phim, chụp ảnh bên trong không gian di tích",
+    "Quầy lưu niệm thiết kế trẻ: túi tote, huy hiệu, nam châm, sổ tay và sách lịch sử",
+    "Số lượng khách quốc tế và khung giờ lý tưởng để tham quan yên tĩnh nhất",
+    "Số lượng khách tham quan trung bình mỗi ngày và mùa cao điểm",
+    "Sự hỗ trợ tiếp cận cho người cao tuổi và người khuyết tật",
+    "Sự khác biệt nội dung giữa 3 phiên bản Tour đêm: Sáng ngời tinh thần Việt, Sống như những đóa hoa, Lửa thanh xuân",
+    "Thiết bị thuyết minh tự động Audioguide đa ngôn ngữ và bản đồ bấm số trạm dừng",
+    "Thời lượng trải nghiệm ban đêm và quy định độ tuổi tối thiểu tham gia",
+    "Trải nghiệm dành cho học sinh tiểu học và trung học khi tới Hỏa Lò",
+    "Trải nghiệm tắt hết đèn trong khu Cachot vào ban đêm",
+    "Tuyến tham quan một chiều tránh ùn tắc ở các hành lang hẹp",
+    "Tâm sự của người dân sống quanh con phố Hỏa Lò chứng kiến diện mạo di tích qua các thập kỷ",
+    "Tôn chỉ văn hóa 'Check-in có văn hóa, không phản cảm' tại cổng di tích và sân tù",
+    "Tủ gửi đồ cá nhân miễn phí và quy định không mang ba lô cồng kềnh vào lối hẹp",
+    "Việc thường xuyên tiếp nhận thêm kỷ vật từ thân nhân cựu tù và cựu binh",
+    "Ý nghĩa tên gọi \"Đêm thiêng liêng 3: Lửa thanh xuân\" với thế hệ trẻ",
+    "Đèn chiếu sáng LED chuyên dụng không phát tia cực tím làm hại giấy và vải cổ",
+    "Độ nghiêng khoảng 45 độ và phông chữ không chân của hệ thống bảng thông tin",
+    "Đội ngũ thuyết minh viên trực tiếp và kỹ năng truyền cảm hứng",
+    "Ứng dụng công nghệ số, mã QR hoặc màn hình tương tác"
+  ],
+  "qa_count_bo1": 34,
+  "qa_count_bo2": 34,
+  "qa_count_total": 68,
+  "golden_fact_ids": [
+    "GF-03",
+    "GF-10"
+  ],
+  "anti_pattern_ids": [
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z14",
+    "zone_vi": "Đêm thiêng liêng & Bảo tồn hiện nay",
+    "total_questions": 34,
+    "on_target": 0,
+    "zone_generic": 10,
+    "off_topic_or_error": 18,
+    "false_refusal": 0,
+    "safety_guard": 6,
+    "drop_and_no_data_rate": 0.1765,
+    "on_target_rate": 0.0,
+    "zone_coverage_rate": 0.2941,
+    "avg_latency_ms": 35.18,
+    "quality_note": "Bị đụng từ khóa nặng: hỏi túi tote rơi vào Cây bàng, hỏi chống ẩm tủ kính rơi vào Khu D."
+  }
+}

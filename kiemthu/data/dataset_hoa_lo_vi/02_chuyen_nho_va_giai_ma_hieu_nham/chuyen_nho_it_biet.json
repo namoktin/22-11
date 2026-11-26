@@ -1,0 +1,272 @@
+{
+  "version": "1.0.0",
+  "language": "vi",
+  "total_stories": 28,
+  "stories": [
+    {
+      "story_id": "MS-01",
+      "zone_id": "Z01",
+      "title": "Nồi đất làng Phụ Khánh đặt tên cho 'Nhà ngục kiên cố nhất Đông Dương'",
+      "story": "Trước năm 1896, vùng đất này là làng Phụ Khánh nổi tiếng với nghề nung siêu đất, ấm sắc thuốc và bếp hỏa lò đỏ lửa suốt ngày đêm. Dù Toàn quyền Đông Dương duyệt xây Maison Centrale thật bề thế, người Hà Nội vẫn gọi bằng cái tên dân dã 'Hỏa Lò' — một sự trùng hợp vừa mộc mạc vừa gợi ẩn dụ về lò rèn ý chí cách mạng.",
+      "great_for_personas": [
+        "Du khách trẻ",
+        "Khách thích nguồn gốc văn hóa"
+      ]
+    },
+    {
+      "story_id": "MS-02",
+      "zone_id": "Z01",
+      "title": "Ô cửa 'con mắt xoay' và cánh cửa nách cho người đi bộ",
+      "story": "Không cần mở toang hai cánh cổng thép nặng hàng tạ mỗi lần ra vào, ngay sát cánh cổng chính có một ô cửa nách nhỏ hẹp khiến bất kỳ ai đi qua đều phải cúi mình bước thấp. Còn trên từng cửa buồng giam có miếng sắt hình lá xoay từ ngoài để cai ngục liếc trộm vào bất ngờ lúc nửa đêm.",
+      "great_for_personas": [
+        "Khách thích chi tiết kiến trúc"
+      ]
+    },
+    {
+      "story_id": "MS-03",
+      "zone_id": "Z02",
+      "title": "Chiếc máng tôn 'lập là' và phép chia cơm thâu đêm của tù nhân",
+      "story": "Cơm tù thời Pháp không phát từng suất sạch sẽ mà đổ chung vào máng tôn dài gọi là 'lập là'. Khi bị cai ngục hoặc đám 'cập rằng' bớt xén, cơm lẫn đầy trấu sạn khiến anh em phải chia từng thìa gỗ đều tăm tắp, nhường phần cơm ít sạn cho người ốm và lập 'hũ gạo tương trợ' từ quà tiếp tế hiếm hoi.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-04",
+      "zone_id": "Z02",
+      "title": "Nghệ thuật trở mình đồng loạt kiểu 'xếp cá mòi' trên bệ 40cm",
+      "story": "Những đợt cao điểm giam quá tải gần 2.000 người, bề rộng mỗi người chỉ vỏn vẹn tầm 40 cm vai chạm vai trên bệ xi măng dốc. Để ngủ được, cả dãy hàng chục người phải nằm nghiêng cùng một phía và hễ mỏi quá lại hô khẽ để tất cả cùng đồng loạt trở mình sang bên kia cùng một nhịp.",
+      "great_for_personas": [
+        "Khách thích chi tiết đời sống"
+      ]
+    },
+    {
+      "story_id": "MS-05",
+      "zone_id": "Z03",
+      "title": "Tiếng gõ tường gạch & tiếng ho điểm danh qua đêm ở Cachot",
+      "story": "Bị nhốt biệt lập trong xà lim tối bệ dốc ngược không nhìn thấy mặt ai, các chiến sĩ tìm ra cách gõ nhẹ lên vách gạch hoặc cất tiếng ho có nhịp quy ước qua ô thông gió sát trần để báo cho buồng cạnh biết người vừa bị lôi vào là ai và kiểm tra xem bạn mình bên kia tường vẫn còn tỉnh táo.",
+      "great_for_personas": [
+        "Du khách quan tâm tâm lý – tinh thần"
+      ]
+    },
+    {
+      "story_id": "MS-06",
+      "zone_id": "Z04",
+      "title": "Hành trình chiếc áo len qua ba trái tim từ Trại Nữ sang Khu D",
+      "story": "Mùa đông cuối năm 1943 đầu 1944 ở buồng số 1 Khu D rét cắt da, nhạc sĩ Đỗ Nhuận đã gửi tặng đồng chí Hoàng Văn Thụ chiếc áo len xanh lá mạ của mình. Trong khi đó ở trại nữ, vợ đồng chí là bà Phạm Thị Vân cũng tháo len áo em gái, vót que tre làm kim đan thành chiếc áo cổ lọ rồi nhờ đường dây tù nhân chia cơm tuồn qua nhiều lớp cửa sắt vào tận xà lim tử hình.",
+      "great_for_personas": [
+        "Tất cả du khách",
+        "Gia đình & bạn trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-07",
+      "zone_id": "Z04",
+      "title": "Cơm nguội trộn tro — lớp ngụy trang qua mắt lính gác đêm Noel 1951",
+      "story": "Để mở đường vượt ngục ngay từ các xà lim Khu D canh phòng nghiêm ngặt nhất, các tử tù phải dùng mẩu lưỡi cưa đồng hồ cưa dần chốt cùm gỗ lim nhiều đêm liền. Sau mỗi ca cưa lén, họ nhai cơm nguội trộn với tro bụi xà lim miết chặt vào vết cắt khiến lính gác kiểm tra buổi sáng cũng nhìn không ra vết thép cưa.",
+      "great_for_personas": [
+        "Du khách thích chuyện mưu trí"
+      ]
+    },
+    {
+      "story_id": "MS-08",
+      "zone_id": "Z05",
+      "title": "Khí phách Phó Đức Chính xin nằm ngửa nhìn thẳng lên lưỡi dao thép",
+      "story": "Rạng sáng ngày 17/6/1930 tại Yên Bái, khi chiếc máy chém chở từ Hỏa Lò lên chuẩn bị hạ xuống 13 nghĩa sĩ Khởi nghĩa Yên Bái, ông Phó Đức Chính đã từ chối nằm sấp trên tấm ván lật mà hiên ngang đề nghị được nằm ngửa để nhìn thẳng vào lưỡi dao thép rơi từ trên cao xuống — chi tiết khiến ngay cả nhiều phóng viên Pháp thời đó sững sờ ghi lại.",
+      "great_for_personas": [
+        "Khách nghiên cứu lịch sử",
+        "Học sinh sinh viên"
+      ]
+    },
+    {
+      "story_id": "MS-09",
+      "zone_id": "Z05",
+      "title": "Tại sao lưỡi dao máy chém luôn vát chéo 45 độ thay vì cắt ngang?",
+      "story": "Khối dao và quả tạ gang gắn trên đầu dao máy chém nặng khoảng 40–50 kg. Độ nghiêng 45 độ không phải để trang trí mà tạo lực cắt xéo (giống nguyên lý lưỡi kéo), giúp lưỡi thép lướt cắt ngọt dứt khoát dọc hành trình rơi gần 2 mét bên trong khung gỗ cao 4 mét.",
+      "great_for_personas": [
+        "Khách thích cơ khí / hiện vật"
+      ]
+    },
+    {
+      "story_id": "MS-10",
+      "zone_id": "Z06",
+      "title": "Những tấm áo dài tiếp tế giúp hơn 100 người bước ra ngay giữa ban ngày 11/3/1945",
+      "story": "Ngay sau cuộc đảo chính Nhật hất cẳng Pháp đêm 9/3/1945 khiến trật tự nhà tù rối loạn, các nữ chiến sĩ như Hoàng Thị Ái và Trương Thị Mỹ đã phối hợp người nhà gửi quần áo thường dân vào trong, bình tĩnh thay áo tù bằng áo dài, chải lại tóc và hòa vào dòng thân nhân bước thẳng qua cửa trại ngày 11/3/1945.",
+      "great_for_personas": [
+        "Du khách nữ",
+        "Gia đình"
+      ]
+    },
+    {
+      "story_id": "MS-11",
+      "zone_id": "Z06",
+      "title": "Kim khâu mài trên sàn xi măng may áo sơ sinh cho 'em bé nhà tù'",
+      "story": "Bị cấm tuyệt đối đồ kim loại sắc nhọn, những người mẹ và chị em trại nữ đã bẻ mảnh thép từ nan ô cũ hay cán thìa, miết hàng giờ trên nền đá ẩm cho tới khi nhọn hoắt, khoét được lỗ chỉ để may những chiếc áo nhỏ xíu từ vạt quần áo cũ cho các bé sinh trong ngục.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-12",
+      "zone_id": "Z07",
+      "title": "Kế đánh chìa khóa của lính gác Busan trong đêm vượt ngục Noel 1951",
+      "story": "Để mở cánh cửa buồng giam trước khi tiếp cận miệng cống, đồng chí Vũ Đức Chính đã khéo léo nắm bắt cơ hội in dấu mẫu chìa khóa phòng giam từ lính gác Busan, dùng nguyên liệu thô sơ mài giũa thành chiếc chìa giả mở khóa thành công ngay trong đêm Giáng sinh 24/12/1951.",
+      "great_for_personas": [
+        "Du khách trẻ",
+        "Khách thích chuyện trinh thám lịch sử"
+      ]
+    },
+    {
+      "story_id": "MS-13",
+      "zone_id": "Z07",
+      "title": "Những gia đình Hà Nội mở cửa trong đêm cưu mang người tù lấm lem bùn cống",
+      "story": "Khi nhóm tù nhân thoát qua đường cống ngầm trồi lên gần phố Quán Sứ / khu Đấu xảo trong bộ dạng bùn đen bốc mùi và quần áo rách tả tơi, nhiều người dân Hà Nội ven phố dù biết đối mặt án nặng vẫn sẵn sàng giấu họ vào nhà, giúp thay đồ thường dân và dẫn lối cho 5 chiến sĩ rút thoát về vùng tự do.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-14",
+      "zone_id": "Z08",
+      "title": "Bốn 'siêu năng lực' của cây bàng sân trại Hỏa Lò",
+      "story": "Nếu phải bình chọn 'đồng đội thầm lặng bền bỉ nhất' tại Hỏa Lò, đó chính là cây bàng: vỏ và lá nấu nước chữa kiết lỵ và rửa vết thương cùm; hốc thân và rễ làm hộp thư chết; cành khô vót thành quản bút và đũa ăn; hạt bàng đập nhân làm dinh dưỡng, còn tán lá đổi màu theo mùa giúp người tù tính lịch.",
+      "great_for_personas": [
+        "Học sinh",
+        "Du khách trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-15",
+      "zone_id": "Z08",
+      "title": "Những cây bàng con Hỏa Lò vươn mình ra tận đảo Trường Sa",
+      "story": "Từ hạt giống của cây bàng lịch sử hơn trăm năm tuổi giữa sân trại, Ban Quản lý Di tích đã ươm nhiều thế hệ cây bàng non trao tặng các trường học, khu lưu niệm và đặc biệt gửi ra trồng tại các điểm đảo Trường Sa như sợi dây nối liền đất liền và biển đảo.",
+      "great_for_personas": [
+        "Gia đình & học sinh"
+      ]
+    },
+    {
+      "story_id": "MS-16",
+      "zone_id": "Z09",
+      "title": "Lớp học trên tường vôi trắng và 'những cuốn từ điển biết đi'",
+      "story": "Vì bị tịch thu sạch sách lý luận và giấy bút, các chiến sĩ biến bức tường quét vôi thành bảng viết bằng mẩu than củi (cử người canh ở song cửa, nghe tiếng giày cai ngục là dùng giẻ ướt xóa trắng ngay), còn những anh em trí thức kỳ cựu đọc thuộc lòng cả cuốn sách sử hay ngữ pháp tiếng Pháp làm 'từ điển sống'.",
+      "great_for_personas": [
+        "Sinh viên",
+        "Giáo viên",
+        "Du khách trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-17",
+      "zone_id": "Z09",
+      "title": "Mực vô hình từ nước cơm, nước chanh & báo chí cỡ bao diêm",
+      "story": "Không hề viết bằng máu như lời đồn, các tờ báo bí mật như Đuốc đưa đường, Suối reo, Chiến thắng được chép tay bằng mẩu bút chì nối ống sậy hoặc mực từ gạch non giã nhỏ, muội than, thuốc đỏ; có bức thư mật viết bằng nước cơm hoặc nước chanh lên giấy mỏng, hơ nhẹ qua lửa hay bôi dung dịch i-ốt mới hiện nét chữ.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-18",
+      "zone_id": "Z10",
+      "title": "Chiếc khăn tay thêu bằng chỉ tháo ra từ chính vớ tất tù nhân",
+      "story": "Giữa nơi thiếu thốn từng viên muối, các chiến sĩ rút từng sợi chỉ xanh đỏ từ đôi tất hay vạt áo, dùng kim tự mài từ nan ô để thêu lên chiếc khăn vải nhỏ tên bạn tù và ngày tiễn biệt trước khi một người bị đưa ra ga Hàng Cỏ đi đày Côn Đảo hoặc Sơn La.",
+      "great_for_personas": [
+        "Du khách thích kỷ vật nhân văn"
+      ]
+    },
+    {
+      "story_id": "MS-19",
+      "zone_id": "Z10",
+      "title": "Phong bì 'VU / CENSURÉ' và mật ngữ hỏi thăm thời tiết quê nhà",
+      "story": "Mỗi bức thư từ tù gửi ra đều bị đóng con dấu mực tím 'VU' (Đã xem) hoặc 'CENSURÉ' (Đã kiểm duyệt). Để lọt lưới kiểm duyệt tiếng Pháp, các chiến sĩ thống nhất mật ngữ với gia đình qua những câu hỏi thăm hết sức đời thường như 'vụ lúa ngoài đồng đã gặt chưa' hay 'chú Ba năm nay khỏe nhiều không'.",
+      "great_for_personas": [
+        "Khách nghiên cứu",
+        "Du khách trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-20",
+      "zone_id": "Z10",
+      "title": "Chiếc đồng hồ quả quýt ngừng kim đúng phút giây bị mật thám bắt giữ",
+      "story": "Trong tủ kỷ vật có chiếc đồng hồ quả quýt cũ kim đã dừng im lìm từ khoảnh khắc va chạm trong giây phút chủ nhân bị bắt. Gia đình đã giữ nguyên trạng không lên dây cót nữa để lưu giữ dấu ấn thời khắc bước ngoặt ấy suốt hàng chục năm trước khi trao tặng lại di tích.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-21",
+      "zone_id": "Z11",
+      "title": "Biệt danh châm biếm 'Hanoi Hilton' và 'dịch vụ bất đắc dĩ' thời chiến",
+      "story": "Các phi công Mỹ đặt tên đùa nơi mình bị giam là 'Hanoi Hilton' (ví như chuỗi khách sạn hạng sang) cùng tên các phân khu như Heartbreak Hotel, New Guy Village, Little Vegas. Thế nhưng giữa lúc người dân Hà Nội ăn cơm độn tem phiếu, chính quyền Việt Nam vẫn cấp bánh mì nướng, thịt, hầm tránh bom chữ A và điều trị răng cho họ chu đáo.",
+      "great_for_personas": [
+        "Du khách trẻ",
+        "Khách quốc tế"
+      ]
+    },
+    {
+      "story_id": "MS-22",
+      "zone_id": "Z11",
+      "title": "Bảng mã gõ tường 'Tap Code 5x5' bỏ chữ cái K",
+      "story": "Để liên lạc lén giữa các phòng trong trại T141 mà không phải nói thành tiếng, tù binh Mỹ sử dụng bảng chữ cái 5×5 ô (ghép chung chữ K vào chữ C cho tròn 25 ô). Chỉ cần gõ hai lượt (hàng trước, cột sau), họ truyền cho nhau tên phi công mới bị bắn rơi, tin gia đình và cả những câu chuyện phiếm giải sầu.",
+      "great_for_personas": [
+        "Sinh viên",
+        "Du khách trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-23",
+      "zone_id": "Z11",
+      "title": "Từ tù binh mang biệt danh 'Song' thành Đại sứ Mỹ đầu tiên năm 1997",
+      "story": "Trong thời gian bị giam (1966–1973), phi công Douglas 'Pete' Peterson được cán bộ quản giáo gọi thân mật bằng cái tên tiếng Việt là 'Song'. Hơn 20 năm sau ngày rời sân bay Gia Lâm năm 1973, ông trở lại Hà Nội đúng vào năm 1997 với tư cách Đại sứ Hợp chúng quốc Hoa Kỳ đầu tiên tại Việt Nam sau bình thường hóa.",
+      "great_for_personas": [
+        "Tất cả du khách"
+      ]
+    },
+    {
+      "story_id": "MS-24",
+      "zone_id": "Z12",
+      "title": "Khung hình đối thoại quá khứ – hiện tại phía sau bức phù điêu Lê Liên",
+      "story": "Khi đứng trước bức phù điêu đá xanh Thanh Hóa do nhà điêu khắc Lê Liên sáng tác năm 2000 và ngước máy ảnh lên, phía sau đỉnh tượng hình ngọn lửa luôn hiện lên tòa tháp kính hiện đại Tháp Hà Nội — tạo nên khung hình biểu tượng nối liền quá khứ hy sinh với Thủ đô hòa bình phát triển hôm nay.",
+      "great_for_personas": [
+        "Du khách thích nhiếp ảnh",
+        "Bạn trẻ"
+      ]
+    },
+    {
+      "story_id": "MS-25",
+      "zone_id": "Z13",
+      "title": "'Đường dây giao liên nhà bếp' dưới đáy thùng cơm gỗ",
+      "story": "Trong khu bếp nấu cơm bằng chảo gang khổng lồ xưa, các tù nhân làm nhiệm vụ chia cơm đã khéo léo tận dụng mặt dưới đáy thùng gỗ đựng cơm canh hoặc chính giữa nắm cơm để chuyển tin tức nóng hổi từ khu bệnh xá, cổng vào các dãy trại bị cách ly.",
+      "great_for_personas": [
+        "Khách thích chuyện đời sống trong tù"
+      ]
+    },
+    {
+      "story_id": "MS-26",
+      "zone_id": "Z13",
+      "title": "20 năm thầm lặng làm Trại tạm giam Hà Nội (1973–1993)",
+      "story": "Nhiều du khách tưởng Hỏa Lò ngừng làm nhà tù ngay sau khi trao trả 591 phi công Mỹ năm 1973, nhưng thực ra từ 1973 tới 1993 công trình vẫn hoạt động thêm 20 năm với vai trò Trại tạm giam của Công an TP. Hà Nội trước khi di dời về Xuân Phương.",
+      "great_for_personas": [
+        "Khách tò mò lịch sử cận đại"
+      ]
+    },
+    {
+      "story_id": "MS-27",
+      "zone_id": "Z14",
+      "title": "Bí mật hậu trường: tượng tù nhân làm bằng composite chống khí hậu nồm ẩm",
+      "story": "Nhiều khách bước qua giật mình vì các bức tượng tù nhân có cả sợi tóc, nếp nhăn và gân tay chân như người thật. Khác với bảo tàng phương Tây hay đúc sáp ong, Hỏa Lò sử dụng chất liệu composite bền chắc để không bị chảy biến dạng hay mốc hỏng trong mùa hè 40°C và mùa nồm ẩm tới 90% của Hà Nội.",
+      "great_for_personas": [
+        "Khách thích kỹ thuật bảo tồn"
+      ]
+    },
+    {
+      "story_id": "MS-28",
+      "zone_id": "Z14",
+      "title": "Dư vị lá bàng trong ly trà nóng và chiếc bánh thạch cuối Tour Đêm",
+      "story": "Khép lại hành trình Đêm thiêng liêng ngập tràn cảm xúc, khách tham quan được mời thưởng thức ấm trà lá bàng thanh mát cùng bánh thạch làm từ chính hương vị cây bàng Hỏa Lò — biến biểu tượng sống còn năm xưa của người tù thành dư vị hòa bình lắng đọng.",
+      "great_for_personas": [
+        "Du khách trẻ",
+        "Khách trải nghiệm Tour Đêm"
+      ]
+    }
+  ]
+}

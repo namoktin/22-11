@@ -11,6 +11,7 @@ const path = require('path');
 const nlp = require('./nlp_processor');
 const { LocalSemanticIndex } = require('./local_semantic_index');
 const docentRewriter = require('./docent_rewriter');
+const { loadDynamicKnowledgePacks, computeFolderSignature } = require('./custom_knowledge_loader');
 
 // 1. HỒ SƠ 13 PHÂN KHU & HIỆN VẬT LỊCH SỬ
 const HISTORICAL_EXHIBITS = {
@@ -412,13 +413,107 @@ class KnowledgeBase {
     this.dataset1000 = [];
     this.invertedIndex1000 = new Map();
 
+    // Kho tri thức tự nạp động: gói chuẩn dataset_hoa_lo_vi (14 phân khu + 1.000 Q&A + chuyện nhỏ + giải mã lầm tưởng)
+    // và thư mục Plug-and-Play `kiemthu/data/custom/` (thả bất kỳ file .txt/.md/.json/.jsonl/.csv nào là tự nạp!)
+    this.customDocs = [];
+    this.zoneTones = new Map();
+    this.customStats = { datasetHoaLoViDocs: 0, customDocs: 0, customFiles: [], zonesLoaded: 0, bySource: {} };
+    this._customWatcherStarted = false;
+    this._customFolderSig = '';
+    this._onReloadCallbacks = [];
+
     this.load100VerifiedFacts();
     this.load500GroundTruth();
     this.loadVerifiedServiceKnowledge();
     this.loadExpandedKnowledge();
     this.loadDataset1000();
+    this.loadDynamicKnowledge();
     this.localSemanticIndex = new LocalSemanticIndex();
     this.buildLocalSemanticIndex();
+  }
+
+  loadDynamicKnowledge() {
+    try {
+      const dataDir = path.join(__dirname, '..', 'data');
+      const customDir = path.join(dataDir, 'custom');
+      const loaded = loadDynamicKnowledgePacks(dataDir);
+      this.customDocs = loaded.docs || [];
+      this.zoneTones = loaded.zoneTones || new Map();
+      this.customStats = loaded.stats || { datasetHoaLoViDocs: 0, customDocs: 0, customFiles: [], zonesLoaded: 0, bySource: {} };
+      this._customFolderSig = computeFolderSignature(customDir);
+      if (this.customDocs.length > 0) {
+        console.log(`[KnowledgeBase] Đã nạp ${this.customStats.datasetHoaLoViDocs} tri thức chuẩn (dataset_hoa_lo_vi • ${this.customStats.zonesLoaded} phân khu) & ${this.customStats.customDocs} tri thức thả file custom/ (${this.customStats.customFiles.length} file).`);
+      }
+    } catch (e) {
+      console.warn('[KnowledgeBase] Lỗi nạp dynamic knowledge packs:', e.message);
+    }
+  }
+
+  reloadDynamicKnowledge() {
+    const t0 = Date.now();
+    this.loadDynamicKnowledge();
+    this.buildLocalSemanticIndex();
+    const summary = {
+      reloadedMs: Date.now() - t0,
+      totalSemanticDocs: this.localSemanticIndex?.docs?.length || 0,
+      ...this.customStats
+    };
+    console.log(`🔄 [Auto-Brain Reload] Đã nạp nóng ${summary.totalSemanticDocs} tri thức (custom: ${summary.customDocs} mục từ ${summary.customFiles.length} file) trong ${summary.reloadedMs}ms!`);
+    for (const cb of this._onReloadCallbacks) {
+      try { cb(summary); } catch {}
+    }
+    return summary;
+  }
+
+  startCustomBrainWatcher(onReloaded = null) {
+    if (typeof onReloaded === 'function' && !this._onReloadCallbacks.includes(onReloaded)) {
+      this._onReloadCallbacks.push(onReloaded);
+    }
+    if (this._customWatcherStarted || process.env.NODE_ENV === 'test') return;
+    this._customWatcherStarted = true;
+
+    const customDir = path.join(__dirname, '..', 'data', 'custom');
+    try {
+      if (!fs.existsSync(customDir)) fs.mkdirSync(customDir, { recursive: true });
+    } catch {}
+
+    let debounceTimer = null;
+    const triggerIfChanged = () => {
+      try {
+        const nextSig = computeFolderSignature(customDir);
+        if (nextSig !== this._customFolderSig) {
+          this.reloadDynamicKnowledge();
+        }
+      } catch (err) {
+        console.warn('⚠ [Auto-Brain Watcher] Lỗi kiểm tra thư mục custom/:', err.message);
+      }
+    };
+
+    try {
+      const watcher = fs.watch(customDir, { recursive: false }, () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(triggerIfChanged, 800);
+      });
+      if (typeof watcher.unref === 'function') watcher.unref();
+      watcher.on('error', () => {});
+    } catch {}
+
+    // Quét dấu vân tay nhẹ mỗi 12 giây (tốn <1ms) để hỗ trợ cả thư mục con sâu và upload qua SCP/WinSCP trên Linux VM!
+    const pollTimer = setInterval(triggerIfChanged, 12000);
+    if (typeof pollTimer.unref === 'function') pollTimer.unref();
+  }
+
+  findDynamicMatch(question, { language = 'vi', minScore = 0.56, onlyUserCustom = false } = {}) {
+    if (!question || !this.localSemanticIndex || this.customDocs.length === 0) return null;
+    const cleanQ = nlp.cleanVoiceSpokenInput(question) || question;
+    const hits = this.localSemanticIndex.search(cleanQ, {
+      lang: language,
+      topK: 1,
+      minScore,
+      onlyDynamic: !onlyUserCustom,
+      onlyUserCustom
+    });
+    return hits.length > 0 ? hits[0] : null;
   }
 
   buildLocalSemanticIndex() {
@@ -477,6 +572,27 @@ class KnowledgeBase {
           answer: ex.directAnswer,
           lang: 'vi',
           intent: 'EXHIBIT_INFORMATION'
+        });
+      }
+    }
+
+    for (const d of this.customDocs) {
+      if (d.question && d.answer) {
+        this.localSemanticIndex.addDocument({
+          id: d.id,
+          source: d.source || 'CUSTOM_DROPIN',
+          question: d.question,
+          answer: d.answer,
+          lang: d.lang || 'vi',
+          intent: d.intent || 'HISTORICAL_FACT',
+          priorityBoost: d.priorityBoost || 0.04,
+          zoneId: d.zoneId || null,
+          zoneName: d.zoneName || null,
+          toneLevel: d.toneLevel || null,
+          topic: d.topic || null,
+          fileLabel: d.fileLabel || null,
+          isDynamic: true,
+          isUserCustom: Boolean(d.isUserCustom)
         });
       }
     }
@@ -1444,6 +1560,33 @@ class KnowledgeBase {
       }
     }
 
+    // 2.5. Truy xuất Top-3 tri thức chuẩn từ gói dataset_hoa_lo_vi (14 phân khu + 1.000 Q&A + chuyện nhỏ + Golden Facts)
+    //      & thư mục thả file tự nạp `custom/` (ưu tiên cao nhất cho tài liệu người dùng mới thả vào!)
+    let matchedToneLevel = null;
+    let hasCustomDropInMatch = false;
+    let hasDynamicArchiveMatch = false;
+    if (this.localSemanticIndex && this.customDocs.length > 0) {
+      const cleanQ = nlp.cleanVoiceSpokenInput(question) || question;
+      const dynHits = this.localSemanticIndex.search(cleanQ, {
+        lang: null,
+        topK: 3,
+        minScore: 0.36,
+        onlyDynamic: true
+      });
+      for (const hit of dynHits) {
+        const doc = hit.doc;
+        if (!matchedToneLevel) {
+          matchedToneLevel = doc.toneLevel || (doc.zoneId ? this.zoneTones.get(doc.zoneId) : null) || null;
+        }
+        if (doc.isUserCustom && hit.score >= 0.44) hasCustomDropInMatch = true;
+        if (hit.score >= 0.48) hasDynamicArchiveMatch = true;
+        const label = doc.isUserCustom
+          ? `Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`
+          : (doc.zoneName ? `Tư liệu ${doc.zoneName} (${doc.id})` : `Tư liệu chuẩn ${doc.id}`);
+        addSnippet(label, doc.answer);
+      }
+    }
+
     // 3. Kho tri thức mở rộng (expanded_heritage_knowledge.json)
     const expMatch = this.findExpandedMatch(question, 'vi', 0);
     if (expMatch && expMatch.reply) {
@@ -1530,7 +1673,10 @@ class KnowledgeBase {
     return {
       snippets: snippets.slice(0, topK),
       hasArchiveEvidence: snippets.length > 0,
-      hasMatchedExhibit: Boolean(matchedExhibit)
+      hasMatchedExhibit: Boolean(matchedExhibit) || hasCustomDropInMatch,
+      matchedToneLevel,
+      hasCustomDropInMatch,
+      hasDynamicArchiveMatch
     };
   }
 }

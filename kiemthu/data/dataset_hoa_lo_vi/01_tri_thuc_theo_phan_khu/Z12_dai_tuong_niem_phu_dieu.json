@@ -1,0 +1,122 @@
+{
+  "zone_id": "Z12",
+  "filename": "Z12_dai_tuong_niem_phu_dieu.json",
+  "zone_vi": "Đài tưởng niệm & Bức phù điêu",
+  "tone_level": "Cấp 1 — Trang nghiêm tuyệt đối & Lắng đọng (Wit = 0%)",
+  "summary": "Không gian kết nối tâm linh ngoài trời ở điểm cuối hành trình tham quan với bức phù điêu đá xanh Thanh Hóa của nhà điêu khắc Lê Liên khánh thành năm 2000, tôn vinh cả các anh hùng hữu danh lẫn vô danh.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z12_F01",
+      "topic": "Kiến trúc Đài tưởng niệm (2000), phù điêu Lê Liên & ý nghĩa biểu tượng",
+      "verified_facts": [
+        "Đài tưởng niệm hoàn thành năm 2000; bức phù điêu lớn do nhà điêu khắc Lê Liên thực hiện bằng đá xanh Thanh Hóa nguyên khối đặt trên bệ đá hoa cương đen khắc chữ vàng.",
+        "Hình tượng nối tiếp từ sĩ phu đầu thế kỷ XX, nữ chiến sĩ, người cao tuổi tới chiến sĩ trẻ vùng lên phá dây thép gai dưới viền đá hình ngọn lửa vươn cao trên đỉnh.",
+        "Bức tường khắc tên các liệt sĩ tiêu biểu đồng thời là nơi tưởng nhớ hàng nghìn chiến sĩ, nông dân, thợ thuyền yêu nước đã ngã xuống mà không còn giữ được đầy đủ hồ sơ tên tuổi.",
+        "Khoảng sân mở hoàn toàn lên bầu trời, kết hợp tiểu cảnh hòn non bộ, cây hoa đại trắng, tạo khung cảnh đối thoại giữa di tích cổ và tòa Tháp Hà Nội hiện đại phía sau."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa kích thước dài rộng chính xác tới từng cm hay trọng lượng bằng tấn của lư đồng nếu bảng giới thiệu không công bố cụ thể."
+      ]
+    },
+    {
+      "card_id": "Z12_F02",
+      "topic": "Nghi lễ tri ân, hoa cúc trắng/bất tử & quy tắc bảo tồn không gian thiêng",
+      "verified_facts": [
+        "Trước đài đặt lư đồng lớn hoa văn truyền thống, bình gốm Bát Tràng cắm hoa cúc trắng/vàng và hoa bất tử; bên cạnh có sổ lưu bút đa ngôn ngữ.",
+        "Để bảo vệ hiện vật giấy, vải và gỗ cổ trong các phòng kế cận khỏi muội khói, di tích áp dụng quy định hạn chế đốt hương khói lớn, giữ trang phục lịch sự và trật tự trang nghiêm.",
+        "Đây cũng là nơi diễn ra lễ thắp nến tri ân 27/7 ('Lửa thanh xuân'), lễ báo công, kết nạp Đoàn – Đội và nghi thức đặt vòng hoa của các đoàn ngoại giao quốc tế."
+      ],
+      "pitfalls_to_avoid": []
+    }
+  ],
+  "notable_people": [
+    "Nhà điêu khắc Lê Liên (tác giả phù điêu năm 2000)"
+  ],
+  "artifact_count_vi": 60,
+  "artifacts_catalog_vi": [
+    "Biểu tượng \"Lửa thanh xuân\" trong các lễ thắp nến tri ân",
+    "Bát hương lớn bằng đồng và nghi thức dâng hương",
+    "Bình gốm Bát Tràng và lẵng hoa cúc trắng viếng hằng ngày ở chân đài",
+    "Bậc tam cấp lát đá chống trơn trượt cho người cao tuổi và cựu chiến binh",
+    "Bậc đá hoa cương và khoảng sân tưởng niệm ngoài trời",
+    "Bệ đá hoa cương đen và hàng chữ khắc trang trọng giữa lòng đài",
+    "Bố cục nhóm nhân vật nối tiếp từ sĩ phu đầu thế kỷ đến chiến sĩ cách mạng",
+    "Bức phù điêu bằng đá của nhà điêu khắc Lê Liên",
+    "Bức tường gắn tên các anh hùng liệt sĩ và những chiến sĩ vô danh",
+    "Bức tường khắc tên các chiến sĩ yêu nước và liệt sĩ hy sinh",
+    "Chiếc lư hương bằng đồng đúc hoa văn rồng phượng và tai mây truyền thống",
+    "Chất liệu đá xanh Thanh Hóa hay đá granite trên bức phù điêu",
+    "Các buổi lễ báo công dâng hương và lễ kết nạp Đoàn, Đội của học sinh Hà Nội",
+    "Cách bố trí chiếu đèn vàng hắt sáng từ dưới chân đài vào buổi chiều muộn",
+    "Cây hoa đại cổ dáng đẹp và tán hoa trắng thơm dịu ở góc sân tưởng niệm",
+    "Dịch vụ hương hoa miễn phí hay tự túc cho các đoàn học sinh, sinh viên",
+    "Giai điệu nhạc nền trầm hùng không lời phát qua loa ngụy trang ngoài sân",
+    "Hoa cúc trắng và vòng hoa tưởng niệm đặt dưới chân đài",
+    "Hình tượng dây thép gai và bàn tay nắm chặt trên phù điêu",
+    "Hình tượng ngọn lửa ẩn dụ trong viền đá bao quanh đỉnh phù điêu",
+    "Hình ảnh góc tòa Tháp Hà Nội phản chiếu hiện đại phía sau tượng đài cổ",
+    "Hình ảnh ngọn lửa cách mạng ẩn dụ trong chi tiết điêu khắc",
+    "Hình ảnh những bông hoa bất tử trưng bày cạnh bảng tri ân",
+    "Hình ảnh nữ chiến sĩ và người cao tuổi trên phù điêu Lê Liên",
+    "Hòn non bộ và tiểu cảnh hồ nước trong khuôn viên di tích",
+    "Hỗ trợ thân nhân liệt sĩ và gia đình cựu tù tra cứu danh sách lưu trữ khi về dâng hương",
+    "Khoảnh khắc các bác cựu tù tuổi chín mươi ngồi ghế đá trò chuyện cùng học sinh",
+    "Khoảnh khắc lắng đọng của các cựu chiến binh khi thắp hương tại đài",
+    "Khu vực ghế đá nghỉ chân dưới tán cây cạnh hòn non bộ",
+    "Khuyến cáo về trang phục lịch sự và cách tạo dáng chụp ảnh tại không gian tâm linh",
+    "Không gian mái mở hoàn toàn hướng lên bầu trời xanh trên khu đài tưởng niệm",
+    "Không gian rợp bóng cây xanh bao quanh khu Đài tưởng niệm",
+    "Kiến trúc tổng thể Đài tưởng niệm các anh hùng liệt sĩ",
+    "Kích thước đồ sộ và tỷ lệ cân xứng của bức phù điêu đá xanh Lê Liên",
+    "Lòng tri ân qua câu khắc chữ vàng trên Đài tưởng niệm",
+    "Lý do chọn chất liệu đá xanh Thanh Hóa chạm khắc nguyên khối ngoài trời",
+    "Lư đồng lớn và họa tiết hoa văn truyền thống trên lư hương",
+    "Mức độ bảo vệ bề mặt đá phù điêu tránh bạc màu và rêu mốc mưa axit",
+    "Nghi thức dâng hương tập thể xúc động trong chương trình Đêm thiêng liêng",
+    "Ngọn đuốc hoặc đèn hắt sáng vào bức phù điêu về đêm",
+    "Những bức tranh sơn mài hoặc phù điêu phụ đặt dọc tường hành lang",
+    "Những lẵng hoa viếng mang dải băng ngoại giao của đoàn khách quốc tế",
+    "Những vần thơ khắc trên tường đá xung quanh Đài tưởng niệm",
+    "Nơi đặt vòng hoa viếng của các đoàn nguyên thủ và khách quốc tế",
+    "Quy định không thắp hương khói lớn để bảo vệ cấu trúc gỗ và giấy cổ xung quanh",
+    "Sổ ghi cảm tưởng của khách tham quan đặt gần khu vực tưởng niệm",
+    "Sự chuyển tiếp sắc độ màu xám tro của khối đá phù điêu dưới nắng trưa và trời râm",
+    "Sự giao thoa giữa không gian linh thiêng và khối nhà cao tầng phía sau",
+    "Thiết kế khoảng mái hiên hành lang nối giúp khách tránh mưa nắng trước sân Đài",
+    "Thông điệp biết ơn gửi lại thế hệ sinh ra trong hòa bình khi khép lại phần thăm đài",
+    "Thông điệp giữ gìn hòa bình gửi gắm ở cuối khu tưởng niệm",
+    "Tiếng chuông và nhạc nền trầm hùng trong không gian tri ân",
+    "Tiểu cảnh hòn non bộ và mặt nước tĩnh làm dịu cảm xúc nặng nề cuối tuyến",
+    "Tính trang nghiêm về trang phục của du khách khi đến Đài tưởng niệm",
+    "Vị trí xưa của khoảng sân Đài tưởng niệm trên bản đồ trại giam cũ 1896",
+    "Vị trí xưa của khu vực Đài tưởng niệm trên bản đồ nhà tù cũ",
+    "Vị trí đặt cuốn sổ lưu bút ghi cảm tưởng đa ngôn ngữ cạnh đài",
+    "Ý nghĩa của câu khẩu hiệu 'Sống vì Đảng, chết không rời Đảng' gắn với khí tiết tù nhân",
+    "Ý nghĩa việc đặt Đài tưởng niệm ở điểm gần cuối hành trình tham quan",
+    "Độ sắc nét của lớp dây thép gai nổi khối trên bề mặt đá cứng"
+  ],
+  "qa_count_bo1": 30,
+  "qa_count_bo2": 30,
+  "qa_count_total": 60,
+  "golden_fact_ids": [
+    "GF-10"
+  ],
+  "anti_pattern_ids": [
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z12",
+    "zone_vi": "Đài tưởng niệm & Bức phù điêu",
+    "total_questions": 30,
+    "on_target": 0,
+    "zone_generic": 26,
+    "off_topic_or_error": 2,
+    "false_refusal": 0,
+    "safety_guard": 2,
+    "drop_and_no_data_rate": 0.0667,
+    "on_target_rate": 0.0,
+    "zone_coverage_rate": 0.8667,
+    "avg_latency_ms": 15.67,
+    "quality_note": "86.7% nhắc đến Lê Liên/Tri ân nhưng trượt toàn bộ câu hỏi chất liệu đá, năm 2000, nghi thức dâng hoa."
+  }
+}

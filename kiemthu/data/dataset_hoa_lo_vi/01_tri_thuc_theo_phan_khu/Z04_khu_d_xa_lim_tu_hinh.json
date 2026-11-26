@@ -1,0 +1,149 @@
+{
+  "zone_id": "Z04",
+  "filename": "Z04_khu_d_xa_lim_tu_hinh.json",
+  "zone_vi": "Khu D & Xà lim tử hình",
+  "tone_level": "Cấp 1 — Trang nghiêm tuyệt đối & Lắng đọng (Wit = 0%)",
+  "summary": "Khu vực biệt lập giam giữ những tử tù mang án chém hoặc xử bắn — nơi chứng kiến những giờ phút cuối đời bất khuất của đồng chí Hoàng Văn Thụ, các nghĩa sĩ Khởi nghĩa Yên Bái và cuộc chuẩn bị vượt ngục kỳ tích đêm Noel 1951.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z04_F01",
+      "topic": "Thiết kế xà lim án chém, cửa thép tán đinh & cùm gỗ lim",
+      "verified_facts": [
+        "Dãy Khu D tách biệt qua nhiều lớp cửa cổng; cánh cửa phòng ghép tấm thép dày với hàng đinh tán thép tròn mũ lớn, ô tiếp tế đặt ngang tầm ngực, bên trong giữ ngọn đèn mờ suốt đêm để giám sát 24/24 phòng tử tù tự sát.",
+        "Chân tử tù bị kẹp cố định 24/24 vào thanh cùm gỗ lim nặng nề khoét hốc bán nguyệt khóa chốt sắt hai đầu (nhích được vài mi-li-mét, có buồng quá tải giam 2–3 tử tù chung một bục).",
+        "Buồng số 1 Khu D tái hiện nơi giam giữ đồng chí Hoàng Văn Thụ từ cuối 1943 tới sáng 24/5/1944 (hy sinh ở tuổi 35 tại trường bắn Tương Mai)."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa cân nặng chính xác từng cánh cửa thép hoặc số lượng liệt sĩ toàn danh sách nếu không có con số chốt tại bảng vàng."
+      ]
+    },
+    {
+      "card_id": "Z04_F02",
+      "topic": "Chiếc áo len xanh lá mạ — Đỗ Nhuận, Phạm Thị Vân & Hoàng Văn Thụ",
+      "verified_facts": [
+        "Nhạc sĩ Đỗ Nhuận từng gửi chiếc áo len xanh lá mạ của mình tặng đồng chí Hoàng Văn Thụ sưởi ấm trong giá rét mùa đông 1943–1944 ở Khu D.",
+        "Bà Phạm Thị Vân (vợ đồng chí Hoàng Văn Thụ) khi bị giam ở trại nữ cũng tháo len từ chiếc áo của em gái, vót que tre làm kim đan thành áo len cổ lọ, nhờ đường dây chia cơm/tiếp tế bí mật chuyển sang tận buồng số 1 Khu D.",
+        "Trước khi ra pháp trường Tương Mai rạng sáng 24/5/1944, đồng chí Hoàng Văn Thụ để lại bài thơ bất hủ 'Việc nước xưa nay có bại thành...' và lời dặn các đồng chí ở lại giữ vững ý chí công tác."
+      ],
+      "pitfalls_to_avoid": []
+    },
+    {
+      "card_id": "Z04_F03",
+      "topic": "Nghi thức rạng sáng, khí tiết tử tù & kỳ tích vượt ngục Noel 1951",
+      "verified_facts": [
+        "Thực dân Pháp giữ bí mật ngày giờ hành quyết với gia đình; khoảng 4–5 giờ sáng mới đánh thức tử tù, đọc lại bản án, cho hút thuốc/uống rượu (phần lớn chiến sĩ từ chối khăn bịt mắt, đi thẳng ra trường bắn Tương Mai, Cầu Giấy trong tiếng hô khẩu hiệu và Quốc tế Ca tiễn biệt của các buồng khác).",
+        "Một số tử tù được hạ án xuống chung thân đày đi Côn Đảo (ví dụ thời kỳ Mặt trận Bình dân 1936–1939).",
+        "Cuối năm 1951, 16 tử tù ngay tại Khu D phối hợp với chi bộ bên ngoài dùng lưỡi cưa nhỏ cưa ngầm chốt cùm gỗ lim (trộn cơm nguội với tro ngụy trang vết cưa) tạo tiền đề cho cuộc vượt ngục đêm 24/12/1951."
+      ],
+      "pitfalls_to_avoid": []
+    }
+  ],
+  "notable_people": [
+    "Hoàng Văn Thụ",
+    "Đỗ Nhuận",
+    "Phạm Thị Vân",
+    "Nguyễn Thái Học",
+    "Phó Đức Chính",
+    "Nhóm 16 tử tù vượt ngục 1951"
+  ],
+  "artifact_count_vi": 72,
+  "artifacts_catalog_vi": [
+    "Bàn thờ và bát hương tưởng niệm ngay trong dãy xà lim",
+    "Bản án tử hình bằng tiếng Pháp có đóng dấu Hội đồng Đề hình",
+    "Bản đồ vị trí Khu D so với khu vực đặt máy chém trước cổng",
+    "Bệ cùm chân 24/24 của tử tù",
+    "Bữa ăn cuối cùng hoặc ly rượu trước khi ra pháp trường",
+    "Chi tiết bài thơ và lời dặn trước lúc ra pháp trường Tương Mai của Hoàng Văn Thụ",
+    "Chi tiết cái gối gỗ cứng và tư thế cùm chân gây phù nề tương tự Cachot",
+    "Chiếc áo len cổ lọ do bà Phạm Thị Vân đan tặng đồng chí Hoàng Văn Thụ",
+    "Chiếc áo len xanh lá mạ của nhạc sĩ Đỗ Nhuận",
+    "Chuyện những tù nhân thường phạm cũng bị giam chung Khu D",
+    "Chính sách ân xá hoặc hạ án từ tử hình xuống chung thân",
+    "Chú thích song ngữ Anh – Việt về vụ vượt ngục 16 tử tù năm 1951 tại Khu D",
+    "Chế độ ăn của tử tù tại Khu D có khác phòng giam thường hay Cachot không",
+    "Chức năng của chiếc xô nhỏ và ca nước trong xà lim tử tù",
+    "Các chiến sĩ thuộc Việt Nam Quốc dân Đảng sau Khởi nghĩa Yên Bái",
+    "Các tử tù tiêu biểu vụ Khởi nghĩa Yên Bái 1930 từng bị giam ở Hỏa Lò",
+    "Cách thức bảo tồn nguyên trạng phần tường và nền Khu D",
+    "Cách thức còng xích tử tù lúc ra khỏi buồng Khu D đi xét xử hay thi hành án",
+    "Cách tù nhân dùng miếng cơm thừa làm cờ hay ghi nhớ lịch sử",
+    "Cách đọc tên tiếng Việt của các giám ngục Pháp đối với tử tù",
+    "Cánh cửa sắt đóng bằng đinh tán dày đặc ở Khu D",
+    "Cánh cửa thép tán đinh dày và độ bền của khóa cổ hơn một thế kỷ",
+    "Câu chuyện cựu tù Khu D thoát chết trở về thăm lại đúng buồng giam số xưa",
+    "Câu nói bất hủ và khí phách trước pháp trường",
+    "Cùm gỗ lim kẹp cổ chân ở khu tử hình",
+    "Cơ chế giám sát tử tù tránh tự sát trước giờ hành quyết",
+    "Cảm giác nghẹn ngào khi rời khỏi xà lim buồng số 1 Khu D",
+    "Cảm xúc của những tử tù được hạ án từ tử hình xuống chung thân đi Côn Đảo",
+    "Cảnh tượng tái hiện trong phòng xà lim tử tù với 2–3 tượng sáp",
+    "Cấu tạo tấm thép tán đinh dày trên cánh cửa sắt buồng tử hình Khu D",
+    "Danh sách tên tuổi các tử tù tiêu biểu từng qua buồng giam Khu D",
+    "Hiện vật bàn thờ tri ân ngay đầu hành lang Khu D",
+    "Hành động trao đổi ám hiệu gõ muỗng hoặc tiếng ho giữa các buồng tử tù",
+    "Hình ảnh ngọn đèn đỏ lờ mờ sáng suốt đêm trong buồng tử tù",
+    "Khe thông sáng nhỏ phía trên cửa xà lim tử hình",
+    "Khoảng thông sáng ô nhỏ trên cao tường ngoài dãy Khu D",
+    "Khoảnh khắc các tử tù chào tạm biệt đồng đội trước khi đi",
+    "Khoảnh khắc nhạc sĩ Đỗ Nhuận chia sẻ chiếc áo len cho đồng chí Hoàng Văn Thụ",
+    "Khí phách bất khuất qua lời tự khai không phản bội đồng chí",
+    "Kỷ vật bức thư tuyệt mệnh hoặc bài thơ viết trên giấy mỏng trước giờ hy sinh",
+    "Lễ tháo chiếc áo len của bà Phạm Thị Vân ở trại nữ để đan lại gửi Khu D",
+    "Nghi thức báo án tử hình vào lúc rạng sáng",
+    "Những bức thư tuyệt mệnh viết trước khi ra pháp trường",
+    "Những giờ phút cuối cùng của đồng chí Hoàng Văn Thụ tại Hỏa Lò",
+    "Những người chiến sĩ bị tử hình trong vụ Hà Thành đầu độc 1908",
+    "Nơi cất giữ chìa khóa khu xà lim đặc biệt",
+    "Quyền thăm gặp thân nhân lần cuối trước ngày thi hành án",
+    "Quá trình chuẩn bị bí mật cuộc vượt ngục đêm 24/12/1951 ngay từ bên trong Khu D",
+    "Quá trình cưa cùm gỗ lim trong đêm vượt ngục Noel 1951",
+    "Số phận thi hài các tử tù sau khi xử bắn tại Tương Mai hoặc chém tại Hỏa Lò",
+    "Sự có mặt của hai hoặc ba tử tù trong cùng một ô xà lim lúc quá tải",
+    "Sự khác biệt giữa phòng xà lim tử hình và phòng Cachot",
+    "Sự khác biệt độ dốc và vật liệu giữa bệ xi măng Khu D với bệ khu tập thể",
+    "Sự phối hợp giữa bà Phạm Thị Vân ở trại nữ và người truyền tin để gửi áo cho Khu D",
+    "Sự tôn trọng của chính đối thủ trước khí tiết tử tù Việt Nam",
+    "Thời gian chờ đợi từ lúc tuyên án đến lúc thi hành án",
+    "Thủ tục cắt tóc hoặc cạo râu trước ngày hành hình",
+    "Thủ tục lập biên bản nhận diện và lăn tay lần cuối trước khi rời Khu D",
+    "Tiếng hát Quốc tế Ca tiễn biệt đồng đội ra pháp trường từ các buồng lân cận",
+    "Trạng thái đóng mở của lớp cửa kính bảo vệ phòng Khu D hiện tại",
+    "Tâm lý kiên định và tinh thần lạc quan 'coi cái chết nhẹ tựa lông hồng'",
+    "Tên gọi \"Xà lim án chém\" và Khu D",
+    "Tấm ảnh tư liệu về trường bắn Tương Mai và Cầu Giấy năm 1944–1954",
+    "Việc lính gác lục soát từng kẽ tóc, gấu áo của tử tù mỗi sáng",
+    "Vòng cùm cổ chân cố định gắn với thanh sắt dày",
+    "Vết khắc tên hoặc ngày tháng trên mảng gỗ cùm cũ",
+    "Vị trí biệt lập của khu xà lim Khu D trong sơ đồ nhà tù cũ",
+    "Âm hưởng tiếng xích kéo lê khi tử tù bước ra khỏi Khu D",
+    "Ô cửa nhỏ trên vách cửa Khu D và cách chuyển đồ vào buồng tử hình",
+    "Đèn ngủ đỏ mờ và hiệu ứng âm thanh trong xà lim tử hình",
+    "Đồng chí Nguyễn Đức Cảnh và những ngày ở Hỏa Lò",
+    "Ống nhòm quan sát / lỗ khoan trên cửa sắt"
+  ],
+  "qa_count_bo1": 36,
+  "qa_count_bo2": 36,
+  "qa_count_total": 72,
+  "golden_fact_ids": [
+    "GF-05"
+  ],
+  "anti_pattern_ids": [
+    "AP-01",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z04",
+    "zone_vi": "Khu D & Xà lim tử hình",
+    "total_questions": 36,
+    "on_target": 2,
+    "zone_generic": 27,
+    "off_topic_or_error": 6,
+    "false_refusal": 0,
+    "safety_guard": 1,
+    "drop_and_no_data_rate": 0.0278,
+    "on_target_rate": 0.0556,
+    "zone_coverage_rate": 0.8056,
+    "avg_latency_ms": 9.56,
+    "quality_note": "Tỷ lệ phủ phân khu tốt (80.6%), có HL-118 khớp chính xác buồng 1 Hoàng Văn Thụ."
+  }
+}

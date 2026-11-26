@@ -1,0 +1,122 @@
+{
+  "zone_id": "Z08",
+  "filename": "Z08_san_trai_cay_bang.json",
+  "zone_vi": "Sân trại giam & Cây bàng lịch sử",
+  "tone_level": "Cấp 3 — Ấm áp & Hóm hỉnh nhẹ nhàng (Độ dí dỏm tinh tế 30–40%)",
+  "summary": "Khoảng sân trung tâm ngập ánh sáng gắn liền với cây bàng cổ thụ hơn trăm năm tuổi — vừa là 'trạm liên lạc', 'tủ thuốc thiên nhiên', 'xưởng chế tác bút đũa' vừa là chiếc đồng hồ bốn mùa nuôi hy vọng cho biết bao thế hệ tù nhân.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z08_F01",
+      "topic": "Bốn công dụng kỳ diệu của Cây bàng lịch sử Hỏa Lò",
+      "verified_facts": [
+        "Liên lạc bí mật ('hộp thư chết'): Các hốc vỏ cây và gốc bàng quanh sân là nơi tù nhân các trại lén đặt truyền đơn, tài liệu, mẩu tin mật chuyển cho nhau trong giờ đi dạo 15 phút dưới họng súng canh gác.",
+        "Tủ thuốc cứu người: Búp bàng, lá bàng non/già và vỏ cây được sắc hoặc giã đắp để chữa bệnh đường ruột (kiết lỵ), hạ sốt và rửa sát trùng vết thương lở loét do tra tấn, xiềng xích.",
+        "Chế tác đồ dùng và dinh dưỡng: Cành bàng khô được mài vót thành quản bút viết báo tù, đũa ăn, thìa, hộp khắc kỷ vật; hạt quả bàng cứng được đập lấy nhân bổ sung chất béo/đạm giữa cảnh thiếu ăn.",
+        "Đồng hồ bốn mùa: Tán lá bàng chuyển xanh – vàng – đỏ – trút lá rồi đâm chồi biếc giúp người tù bị cách ly nhiều năm cảm nhận vòng quay thời gian và viết thơ lên lá khô."
+      ],
+      "pitfalls_to_avoid": [
+        "Phân biệt rõ câu hỏi về cây bàng sân trại với 'trà lá bàng / bánh thạch lá bàng' ở Tour Đêm (Z14)."
+      ]
+    },
+    {
+      "card_id": "Z08_F02",
+      "topic": "Bảo tồn & Nhân giống cây bàng Hỏa Lò ngày nay",
+      "verified_facts": [
+        "Cây bàng cổ thụ tại sân di tích được chăm sóc đặc biệt với bồn bảo vệ gốc.",
+        "Ban Quản lý Di tích thu hạt nhân giống thành nhiều cây bàng non trao tặng các trường học, cơ quan và cả chiến sĩ, nhân dân ngoài quần đảo Trường Sa làm biểu tượng tiếp nối truyền thống."
+      ],
+      "pitfalls_to_avoid": []
+    }
+  ],
+  "notable_people": [
+    "Tập thể chiến sĩ cách mạng qua nhiều thế hệ (1930–1954)"
+  ],
+  "artifact_count_vi": 60,
+  "artifacts_catalog_vi": [
+    "Biển cảnh báo bảo vệ cây di sản trong khuôn viên",
+    "Biểu tượng chiếc lá bàng trên logo, túi vải và huy hiệu truyền thông của di tích",
+    "Bóng mát cây bàng – nơi tổ chức sinh hoạt chi bộ bí mật",
+    "Bồn gạch xây quây quanh gốc cây giúp bảo vệ bộ rễ tránh bị giẫm nén",
+    "Bức ảnh cựu tù đứng chụp kỷ niệm bên gốc bàng khi thăm lại di tích",
+    "Chiếc quản bút mài từ cành bàng khô trưng bày trong tủ kính",
+    "Chú thích bằng thơ về cây bàng của các cựu tù Hỏa Lò",
+    "Chất tanin chát trong búp bàng non giúp cầm tiêu chảy và kiết lỵ",
+    "Cách mài vỏ quả hoặc cành bàng khô tạo rãnh kẹp ngòi bút tự chế",
+    "Cách tù nhân giấu \"hòm thư mật\" bằng ống tre hoặc bọc vải dưới gốc bàng",
+    "Cách tù nhân giấu lá bàng và cành khô vào gấu quần hay bên trong nón lá",
+    "Cách đập vỡ vỏ xơ cứng của hạt bàng bên trong phòng giam không gây ồn",
+    "Câu chuyện cành bàng khô biến thành đôi đũa kỷ niệm khắc hoa văn tinh xảo",
+    "Cây bàng cổ thụ trồng từ trước năm 1930",
+    "Cây bàng như điểm chuyển tiếp nhẹ nhàng giữa hai phần trưng bày Pháp và Mỹ",
+    "Cây bàng trong kỷ niệm của phi công Mỹ giai đoạn 1964–1973",
+    "Công dụng của nhựa bàng hoặc tro lá bàng trong tù",
+    "Cảm giác ngắm mùa lá bàng rụng nhắc nhớ thời gian trôi qua sau song sắt",
+    "Cảnh lá bàng chuyển màu đỏ rực vào mùa đông Hà Nội",
+    "Góc sân dưới tán bàng làm nơi họp chi bộ giả vờ bắt chấy hoặc tập thể dục",
+    "Hình ảnh cây bàng đi vào thơ ca viết từ ngục Hỏa Lò của Xuân Thủy, Sóng Hồng",
+    "Hạt giống cây bàng được nhân giống trồng lưu niệm ở nơi khác",
+    "Hệ thống chống sét hoặc dây cột chằng tán cho cây bàng cổ thụ",
+    "Hốc gốc cây bàng dùng làm \"hòm thư bí mật\"",
+    "Hốc tự nhiên ở phần rễ nổi dùng giấu ống thuốc lá chứa mật thư",
+    "Khoảng sân lát gạch xung quanh gốc bàng trong các hoạt cảnh đêm",
+    "Khách quốc tế ngạc nhiên khi nghe câu chuyện 'cây thuốc' giữa nhà ngục",
+    "Ký ức hái trộm lá bàng non của tù nhân giữa lúc lính gác quay đi",
+    "Lá bàng non và vỏ bàng sắc thuốc chữa kiết lỵ, sát trùng",
+    "Màu sắc lá bàng non màu đồng ánh đỏ vào mùa xuân ở Hà Nội",
+    "Nhiệt độ mát dịu dưới tán bàng so với sân xi măng hấp nhiệt mùa hè",
+    "Nhân hạt bàng giàu dầu béo trở thành nguồn dinh dưỡng cứu người ốm",
+    "Những hộp khắc nhỏ từ gỗ bàng hoặc vỏ quả bàng",
+    "Những kỷ niệm khác lạ của tù binh Mỹ dưới tán cây bàng sân trại",
+    "Những vệt nhựa bàng tự nhiên hoặc tổ kiến dưới lớp vỏ cây già",
+    "Phương pháp chăm sóc, chống đỡ bảo tồn cây bàng gần 100 tuổi",
+    "Phương án khung chống hoặc cắt tỉa an toàn phòng bão nhiệt đới Hà Nội",
+    "Quy trình thu hái lá sạch tạo ra món trà bàng và bánh lá bàng đặc trưng",
+    "Quả bàng chín giúp tù nhân chống đói và bổ sung vitamin",
+    "Số lượng cây bàng từng mọc trong sân Nhà tù Hỏa Lò xưa",
+    "Sự kiện tặng 'cây bàng con' hậu duệ Hỏa Lò cho các trường học và đảo Trường Sa",
+    "Sự kết hợp giữa gốc cây bàng và khoảng sân gạch vuông đón gió trời",
+    "Sự tương đồng giữa cây bàng Hỏa Lò và hàng bàng di sản ở Nhà tù Côn Đảo",
+    "Thế thân nghiêng uốn lượn tự nhiên của cây bàng vươn về phía ánh sáng",
+    "Thời điểm hoa bàng nở nhỏ li ti trắng xanh trước khi kết quả",
+    "Trà lá bàng và bánh lá bàng lưu niệm lấy cảm hứng từ cây bàng",
+    "Tuổi đời gần một trăm năm và chu vi gốc xù xì của cây bàng Hỏa Lò",
+    "Tình cảm các cựu tù gắn bó với cây bàng như người đồng chí thầm lặng",
+    "Tình trạng cây bàng trong thời điểm giải tỏa thập niên 1990",
+    "Tại sao cai ngục Pháp lại cho phép giữ lại cây bàng giữa sân tù?",
+    "Tẩu hút thuốc và đôi đũa làm từ gỗ cành bàng",
+    "Việc cây bàng nằm gọn trong vùng bảo tồn lõi sau quy hoạch năm 1993",
+    "Việc lính gác sử dụng bóng mát cây bàng hay cấm tù nhân tụ tập",
+    "Vì sao cây bàng được gọi là \"cây bàng tình nghĩa\"",
+    "Vết sẹo vỏ cây cũ trên thân cây bàng cổ thụ",
+    "Vị trí cây bàng nằm giữa khu sân nam",
+    "Ánh nắng xuyên qua kẽ lá tạo không gian dịu mắt giữa hành trình tham quan",
+    "Ý nghĩa tinh thần của màu xanh cây bàng giữa chốn xi măng sắt thép",
+    "Độ cao tán cây so với bức tường thành 4m",
+    "Ảnh hưởng của đợt bom B-52 tháng 12/1972 đối với cây bàng sân Hỏa Lò"
+  ],
+  "qa_count_bo1": 30,
+  "qa_count_bo2": 30,
+  "qa_count_total": 60,
+  "golden_fact_ids": [
+    "GF-08"
+  ],
+  "anti_pattern_ids": [
+    "AP-05",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z08",
+    "zone_vi": "Sân trại giam & Cây bàng lịch sử",
+    "total_questions": 30,
+    "on_target": 3,
+    "zone_generic": 26,
+    "off_topic_or_error": 0,
+    "false_refusal": 1,
+    "safety_guard": 0,
+    "drop_and_no_data_rate": 0.0333,
+    "on_target_rate": 0.1,
+    "zone_coverage_rate": 0.9667,
+    "avg_latency_ms": 3.37,
+    "quality_note": "Phân khu tốt nhất (100% không lạc đề trừ 1 câu bị từ chối), trùng khớp 3 công dụng cây bàng."
+  }
+}

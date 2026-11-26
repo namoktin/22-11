@@ -1,0 +1,296 @@
+{
+  "dataset_name": "HoaLo_AI_Dataset_VI",
+  "version": "1.0.0",
+  "language": "vi",
+  "total_qa_pairs": 1000,
+  "total_zones": 14,
+  "total_question_types": 7,
+  "total_fact_cards": 36,
+  "total_micro_stories": 28,
+  "total_myth_busters": 12,
+  "sft_splits": {
+    "train": 900,
+    "validation": 100,
+    "adversarial": 36
+  },
+  "total_files": 48,
+  "total_bytes": 7689938,
+  "files": [
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z01_cong_chinh_kien_truc.json",
+      "records": 4,
+      "bytes": 11502
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z02_phong_giam_tap_the.json",
+      "records": 4,
+      "bytes": 11363
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z03_nguc_toi_cachot.json",
+      "records": 3,
+      "bytes": 10157
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z04_khu_d_xa_lim_tu_hinh.json",
+      "records": 3,
+      "bytes": 11006
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z05_may_chem_cong_cu_tra_tan.json",
+      "records": 2,
+      "bytes": 11364
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z06_trai_giam_nu_tu_nhi.json",
+      "records": 2,
+      "bytes": 9849
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z07_cong_ngam_vuot_nguc.json",
+      "records": 2,
+      "bytes": 10692
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z08_san_trai_cay_bang.json",
+      "records": 2,
+      "bytes": 8848
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z09_truong_hoc_bao_chi_tu.json",
+      "records": 2,
+      "bytes": 10274
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z10_ky_vat_chien_si.json",
+      "records": 2,
+      "bytes": 12096
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z11_phi_cong_my_1964_1973.json",
+      "records": 3,
+      "bytes": 13754
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z12_dai_tuong_niem_phu_dieu.json",
+      "records": 2,
+      "bytes": 9440
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z13_khu_chuc_nang_cu.json",
+      "records": 3,
+      "bytes": 11047
+    },
+    {
+      "folder": "01_tri_thuc_theo_phan_khu",
+      "file": "Z14_dem_thieng_lieng_bao_ton.json",
+      "records": 2,
+      "bytes": 11473
+    },
+    {
+      "folder": "02_chuyen_nho_va_giai_ma_hieu_nham",
+      "file": "golden_facts_p0.json",
+      "records": 10,
+      "bytes": 13985
+    },
+    {
+      "folder": "02_chuyen_nho_va_giai_ma_hieu_nham",
+      "file": "chuyen_nho_it_biet.json",
+      "records": 28,
+      "bytes": 18654
+    },
+    {
+      "folder": "02_chuyen_nho_va_giai_ma_hieu_nham",
+      "file": "giai_ma_nham_lan_thuong_gap.json",
+      "records": 12,
+      "bytes": 9613
+    },
+    {
+      "folder": "03_go_roi_tu_khoa_va_chong_loi",
+      "file": "disambiguation_matrix.json",
+      "records": 6,
+      "bytes": 8285
+    },
+    {
+      "folder": "03_go_roi_tu_khoa_va_chong_loi",
+      "file": "anti_patterns_va_guardrails.json",
+      "records": 6,
+      "bytes": 5270
+    },
+    {
+      "folder": "03_go_roi_tu_khoa_va_chong_loi",
+      "file": "mau_test_ca_kho_audit.json",
+      "records": 30,
+      "bytes": 33806
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z01_cong_chinh_kien_truc.jsonl",
+      "records": 72,
+      "bytes": 100771
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z02_phong_giam_tap_the.jsonl",
+      "records": 76,
+      "bytes": 101622
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z03_nguc_toi_cachot.jsonl",
+      "records": 72,
+      "bytes": 95198
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z04_khu_d_xa_lim_tu_hinh.jsonl",
+      "records": 72,
+      "bytes": 96948
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z05_may_chem_cong_cu_tra_tan.jsonl",
+      "records": 80,
+      "bytes": 108252
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z06_trai_giam_nu_tu_nhi.jsonl",
+      "records": 68,
+      "bytes": 95237
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z07_cong_ngam_vuot_nguc.jsonl",
+      "records": 72,
+      "bytes": 103215
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z08_san_trai_cay_bang.jsonl",
+      "records": 60,
+      "bytes": 82425
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z09_truong_hoc_bao_chi_tu.jsonl",
+      "records": 72,
+      "bytes": 104294
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z10_ky_vat_chien_si.jsonl",
+      "records": 80,
+      "bytes": 112559
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z11_phi_cong_my_1964_1973.jsonl",
+      "records": 88,
+      "bytes": 129007
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z12_dai_tuong_niem_phu_dieu.jsonl",
+      "records": 60,
+      "bytes": 82811
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z13_khu_chuc_nang_cu.jsonl",
+      "records": 60,
+      "bytes": 84666
+    },
+    {
+      "folder": "04_hoi_dap_theo_phan_khu",
+      "file": "QA_Z14_dem_thieng_lieng_bao_ton.jsonl",
+      "records": 68,
+      "bytes": 101336
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT01_kien_truc_nguon_goc.jsonl",
+      "records": 67,
+      "bytes": 92365
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT02_lich_su_su_kien.jsonl",
+      "records": 132,
+      "bytes": 188845
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT03_chi_tiet_quan_sat.jsonl",
+      "records": 179,
+      "bytes": 246694
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT04_cau_tao_chat_lieu.jsonl",
+      "records": 163,
+      "bytes": 221398
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT05_doi_song_che_do_giam.jsonl",
+      "records": 163,
+      "bytes": 224569
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT06_nhan_vat_cau_chuyen.jsonl",
+      "records": 118,
+      "bytes": 169510
+    },
+    {
+      "folder": "05_hoi_dap_theo_loai_cau_hoi",
+      "file": "QT07_bao_ton_trai_nghiem.jsonl",
+      "records": 178,
+      "bytes": 254960
+    },
+    {
+      "folder": "06_du_lieu_huan_luyen_sft",
+      "file": "sft_train_nhom1_thuoc_dia_va_giam_giu_Z01_Z05.jsonl",
+      "records": 332,
+      "bytes": 1399533
+    },
+    {
+      "folder": "06_du_lieu_huan_luyen_sft",
+      "file": "sft_train_nhom2_vuot_nguc_va_chien_si_Z06_Z10.jsonl",
+      "records": 316,
+      "bytes": 1470505
+    },
+    {
+      "folder": "06_du_lieu_huan_luyen_sft",
+      "file": "sft_train_nhom3_khang_chien_my_va_bao_ton_Z11_Z14.jsonl",
+      "records": 252,
+      "bytes": 1204798
+    },
+    {
+      "folder": "06_du_lieu_huan_luyen_sft",
+      "file": "sft_validation.jsonl",
+      "records": 100,
+      "bytes": 451098
+    },
+    {
+      "folder": "06_du_lieu_huan_luyen_sft",
+      "file": "sft_adversarial_edge_cases.jsonl",
+      "records": 36,
+      "bytes": 121603
+    }
+  ]
+}

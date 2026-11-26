@@ -1,0 +1,161 @@
+{
+  "zone_id": "Z02",
+  "filename": "Z02_phong_giam_tap_the.json",
+  "zone_vi": "Khu phòng giam tập thể",
+  "tone_level": "Cấp 2 — Sắc sảo & Khâm phục (Độ dí dỏm tinh tế 20–30%)",
+  "summary": "Các buồng giam tập thể tiêu biểu như Trại E giam hàng chục đến hàng trăm tù nhân trên hai dãy bục xi măng đổ dốc kẹp giữa lối đi hẹp hơn 1 mét. Cuối bục gắn thanh cùm sắt dài khóa đồng loạt cả dãy cổ chân vào ban đêm; ngay trong buồng đặt thùng vệ sinh chung tạo điều kiện sinh hoạt cực kỳ ngột ngạt.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z02_F01",
+      "topic": "Kiến trúc bục xi măng dốc, thanh cùm sắt dài và ô thoáng trên cao",
+      "verified_facts": [
+        "Hai dãy bục xi măng xây cao hơn lối đi giữa để chống ẩm bốc từ nền và đổ dốc nghiêng từ tường xuống lối đi giữa nhằm giúp cai ngục nhìn rõ mặt từng tù nhân từ cửa, đồng thời dễ thoát nước khi cọ rửa sàn.",
+        "Thanh sắt dài chạy dọc cuối bục có nhiều hốc vòng bán nguyệt ôm cổ chân; chỉ cần khóa chốt ở đầu thanh là khóa chặt toàn bộ một dãy tù nhân suốt đêm.",
+        "Ô cửa sổ nhỏ nằm tít trên cao có song sắt dọc và thanh ngang đan chéo khiến mùa hè nóng ngột ngạt, còn mùa đông rét buốt dưới 10°C tù nhân chỉ có manh chiếu cói mỏng trên xi măng."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa chính xác đường kính thanh sắt hay độ dày cánh cửa gỗ theo từng milimét/phân nếu không có số đo gốc."
+      ]
+    },
+    {
+      "card_id": "Z02_F02",
+      "topic": "Cửa phòng giam, lỗ soi xoay & khe đưa cơm ở chân cửa sắt",
+      "verified_facts": [
+        "Trên cửa phòng giam có ô kính/lỗ nhỏ lắp miếng sắt xoay bên ngoài giúp lính gác bất ngờ kiểm tra bên trong.",
+        "Khoảng hở hình chữ nhật sát chân cửa sắt được thiết kế để đẩy máng cơm, nước uống và dụng cụ vệ sinh qua lại mà không phải mở toang cánh cửa nặng.",
+        "Cánh cửa phòng giam cài thanh sắt ngang bản to bên ngoài; chao đèn trên trần bọc lưới sắt tránh tù nhân đập vỡ lấy mảnh thủy tinh."
+      ],
+      "pitfalls_to_avoid": [
+        "TUYỆT ĐỐI KHÔNG nói khe hở dưới chân cửa 'không phải để đưa cơm nước'."
+      ]
+    },
+    {
+      "card_id": "Z02_F03",
+      "topic": "Khẩu phần ăn một bữa, máng 'lập là' & chế độ 'cập rằng'",
+      "verified_facts": [
+        "Mỗi ngày có 2 bữa chính; mô hình nắm cơm gạo đỏ hẩm (lẫn trấu sạn do cai thầu bớt xén dù quy định sổ sách ghi 700–750g/ngày), rau muống già úa và vài miếng cá mắm ươn là khẩu phần cho MỘT bữa ăn.",
+        "Cơm canh chung được chia trong máng tôn dài gọi là 'lập là'; nhiều thời kỳ nhà tù cấm phát đũa tre sắc nhọn, chỉ dùng thìa gỗ cùn hoặc bốc tay.",
+        "Cai ngục chọn tù thường phạm hung hãn làm 'cập rằng' (cai buồng) để giữ trật tự, bắt nạt tù mới, thu 'lệ buồng' và dò la tù chính trị."
+      ],
+      "pitfalls_to_avoid": [
+        "TUYỆT ĐỐI KHÔNG khẳng định mô hình cơm/cá mắm là khẩu phần 'cả một ngày'."
+      ]
+    },
+    {
+      "card_id": "Z02_F04",
+      "topic": "Đoàn kết trong buồng giam & 'hũ gạo tương trợ'",
+      "verified_facts": [
+        "Trong điều kiện vai chạm vai (khoảng 40cm/người khi quá tải), tù chính trị tự nhường chỗ thoáng gần cửa cho người già yếu, bệnh nặng; lập quỹ tương trợ chia đều quà tiếp tế từ bên ngoài.",
+        "Các chiến sĩ dùng vạt áo rách, tro, nước lá bàng chăm sóc vết thương do tra tấn, cảm hóa nhiều tên 'cập rằng', và biến giờ trước điểm danh thành lớp xóa mù chữ Quốc ngữ ngay trên nền xi măng."
+      ],
+      "pitfalls_to_avoid": []
+    }
+  ],
+  "notable_people": [
+    "Các nhóm tù chính trị thời kỳ 1930–1931 (sau Xô Viết Nghệ Tĩnh & Khởi nghĩa Yên Bái), 1939–1945, 1950–1954"
+  ],
+  "artifact_count_vi": 76,
+  "artifacts_catalog_vi": [
+    "Biển số phòng giam đắp nổi hoặc gắn bằng sắt bên ngoài cửa",
+    "Bát sắt tráng men sứt mẻ và thìa gỗ",
+    "Bố trí thùng vệ sinh ngay dưới ô cửa sổ hay cuối dãy bệ nằm",
+    "Bộ quần áo tù vải thô màu nâu/xám đánh số",
+    "Bục xi măng dài và độ dốc sàn nằm",
+    "Bữa rau muống già luộc và nước canh đục trong máng ăn tập thể",
+    "Chiếc \"lập là\" (máng đựng cơm bằng tôn)",
+    "Chiếc thùng gỗ đựng nước uống và gáo múc chung",
+    "Chiều cao của bệ xi măng so với nền lối đi giữa phòng",
+    "Chú thích phân biệt khoảng không gian ngủ chật chội",
+    "Chất lượng nước uống và bể nước trong trại giam",
+    "Chế độ lao dịch ban ngày dành cho tù nhân ở buồng tập thể",
+    "Chế độ phát hai bộ quần áo tù vải nâu một năm",
+    "Chế độ tiếp tế đồ ăn của gia đình cho tù nhân",
+    "Cuộc đấu tranh đòi cải thiện cơm ăn áo mặc năm 1930–1945",
+    "Các bức ảnh tư liệu tù chính trị đứng tập trung sau ngày Nhật đảo chính",
+    "Các bức ảnh tư liệu tù nhân mặc áo tù xếp hàng trong sân",
+    "Các chiến sĩ tiền bối từng nằm tại khu phòng giam tập thể",
+    "Cách phân chia vị trí nằm trên bệ xi măng cho người ốm và người già",
+    "Cách tù chính trị cảm hóa hoặc đấu tranh vô hiệu hóa 'cập rằng'",
+    "Cách tù nhân liên lạc bí mật qua vách tường chung",
+    "Cách tù nhân thông tin tin tức thời sự cho nhau khi tù mới nhập buồng",
+    "Cách tù nhân tự giữ vệ sinh thân thể khi không được tắm nhiều ngày",
+    "Câu chuyện trốn chạy bất thành hoặc bị mật báo trong buồng giam pha tạp",
+    "Cùm gỗ dài và cùm sắt trong phòng tập thể",
+    "Cơ chế một chốt khóa cùm chung cho hàng chục cổ chân",
+    "Cơ chế đếm người điểm danh ban đêm khi tắt đèn",
+    "Cảm giác rờn rợn khi đối chiếu diện tích phòng với con số hàng trăm người",
+    "Cảnh sinh hoạt tập thể dục tại chỗ ban ngày giữa lòng buồng",
+    "Giờ giới nghiêm buổi tối và lệnh cấm tuyệt đối phát ra tiếng nói",
+    "Gối gỗ và vật kê đầu của tù nhân",
+    "Hiện vật chiếc thìa gỗ tự gọt hoặc thanh tre thay đũa",
+    "Hành động chia sẻ từng mảnh vải rách để vá áo hoặc băng vết thương tra tấn",
+    "Hình phạt khi có người vi phạm trong buồng tập thể",
+    "Hệ thống thông gió trên mái vòm phòng giam",
+    "Hệ thống tượng sáp tái hiện tù nhân nằm san sát",
+    "Khe đưa thức ăn dưới chân cửa phòng giam",
+    "Khoảng lối đi hẹp kẹp giữa hai dãy bục xi măng nằm",
+    "Không gian sinh hoạt ban ngày khi tháo cùm",
+    "Không khí oi bức ngột ngạt khi trần phòng giam không có quạt gió",
+    "Khẩu phần cơm gạo hẩm và cá mắm",
+    "Kích thước cửa gỗ dày và thanh chốt sắt bên ngoài hành lang",
+    "Lớp học bổ túc văn hóa ngay trên bục xi măng lúc lính vắng",
+    "Lớp học văn hóa ban đêm dưới ánh đèn lờ mờ",
+    "Mẩu giấy báo, bao tải hoặc chiếu rách dùng lót lưng chống lạnh",
+    "Mức độ ô nhiễm và bệnh tật từ thùng vệ sinh",
+    "Những vệt ố vàng và mùi ẩm ngấm lâu năm trên bề mặt xi măng cổ",
+    "Song sắt cửa sổ có lớp lưới mắt cáo bên ngoài",
+    "Sàn xi măng lạnh lẽo và manh chiếu rách",
+    "Số lượng song sắt bảo vệ trên mỗi ô cửa sổ phòng tập thể",
+    "Số lượng tù nhân tối đa trong một phòng giam chung",
+    "Sức nặng của các tấm khóa sắt gắn hai đầu thanh cùm",
+    "Sự biến đổi công năng phòng giam từ thời Pháp sang giai đoạn sau",
+    "Sự chênh lệch giữa bức ảnh tù nhân lúc mới bị bắt và sau vài tháng giam tập thể",
+    "Sự khác nhau giữa cơm gạo đỏ mốc và định mức cơm 700g trên văn bản",
+    "Sự kiện Tết Nguyên Đán trong buồng giam tập thể thời Pháp",
+    "Sự phân biệt giữa phòng giam tù thường phạm và tù chính trị",
+    "Thanh sắt cùm chân chạy dọc cuối bệ xi măng",
+    "Thùng vệ sinh bằng gỗ/tôn đặt ở góc phòng giam",
+    "Thủ tục điểm danh tù nhân hai lần mỗi ngày",
+    "Thủ đoạn của bọn 'cập rằng' bóc lột chỗ nằm và thức ăn của bạn tù",
+    "Tâm sự của các bức tượng tái hiện qua ánh sáng đèn rọi sân khấu",
+    "Tâm trạng của tù chính trị qua biểu cảm các bức tượng",
+    "Tình trạng côn trùng, rệp và ghẻ lở trong phòng giam",
+    "Tình trạng thiếu ánh nắng gây bệnh còi xương và suy nhược thị lực",
+    "Vai trò của tên \"cập rằng\" (tù trưởng buồng) trong phòng giam",
+    "Việc lính gác dùng thanh sắt gõ dọc dãy song cửa kiểm tra độ chắc chắn",
+    "Việc đọc lén thư gia đình và chia sẻ quà tiếp tế chung của chi bộ tù",
+    "Vấn đề cổ chân bên nào bị khóa vào thanh cùm sắt",
+    "Vết máu và gỉ sét trên thanh cùm kim loại",
+    "Vết mòn bóng ở các móc vòng sắt trên thanh cùm",
+    "Vết tích cào vẽ, khắc chữ trên tường vôi cũ",
+    "Vị trí treo bóng đèn bảo vệ bằng lồng lưới thép trên cao",
+    "Vị trí treo đèn dầu hoặc bóng đèn sợi đốt công suất yếu",
+    "Ánh sáng tự nhiên lọt vào phòng giam tập thể",
+    "Ô nhìn trộm (mắt thần) trên cánh cửa gỗ lim"
+  ],
+  "qa_count_bo1": 38,
+  "qa_count_bo2": 38,
+  "qa_count_total": 76,
+  "golden_fact_ids": [
+    "GF-04"
+  ],
+  "anti_pattern_ids": [
+    "AP-04",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z02",
+    "zone_vi": "Khu phòng giam tập thể",
+    "total_questions": 38,
+    "on_target": 2,
+    "zone_generic": 14,
+    "off_topic_or_error": 15,
+    "false_refusal": 3,
+    "safety_guard": 4,
+    "drop_and_no_data_rate": 0.1842,
+    "on_target_rate": 0.0526,
+    "zone_coverage_rate": 0.4211,
+    "avg_latency_ms": 219.32,
+    "quality_note": "Bị xáo trộn sang Cachot, Cổng chính, Giá vé 50k; 3/4 ca Groq bị từ chối sai hoặc sai sử học."
+  }
+}

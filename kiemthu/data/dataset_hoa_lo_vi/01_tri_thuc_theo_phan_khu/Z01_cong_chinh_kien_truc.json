@@ -1,0 +1,167 @@
+{
+  "zone_id": "Z01",
+  "filename": "Z01_cong_chinh_kien_truc.json",
+  "zone_vi": "Cổng chính & Kiến trúc tổng thể",
+  "location_address": "Số 1 phố Hỏa Lò, phường Trần Hưng Đạo, quận Hoàn Kiếm, Hà Nội",
+  "tone_level": "Cấp 2 — Sắc sảo & Khâm phục (Độ dí dỏm tinh tế 20–30%)",
+  "summary": "Công trình do chính quyền thực dân Pháp thiết kế (Kiến trúc sư – Giám đốc Sở Xây dựng nhà cửa dân sự lập, Toàn quyền Đông Dương phê duyệt ngày 27/2/1896), khởi công năm 1896 trên nền đất làng gốm Phụ Khánh và đưa các dãy trại chính vào giam giữ từ năm 1899. Tên chính thức tiếng Pháp là Maison Centrale (cũng xuất hiện dưới tên Prison Centrale de Hanoi trong một số hồ sơ), trong dân gian gọi là Nhà tù Hỏa Lò hoặc nhà pha Hỏa Lò.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z01_F01",
+      "topic": "Tên gọi Hỏa Lò và nền đất làng Phụ Khánh",
+      "verified_facts": [
+        "Trước năm 1896, khu đất này là làng Phụ Khánh (tổng Vĩnh Xương, huyện Thọ Xương, Hà Nội), làng nghề truyền thống chuyên nặn ấm đất, siêu đất và các loại bếp hỏa lò nung đỏ lửa quanh năm.",
+        "Khi giải tỏa lập nhà tù năm 1896, người dân quen gọi theo tên vùng đất cũ là Hỏa Lò dù biển cổng chính khắc chữ Pháp 'Maison Centrale'.",
+        "Trong tiếng Pháp, 'Maison Centrale' chỉ loại nhà tù trung tâm quy mô lớn dành cho án nặng và giam giữ tập trung tại thuộc địa."
+      ],
+      "pitfalls_to_avoid": [
+        "Không nói Pháp tự đặt tên Hỏa Lò; không nhầm sang nhà lao được xây sau năm 1945."
+      ]
+    },
+    {
+      "card_id": "Z01_F02",
+      "topic": "Quy mô 1896–1899, quá tải giam giữ và Khu Tây",
+      "verified_facts": [
+        "Diện tích nguyên thủy hình thang khép kín khoảng 12.908 m², có 4 mặt phố tiếp giáp khu vực Hỏa Lò – Hai Bà Trưng – Thợ Nhuộm – Quán Sứ.",
+        "Công trình khởi công năm 1896 và đưa vào giam giữ những lượt tù nhân đầu tiên từ năm 1899 trước khi hoàn thiện hết mọi hạng mục phụ.",
+        "Định mức thiết kế tính đến khoảng năm 1913 là 460–500 tù nhân (2 người/m² sàn nằm), nhưng thực tế các cao trào 1930–1931, 1939–1945, 1950–1954 bị nhồi nhét tới 1.800–2.000 người.",
+        "Khu Tây tách biệt hẳn để giam phạm nhân người Pháp/Âu với phòng ngủ giường sắt có nệm, không giam chung với tù nhân người Việt."
+      ],
+      "pitfalls_to_avoid": [
+        "Không tự bịa số dãy nhà cố định như '12 dãy'; không nói ban đầu xây chỉ để giam người Pháp."
+      ]
+    },
+    {
+      "card_id": "Z01_F03",
+      "topic": "Kết cấu tường đá, vòm cổng, cửa sắt, mái ngói & vật liệu xây dựng",
+      "verified_facts": [
+        "Tường bao quanh cao khoảng 4 m, dày khoảng 0,5 m bằng gạch đặc nung già, vữa xi măng/vôi cát có lõi cốt thép gia cường; đỉnh tường cắm dày mảnh sành và mảnh thủy tinh nhọn chống trèo thoát.",
+        "Các ô cửa vòm cuốn bán nguyệt giúp phân tán lực nén xuống tường gạch chịu lực; bệ cửa sổ dùng phiến đá xanh nguyên khối khoan lỗ cắm song sắt.",
+        "Cánh cổng sắt lớn tán đinh có chốt ngỗng cắm ổ đá dưới đất cùng ô cửa nách nhỏ để lính gác kiểm soát người đi bộ thường ngày.",
+        "Phần mái các dãy còn giữ lại dùng ngói mũi hài và ngói máy kiểu Pháp; mặt tiền được quét vôi vàng kem đặc trưng kiến trúc thuộc địa Pháp.",
+        "Tất cả hạng mục sắt thép chịu lực (khóa, bản lề, song cửa) được đặt chuẩn nghiêm ngặt từ Pháp hoặc xưởng kỹ nghệ thuộc địa, kết hợp gạch nung và nhân công địa phương."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa tỷ lệ sa bàn hay thành phần hóa học chính xác của vữa nếu bảng nhãn tại chỗ không nêu số liệu."
+      ]
+    },
+    {
+      "card_id": "Z01_F04",
+      "topic": "Giải tỏa năm 1993 & Quyết định Di tích Quốc gia 18/6/1997",
+      "verified_facts": [
+        "Năm 1993, Trại tạm giam Hà Nội chuyển ra Xuân Phương; phần lớn mặt bằng phía bắc được giải tỏa để xây Tổ hợp Tháp Hà Nội (Hanoi Towers), giữ lại diện tích lõi phía nam khoảng 2.000–2.434 m² (gần 1/5 diện tích gốc).",
+        "Ngày 18/6/1997, Bộ Văn hóa – Thông tin ban hành Quyết định số 1543/QĐ-VH công nhận Di tích Nhà tù Hỏa Lò là Di tích Lịch sử cấp Quốc gia.",
+        "Giai đoạn 1997–1999 hoàn thiện tu bổ, trưng bày mở cửa đón công chúng."
+      ],
+      "pitfalls_to_avoid": [
+        "Tuyệt đối không nói xếp hạng Di tích Quốc gia năm 1990 hoặc mở cửa bảo tàng năm 1993."
+      ]
+    }
+  ],
+  "notable_people": [
+    "Viên Kiến trúc sư – Giám đốc Sở Xây dựng nhà cửa dân sự (tác giả đồ án 2/1896)"
+  ],
+  "artifact_count_vi": 72,
+  "artifacts_catalog_vi": [
+    "Biển số nhà số 1 phố Hỏa Lò và tên phố cũ thời Pháp",
+    "Biển đồng xếp hạng Di tích Lịch sử Quốc gia",
+    "Bản vẽ thiết kế kiến trúc gốc của người Pháp",
+    "Bố cục trục đối xứng đặc trưng của công trình thực dân",
+    "Bốt gác nhỏ và barie chắn xe ở cổng ra vào",
+    "Bức tường gạch cao 4m, dày 0,5m",
+    "Chi phí xây dựng và nguồn ngân sách thuộc địa Đông Dương",
+    "Chi tiết bản lề sắt rèn âm tường nặng hàng chục cân",
+    "Chiếc đồng hồ hoặc bảng giờ giới nghiêm gắn khu cổng chính",
+    "Chuông báo động và kẻng sắt nhà tù",
+    "Chữ khắc và hồ sơ phê duyệt công trình năm 1896",
+    "Các bức ảnh tư liệu Hỏa Lò đầu thế kỷ XX",
+    "Các chấn song sắt đúc đặc trưng",
+    "Các ô thoáng nhỏ sát mái tường",
+    "Cảm nhận nhiệt độ và độ ẩm khác biệt khi qua cổng",
+    "Cấu trúc mái vòm gạch ở lối hành lang thông phòng",
+    "Cột thu lôi và chi tiết sắt thép trên nóc nhà giam",
+    "Cửa sổ kính mờ và phòng làm việc giám ngục",
+    "Cửa sổ lá chớp gỗ sơn xanh trên tầng hai khu cổng",
+    "Cửa sổ sắt và chấn song thép cắm sâu vào bệ đá",
+    "Cửa vòm cuốn bán nguyệt tại đầu các dãy nhà giam",
+    "Dòng chữ Pháp \"Maison Centrale\"",
+    "Gạch xây chịu lực kích thước lớn từ cuối thế kỷ XIX",
+    "Hai cánh cổng sắt nặng tại lối vào",
+    "Hình ảnh so sánh Hỏa Lò với Côn Đảo và Khám Lớn Sài Gòn",
+    "Hướng quay mặt tiền cổng chính và phong thủy phố cũ",
+    "Hệ thống cửa gỗ lim nhập khẩu từ Pháp",
+    "Hệ thống dây thép gai và dòng điện cao thế trên tường",
+    "Hệ thống dây điện thoại liên lạc nội bộ thời Pháp",
+    "Hệ thống hành lang tuần tra bao quanh phòng giam",
+    "Hệ thống mương rãnh thoát nước mưa quanh chân tường",
+    "Hệ thống ống dẫn nước và máng xối bằng gang cũ",
+    "Khoảng cách từ Nhà tù Hỏa Lò tới Đề lao Hà Nội trước kia",
+    "Khoảng sân nhỏ phía trước khu nhà giam chính",
+    "Khoảng tường bao giáp các phố Hai Bà Trưng, Thợ Nhuộm, Quán Sứ",
+    "Khu giam giữ tù nhân người châu Âu / ngoại quốc",
+    "Khu vực tường ngăn bên trong chia tách các phân trại",
+    "Khung cổng sắt và rãnh ray đóng mở phía dưới nền",
+    "Khóa sắt và chốt cài cửa thời Pháp",
+    "Kiến trúc kết hợp tường gạch trần và mảng vữa bong tróc",
+    "Kiến trúc vòm cuốn và gờ đá mặt tiền cổng chính",
+    "Làng gốm Phụ Khánh xưa",
+    "Lớp vữa vôi cát cổ dày trên mặt tường hành lang",
+    "Lực lượng thợ xây dựng công trình nhà tù giai đoạn 1896–1899",
+    "Màu sơn vàng vôi đặc trưng của tường mặt tiền kiểu Pháp",
+    "Mái ngói và hệ vì kèo khu nhà giam cũ",
+    "Mảnh sành thủy tinh cắm trên đỉnh tường",
+    "Ngưỡng cửa đá xanh và độ chênh cao nền nhà tù so với mặt phố",
+    "Những vết sứt mẻ trên gạch tường từ thời chiến tranh phá hoại",
+    "Năm khởi công 1896 và quá trình xây dựng",
+    "Nền đá xanh và sân gạch cổ",
+    "Phân khu giam giữ trong sơ đồ Hỏa Lò gốc",
+    "Phù điêu và họa tiết mặt tiền cổng Pháp",
+    "Quy mô diện tích 12.908 m² xưa và 2.434 m² nay",
+    "Số lượng tù nhân thực tế so với thiết kế ban đầu",
+    "Sự im ắng lạ thường ngay giữa trung tâm quận Hoàn Kiếm ồn ào",
+    "Sự tương đồng thiết kế giữa Hỏa Lò và nhà tù thuộc địa ở Pháp",
+    "Trạm gác và vọng gác góc tường",
+    "Tác động của dự án Tháp Hà Nội lên nền móng tường cổ sát vách",
+    "Tên gọi \"Hỏa Lò\" và nền đất làng Phụ Khánh",
+    "Tên gọi hành chính bằng tiếng Pháp trong tài liệu lưu trữ",
+    "Tổ hợp Tháp Hà Nội (Hanoi Towers) kế bên",
+    "Tỷ lệ diện tích còn lại sau năm 1993 trên tổng thể ban đầu",
+    "Tỷ lệ kích thước sa bàn tổng thể di tích",
+    "Viên gạch xây dựng có dấu triện nhà máy",
+    "Việc đưa tù nhân vào giam từ đầu năm 1899 dù chưa xong hết",
+    "Vật liệu mái lợp bằng ngói Tây hay ngói ta nung thủ công",
+    "Vị trí Nhà tù Hỏa Lò cạnh Tòa án và Sở Mật thám",
+    "Vị trí khu đất làng Phụ Khánh trên bản đồ Hà Nội cuối thế kỷ XIX",
+    "Ô cửa nhỏ kiểm soát ngay cạnh cánh cổng sắt chính",
+    "Đèn báo hiệu và hệ thống chiếu sáng ban đêm thời xưa",
+    "Đợt mở rộng và cải tạo nhà tù giai đoạn 1913–1930"
+  ],
+  "qa_count_bo1": 36,
+  "qa_count_bo2": 36,
+  "qa_count_total": 72,
+  "golden_fact_ids": [
+    "GF-01",
+    "GF-02",
+    "GF-03"
+  ],
+  "anti_pattern_ids": [
+    "AP-04",
+    "AP-05",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z01",
+    "zone_vi": "Cổng chính & Kiến trúc tổng thể",
+    "total_questions": 36,
+    "on_target": 2,
+    "zone_generic": 25,
+    "off_topic_or_error": 7,
+    "false_refusal": 2,
+    "safety_guard": 0,
+    "drop_and_no_data_rate": 0.0556,
+    "on_target_rate": 0.0556,
+    "zone_coverage_rate": 0.75,
+    "avg_latency_ms": 177.58,
+    "quality_note": "Khá ổn định phần giới thiệu 1896 nhưng Groq LLM bịa năm Di tích 1990 & từ chối sai câu mái ngói."
+  }
+}

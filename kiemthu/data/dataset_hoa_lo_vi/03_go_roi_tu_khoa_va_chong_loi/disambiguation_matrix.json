@@ -1,0 +1,267 @@
+{
+  "version": "1.0.0",
+  "language": "vi",
+  "total_clusters": 6,
+  "disambiguation_rules": [
+    {
+      "trigger_keyword": "cây bàng / lá bàng / quả bàng / cành bàng",
+      "risk_observed": "Trong kiểm định cũ, các câu hỏi về bánh/trà lá bàng ở Tour Đêm hay bút cành bàng hay bị kéo nhầm về mẫu giới thiệu cây bàng chung ở Z08.",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "bút",
+            "viết",
+            "báo",
+            "mực",
+            "chữ",
+            "trường học"
+          ],
+          "target_zone": "Z09",
+          "intent": "Dùng cành bàng vót bút chép báo/học chữ trong tù"
+        },
+        {
+          "if_cooccurs": [
+            "trà",
+            "bánh",
+            "thạch",
+            "tour đêm",
+            "đêm thiêng liêng",
+            "thưởng thức",
+            "ẩm thực"
+          ],
+          "target_zone": "Z14",
+          "intent": "Trà lá bàng & bánh thạch lá bàng ở cuối Tour Đêm"
+        },
+        {
+          "if_cooccurs": [
+            "truyền đơn",
+            "giấu",
+            "thuốc",
+            "kiết lỵ",
+            "lá đỏ",
+            "sân",
+            "hạt",
+            "trường sa",
+            "hộp khắc"
+          ],
+          "target_zone": "Z08",
+          "intent": "Cây bàng cổ thụ sân trại & 4 công dụng lịch sử"
+        }
+      ]
+    },
+    {
+      "trigger_keyword": "vượt ngục / trốn thoát / cống ngầm",
+      "risk_observed": "Trộn lẫn giữa vượt ngục 1932, tháng 3/1945 (>100 người, trại nữ) và đêm Noel 24/12/1951 (Khu D -> Quán Sứ, 5 người thoát).",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "1932",
+            "phủ doãn",
+            "bệnh viện",
+            "việt đức"
+          ],
+          "target_zone": "Z13",
+          "intent": "Vụ vượt ngục 7 chiến sĩ qua Bệnh viện Phủ Doãn năm 1932"
+        },
+        {
+          "if_cooccurs": [
+            "1945",
+            "nhật đảo chính",
+            "9/3",
+            "11/3",
+            "nữ",
+            "áo dài",
+            "hoàng thị ái",
+            "trương thị mỹ"
+          ],
+          "target_zone": "Z06",
+          "intent": "Cuộc đại vượt ngục tháng 3/1945 & Trại giam nữ"
+        },
+        {
+          "if_cooccurs": [
+            "1951",
+            "noel",
+            "24/12",
+            "busan",
+            "vũ đức chính",
+            "quán sứ",
+            "đấu xảo",
+            "cưa cùm"
+          ],
+          "target_zone": "Z07",
+          "intent": "Vượt ngục đêm Noel 24/12/1951 (16–17 người xuống cống, 5 người thoát)"
+        }
+      ]
+    },
+    {
+      "trigger_keyword": "khẩu phần / cơm / bếp ăn / nhà bếp",
+      "risk_observed": "Dễ nhầm giữa khẩu phần cơm hẩm thời Pháp (1 bữa/2 bữa, lập là) với bữa ăn kiểu Âu cho phi công Mỹ 1964–1973 hoặc nhà bếp Z13.",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "bánh mì",
+            "phi công",
+            "mỹ",
+            "1964",
+            "1973",
+            "âu",
+            "bơ",
+            "súp",
+            "tạ ơn",
+            "giáng sinh"
+          ],
+          "target_zone": "Z11",
+          "intent": "Chế độ ăn nhân đạo cho phi công Mỹ giai đoạn 1964–1973"
+        },
+        {
+          "if_cooccurs": [
+            "chảo gang",
+            "cai thầu",
+            "giao liên",
+            "thùng gỗ",
+            "chia cơm",
+            "hậu cần"
+          ],
+          "target_zone": "Z13",
+          "intent": "Khu Nhà bếp cũ & Đường dây giao liên nhà bếp"
+        },
+        {
+          "if_cooccurs": [
+            "cá mắm",
+            "lập là",
+            "gạo đỏ",
+            "trấu",
+            "một bữa",
+            "nắm cơm",
+            "bát sắt"
+          ],
+          "target_zone": "Z02",
+          "intent": "Khẩu phần một bữa của tù nhân phòng giam tập thể"
+        }
+      ]
+    },
+    {
+      "trigger_keyword": "cùm chân / bệ xi măng / cùm gỗ",
+      "risk_observed": "Trùng lặp giữa bục cùm sắt dài (Z02), bệ dốc ngược (Z03) và cùm gỗ lim tử hình (Z04) hay máy chém/tủ trưng bày (Z05).",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "cachot",
+            "tối",
+            "dốc ngược",
+            "đầu thấp hơn chân",
+            "một người",
+            "ô hẹp"
+          ],
+          "target_zone": "Z03",
+          "intent": "Ngục tối Cachot & bệ xi măng dốc ngược"
+        },
+        {
+          "if_cooccurs": [
+            "khu d",
+            "tử hình",
+            "gỗ lim",
+            "hoàng văn thụ",
+            "1951"
+          ],
+          "target_zone": "Z04",
+          "intent": "Khu D xà lim tử hình & cùm gỗ lim"
+        },
+        {
+          "if_cooccurs": [
+            "6–8 hốc",
+            "8 hốc",
+            "tủ kính",
+            "máy chém",
+            "quả tạ",
+            "xích"
+          ],
+          "target_zone": "Z05",
+          "intent": "Bộ cùm gỗ dài & xiềng xích trưng bày phòng công cụ"
+        },
+        {
+          "if_cooccurs": [
+            "tập thể",
+            "dãy dài",
+            "lối đi giữa",
+            "nhiều người",
+            "trục sắt"
+          ],
+          "target_zone": "Z02",
+          "intent": "Thanh cùm sắt dài khóa cả dãy phòng tập thể"
+        }
+      ]
+    },
+    {
+      "trigger_keyword": "lưu trữ / hiện vật / kho / túi tote / chuyên đề",
+      "risk_observed": "HL-478 và HL-497 bị bắt nhầm từ chữ 'hiện vật / lưu trữ' sang bài quảng bá túi tote quầy lưu niệm.",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "túi tote",
+            "huy hiệu",
+            "quà",
+            "quầy lưu niệm",
+            "sổ tay",
+            "mua"
+          ],
+          "target_zone": "Z14",
+          "intent": "Quầy lưu niệm & ấn phẩm hiện đại"
+        },
+        {
+          "if_cooccurs": [
+            "kho",
+            "hiến tặng",
+            "luân phiên",
+            "bảo quản",
+            "độ ẩm",
+            "led",
+            "uv",
+            "gốc hay phục chế"
+          ],
+          "target_zone": "Z14",
+          "intent": "Công tác lưu trữ kho, thẩm định hiện vật & bảo tồn trưng bày"
+        }
+      ]
+    },
+    {
+      "trigger_keyword": "nước ngoài / 1993 / giải tỏa / tháp hà nội",
+      "risk_observed": "Nhầm lẫn giữa sự kiện 1993 phá bỏ trại A/B/C xây Tháp Hà Nội, mốc Di tích Quốc gia 1997, và giai đoạn 1973–1993.",
+      "routes": [
+        {
+          "if_cooccurs": [
+            "1973",
+            "tạm giam",
+            "công an",
+            "xuân phương"
+          ],
+          "target_zone": "Z13",
+          "intent": "Giai đoạn Trại tạm giam Hà Nội 1973–1993 & giải tỏa khu chức năng"
+        },
+        {
+          "if_cooccurs": [
+            "1997",
+            "1543",
+            "xếp hạng",
+            "di tích quốc gia",
+            "2434",
+            "12908"
+          ],
+          "target_zone": "Z01",
+          "intent": "Mốc bảo tồn lõi 1993 & Quyết định Di tích Quốc gia 18/6/1997"
+        },
+        {
+          "if_cooccurs": [
+            "nền trời",
+            "chụp ảnh",
+            "phù điêu",
+            "lê liên",
+            "tòa tháp"
+          ],
+          "target_zone": "Z12",
+          "intent": "Khung hình đối thoại Đài tưởng niệm & Tháp Hà Nội"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "source": "Trích xuất từ Báo cáo đối chiếu 500 câu AI 2Guide (Bao_cao_doi_chieu_danh_gia_AI_2Guide_Hoa_Lo.xlsx)",
+    "baseline_metrics": {
+      "total_evaluated": 500,
+      "actual_on_target_pct": 2.2,
+      "partial_generic_pct": 57.8,
+      "wrong_offtopic_pct": 25.2,
+      "skip_and_nodata_pct": 14.8,
+      "keyword_mismatch_count": 116,
+      "false_refusal_count": 15,
+      "safety_guard_fallback_count": 59
+    }
+  },
+  "anti_patterns": [
+    {
+      "rule_id": "AP-01",
+      "priority": "P0",
+      "zones": [
+        "Z07",
+        "Z04"
+      ],
+      "bad_behavior": "Nói toàn bộ 16 tử tù vượt ngục đêm Noel 1951 thoát an toàn ra phố Thợ Nhuộm.",
+      "mandatory_rule": "Nêu rõ tổng cộng 16 tử tù Khu D (~17 người gồm 1 thường phạm) chui cống góc sân nam thoát ra gần phố Quán Sứ / khu Đấu xảo; kết quả chỉ 5 chiến sĩ thoát hẳn về vùng tự do, số còn lại bị bắt lại."
+    },
+    {
+      "rule_id": "AP-02",
+      "priority": "P0",
+      "zones": [
+        "Z05"
+      ],
+      "bad_behavior": "Nhầm chiều cao khung 4m thành độ cao rơi dao, hoặc gây hiểu nhầm cụ Nguyễn Thái Học bị chém ngay tại sân Hỏa Lò.",
+      "mandatory_rule": "Khung cao ~4 m, hành trình rơi dao (40–50 kg, vát chéo 45°) ~2 m; máy chém được tháo rời chở tàu hỏa lên Yên Bái xử tử Nguyễn Thái Học & 12 đồng chí ngày 17/6/1930."
+    },
+    {
+      "rule_id": "AP-03",
+      "priority": "P0",
+      "zones": [
+        "Z09"
+      ],
+      "bad_behavior": "Nói báo chí bí mật trong tù viết bằng máu.",
+      "mandatory_rule": "Viết bằng mẩu bút chì nối ống sậy, cành bàng vót nhọn hoặc mực tự chế (gạch non, muội than, thuốc đỏ, phẩm tím, nước cơm, nước chanh) trên giấy quyến / bao thuốc lá."
+    },
+    {
+      "rule_id": "AP-04",
+      "priority": "P0",
+      "zones": [
+        "Z01",
+        "Z02",
+        "Z10"
+      ],
+      "bad_behavior": "Bịa năm Di tích Quốc gia (1990), phủ nhận công năng khe đưa cơm dưới cửa sắt, nói khẩu phần là cả 1 ngày, nhầm nơi đày cụ Lương Văn Can, hoặc quở trách du khách về ảnh Xô Viết Nghệ Tĩnh.",
+      "mandatory_rule": "Di tích Quốc gia: 18/6/1997 (QĐ 1543/QĐ-VH). Khe dưới cửa: dùng đẩy máng cơm nước/đồ vệ sinh. Suất cơm cá mắm: MỘT bữa (2 bữa/ngày). Lương Văn Can đày Nam Vang. Tôn trọng khách, tuyệt đối không quở trách."
+    },
+    {
+      "rule_id": "AP-05",
+      "priority": "P1",
+      "zones": [
+        "Z01",
+        "Z03",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z13"
+      ],
+      "bad_behavior": "Từ chối nhầm (False Out-of-Scope Refusal) các câu hỏi hợp lệ về hiện vật nhỏ, tù nhi, nhân vật lịch sử liên quan, hay khu chức năng cũ.",
+      "mandatory_rule": "MỌI câu hỏi thuộc 14 phân khu (kể cả địa danh đày đi Côn Đảo/Sơn La/ga Hàng Cỏ, phi công Mỹ, sổ sách, hiện vật kho, dịch vụ tham quan) đều là IN-SCOPE hợp lệ, tuyệt đối không kích hoạt từ chối."
+    },
+    {
+      "rule_id": "AP-06",
+      "priority": "P1",
+      "zones": [
+        "ALL"
+      ],
+      "bad_behavior": "Dùng khung rập khuôn 'Dạ đúng rồi quý khách!' mở đầu cả cho câu hỏi mở ('bao nhiêu, tại sao, năm nào, ở đâu, A hay B') hoặc dùng Safety Guard 1896 lấp chỗ trống.",
+      "mandatory_rule": "Phân loại chuẩn intent (Yes/No đúng vs Yes/No sai tiền đề vs Lựa chọn A/B vs Câu hỏi mở); đáp thẳng trọng tâm trong 1 câu đầu; nếu thiếu thông số đo đạc chi li chưa công bố thì thực hiện Graceful Fallback trung thực + cung cấp ngữ cảnh gần nhất."
+    }
+  ],
+  "graceful_fallback_policy": {
+    "when_to_apply": "Khi du khách hỏi thông số vi mô chưa được ghi nhận trong hồ sơ trưng bày công khai (VD: cân nặng chính xác tới từng gam của ổ khóa, độ dày tường kính tính theo mm, ngân sách tu bổ năm cụ thể, tần suất bảo dưỡng nội bộ hàng quý).",
+    "required_steps": [
+      "1. Không tự suy đoán hay bịa con số chính xác.",
+      "2. Thừa nhận nhẹ nhàng, minh bạch phần thông số chi tiết đó chưa được công bố trên biển nhãn / cần tra cứu trực tiếp hồ sơ kiểm kê của BQL Di tích.",
+      "3. Cung cấp ngay toàn bộ thông tin vật liệu, công năng, bối cảnh lịch sử xác thực của đúng hiện vật/khu vực đó để câu trả lời vẫn cực kỳ hữu ích."
+    ]
+  },
+  "true_out_of_scope_examples": [
+    "Viết giùm tôi một đoạn code Python sắp xếp mảng bằng thuật toán quicksort.",
+    "Dự báo thời tiết cuối tuần ở Paris hoặc giá vàng SJC hôm nay bao nhiêu?",
+    "Tư vấn chiến lược đầu tư chứng khoán dài hạn cho người mới bắt đầu."
+  ]
+}

@@ -161,6 +161,13 @@ class LocalSemanticIndex {
       stationCode: doc.stationCode || null,
       intent: doc.intent || 'HISTORICAL_FACT',
       priorityBoost: doc.priorityBoost || 0,
+      zoneId: doc.zoneId || null,
+      zoneName: doc.zoneName || null,
+      toneLevel: doc.toneLevel || null,
+      topic: doc.topic || null,
+      fileLabel: doc.fileLabel || null,
+      isDynamic: Boolean(doc.isDynamic),
+      isUserCustom: Boolean(doc.isUserCustom),
       vector
     });
   }
@@ -193,13 +200,15 @@ class LocalSemanticIndex {
   /**
    * Tìm Top-K tri thức gần nghĩa nhất theo Cosine Similarity + Entity Consistency Guard
    */
-  search(query, { lang = null, stationCode = null, topK = 5, minScore = 0.42 } = {}) {
+  search(query, { lang = null, stationCode = null, topK = 5, minScore = 0.42, onlyDynamic = false, onlyUserCustom = false } = {}) {
     if (!query || this.docs.length === 0) return [];
     const qVec = buildSparseVector(query, this.idfMap, this.avgDocLen);
     if (qVec.vec.size === 0) return [];
 
     const results = [];
     for (const doc of this.docs) {
+      if (onlyUserCustom && !doc.isUserCustom) continue;
+      if (onlyDynamic && !doc.isDynamic) continue;
       // Khớp ngôn ngữ nếu chỉ định (auto-learned docs tách riêng theo ngôn ngữ khóa)
       if (lang && doc.lang && doc.lang !== 'any' && doc.lang !== lang) continue;
 

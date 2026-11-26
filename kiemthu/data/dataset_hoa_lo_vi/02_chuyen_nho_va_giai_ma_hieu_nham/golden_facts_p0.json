@@ -1,0 +1,114 @@
+{
+  "version": "1.0.0",
+  "site_name": "Di tích Lịch sử Nhà tù Hỏa Lò (Maison Centrale)",
+  "address": "Số 1 phố Hỏa Lò, phường Trần Hưng Đạo, quận Hoàn Kiếm, Hà Nội",
+  "golden_facts": [
+    {
+      "id": "GF-01",
+      "zone_ids": [
+        "Z01"
+      ],
+      "topic": "Nguồn gốc tên gọi Hỏa Lò & Làng Phụ Khánh",
+      "fact_vi": "Trước năm 1896, khu đất này thuộc làng Phụ Khánh (tổng Vĩnh Xương, huyện Thọ Xương, Hà Nội) — làng nghề truyền thống chuyên làm ấm đất, siêu đất và bếp hỏa lò nung đỏ lửa quanh năm. Dù Pháp đặt tên chính thức là Maison Centrale (Nhà tù Trung ương), người dân quen gọi theo tên vùng đất cũ là Nhà tù Hỏa Lò.",
+      "fact_en": "Before 1896, the site belonged to Phu Khanh village, famous for terracotta pottery, kettles, and portable clay stoves ('Hoa Lo' / fiery furnaces). Although the French named it Maison Centrale, locals called it Hoa Lo Prison.",
+      "anti_hallucination": "Không nói Hỏa Lò là tên do Pháp đặt hay có từ thời sau 1945."
+    },
+    {
+      "id": "GF-02",
+      "zone_ids": [
+        "Z01"
+      ],
+      "topic": "Mốc khởi công 1896, đưa vào sử dụng 1899 & công năng Khu Tây",
+      "fact_vi": "Bản thiết kế Nhà tù Hỏa Lò được Toàn quyền Đông Dương phê duyệt ngày 27/2/1896, khởi công năm 1896 và bắt đầu đưa các dãy trại chính vào giam giữ từ năm 1899 (dù hạng mục phụ trợ chưa xong hết). Thiết kế ban đầu khoảng 450–500 tù nhân nhưng thực tế thường xuyên giam quá tải trên 2.000 người. Khu Tây giam phạm nhân người Pháp/ngoại quốc tách riêng hoàn toàn khỏi tù nhân người Việt và hưởng chế độ khác biệt.",
+      "fact_en": "Approved on 27 Feb 1896, construction began in 1896 and initial detention began in 1899. Originally designed for ~450-500 inmates, overcrowding pushed numbers above 2,000. French/foreign inmates were held separately in the Western wing, not mixed in collective cells with Vietnamese political prisoners.",
+      "anti_hallucination": "Không khẳng định ban đầu xây chỉ để giam người Pháp rồi mới chuyển đổi; không bịa số lượng cố định như '12 dãy nhà giam' nếu không có trong ngữ cảnh."
+    },
+    {
+      "id": "GF-03",
+      "zone_ids": [
+        "Z01",
+        "Z14"
+      ],
+      "topic": "Diện tích bảo tồn 1993 & Quyết định xếp hạng Di tích Quốc gia 18/6/1997",
+      "fact_vi": "Diện tích gốc ban đầu khoảng 12.908 m². Từ năm 1993, phần lớn mặt bằng chuyển đổi công năng (xây Tổ hợp Hanoi Towers) và giữ lại phần diện tích lõi phía nam (hơn 2.000–2.434 m²) để bảo tồn. Ngày 18/6/1997, Bộ Văn hóa - Thông tin ký Quyết định số 1543/QĐ-VH công nhận phần còn lại của Nhà tù Hỏa Lò là Di tích Lịch sử cấp Quốc gia; hoàn thiện tôn tạo trưng bày giai đoạn 1997–1999 để mở cửa phục vụ công chúng.",
+      "fact_en": "The original 1896 compound covered ~12,908 sq meters. In 1993, most of the grounds were redeveloped (Hanoi Towers) while retaining the historic southern core (~2,000-2,434 sq meters). On 18 June 1997 (Decision 1543/QD-VH), it was officially designated a National Historical Relic, and restoration/exhibition completed in 1997-1999 for public opening.",
+      "anti_hallucination": "TUYỆT ĐỐI KHÔNG nói xếp hạng Di tích Quốc gia năm 1990 hoặc mở cửa bảo tàng năm 1993."
+    },
+    {
+      "id": "GF-04",
+      "zone_ids": [
+        "Z02"
+      ],
+      "topic": "Cửa phòng giam, khe đưa cơm & khẩu phần ăn, máng 'lập là'",
+      "fact_vi": "Trên cửa phòng giam tập thể có ô nhỏ gắn miếng sắt xoay để cai ngục bất ngờ quan sát bên trong; còn khoảng hở hình chữ nhật sát chân cửa sắt dùng để đẩy máng thức ăn, nước uống vào hoặc đưa dụng cụ vệ sinh ra ngoài mà không phải mở toang cửa lớn. Mô hình khẩu phần cơm gạo hẩm và cá mắm trưng bày là khẩu phần cho MỘT bữa ăn (mỗi ngày có 2 bữa chính), không phải cả ngày. Máng tôn dài đựng cơm chung gọi là 'lập là'.",
+      "fact_en": "The small sliding peephole in the wooden door was for guards to inspect inside. The rectangular slot at the bottom of the iron door was specifically used to slide food trays, water, and sanitation items through without opening the heavy gate. The displayed ration (red moldy rice ball and tiny salted fish) represents ONE meal (two main meals per day), served from long galvanized iron troughs called 'lap la'.",
+      "anti_hallucination": "KHÔNG nói khe dưới cửa không dùng để đưa cơm nước; KHÔNG nói mô hình cơm/cá mắm là khẩu phần cả một ngày."
+    },
+    {
+      "id": "GF-05",
+      "zone_ids": [
+        "Z03",
+        "Z04"
+      ],
+      "topic": "Ngục tối (Cachot) & Khu D / Xà lim tử hình",
+      "fact_vi": "Mỗi ô xà lim đơn Cachot chỉ rộng khoảng 2–3 m², trần thấp, tối tăm, cùm chân cố định trên bệ xi măng thiết kế dốc ngược đầu thấp hơn chân khiến máu dồn lên đầu gây kiệt sức. Khu D giam tử tù mang cùm gỗ lim nặng; đêm Noel 24/12/1951, 16 tử tù đã dùng mảnh lưỡi cưa giấu sẵn cưa ngầm chốt cùm gỗ lim (lấy cơm nguội trộn tro ngụy trang) để mở đường vượt ngục.",
+      "fact_en": "Each solitary dark cell (Cachot) measured barely 2-3 sq meters with a low ceiling and a sloped concrete platform tilting the prisoner's head lower than their shackled feet. In Zone D (Death Row), prisoners were locked in heavy ironwood stocks; before Christmas Eve 24 Dec 1951, 16 death-row inmates secretly sawed the stock pins and disguised the cuts with ash-mixed rice.",
+      "anti_hallucination": "Không nhầm lẫn kích thước hay bịa thêm các thiết bị điện đại tân thời trong Cachot."
+    },
+    {
+      "id": "GF-06",
+      "zone_ids": [
+        "Z05"
+      ],
+      "topic": "Máy chém Hỏa Lò & Vụ hành quyết ở Yên Bái 17/6/1930",
+      "fact_vi": "Máy chém trưng bày tại Hỏa Lò là một trong hai bộ máy chém lớn Pháp đưa sang Việt Nam (một ở Hỏa Lò Hà Nội, một ở Khám Lớn Sài Gòn). Khung máy chém cao khoảng 4 m, nhưng hành trình rơi của lưỡi dao thép vát chéo 45° (nặng khoảng 40–50 kg) vào khoảng 2 m. Tháng 6/1930, Pháp tháo rời chính chiếc máy chém này chở tàu hỏa lên Yên Bái để hành quyết Nguyễn Thái Học và 12 đồng chí Việt Nam Quốc dân Đảng rạng sáng ngày 17/6/1930.",
+      "fact_en": "The guillotine on display stands roughly 4m tall, while the oblique 45-degree steel blade (weighing ~40-50 kg) drops ~2m along the track. In June 1930, French authorities dismantled this exact guillotine and transported it by train to Yen Bai to execute Nguyen Thai Hoc and 12 comrades on 17 June 1930 (not inside Hoa Lo courtyard).",
+      "anti_hallucination": "KHÔNG nói lưỡi dao rơi từ độ cao 4m (4m là chiều cao khung, hành trình rơi ~2m). KHÔNG gây hiểu nhầm rằng Nguyễn Thái Học bị chém ngay tại sân Nhà tù Hỏa Lò."
+    },
+    {
+      "id": "GF-07",
+      "zone_ids": [
+        "Z07"
+      ],
+      "topic": "Vượt ngục cống ngầm Tháng 3/1945 & Đêm Noel 24/12/1951",
+      "fact_vi": "Cuộc đại vượt ngục tháng 3/1945 (ngay sau sự kiện Nhật đảo chính Pháp tối 9/3/1945) giúp hơn 100 tù chính trị thoát khỏi Hỏa Lò bằng ba ngả: cống ngầm, trèo tường và cổng chính. Còn cuộc vượt ngục đêm 24/12/1951 của 16 tử tù từ xà lim Khu D chui qua miệng cống góc sân nam: tổng cộng khoảng 17 người chui qua đường cống ngầm ra gần khu vực Quán Sứ / Đấu xảo, nhưng do bị lộ nên chỉ có 5 chiến sĩ thoát hẳn ra vùng tự do, số còn lại bị bắt lại (không phải tất cả đều thoát ra phố Thợ Nhuộm).",
+      "fact_en": "In March 1945 (after the 9 March Japanese coup), over 100 political prisoners escaped via three routes: the underground sewer, climbing walls, and the main gate. In the 24 Dec 1951 escape from Death Row via the sewer grate in the southern courtyard, 16 death-row inmates (total ~17 people emerging near Quan Su / Exhibition grounds) attempted the tunnel escape, but only 5 successfully escaped to the liberated zone while the rest were recaptured.",
+      "anti_hallucination": "TUYỆT ĐỐI KHÔNG nói toàn bộ nhóm vượt ngục Noel 1951 đều thoát hết ra phố Thợ Nhuộm."
+    },
+    {
+      "id": "GF-08",
+      "zone_ids": [
+        "Z08",
+        "Z09"
+      ],
+      "topic": "Cây bàng lịch sử & Báo chí, Chi bộ trong tù",
+      "fact_vi": "Cây bàng cổ thụ ở sân trại giam là nơi che bóng, cung cấp búp/lá/vỏ bàng làm thuốc chữa bệnh kiết lỵ, vết thương, bổ sung dinh dưỡng và gỗ cành bàng khô dùng khắc quản bút, đũa, hộp kỷ niệm. Chi bộ Đảng Cộng sản đầu tiên trong Hỏa Lò thành lập cuối năm 1931 – đầu năm 1932 do đồng chí Hoàng Quốc Việt (Hạ Bá Cang) làm Bí thư. Báo chí bí mật trong tù được viết bằng mẩu bút chì kẹp ống sậy hoặc mực vô hình (nước cơm, thuốc đỏ, nước chanh, phẩm tím) trên giấy quyến/vỏ bao thuốc lá.",
+      "fact_en": "The historic tropical almond tree provided shade, leaves/bark/buds for treating dysentery and wounds, and dry twigs carved into penholders, chopsticks, and keepsakes. The first Communist Party cell inside Hoa Lo was formed in late 1931–early 1932 with Hoang Quoc Viet as Secretary. Secret prison newspapers were written with tiny pencil stubs or invisible inks (rice water, mercurochrome, lemon juice) on thin paper or cigarette packs—never written in blood.",
+      "anti_hallucination": "TUYỆT ĐỐI KHÔNG nói tù nhân viết báo trong tù bằng máu."
+    },
+    {
+      "id": "GF-09",
+      "zone_ids": [
+        "Z06",
+        "Z10",
+        "Z13"
+      ],
+      "topic": "Nhân vật tiêu biểu, Trại nữ/Tù nhi & Vai trò trạm trung chuyển",
+      "fact_vi": "Hỏa Lò đóng vai trò nhà tù trung chuyển lớn nhất miền Bắc đưa tù chính trị qua ga Hàng Cỏ -> Hải Phòng ra Côn Đảo hoặc lên Sơn La. Cụ Phan Bội Châu bị giam tại đây từ năm 1925 trước khi an trí tại Huế; các sĩ phu Đông Kinh Nghĩa Thục (1907–1908) như Lương Văn Can (bị đày Nam Vang/Phnôm Pênh), Nguyễn Quyền, Lê Đại (Côn Đảo) đều từng bị giam qua Hỏa Lò. Trong ảnh tư liệu đoàn tù mặc áo tù cạo trọc đầu xếp hàng dưới sân phản ánh các đợt đàn áp 1930–1931 (gồm cả sau Xô Viết Nghệ Tĩnh và Khởi nghĩa Yên Bái) và đầu Thế chiến II. Khu nữ có phòng giam riêng và nhiều em bé sinh ra hoặc theo mẹ vào tù (có hình tượng mẹ Nguyễn Thị Quang Thái và con nhỏ). Khi nhập trại ở khu chức năng, tù nhân bị ghi sổ cái tiếng Pháp, đo nhân trắc, lăn vân tay 10 ngón, chụp ảnh và cấp mã số.",
+      "fact_en": "Hoa Lo served as northern Vietnam's main transit prison sending inmates via Hang Co Station to Con Dao or Son La. Notable detainees included Phan Boi Chau (1925, before house arrest in Hue) and Dong Kinh Nghia Thuc scholars (1907-1908) such as Luong Van Can, Nguyen Quyen, and Le Dai. Photos of shaved-head inmates in the yard document 1930-1931 crackdowns (including Nghe Tinh Soviets) and WWII arrests.",
+      "anti_hallucination": "Không phủ nhận hoặc quở trách du khách khi hỏi về ảnh tù nhân Xô Viết Nghệ Tĩnh; không nhầm nơi đày cụ Lương Văn Can (Nam Vang/Phnôm Pênh, không phải Côn Đảo)."
+    },
+    {
+      "id": "GF-10",
+      "zone_ids": [
+        "Z11",
+        "Z12",
+        "Z14"
+      ],
+      "topic": "Phi công Mỹ (1964–1973), Đài tưởng niệm & Tour Đêm thiêng liêng",
+      "fact_vi": "Giai đoạn 1964–1973, Hỏa Lò giam giữ các phi công Mỹ bị bắn rơi (trong đó có chiến dịch Sấm Rền 1964–1968 và Điện Biên Phủ trên không cuối năm 1972); các phi công gọi đùa nơi đây là 'Hanoi Hilton' và được đối xử theo chính sách nhân đạo (y tế, cắt tóc, sinh hoạt lễ Giáng sinh, trao trả năm 1973 theo Hiệp định Paris). Khu vực Đài tưởng niệm và bức phù điêu tôn vinh tinh thần bất khuất của các chiến sĩ cách mạng. Hiện nay Di tích mở cửa tham quan hằng ngày 8:00–17:00 với 35 điểm Audioguide và tổ chức tour thực cảnh 'Đêm thiêng liêng' (khuyến khích đặt vé trước 1–2 tuần).",
+      "fact_en": "From 1964 to 1973, downed US pilots (including Rolling Thunder 1964-1968 and Linebacker II Dec 1972) were detained at Hoa Lo—nicknamed the 'Hanoi Hilton'—receiving humane treatment, medical care, recreation, and repatriation in 1973 under the Paris Peace Accords. Today the site opens daily 08:00-17:00 with a 35-stop audio guide and 'Sacred Night' experiential tours.",
+      "anti_hallucination": "Chỉ nói giờ mở cửa 8:00–17:00 khi du khách hỏi về tham quan/giờ mở cửa, tuyệt đối không lấy giờ mở cửa làm câu trả lời cho các câu hỏi lịch sử hay hiện vật."
+    }
+  ]
+}

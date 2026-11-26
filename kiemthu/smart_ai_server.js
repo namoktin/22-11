@@ -855,6 +855,16 @@ class ProductionSmartTourGuideServer {
 // Khởi tạo Server
 const engine = new ProductionSmartTourGuideServer();
 
+// Bật bộ tự động theo dõi thư mục thả file `kiemthu/data/custom/` (tự nạp lại nóng khi thêm/sửa/xóa file!)
+if (typeof knowledgeBase.startCustomBrainWatcher === 'function') {
+  knowledgeBase.startCustomBrainWatcher(() => {
+    try {
+      if (typeof responseCache.clear === 'function') responseCache.clear();
+      engine.verifiedBaseReplies.clear();
+    } catch {}
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   // 1. Configurable CORS Headers
   const reqOrigin = req.headers.origin || '';

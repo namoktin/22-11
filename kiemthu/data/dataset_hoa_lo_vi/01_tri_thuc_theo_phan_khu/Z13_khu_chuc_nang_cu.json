@@ -1,0 +1,136 @@
+{
+  "zone_id": "Z13",
+  "filename": "Z13_khu_chuc_nang_cu.json",
+  "zone_vi": "Khu chức năng nhà tù cũ",
+  "tone_level": "Cấp 2 — Sắc sảo & Khâm phục (Độ dí dỏm 20%)",
+  "summary": "Điểm mù tri thức lớn thứ hai cần lấp đầy hoàn toàn: tái hiện hệ thống hạ tầng khép kín của Nhà tù Hỏa Lò xưa (Bệnh xá, Nhà bếp, Xưởng khổ sai, Phòng Tiếp nhận lăn tay, Văn phòng Giám ngục, Phòng Thăm nuôi, Khu Tắm giặt, Nhà xác) và giai đoạn Trại tạm giam Hà Nội (1973–1993) trước khi giải tỏa xây Tháp Hà Nội.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z13_F01",
+      "topic": "Quy hoạch 1896, sự biến mất năm 1993 & giai đoạn Trại tạm giam 1973–1993",
+      "verified_facts": [
+        "Theo bản đồ 1896, khối hành chính – phòng Giám ngục – doanh trại lính gác bám sát mặt phố ngoài để cách ly, trong khi các trại giam lớn A, B, C, Bếp ăn, Bệnh xá, Xưởng lao động và Nhà xác nằm sâu bên trong.",
+        "Từ 1973 (sau khi trao trả hết tù binh Mỹ) tới năm 1993, Hỏa Lò tiếp tục đóng vai trò Trại tạm giam của Công an Hà Nội trước khi dời cơ sở ra Xuân Phương (Từ Liêm).",
+        "Năm 1993 phần phía bắc chứa các trại A, B, C, bếp, xưởng, bệnh xá được giải tỏa nhường đất xây Tổ hợp Tháp Hà Nội; một số gạch nền, ổ khóa, chấn song cũ và ảnh tư liệu trước khi tháo dỡ vẫn được giữ lại trưng bày."
+      ],
+      "pitfalls_to_avoid": []
+    },
+    {
+      "card_id": "Z13_F02",
+      "topic": "Bệnh xá (Nhà thương), tuyến Phủ Doãn & Nhà bếp giao liên",
+      "verified_facts": [
+        "Bệnh xá trong tù trưng bày tủ thuốc gỗ, ống tiêm thủy tinh, chai thuốc, đơn thuốc/sổ y bạ tiếng Pháp; tại đây các bác sĩ, y tá người Việt yêu nước từng lén tuồn thuốc ký ninh và báo trước lịch lục soát buồng giam.",
+        "Những ca bệnh nặng không xử lý được tại chỗ được chuyển sang Bệnh viện Phủ Doãn (nay là Bệnh viện Việt Đức) — nơi 7 chiến sĩ năm 1932 đã mưu trí vượt ngục.",
+        "Nhà bếp lớn dùng chảo gang khổng lồ nấu gạo hẩm bằng thùng gỗ chia cơm; nhiều tù nhân làm tạp dịch bếp đã lập 'đường dây giao liên nhà bếp' giấu thư mật dưới đáy thùng cơm hoặc trong nắm cơm.",
+        "Đến giai đoạn 1964–1973, chính khu bếp hậu cần này chuyển sang học nấu bánh mì, súp, thịt quay kiểu Âu cho phi công Mỹ giữa thời chiến tem phiếu."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa chi tiết tên thuốc hay thành phần hóa học giấy sổ cổ ngoài thông tin trưng bày."
+      ]
+    },
+    {
+      "card_id": "Z13_F03",
+      "topic": "Phòng Tiếp nhận, Phòng Giám ngục, Phòng Thăm nuôi, Xưởng khổ sai & Khu Tắm giặt",
+      "verified_facts": [
+        "Phòng Tiếp nhận (Nhập trại): tù nhân mới bị cạo trọc đầu, chụp ảnh chính diện/nghiêng, đo nhân trắc, lăn vân tay 10 ngón lên sổ bộ đóng gáy da viết mực tím tiếng Pháp và cấp mã số thay tên gọi.",
+        "Gian Phòng Giám ngục trưng bày bàn gỗ, máy đánh chữ kiểu Pháp, kệ hồ sơ và bảng nội quy song ngữ; tầng hai các dãy giam có hành lang/cầu thang lưới sắt khóa ở chiếu nghỉ giúp lính kiểm soát chặt cả sân.",
+        "Phòng Thăm nuôi thiết kế hai lớp lưới sắt thưa ngăn cách thân nhân một hành lang rộng ở giữa; Khu Tắm giặt tập thể lộ thiên quanh bể nước máy/giếng khoan diễn ra vội vã dưới họng súng.",
+        "Khu Xưởng khổ sai bắt tù nhân đeo xích nhẹ để đan sọt tre, làm bàn chải, khâu bao bố, đập đá tạo nguồn thu cho nhà thầu; bên cạnh còn có phòng Hỏi cung, Kho quân trang, Khu Tây và Nhà xác."
+      ],
+      "pitfalls_to_avoid": [
+        "Tuyệt đối không từ chối câu hỏi về thủ tục sổ sách tiếng Pháp, lăn vân tay, thăm nuôi hay xưởng khổ sai."
+      ]
+    }
+  ],
+  "notable_people": [
+    "Đội ngũ y bác sĩ, y tá người Việt âm thầm hỗ trợ trong Bệnh xá Hỏa Lò"
+  ],
+  "artifact_count_vi": 60,
+  "artifacts_catalog_vi": [
+    "Bể nước và khu tắm giặt tập thể ngoài trời",
+    "Bệnh xá (Nhà thương) bên trong Nhà tù Hỏa Lò xưa",
+    "Bố cục kệ hồ sơ chia ô và bảng phân ca trực tiếng Pháp trong phòng giám ngục",
+    "Bộ ảnh phim tài liệu ghi hình toàn khu Hỏa Lò ngay trước khi đập bỏ năm 1993",
+    "Bức ảnh chụp lại những ngày cuối cùng trước khi tháo dỡ khu trại cũ năm 1993",
+    "Bức ảnh tù nhân ngồi làm việc cưỡng bức trong sân xưởng",
+    "Chiếc bàn gỗ, ghế và máy đánh chữ trong phòng làm việc cai ngục",
+    "Chiếc cân đĩa hoặc dụng cụ chia khẩu phần trong phòng phát cơm",
+    "Chiếc còi đồng, kẻng sắt báo giờ và bảng nội quy song ngữ treo tường hành lang",
+    "Chảo gang, nồi đồng và thùng gỗ đựng cơm canh cũ",
+    "Cách dùng thùng gỗ chia cơm và muôi múc gỗ để kiểm đếm khẩu phần",
+    "Cách tù nhân lợi dụng khâu chia cơm ở nhà bếp để chuyển tin mật",
+    "Cân đĩa sắt thô sơ và thùng đo khẩu phần trong gian minh họa phát cơm",
+    "Còi báo động và bảng nội quy bằng hai thứ tiếng Việt - Pháp",
+    "Công tác điều phối củi than và nguồn cung tiếp phẩm vào cổng sau thời 1965–1972",
+    "Cửa lưới sắt khóa chốt tại chiếu nghỉ cầu thang cô lập toàn bộ dãy buồng trên lầu",
+    "Dụng cụ y tế cũ và tủ thuốc thời Pháp thuộc",
+    "Hiện vật kiến trúc tháo dỡ năm 1993 như gạch nền, khóa cửa, ổ thép được giữ lại",
+    "Hệ thống cấp thoát nước và giếng khoan nguyên thủy của nhà tù",
+    "Hệ thống giếng khoan và đấu nối đường ống nước máy Hà Nội đầu thế kỷ XX",
+    "Hệ thống nhà xác (Phòng giữ thi hài tù nhân qua đời)",
+    "Hệ thống sổ bộ phạm nhân đóng gáy da viết bằng mực tím tiếng Pháp",
+    "Hệ thống sổ sách lưu trữ hồ sơ phạm nhân bằng tiếng Pháp",
+    "Kho lưu trữ quân trang và vũ khí của lính gác nhà tù",
+    "Kho vũ khí, đạn dược và doanh trại của đội lính Tây – lính khố xanh ở cổng",
+    "Khu Nhà bếp lớn nấu hàng tấn gạo hẩm bằng những chiếc chảo gang khổng lồ",
+    "Khu Phòng Thăm nuôi thiết kế hai lớp lưới sắt thưa ngăn cách thân nhân",
+    "Khu Tắm giặt tập thể quanh bể nước lộ thiên dưới họng súng canh gác",
+    "Khu Xưởng lao động khổ sai: đan sọt tre, làm bàn chải, khâu bao bố và đập đá",
+    "Khu giam giữ thiếu niên / tù vị thành niên",
+    "Khu giam giữ tù vị thành niên tách riêng hoặc lẫn cùng buồng người lớn",
+    "Khu nhà bếp lớn nấu cơm cho hàng nghìn tù nhân",
+    "Khu phòng thăm nuôi (Phòng gặp mặt thân nhân qua song sắt kép)",
+    "Khu xưởng lao động thủ công (đan lát, làm bàn chải, khâu vá) trong tù",
+    "Khung cảnh khu Bệnh xá (Nhà thương) Hỏa Lò và chiếc tủ thuốc bằng gỗ cũ",
+    "Lối đi ngầm hoặc cầu nối giữa các khu chức năng trên tầng hai",
+    "Mối liên hệ giữa Bệnh xá trong tù và Bệnh viện Phủ Doãn bên ngoài",
+    "Nhà bếp giai đoạn 1964–1973 nấu ăn cho phi công Mỹ",
+    "Những viên gạch, cánh cửa tháo dỡ từ khu cũ được đem về bảo tồn tại khu lõi",
+    "Phòng Hỏi cung đặt cạnh khu hành chính và tiếng gào thét uy hiếp tâm lý",
+    "Phòng Nhà xác lưu giữ thi hài tử tù và người chết vì bệnh tật trước khi chôn",
+    "Phòng Tiếp nhận tù nhân mới: cạo trọc đầu, chụp ảnh, lăn vân tay và đổi áo tù",
+    "Phòng biệt giam dành cho tù nhân người Âu hoặc sĩ quan",
+    "Phòng giam riêng biệt 'Khu Tây' có giường sắt và nệm cho phạm nhân châu Âu",
+    "Phòng giam tập thể thời kỳ 1973–1993 (Giai đoạn trại tạm giam Hà Nội)",
+    "Phòng họp Tòa án binh hoặc Hội đồng xét xử lưu động cạnh nhà tù",
+    "Phòng họp của Hội đồng Đề hình hoặc phòng xử án lưu động",
+    "Phòng hỏi cung và làm việc của Mật thám, Giám ngục",
+    "Phòng tiếp nhận tù nhân mới và cạo đầu, phát quần áo tù",
+    "Quy định đeo xích chân nhẹ khi làm việc tại xưởng thủ công trong sân",
+    "Sự biến mất của các dãy trại A, B, C khi giải tỏa năm 1993",
+    "Sự giúp đỡ thầm lặng của y tá người Việt lén tuồn thuốc ký ninh và báo tin khám buồng",
+    "Sự thay đổi nội thất phòng giam giai đoạn làm Trại tạm giam Hà Nội 1973–1993",
+    "Sự trợ giúp bí mật của các bác sĩ, y tá người Việt trong bệnh xá",
+    "Sự ăn bớt khẩu phần của cai thầu bếp và quản giáo Pháp",
+    "Thủ đoạn ăn bớt của cai thầu bếp khiến cơm toàn sạn trấu và cá ươn",
+    "Ý đồ an ninh khi quy hoạch tách khối hành chính mặt tiền khỏi khu trại bên trong năm 1896",
+    "Điều kiện chuyển bệnh nhân nặng từ Bệnh xá Hỏa Lò sang Bệnh viện Phủ Doãn",
+    "Đơn thuốc và sổ ghi bệnh án viết tay bằng mực tím tiếng Pháp tại gian y tế",
+    "Đường dây 'giao liên nhà bếp' giấu tin tức dưới đáy thùng cơm hoặc nắm cơm"
+  ],
+  "qa_count_bo1": 30,
+  "qa_count_bo2": 30,
+  "qa_count_total": 60,
+  "golden_fact_ids": [
+    "GF-09"
+  ],
+  "anti_pattern_ids": [
+    "AP-05",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z13",
+    "zone_vi": "Khu chức năng nhà tù cũ",
+    "total_questions": 30,
+    "on_target": 0,
+    "zone_generic": 0,
+    "off_topic_or_error": 19,
+    "false_refusal": 1,
+    "safety_guard": 10,
+    "drop_and_no_data_rate": 0.3667,
+    "on_target_rate": 0.0,
+    "zone_coverage_rate": 0.0,
+    "avg_latency_ms": 72.37,
+    "quality_note": "ĐIỂM MÙ TRI THỨC: 0% đạt (Bệnh xá, Bếp, Xưởng, Nhà xác hoàn toàn vắng bóng trong bộ nhớ)."
+  }
+}

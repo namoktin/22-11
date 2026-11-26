@@ -1,0 +1,91 @@
+{
+  "version": "1.0.0",
+  "language": "vi",
+  "total_items": 12,
+  "myth_busters": [
+    {
+      "myth_id": "MB-01",
+      "zone_id": "Z07",
+      "common_misconception": "Cả 16 tử tù vượt ngục đêm Noel 1951 đều trốn thoát trót lọt qua cống ngầm ra phố Thợ Nhuộm.",
+      "truth": "Tổng cộng có khoảng 17 người (16 tù chính trị Khu D + 1 thường phạm) chui cống ngầm góc sân nam, trồi lên ở khu vực gần phố Quán Sứ / Nhà Đấu xảo. Vì bị lộ và vây bắt, chỉ có 5 chiến sĩ thoát hẳn về vùng tự do (Vũ Đức Chính, Nguyễn Gia Thiết, Vũ Đình Quang, Vũ Đình Khôi, Nguyễn Văn Hùng); 12 người còn lại bị bắt lại.",
+      "tactful_correction_vi": "Chi tiết về đêm Noel 24/12/1951 rất nổi tiếng nên nhiều người hay nhớ thành cả nhóm đều thoát hết, nhưng thực tế lịch sử ghi nhận trong khoảng 16–17 người chui cống ngầm ra khu vực Quán Sứ / Đấu xảo hôm ấy chỉ có 5 chiến sĩ thoát hẳn về vùng tự do, còn 12 người bị bắt lại bạn ạ."
+    },
+    {
+      "myth_id": "MB-02",
+      "zone_id": "Z05",
+      "common_misconception": "Cụ Nguyễn Thái Học và 12 đồng chí bị xử chém bằng máy chém ngay giữa sân Nhà tù Hỏa Lò.",
+      "truth": "Thực dân Pháp tháo rời chiếc máy chém của Hỏa Lò chở tàu hỏa từ ga Hàng Cỏ lên Yên Bái để hành quyết Nguyễn Thái Học và 12 đồng chí tại Yên Bái rạng sáng ngày 17/6/1930.",
+      "tactful_correction_vi": "Nhiều bạn nhìn cỗ máy chém đặt tại đây cũng dễ hình dung cảnh hành quyết ngay trong sân, nhưng thực ra ngày 17/6/1930 Pháp đã tháo rời chính cỗ máy này chở tàu hỏa lên tận Yên Bái để xử chém cụ Nguyễn Thái Học cùng 12 đồng chí đấy ạ."
+    },
+    {
+      "myth_id": "MB-03",
+      "zone_id": "Z05",
+      "common_misconception": "Lưỡi dao máy chém rơi tự do từ độ cao 4 mét.",
+      "truth": "Tổng chiều cao khung gỗ máy chém là gần 4 m, nhưng phần rãnh trượt để lưỡi dao nặng 40–50 kg lao xuống chỉ có hành trình rơi khoảng 2 m.",
+      "tactful_correction_vi": "Nhìn tổng thể hai cột gỗ cao gần 4 m nên cảm giác lưỡi dao rơi từ đỉnh 4 m xuống, song hành trình rơi thực tế từ chốt treo trên xuống vòng kẹp cổ là khoảng 2 m với khối dao nặng chừng 40–50 kg."
+    },
+    {
+      "myth_id": "MB-04",
+      "zone_id": "Z09",
+      "common_misconception": "Tù nhân Hỏa Lò chích ngón tay lấy máu viết báo bí mật trong tù.",
+      "truth": "Báo bí mật trong tù (Đuốc đưa đường, Suối reo, Chiến thắng...) được viết bằng mẩu bút chì nối ống sậy, cành bàng vót nhọn hoặc các loại mực tự chế từ gạch non, muội than, thuốc đỏ, phẩm tím, nước cơm, nước chanh.",
+      "tactful_correction_vi": "Ý chí viết báo trong ngục rất phi thường nhưng các chiến sĩ không dùng máu đâu ạ; thực tế anh em khéo léo tận dụng mẩu bút chì nối ống sậy và pha mực từ muội than, bột gạch non, thuốc đỏ hay nước cơm để viết trên giấy quyến mỏng."
+    },
+    {
+      "myth_id": "MB-05",
+      "zone_id": "Z01",
+      "common_misconception": "Hỏa Lò được xếp hạng Di tích Quốc gia năm 1990 hoặc mở cửa bảo tàng ngay năm 1993.",
+      "truth": "Năm 1993 chuyển đổi công năng xây Tháp Hà Nội và giữ lại khu lõi phía nam; ngày 18/6/1997 Bộ Văn hóa – Thông tin mới ký Quyết định 1543/QĐ-VH xếp hạng Di tích Lịch sử Quốc gia và tôn tạo trưng bày giai đoạn 1997–1999.",
+      "tactful_correction_vi": "Mốc năm 1993 là thời điểm giải tỏa một phần để xây Tháp Hà Nội và chuyển trại tạm giam ra Xuân Phương, còn quyết định chính thức công nhận Di tích Quốc gia số 1543/QĐ-VH được ký ngày 18/6/1997 bạn nhé."
+    },
+    {
+      "myth_id": "MB-06",
+      "zone_id": "Z02",
+      "common_misconception": "Mô hình nắm cơm hẩm + miếng cá mắm bé xíu là khẩu phần cho cả một ngày dài.",
+      "truth": "Đó là khẩu phần cho MỘT bữa ăn (mỗi ngày có 2 bữa chính), chia chung trong máng tôn gọi là 'lập là'; dù vậy khẩu phần vẫn bị cai thầu bớt xén nặng nề, đầy trấu sạn.",
+      "tactful_correction_vi": "Nắm cơm nhỏ trông đến xót xa ấy thực ra là tiêu chuẩn của MỘT bữa (mỗi ngày tù nhân được chia hai bữa chính bằng máng tôn 'lập là'), nhưng gạo hẩm lẫn sạn và cá ươn nên vẫn khiến anh em đói lả triền miên."
+    },
+    {
+      "myth_id": "MB-07",
+      "zone_id": "Z02",
+      "common_misconception": "Khe hở chữ nhật sát chân cửa sắt chỉ để khóa hoặc thông gió, không phải để đưa cơm.",
+      "truth": "Chính khe chữ nhật thấp sát chân cửa sắt mới là chỗ đẩy máng cơm nước vào và chuyển thùng vệ sinh ra mà không cần mở cánh cửa nặng.",
+      "tactful_correction_vi": "Đúng ngay ô chữ nhật sát sàn cửa sắt đó bạn ạ — cai ngục mở chốt kéo máng cơm nước hoặc đẩy đồ vệ sinh qua khe thấp đó để tuyệt đối không phải mở toang cửa phòng giam."
+    },
+    {
+      "myth_id": "MB-08",
+      "zone_id": "Z10",
+      "common_misconception": "Cụ Lương Văn Can bị đày ra Côn Đảo giống các sĩ phu Đông Kinh Nghĩa Thục khác.",
+      "truth": "Cụ Lương Văn Can sau khi bị giam ở Hỏa Lò đã bị thực dân Pháp kết án lưu đày sang Nam Vang (Phnôm Pênh, Campuchia), còn cụ Nguyễn Quyền, Lê Đại bị đày ra Côn Đảo.",
+      "tactful_correction_vi": "Các cụ Đông Kinh Nghĩa Thục đều từng bị giam qua Hỏa Lò từ 1907–1908, tuy nhiên cụ Lương Văn Can bị thực dân Pháp đày sang Nam Vang (Phnôm Pênh), còn cụ Nguyễn Quyền và cụ Lê Đại mới bị đưa ra Côn Đảo."
+    },
+    {
+      "myth_id": "MB-09",
+      "zone_id": "Z01",
+      "common_misconception": "Ban đầu Pháp xây Hỏa Lò chỉ để giam người Pháp rồi sau mới chuyển sang nhốt tù chính trị Việt Nam.",
+      "truth": "Ngay từ đồ án năm 1896, Hỏa Lò được xây dựng chủ yếu để giam giữ và đàn áp lực lượng đấu tranh yêu nước người Việt (đồng thời có một 'Khu Tây' tách riêng hoàn toàn cho phạm nhân Pháp/châu Âu).",
+      "tactful_correction_vi": "Thực ra ngay từ khi khởi công năm 1896, Hỏa Lò đã được quy hoạch làm nhà tù trung tâm Bắc Kỳ chủ yếu giam giữ người Việt Nam yêu nước và phạm nhân bản xứ; khu giam người Pháp ('Khu Tây') chỉ là một bộ phận tách riêng có chế độ khác biệt."
+    },
+    {
+      "myth_id": "MB-10",
+      "zone_id": "Z02",
+      "common_misconception": "Bức ảnh đoàn tù cạo trọc đầu xếp hàng mặc áo tù không liên quan đến phong trào 1930–1931 / Xô Viết Nghệ Tĩnh.",
+      "truth": "Ảnh tư liệu phản ánh chính xác làn sóng bắt bớ ồ ạt giai đoạn 1930–1931 (sau Khởi nghĩa Yên Bái lẫn cao trào Xô Viết Nghệ Tĩnh) và đầu Thế chiến II.",
+      "tactful_correction_vi": "Nhận định của bạn hoàn toàn có cơ sở lịch sử: những bức ảnh đoàn tù xếp hàng chật kín sân thuộc cao trào khủng bố trắng những năm 1930–1931, trong đó Hỏa Lò là trạm trung chuyển tiếp nhận tù chính trị cả từ các cuộc đấu tranh lớn như Yên Bái và Xô Viết Nghệ Tĩnh."
+    },
+    {
+      "myth_id": "MB-11",
+      "zone_id": "Z03",
+      "common_misconception": "Xà lim tối Cachot ở Hỏa Lò chính là 'Chuồng cọp' giống ở Côn Đảo.",
+      "truth": "Chuồng cọp Côn Đảo có song sắt hở trần bên trên để cai ngục đứng từ sàn gác đi tuần chọc gậy, rắc vôi bột; còn Cachot Hỏa Lò xây trần vòm gạch kín thấp tối om hoàn toàn với bệ nằm dốc ngược.",
+      "tactful_correction_vi": "Cả hai đều tàn khốc nhưng khác hẳn về cấu trúc: 'Chuồng cọp' Côn Đảo làm trần song sắt lộ thiên để lính tuần tra từ trên rắc vôi chọc gậy xuống, còn Cachot ở Hỏa Lò là xà lim kín bưng tối mực với nền bệ đổ dốc ngược."
+    },
+    {
+      "myth_id": "MB-12",
+      "zone_id": "Z11",
+      "common_misconception": "Năm 1973 trao trả phi công Mỹ xong thì Nhà tù Hỏa Lò lập tức đóng cửa biến thành bảo tàng.",
+      "truth": "Từ năm 1973 tới 1993, khu di tích vẫn làm Trại tạm giam của Công an TP. Hà Nội suốt 20 năm trước khi chuyển ra Xuân Phương và bảo tồn thành di tích lịch sử.",
+      "tactful_correction_vi": "Sau khi trao trả hết 591 phi công Mỹ năm 1973, Hỏa Lò chưa đóng cửa thành bảo tàng ngay mà còn tiếp tục làm Trại tạm giam Công an Hà Nội suốt 20 năm (1973–1993) trước khi dời ra Xuân Phương bạn ạ."
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "zone_id": "Z03",
+  "filename": "Z03_nguc_toi_cachot.json",
+  "zone_vi": "Ngục tối (Cachot)",
+  "tone_level": "Cấp 1 — Trang nghiêm tuyệt đối & Lắng đọng (Wit = 0%)",
+  "summary": "Được ví như 'địa ngục trong lòng địa ngục' (Cachot tiếng Pháp nghĩa là hầm ngục tối), dùng để biệt giam cực kỳ hà khắc những tù nhân dám chống đối, tuyệt thực, truyền bá tài liệu hoặc bị kỷ luật nặng.",
+  "atomic_fact_cards": [
+    {
+      "card_id": "Z03_F01",
+      "topic": "Cấu trúc hình học bức bối & bệ xi măng dốc ngược",
+      "verified_facts": [
+        "Mỗi xà lim đơn Cachot chỉ rộng khoảng 2–3 m², trần vòm thấp tối tăm, mặt bằng nhiều ô có hình thang méo hẹp tạo cảm giác ngột ngạt tối đa.",
+        "Bệ nằm xi măng đổ dốc ngược khiến phần đầu tù nhân thấp hơn cổ chân bị cùm cố định phía trên; tư thế kéo dài gây máu dồn lên não, phù nề chân tay, suy giảm thị lực, teo cơ và có thể dẫn tới kiệt sức hy sinh.",
+        "Cửa sắt hai lớp (cửa thép dày và cửa trong chốt ngang trên dưới) rất hẹp và thấp buộc tù nhân phải cúi gập bước vào; lỗ thông hơi sát trần bị bịt lưới đan dày."
+      ],
+      "pitfalls_to_avoid": [
+        "Không bịa tỷ lệ % cấu trúc gốc còn lại nếu không có nguồn công bố; không đùa cợt dưới bất kỳ hình thức nào."
+      ]
+    },
+    {
+      "card_id": "Z03_F02",
+      "topic": "Chế độ biệt giam tàn khốc & giao tiếp bí mật trong bóng tối",
+      "verified_facts": [
+        "Người bị phạt Cachot bị tước toàn bộ vật dụng cá nhân (thắt lưng, cúc áo kim loại), không có ánh sáng, ăn chế độ kỷ luật cắt rau chỉ còn cơm với muối trắng qua hộc cửa sát sàn.",
+        "Thùng vệ sinh không nắp đặt ngay cạnh đầu nằm tạo mùi hôi thối nồng nặc; tù nhân vừa phải chịu vết thương chưa lành từ phòng hỏi cung vừa chống chọi ẩm lạnh.",
+        "Các chiến sĩ dùng cách gõ nhẹ vào tường gạch dày, truyền tín hiệu rung qua thanh sắt hoặc nền chung, và cất tiếng hát Quốc tế Ca qua lỗ thông hơi để điểm danh, giữ vững tinh thần."
+      ],
+      "pitfalls_to_avoid": [
+        "Không nhầm lẫn giữa Cachot tối om bệ dốc ngược của Hỏa Lò với 'chuồng cọp' song sắt lộ thiên ở Côn Đảo."
+      ]
+    },
+    {
+      "card_id": "Z03_F03",
+      "topic": "Nhân vật từng bị giam Cachot & trải nghiệm tắt đèn Tour Đêm",
+      "verified_facts": [
+        "Nhiều nhà lãnh đạo cách mạng kiệt xuất như Trường Chinh, Nguyễn Văn Cừ, Lê Duẩn, Đỗ Mười cùng đông đảo chiến sĩ và học sinh sinh viên Hà Nội kháng chiến (1950–1953) từng bị biệt giam tại đây.",
+        "Sau năm 1954 khu Cachot không còn sử dụng kiểu kỷ luật thực dân; ngày nay được lắp kính và đèn vàng dịu bảo tồn, riêng Tour Đêm thiêng liêng tái hiện khoảnh khắc tắt toàn bộ ánh sáng kèm âm thanh mô phỏng để khách cảm nhận trực tiếp."
+      ],
+      "pitfalls_to_avoid": []
+    }
+  ],
+  "notable_people": [
+    "Trường Chinh",
+    "Nguyễn Văn Cừ",
+    "Lê Duẩn",
+    "Đỗ Mười"
+  ],
+  "artifact_count_vi": 72,
+  "artifacts_catalog_vi": [
+    "Biến chứng khớp gối và cột sống từ bệ xi măng dốc ngược",
+    "Bài học về sức chịu đựng phi thường sau khi rời dãy hành lang tối",
+    "Bóng tối tuyệt đối không có ánh sáng tự nhiên",
+    "Bảo quản thanh cùm sắt nguyên gốc trong môi trường ẩm của Cachot",
+    "Bệ nằm xi măng dốc ngược đầu xuống thấp",
+    "Bệnh tê phù (Béri-béri) và kiết lỵ trong ngục tối",
+    "Bố cục chiếu sáng và âm thanh dẫn chuyện ban đêm tại Cachot",
+    "Chi tiết vị trí thùng vệ sinh không nắp trong không gian dưới 3m²",
+    "Chiều cao ngưỡng cửa và độ dốc thoát nước sàn Cachot",
+    "Các đồ vật cá nhân bị tịch thu trước khi đưa vào Cachot",
+    "Cách thức thực dân Pháp xử lý nếu có tù nhân chết ngay trong Cachot",
+    "Cách tù nhân dùng nước bọt hoặc quần áo tự giữ ẩm môi khi khát",
+    "Cách tù nhân giữ tỉnh táo, không hóa điên trong bóng tối",
+    "Cánh cửa sắt kép hai lớp đóng kín",
+    "Cánh cửa sắt kép ngoài dày và tiếng đập rầm mỗi lần đóng sập",
+    "Cấu trúc trần vòm thấp và cảm giác đè nén của một ô Cachot",
+    "Cấu tạo chốt cài khóa ngoài hai tầng của cửa Cachot",
+    "Cửa nhỏ bằng nắm tay trên cánh cửa thép Cachot",
+    "Dấu tích bảng đánh số buồng trên vách cửa ô Cachot",
+    "Hiện tượng rối loạn thị giác và ảo giác thính giác khi biệt giam lâu",
+    "Hành lang hẹp và cánh cửa sắt thông ra ngoài trời",
+    "Hình phạt bổ sung bằng roi vọt trước khi ném vào Cachot",
+    "Khe đổ cơm sát sàn và thái độ đối xử của lính gác Cachot",
+    "Khẩu phần ăn bị cắt giảm khi bị phạt vào Cachot",
+    "Kích thước cực kỳ chật hẹp của một ô xà lim đơn",
+    "Lỗ thông hơi nhỏ xíu bị bịt lưới dày",
+    "Lớp lưới mắt cáo dày đặc ở ô thông khí nhỏ tường sau",
+    "Lớp vữa đen sạm và nấm mốc trên tường Cachot",
+    "Mất cảm giác thời gian ngày đêm trong bóng tối đặc quánh",
+    "Mối liên hệ giữa việc bị giam Cachot và việc làm thơ trong bóng tối",
+    "Mục đích đặt tên tiếng Pháp 'Cachot' trong hệ thống nhà lao thuộc địa",
+    "Mức độ nguyên bản của dãy buồng Cachot giữ lại đến ngày nay",
+    "Những chiến sĩ cách mạng nổi tiếng từng chịu hình phạt Cachot",
+    "Những lỗi bị đưa vào kỷ luật trong Cachot",
+    "Những nhân vật cách mạng từng chịu phạt trong Cachot",
+    "Phản ứng của cơ thể sau 7 ngày đầu tiên trong ngục tối thiếu sáng",
+    "Quy trình cai ngục kiểm tra tù nhân ngất xỉu trong Cachot",
+    "Quy định cấm sách, bút và mọi vật dụng kim loại nhỏ trong Cachot",
+    "Quá trình chuyển tù nhân từ Cachot ra ngoài khi hết hạn phạt",
+    "Số lượng bữa ăn bị cắt còn 1 bữa cơm nhạt/ngày trong Cachot",
+    "Số lượng ô Cachot từng tồn tại tại Nhà tù Hỏa Lò",
+    "Sự phân biệt giữa Cachot Hỏa Lò và chuồng cọp Côn Đảo",
+    "Sự trợ giúp lén lút từ bạn tù làm nhiệm vụ đổ thùng vệ sinh",
+    "Sự tương phản giữa Cachot và khu giam tù kinh tế / nhẹ tội",
+    "Sự tương trợ bằng âm thanh gõ vào ống sắt cùm chân",
+    "Sự đối lập ánh sáng khi mở cánh cửa nặng từ hành lang Cachot",
+    "Thanh cùm sắt khóa chéo hay thanh sắt luồn qua bệ cuối chân",
+    "Thiết kế bậc cửa ra vào hơi hẹp buộc tù nhân phải cúi đầu chui qua",
+    "Thời hạn 15 ngày hay kéo dài nhiều tháng trong Cachot",
+    "Thử thách ý chí trước nỗi sợ bóng tối của chính khách tham quan",
+    "Tiếng gõ ký hiệu Morse hoặc quy ước mật trong Cachot",
+    "Trường hợp bị cùm cả hai chân lẫn xích tay",
+    "Tác động tâm lý lên du khách khi đứng thử bên trong hành lang",
+    "Tên gọi \"Cachot\" và biệt danh \"địa ngục của địa ngục\"",
+    "Tình trạng nhốt 2–3 người vào chung một ô Cachot đơn",
+    "Tình trạng phù nề, mù lòa sau khi bị giam trong Cachot",
+    "Tình trạng sử dụng khu Cachot trong giai đoạn 1954–1975 hay sau này",
+    "Tư thế ngồi co gối trên bệ dốc trong tượng phục dựng",
+    "Tượng tái hiện tù nhân bị cùm trong Cachot",
+    "Vai trò của tinh thần lạc quan cách mạng qua tiếng hát từ trong ngục tối",
+    "Việc lính gác kiểm tra vào ban đêm bằng đèn pin",
+    "Vấn đề hơi nước ngưng tụ và nước rỉ trần trong ô Cachot",
+    "Vết gỉ màu nâu sẫm trên vòng sắt cùm cổ chân",
+    "Vết nứt chân tường và gạch nền nguyên bản tại khu Cachot",
+    "Vị trí nằm tách biệt của khu Cachot so với sân chung",
+    "Ánh đèn hắt đỏ hoặc xanh mờ trong bảo tàng hiện nay",
+    "Âm thanh tiếng vọng kỳ lạ trong hành lang Cachot",
+    "Âm vang tiếng rên rỉ hoặc tiếng hát xuyên qua khe thông hơi",
+    "Ăn, ngủ và vệ sinh tại chỗ trong không gian dưới 3m²",
+    "Đoạn ống thoát nước hoặc rãnh rò rỉ dưới gầm bệ xi măng Cachot",
+    "Độ dày của tường gạch giữa các phòng Cachot",
+    "Độ lạnh buốt của sàn xi măng trong mùa đông miền Bắc"
+  ],
+  "qa_count_bo1": 36,
+  "qa_count_bo2": 36,
+  "qa_count_total": 72,
+  "golden_fact_ids": [
+    "GF-05"
+  ],
+  "anti_pattern_ids": [
+    "AP-05",
+    "AP-06"
+  ],
+  "audit_baseline_2guide": {
+    "zone_id": "Z03",
+    "zone_vi": "Ngục tối (Cachot)",
+    "total_questions": 36,
+    "on_target": 1,
+    "zone_generic": 22,
+    "off_topic_or_error": 10,
+    "false_refusal": 1,
+    "safety_guard": 2,
+    "drop_and_no_data_rate": 0.0833,
+    "on_target_rate": 0.0278,
+    "zone_coverage_rate": 0.6389,
+    "avg_latency_ms": 14.58,
+    "quality_note": "Nhận diện phân khu tạm ổn (63.9%), nhưng HL-079/HL-103 lạc sang Máy chém; mất dữ kiện chi tiết."
+  }
+}

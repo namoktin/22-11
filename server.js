@@ -2737,6 +2737,56 @@ const server = http.createServer(async (req, res) => {
     }, null, 2));
   }
 
+  // 8.45 Admin Plug-and-Play Knowledge Brain Reload & Text Ingest (Fail-Closed)
+  if (req.method === 'POST' && pathname === '/api/admin/kb/reload') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const kbPath = path.join(kiemthuDir, 'engine', 'knowledge_base.js');
+      const { knowledgeBase } = require(kbPath);
+      const summary = knowledgeBase.reloadDynamicKnowledge();
+      audioCache.clear();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'ok', ...summary }));
+    } catch (err) {
+      return safeErrorResponse(res, 500, 'Failed to reload knowledge base', err);
+    }
+  }
+
+  if (req.method === 'POST' && pathname === '/api/admin/kb/ingest-text') {
+    const adminCheck = verifyAdminRequest(req);
+    if (!adminCheck.ok) {
+      res.writeHead(adminCheck.statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'error', error: adminCheck.error }));
+    }
+    try {
+      const body = await parseJsonBody(req, 512 * 1024);
+      const rawName = sanitizeStringInput(body?.filename || `doc_${Date.now()}.md`, 80)
+        .replace(/[^a-zA-Z0-9._-]/g, '_')
+        .replace(/^\.+/, '');
+      const finalName = /\.(md|txt|json|jsonl|csv)$/i.test(rawName) ? rawName : `${rawName}.md`;
+      const content = String(body?.content || '').trim();
+      if (content.length < 25) {
+        res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ status: 'error', error: 'Content must be at least 25 characters.' }));
+      }
+      const customDir = path.join(kiemthuDir, 'data', 'custom');
+      if (!fs.existsSync(customDir)) fs.mkdirSync(customDir, { recursive: true });
+      const targetPath = path.join(customDir, finalName);
+      fs.writeFileSync(targetPath, content, 'utf8');
+      const { knowledgeBase } = require(path.join(kiemthuDir, 'engine', 'knowledge_base.js'));
+      const summary = knowledgeBase.reloadDynamicKnowledge();
+      audioCache.clear();
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      return res.end(JSON.stringify({ status: 'ok', savedFile: finalName, ...summary }));
+    } catch (err) {
+      return safeErrorResponse(res, err.statusCode || 500, err.statusCode ? err.message : 'Failed to ingest knowledge text', err);
+    }
+  }
+
   // 8.5 Health check cho Render & Uptime monitor
   if (req.method === 'GET' && (pathname === '/health' || pathname === '/api/health')) {
     let kbStats = null;
@@ -2752,6 +2802,10 @@ const server = http.createServer(async (req, res) => {
           servicePolicies: knowledgeBase.servicePolicies?.length || 0,
           expandedKnowledge: knowledgeBase.expandedKnowledge?.length || 0,
           dataset1000: knowledgeBase.dataset1000?.length || 0,
+          datasetHoaLoViDocs: knowledgeBase.customStats?.datasetHoaLoViDocs || 0,
+          zonesLoaded: knowledgeBase.customStats?.zonesLoaded || 0,
+          customDocs: knowledgeBase.customStats?.customDocs || 0,
+          customFiles: knowledgeBase.customStats?.customFiles || [],
           localSemanticVectorDocs: knowledgeBase.localSemanticIndex?.docs?.length || 0,
           autoLearnedLocal: autoLearn ? autoLearn.records.length : 0
         };
@@ -2797,6 +2851,15 @@ if (require.main === module) {
     try {
       const kPath = path.join(kiemthuDir, 'smart_ai_server.js');
       if (fs.existsSync(kPath)) require(kPath);
+      const kbPath = path.join(kiemthuDir, 'engine', 'knowledge_base.js');
+      if (fs.existsSync(kbPath)) {
+        const { knowledgeBase } = require(kbPath);
+        if (typeof knowledgeBase.startCustomBrainWatcher === 'function') {
+          knowledgeBase.startCustomBrainWatcher(() => {
+            audioCache.clear();
+          });
+        }
+      }
     } catch (e) {
       console.warn('⚠ Pre-warm kiemthu notice:', e.message);
     }

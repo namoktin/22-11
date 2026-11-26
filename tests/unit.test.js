@@ -496,3 +496,62 @@ test('9.5+ Docent Upgrade: 6-language glossary, mature tone, graceful OOS bridge
   const cmpAns = await queryKiemThuAI('So sánh Nhà tù Hỏa Lò có điểm gì đặc biệt so với Nhà tù Côn Đảo?', null, 't95_cmp', 'vi');
   assert.ok(/Hà Nội|1964|1973|Hanoi Hilton/i.test(cmpAns.reply), `Expected Hoa Lo vs Con Dao comparison dossier, got: ${cmpAns.reply}`);
 });
+
+test('Universal Drop-In Auto-Brain & dataset_hoa_lo_vi: 14 zones, Z10/Z13 depth & live custom/ file ingestion', async () => {
+  const { knowledgeBase } = require(path.join(kiemthuRoot, 'engine', 'knowledge_base'));
+  const { parseTextOrMarkdownDocument } = require(path.join(kiemthuRoot, 'engine', 'custom_knowledge_loader'));
+  const { queryKiemThuAI } = require('../server');
+
+  // 1. Verify dataset_hoa_lo_vi loaded (14 zones + 1000 QA + micro-stories + myth-busters + golden facts)
+  assert.ok(knowledgeBase.customStats.datasetHoaLoViDocs >= 1000, `Expected >= 1000 dataset_hoa_lo_vi docs, got ${knowledgeBase.customStats.datasetHoaLoViDocs}`);
+  assert.equal(knowledgeBase.customStats.zonesLoaded, 14, 'Expected all 14 zones Z01..Z14 loaded');
+
+  // 2. Verify previously blind-spot Z10 exhibit retrieval works cleanly (thẻ tù VN 2017 / lược xương)
+  const z10TopK = knowledgeBase.retrieveTopKContext('Tấm thẻ tù số VN 2017 của bác Dương Tự Minh ở Hỏa Lò có ý nghĩa gì?', { topK: 5 });
+  assert.ok(z10TopK.snippets.some(s => /VN 2017|Dương Tự Minh/i.test(s)), 'Expected Z10 VN 2017 snippet in Top-K');
+  assert.ok(Boolean(z10TopK.matchedToneLevel), 'Expected zone tone_level propagated into Top-K');
+
+  // 3. Verify Markdown narrative & dialogue parser
+  const parsedDlg = parseTextOrMarkdownDocument('Khách: Chiếc đàn cổ ở phòng mới tên là gì?\nHDV: Dạ đó là cây đàn nguyệt khảm trai từ năm 1920 rất quý hiếm ạ.', 'test_dlg.txt', true);
+  assert.equal(parsedDlg.length, 1);
+  assert.ok(parsedDlg[0].answer.includes('đàn nguyệt khảm trai'));
+
+  // 4. Live Drop-In Test: drop a brand-new Markdown file into kiemthu/data/custom/ -> reload -> AI answers immediately!
+  const customDir = path.join(kiemthuRoot, 'data', 'custom');
+  const rootCustomDir = path.join(kiemthuRoot, '..', '..', 'kiemthu', 'data', 'custom');
+  const tmpFile = path.join(customDir, 'unit_test_auto_ingest_demo.md');
+  const tmpRootFile = path.join(rootCustomDir, 'unit_test_auto_ingest_demo.md');
+  const sampleDoc = `# Chuyên đề Bảo tồn Điện Kính Thiên 2026\n\n## Hiện vật Ngói Rồng Men Vàng\nHiện vật Ngói Rồng Men Vàng vừa được khai quật năm 2026 tại khu trưng bày đặc biệt, có chiều dài 42 cm và mang hoa văn rồng 5 móng thời Lê sơ biểu trưng cho hoàng quyền Đại Việt.\n`;
+  try {
+    if (!fs.existsSync(customDir)) fs.mkdirSync(customDir, { recursive: true });
+    fs.writeFileSync(tmpFile, sampleDoc, 'utf8');
+    if (fs.existsSync(path.join(kiemthuRoot, '..', '..', 'kiemthu', 'data'))) {
+      if (!fs.existsSync(rootCustomDir)) fs.mkdirSync(rootCustomDir, { recursive: true });
+      fs.writeFileSync(tmpRootFile, sampleDoc, 'utf8');
+    }
+
+    const reloaded = knowledgeBase.reloadDynamicKnowledge();
+    assert.ok(reloaded.customDocs >= 1, `Expected customDocs >= 1 after drop-in, got ${reloaded.customDocs}`);
+
+    const dynHit = knowledgeBase.findDynamicMatch('Hiện vật Ngói Rồng Men Vàng dài bao nhiêu cm và có hoa văn gì?', { language: 'vi', minScore: 0.42, onlyUserCustom: true });
+    assert.ok(dynHit !== null && /42 cm|rồng 5 móng/i.test(dynHit.doc.answer), 'Drop-in doc must be immediately searchable');
+
+    // Reload both repo KB and parent root kiemthu KB (if present on Windows) so queryKiemThuAI sees the dropped file immediately
+    const rootKbPath = path.join(kiemthuRoot, '..', '..', 'kiemthu', 'engine', 'knowledge_base.js');
+    if (fs.existsSync(rootKbPath)) {
+      require(rootKbPath).knowledgeBase.reloadDynamicKnowledge();
+    }
+    const ans = await queryKiemThuAI('Hiện vật Ngói Rồng Men Vàng dài bao nhiêu cm và mang hoa văn gì?', null, 't_dropin_1', 'vi');
+    assert.ok(/42\s*cm|rồng 5 móng/i.test(ans.reply), `Expected AI to answer from newly dropped file, got: ${ans.reply}`);
+  } finally {
+    try { if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile); } catch {}
+    try { if (fs.existsSync(tmpRootFile)) fs.unlinkSync(tmpRootFile); } catch {}
+    knowledgeBase.reloadDynamicKnowledge();
+    try {
+      const rootKbPath = path.join(kiemthuRoot, '..', '..', 'kiemthu', 'engine', 'knowledge_base.js');
+      if (require.cache[require.resolve(rootKbPath)]) {
+        require(rootKbPath).knowledgeBase.reloadDynamicKnowledge();
+      }
+    } catch {}
+  }
+});

@@ -76,6 +76,9 @@ class IntentClassifier {
       'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
       'dai hong chung', 'chuong dai hong', 'dathong', 'chuong lon', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
       'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'bao bi mat', 'truong hoc cach mang',
+      'the tu', 'vn 2017', '2056', 'luoc xuong', 'gao dua', 'khan tay', 'kim khau', 'censure', 'khu tay',
+      'nha bep', 'benh xa', 'khe cua', 'o quan sat', 'mang ton', 'ca sat', 'mai ngoi', 'tuong gach', 'xuan phuong',
+      '1543', 'hoang quoc viet', 'nguyen quyen', 'le dai', 'xo viet nghe tinh',
       'ma 001', 'ma 002', 'ma 003', 'ma 004', 'so 001', 'so 002', 'so 003', 'so 004'
     ];
   }
