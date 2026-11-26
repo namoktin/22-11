@@ -582,6 +582,7 @@ class KnowledgeBase {
           id: d.id,
           source: d.source || 'CUSTOM_DROPIN',
           question: d.question,
+          aliases: d.aliases || [],
           answer: d.answer,
           lang: d.lang || 'vi',
           intent: d.intent || 'HISTORICAL_FACT',
@@ -1578,8 +1579,8 @@ class KnowledgeBase {
         if (!matchedToneLevel) {
           matchedToneLevel = doc.toneLevel || (doc.zoneId ? this.zoneTones.get(doc.zoneId) : null) || null;
         }
-        if (doc.isUserCustom && hit.score >= 0.44) hasCustomDropInMatch = true;
-        if (hit.score >= 0.48) hasDynamicArchiveMatch = true;
+        if (doc.isUserCustom && hit.score >= 0.42) hasCustomDropInMatch = true;
+        if (hit.score >= 0.42) hasDynamicArchiveMatch = true;
         const label = doc.isUserCustom
           ? `Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`
           : (doc.zoneName ? `Tư liệu ${doc.zoneName} (${doc.id})` : `Tư liệu chuẩn ${doc.id}`);

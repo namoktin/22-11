@@ -257,7 +257,7 @@ function extractDocsFromObject(obj, fileLabel, idx, isUserCustom = true) {
   const a = obj.answer || obj.tra_loi || obj.reference_answer || obj.ideal_answer || obj.expected_answer || obj.golden_answer || obj.tactful_correction_vi || obj.content || obj.text || obj.story || obj.fact_vi || '';
   if (q && a && String(a).trim().length >= 18) {
     const lang = obj.language || (nlp.detectLanguage(a) === 'en' ? 'en' : 'vi');
-    const artifactPrefix = obj.artifact ? `${obj.artifact}: ` : '';
+    const artifactStr = obj.artifact ? cleanWhitespace(obj.artifact) : '';
     const answerText = obj.tactful_correction_vi && obj.truth && !obj.tactful_correction_vi.includes(obj.truth.slice(0, 30))
       ? `${cleanWhitespace(obj.tactful_correction_vi)} ${cleanWhitespace(obj.truth)}`
       : cleanWhitespace(a);
@@ -267,9 +267,10 @@ function extractDocsFromObject(obj, fileLabel, idx, isUserCustom = true) {
       fileLabel,
       zoneId: obj.zone_id || null,
       zoneName: obj.zone_vi || null,
-      artifact: obj.artifact || null,
+      artifact: artifactStr || null,
       toneLevel: obj.tone_level || null,
-      question: cleanWhitespace(`${artifactPrefix}${q}`),
+      question: cleanWhitespace(q),
+      aliases: artifactStr ? [artifactStr, `${artifactStr} ${obj.zone_vi || ''}`.trim()] : [],
       answer: answerText,
       lang,
       intent: 'HISTORICAL_FACT',
