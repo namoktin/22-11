@@ -91,6 +91,20 @@ function matchAccentConsistentPhrase(rawText, accentedPhrase) {
 }
 
 /**
+ * Khớp danh từ riêng / địa danh có dấu (Accented Proper-Noun Guard):
+ * Khi câu đã có dấu tiếng Việt và địa danh đích mang dấu ("côn đảo", "đà nẵng", "nhà lê"),
+ * BẮT BUỘC khớp đúng dấu gốc để tuyệt đối không nhận nhầm từ đồng âm không dấu ("con dao" ≠ "Côn Đảo", "đa năng" ≠ "Đà Nẵng")!
+ * Khi cả câu gõ không dấu hoàn toàn, tự động khớp chuẩn không dấu.
+ */
+function matchAccentedProperNoun(rawText, accentedPhrase) {
+  if (!rawText || !accentedPhrase) return false;
+  if (hasVietnameseDiacritics(rawText) && hasVietnameseDiacritics(accentedPhrase)) {
+    return hasRawPhrase(rawText, accentedPhrase);
+  }
+  return hasPhrase(normalizeText(rawText), normalizeText(accentedPhrase));
+}
+
+/**
  * Khớp an toàn theo dấu (Accent-Safe Matcher):
  * Dùng Accent-Consistent Token-Window trên `accentedList`, hoạt động chuẩn xác trên cả câu có dấu, câu không dấu, và câu pha trộn!
  */
@@ -188,7 +202,8 @@ function analyzeDiscourseMode(rawText, normText = null) {
     'trai nam', 'trai giam', 'phong giam tap the', 'buong giam', 'khu d', 'khu tay', 'nha de lao',
     'nha bep', 'benh xa', 'lang phu khanh', 'maison centrale', 'hanoi hilton', 'an pham', 'tui vai',
     'trong dong', 'dong son', 'dat hong', 'dai hong chung', 'bao kiem', 'trang mang xa hoi',
-    'nhin be mat', 'nhin guong mat', 'toi de y', 'tuong nguoi me', 'ten duong tieng phap'
+    'nhin be mat', 'nhin guong mat', 'toi de y', 'tuong nguoi me', 'ten duong tieng phap',
+    'gian y te', 'gian trung bay', 'don thuoc', 'so ghi chep', 'chu phap', 'gan tram nam', 'giay so', 'muc tim', 'muc viet', 'dao sinh ton'
   ];
   const matchedExhibits = exhibitObservationMarkers.filter(p => hasPhrase(norm, p));
   if (matchedExhibits.length > 0) {
@@ -280,7 +295,8 @@ function analyzeDiscourseMode(rawText, normText = null) {
     ) ||
     /\b(my son|my daughter|my child|my kid|lost child|missing kid|nearest hospital|medical emergency|ambulance|call an ambulance|just fainted|fainted right)\b/.test(norm);
 
-  const isDisplayGlassExhibit = hasPhrase(norm, 'tu kinh') || hasPhrase(norm, 'trong tu kinh') || hasPhrase(norm, 'trung bay');
+  const isDisplayGlassExhibit = hasPhrase(norm, 'tu kinh') || hasPhrase(norm, 'trong tu kinh') || hasPhrase(norm, 'trung bay') ||
+    hasPhrase(norm, 'gian y te') || hasPhrase(norm, 'gian trung bay') || hasPhrase(norm, 'don thuoc') || hasPhrase(norm, 'so ghi chep') || hasPhrase(norm, 'chu phap');
   const isLivePersonalEmergency = hasPresentVictimOrCall ||
     (!hasHistoricalActor && !hasHistoricalTime && !isDisplayGlassExhibit && wordCount <= 16 &&
       /\b(cap cuu|say nang|ngat xiu|bi ngat|chong mat|so cuu|benh vien|xe cuu thuong|chay mau|emergency|hospital|first aid|fainted|dizzy|collapsed)\b/.test(norm));
@@ -589,17 +605,18 @@ class SemanticRouter {
         /\b(torn\s+ticket|damaged\s+ticket|lost\s+ticket)\b/.test(normText)) {
       return { isOps: true, subType: 'OPS_DAMAGED_TICKET' };
     }
-    // Đăng ký đoàn đông người / đoàn trường học (loại trừ "đoàn kết" + "khách tham quan"!)
+    // Đăng ký đoàn đông người / đoàn trường học (chỉ kích hoạt khi thực sự hỏi đăng ký/đặt lịch/thủ tục đoàn, KHÔNG bắt nhầm khách lẻ hỏi khung giờ ít đông!)
     const isGroupEntity = (hasPhrase(normText, 'doan khach') || hasPhrase(normText, 'doan hoc sinh') || hasPhrase(normText, 'doan truong') ||
                           hasPhrase(normText, 'doan tham quan') || hasPhrase(normText, 'doan dong') || hasPhrase(normText, 'di theo doan') ||
                           hasPhrase(normText, 'truong cap 1') || hasPhrase(normText, 'truong tieu hoc') || hasPhrase(normText, 'nha truong') ||
                           hasPhrase(normText, 'school group') || hasPhrase(normText, 'group booking') ||
                           (hasPhrase(normText, 'doan') && !hasPhrase(normText, 'doan ket') && !hasPhrase(normText, 'doan nguoi hoa trang') && /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText)));
-    if (isGroupEntity &&
-        (hasPhrase(normText, 'hoc sinh') || hasPhrase(normText, 'tieu hoc') || hasPhrase(normText, 'cap 1') ||
-         hasPhrase(normText, 'dang ky') || hasPhrase(normText, 'dat truoc') || hasPhrase(normText, 'dat lich') ||
-         hasPhrase(normText, 'huong dan vien') || hasPhrase(normText, 'thuyet minh vien') ||
-         /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText))) {
+    const hasGroupBookingAction = hasPhrase(normText, 'dang ky') || hasPhrase(normText, 'dat truoc') || hasPhrase(normText, 'dat lich') ||
+      hasPhrase(normText, 'thu tuc') || hasPhrase(normText, 'huong dan vien') || hasPhrase(normText, 'thuyet minh vien') ||
+      hasPhrase(normText, 'group booking') || hasPhrase(normText, 'school group') || hasPhrase(normText, 'mien phi') || hasPhrase(normText, 'gia ve') ||
+      /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText);
+    const isSoloCrowdTimingAsk = (hasPhrase(normText, 'khung gio') || hasPhrase(normText, 'khong bi on') || hasPhrase(normText, 'lang dong') || hasPhrase(normText, 'it dong') || hasPhrase(normText, 'vang khach')) && !hasGroupBookingAction;
+    if (isGroupEntity && hasGroupBookingAction && !isSoloCrowdTimingAsk) {
       return { isOps: true, subType: 'OPS_GROUP_BOOKING' };
     }
 
@@ -811,6 +828,7 @@ module.exports = {
   hasVietnameseDiacritics,
   normalizeAccentedLower,
   matchAccentConsistentPhrase,
+  matchAccentedProperNoun,
   matchAccentSafe,
   analyzeDiscourseMode,
   normalizeText,

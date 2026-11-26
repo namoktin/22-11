@@ -771,6 +771,51 @@ class IntelligentAnswerComposer {
           }, intent, retrievedData);
         }
 
+        // Nguyên lý 3 (RAG-First cho câu hỏi dịch vụ/quan sát phức tạp nhiều vế >= 22 từ):
+        // Giữ phản hồi tức thời cho tình huống khẩn cấp / mất đồ / khiếu nại và câu hỏi ngắn trực diện;
+        // còn câu hỏi dịch vụ nhiều chi tiết (VD: Audioguide có bản trẻ em không, khung giờ nào tránh đoàn học sinh)
+        // sẽ nạp chính sách chuẩn vào CONTEXT cho RAG hoặc lấy bản khớp sát hơn từ 3.128 vector thay vì xả khung mẫu chung!
+        const nonUrgentCareIntents = new Set([
+          'TICKET_INFORMATION', 'OPENING_HOURS', 'AUDIO_GUIDE_SUPPORT',
+          'FACILITY_INFORMATION', 'FACILITY_SUPPORT', 'TOUR_RECOMMENDATION',
+          'ACCESSIBILITY_SUPPORT', 'VISIT_GUIDANCE'
+        ]);
+        if (nonUrgentCareIntents.has(intent) && qWordCount >= 22) {
+          retrievedData.facts.push(scenarioRes.response);
+          if (groqCaller) {
+            const nuancedRag = await this.runUniversalGroundedRAG({
+              question,
+              intent,
+              subject,
+              retrievedData,
+              language,
+              session,
+              artifactContext,
+              previousPhrasings,
+              groqCaller,
+              allowOutOfScopeRefusal: false
+            });
+            if (nuancedRag) return nuancedRag;
+          }
+          const nuancedVec = knowledgeBase.findSemanticLocalMatch(question, {
+            language: language === 'en' ? 'en' : 'vi',
+            stationCode: artifactContext?.code || null,
+            minScore: 0.56
+          });
+          if (nuancedVec && nuancedVec.doc?.answer) {
+            return this.formatResponse({
+              reply: nuancedVec.doc.answer,
+              style: 'DEEP_EXPLANATION',
+              confidence: 'HIGH',
+              confidenceScore: Number(Math.min(0.95, nuancedVec.score + 0.1).toFixed(2)),
+              sources: [`LOCAL_SEMANTIC_VECTOR_${nuancedVec.doc.id} (sim=${nuancedVec.score.toFixed(2)})`],
+              claims: [nuancedVec.doc.zoneName || 'Tư liệu dịch vụ chuyên sâu'],
+              responseType: 'LOCAL_SEMANTIC_VECTOR_HIT',
+              requiresHuman: false
+            }, intent, retrievedData);
+          }
+        }
+
         return this.formatResponse({
           reply: scenarioRes.response,
           style: scenarioRes.style || 'CUSTOMER_CARE',
@@ -1281,7 +1326,7 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       topK: 5
     });
 
-    // Nén ngữ cảnh gọn <= 1650 ký tự để giữ trọn Top-3 Vector chuyên sâu + Hồ sơ nền mà vẫn tiết kiệm TPM Groq!
+    // Nén ngữ cảnh gọn <= 1280 ký tự (Top-3 Vector chuyên sâu + Hồ sơ nền) để tăng +60% lưu lượng gọi Groq RAG/phút mà vẫn giữ đủ dữ kiện!
     const extraFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
     const mergedSnippets = [...topK.snippets];
     for (const f of extraFacts.slice(0, 2)) {
@@ -1293,10 +1338,10 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }
     }
     let compactContext = '';
-    for (const s of mergedSnippets.slice(0, 6)) {
-      const cap = s.startsWith('[Hồ sơ ') || s.startsWith('[Tài liệu mới') || s.startsWith('[Tư liệu ') ? 640 : 420;
+    for (const s of mergedSnippets.slice(0, 5)) {
+      const cap = s.startsWith('[Tài liệu mới') || s.startsWith('[Tư liệu ') ? 480 : 340;
       const piece = s.length > cap ? s.slice(0, cap) + '...' : s;
-      if (compactContext.length + piece.length > 1650 && compactContext.length > 400) break;
+      if (compactContext.length + piece.length > 1280 && compactContext.length > 360) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
@@ -1338,12 +1383,11 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       ? `\n- Emotional register for this gallery/zone: ${topK.matchedToneLevel}.`
       : '';
 
-    const promptSystem = `You are a seasoned, dignified Senior Cultural & Historical Docent at Hoa Lo Prison Historical Relic (Hanoi) and its featured exhibition galleries (codes 001-004).
-- Reply STRICTLY in ${targetLangName} ONLY.${foreignCleanRule}
-- "bạn ở đâu/where are you" = virtual docent accompanying via guide device; "tôi đang đứng ở đâu/where am I" = current exhibit location in CONTEXT; place "ở đâu" = exact site location.
-- Ground EVERY historical date, name, measurement, and policy strictly in CONTEXT (never fabricate dates/figures; never conflate separate historical figures—e.g. Nguyen Thai Hoc led the 1930 Yen Bai uprising whereas Hoang Van Thu was a separate leader executed in 1944; if a detail is absent from archives, state so transparently with poise).${refusalRule}
-- Answer-form & courtesy rules: Only open with "Đúng vậy"/"Yes, that is correct" when the visitor asked a Yes/No confirmation question that is actually true; for open questions (why/how/what/when/who), go straight to the answer. If a visitor holds a misconception, clarify gently and respectfully—never scold.
-- Voice & depth: ${pickedStyle}. Deliver ${isStorytelling ? '3-4' : '2-3'} fluid, plain spoken sentences (no markdown, no bullet points, no arrows, and NEVER mention technical jargon like "BLE", "beacon", or "database"). Synthesize facts with genuine historical insight and human empathy—never recite dry bullet fragments.${viToneRuleRag}${zoneToneLine}${audienceInstruction}${recentOpens}
+    const promptSystem = `Senior Cultural Docent at Hoa Lo Prison Relic (Hanoi) & galleries 001-004.
+- Reply STRICTLY in ${targetLangName}.${foreignCleanRule}
+- Ground ALL dates, names, specs, and policies strictly in CONTEXT; never fabricate figures or merge separate figures (Nguyen Thai Hoc 1930 Yen Bai ≠ Hoang Van Thu 1944 Tuong Mai). If absent from archives, state transparently with poise.${refusalRule}
+- Only open with "Đúng vậy"/"Yes" for true Yes/No questions; answer open questions directly; clarify misconceptions gently.
+- Style: ${pickedStyle}. ${isStorytelling ? '3-4' : '2-3'} natural plain spoken sentences (no markdown/bullets/jargon like BLE/beacon/database).${viToneRuleRag}${zoneToneLine}${audienceInstruction}${recentOpens}
 
 CONTEXT:
 ${compactContext}`;

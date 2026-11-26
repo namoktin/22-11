@@ -153,8 +153,8 @@ class GroqModelPool {
     max_tokens = 240,
     presence_penalty = 0.2,
     frequency_penalty = 0.15,
-    timeoutMs = 3800,
-    minHeadroomTokens = 750,
+    timeoutMs = 4500,
+    minHeadroomTokens = 650,
     onAttempt = null,
     onRateLimit = null,
     onUsage = null

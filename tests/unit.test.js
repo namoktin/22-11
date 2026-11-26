@@ -672,4 +672,30 @@ test('Systemic 4-Principle Architecture: Accent-Consistent Homographs, Historica
     groqCaller: null
   });
   assert.equal(resOff.responseType, 'LOCAL_SEMANTIC_VECTOR_HIT', 'Offline/429 fallback must hit 3,128 Unified Semantic Vector before canned summaries');
+
+  // Additional systemic proper-noun & secondary-intent guards (con dao ≠ Côn Đảo, đa năng ≠ Đà Nẵng, no opening-hours tail on historical Qs)
+  const { matchAccentedProperNoun } = require(path.join(kiemthuRoot, 'engine', 'semantic_router'));
+  assert.equal(matchAccentedProperNoun('Con dao sinh tồn cán da của phi công bị thu giữ', 'côn đảo'), false, '"con dao" must NEVER match "Côn Đảo"');
+  assert.equal(matchAccentedProperNoun('Nhà tù Côn Đảo có gì khác Hỏa Lò?', 'côn đảo'), true);
+  assert.equal(matchAccentedProperNoun('đào tạo thành cán bộ đa năng sau này đúng không?', 'đà nẵng'), false, '"đa năng" must NEVER match "Đà Nẵng"');
+  assert.equal(
+    classifier.classify('Đồng chí Trường Chinh lúc làm chủ bút báo trong tù mới ngoài hai mươi tuổi—thơ cổ động của ông có ảnh hưởng thế nào?').secondaryIntents.length,
+    0,
+    'Historical narrative must NEVER append secondary visitor-ops intents'
+  );
+  assert.notEqual(
+    classifier.classify('Nhìn bề mặt dốc bệ xi măng cũ, công tác bảo tồn xử lý vệ sinh bề mặt cổ thế nào?').intent,
+    'FACILITY_INFORMATION',
+    'Artifact conservation cleaning ("vệ sinh bề mặt") must NOT route to WC'
+  );
+  assert.notEqual(
+    classifier.classify('Những trang đơn thuốc và sổ ghi chép bệnh tình viết bằng chữ Pháp đặt trong gian y tế dùng mực gì mà bền màu?').intent,
+    'EMERGENCY_SUPPORT',
+    'Historical medical documents in gallery must NOT route to live MEDICAL_EMERGENCY'
+  );
+  assert.equal(
+    classifier.classify('Chiếc máy tai nghe Audioguide hiện hỗ trợ bao nhiêu ngôn ngữ và có bản dành cho trẻ em không?').intent,
+    'AUDIO_GUIDE_SUPPORT',
+    'Audioguide question mentioning children must route to AUDIO_GUIDE_SUPPORT, not child ticket boilerplate'
+  );
 });

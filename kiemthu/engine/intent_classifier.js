@@ -13,6 +13,7 @@ const {
   semanticRouter,
   hasPhrase,
   hasRawPhrase,
+  matchAccentedProperNoun,
   matchAccentSafe,
   analyzeDiscourseMode
 } = require('./semantic_router');
@@ -140,27 +141,34 @@ class IntentClassifier {
 
   /**
    * Phát hiện đa ý định trong 1 câu hỏi (Multi-Intent) + đối tượng khán giả (VD: trẻ em / giải thích đơn giản)
+   * Nguyên lý 1 & 2: Bắt buộc bảo toàn dấu ("đóng cửa" ≠ "động của") và KHÔNG ghép ý định dịch vụ phụ vào diễn ngôn lịch sử!
    */
-  detectSecondaryIntentsAndAudience(rawQuestion, primaryIntent) {
+  detectSecondaryIntentsAndAudience(rawQuestion, primaryIntent, discourse = null) {
     const norm = ' ' + nlp.normalize(rawQuestion || '') + ' ';
-    const secondary = [];
-    const checks = [
-      ['TICKET_INFORMATION', ['gia ve', 've vao', 'bao nhieu tien', 'ticket price', 'admission']],
-      ['OPENING_HOURS', ['gio mo', 'may gio', 'dong cua', 'nghi trua', 'opening hours']],
-      ['FACILITY_INFORMATION', ['nha ve sinh', 'wc', 'toilet', 'gui do', 'balo', 'locker', 'restroom']],
-      ['PARKING_SUPPORT', ['gui xe', 'do xe', 'bai xe', 'parking']],
-      ['PHOTOGRAPHY_POLICY', ['chup anh', 'quay phim', 'flash', 'photo']],
-      ['TOUR_INFORMATION', ['tour dem', 'dem thieng lieng', 'night tour']]
-    ];
-    for (const [intentName, phrases] of checks) {
-      if (intentName === primaryIntent) continue;
-      if (phrases.some(p => hasPhrase(norm, p))) secondary.push(intentName);
-    }
+    const mode = discourse || analyzeDiscourseMode(rawQuestion, norm);
 
     const isChildMode =
       hasPhrase(norm, 'cho tre em') || hasPhrase(norm, 'cho be') || hasPhrase(norm, 'cho con nho') ||
       hasPhrase(norm, 'giai thich don gian') || hasPhrase(norm, 'de hieu cho be') ||
       hasPhrase(norm, 'for kids') || hasPhrase(norm, 'for children') || hasPhrase(norm, 'simple explanation');
+
+    if (mode.isHistoricalDiscourse) {
+      return { secondaryIntents: [], audience: isChildMode ? 'child' : 'general' };
+    }
+
+    const secondary = [];
+    const checks = [
+      ['TICKET_INFORMATION', ['giá vé', 'vé vào', 'bao nhiêu tiền', 'ticket price', 'admission']],
+      ['OPENING_HOURS', ['giờ mở cửa', 'mở cửa mấy giờ', 'mấy giờ mở cửa', 'mấy giờ đóng cửa', 'đóng cửa', 'nghỉ trưa', 'opening hours']],
+      ['FACILITY_INFORMATION', ['nhà vệ sinh', 'wc', 'toilet', 'gửi đồ', 'balo', 'locker', 'restroom']],
+      ['PARKING_SUPPORT', ['gửi xe', 'đỗ xe', 'bãi xe', 'parking']],
+      ['PHOTOGRAPHY_POLICY', ['chụp ảnh', 'quay phim', 'flash', 'take photos']],
+      ['TOUR_INFORMATION', ['tour đêm', 'đêm thiêng liêng', 'night tour']]
+    ];
+    for (const [intentName, phrases] of checks) {
+      if (intentName === primaryIntent) continue;
+      if (matchAccentSafe(rawQuestion, norm, phrases)) secondary.push(intentName);
+    }
 
     return {
       secondaryIntents: secondary,
@@ -170,7 +178,7 @@ class IntentClassifier {
 
   classify(rawQuestion, context = null) {
     const result = this._classifyCore(rawQuestion, context);
-    const extra = this.detectSecondaryIntentsAndAudience(rawQuestion, result.intent);
+    const extra = this.detectSecondaryIntentsAndAudience(rawQuestion, result.intent, result.discourse || null);
     return {
       ...result,
       secondaryIntents: extra.secondaryIntents,
@@ -271,7 +279,7 @@ class IntentClassifier {
 
     // 0.07. CỔNG CHẶN NGOÀI LỀ TOÀN DIỆN (chạy TRƯỚC SITE_OPERATIONS để 'Giá Bitcoin' không nhảy vào vé 50k!)
     // Lưu ý: Không coi từ chung "nha tu" là mỏ neo Hỏa Lò khi khách đang hỏi đích danh nhà tù bên ngoài (Alcatraz, Bastille, Côn Đảo, Phú Quốc)!
-    const hasSpecificExternalPrison = hasPhrase(norm, 'alcatraz') || hasPhrase(norm, 'bastille') || hasPhrase(norm, 'con dao') || hasPhrase(norm, 'phu quoc');
+    const hasSpecificExternalPrison = hasPhrase(norm, 'alcatraz') || hasPhrase(norm, 'bastille') || matchAccentedProperNoun(raw, 'côn đảo') || matchAccentedProperNoun(raw, 'phú quốc');
     const hasExplicitHoaLoSite = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') || hasPhrase(norm, 'hanoi hilton');
     const hasHoaLoAnchor = (hasSpecificExternalPrison && !hasExplicitHoaLoSite)
       ? false
@@ -743,9 +751,10 @@ class IntentClassifier {
     const strictOutOfScope = [
       'quan an', 'nha hang', 'quan ca phe', 'an uong quanh', 'an gi quanh', 'quan ngon',
       'thoi tiet', 'du bao thoi tiet', 'gia vang', 'chung khoan', 'bitcoin', 'crypto',
-      'con dao', 'nha tu con dao', 'nha tu phu quoc'
+      'nha tu con dao', 'nha tu phu quoc'
     ];
-    if (!isHist && !hasPhrase(norm, 'hoa lo') && strictOutOfScope.some(s => hasPhrase(norm, s))) {
+    const hasStrictOosPhrase = strictOutOfScope.some(s => hasPhrase(norm, s)) || matchAccentedProperNoun(raw, 'côn đảo');
+    if (!isHist && !hasPhrase(norm, 'hoa lo') && hasStrictOosPhrase) {
       return {
         intent: INTENTS.OUT_OF_SCOPE,
         subIntent: null,
@@ -850,7 +859,7 @@ class IntentClassifier {
     // 6. Cấp cứu y tế & Tình huống khẩn cấp (EMERGENCY_SUPPORT)
     const isHistoricalLeafMedicalQuestion = norm.includes('la bang') || norm.includes('cay bang') || norm.includes('bup bang');
     const isEmergency = !isHist && !isHistoricalLeafMedicalQuestion && [
-      'cap cuu', 'say nang', 'ngat xiu', 'ngat', 'chong mat', 'so cuu', 'y te', 'phong y te',
+      'cap cuu', 'say nang', 'ngat xiu', 'ngat', 'chong mat', 'so cuu', 'phong y te', 'tram y te', 'ho tro y te',
       'lac con', 'lac tre', 'tim be', 'tim con', 'lac chau', 'lac be', 'tim chau', 'lost child', 'medical emergency', 'first aid'
     ].some(s => hasPhrase(norm, s));
     if (isEmergency) {
@@ -884,6 +893,21 @@ class IntentClassifier {
         urgency: 'NORMAL',
         confidence: 0.90,
         reason: 'Khách hàng cần liên hệ nhân viên hỗ trợ trực tiếp'
+      };
+    }
+
+    // 7.5. Hướng dẫn & Dịch vụ thuyết minh tự động (AUDIO_GUIDE_SUPPORT — đặt TRƯỚC Accessibility để câu hỏi Audioguide có nhắc "trẻ em" không bị kéo sang vé trẻ em!)
+    const audioGuideSignals = [
+      'audioguide', 'thuyet minh tu dong', 'tai nghe thuyet minh', 'may thuyet minh', '35 cau chuyen'
+    ];
+    if (!isHist && audioGuideSignals.some(s => hasPhrase(norm, s))) {
+      return {
+        intent: INTENTS.AUDIO_GUIDE_SUPPORT,
+        subIntent: null,
+        subject: 'audioguide',
+        aspect: 'DEVICE_SERVICE',
+        confidence: 0.95,
+        reason: 'Hỏi về thiết bị và số lượng câu chuyện thuyết minh tự động Audioguide'
       };
     }
 
@@ -965,20 +989,7 @@ class IntentClassifier {
       };
     }
 
-    // 12. Hướng dẫn & Dịch vụ thuyết minh tự động (AUDIO_GUIDE_SUPPORT)
-    const audioGuideSignals = [
-      'audioguide', 'thuyet minh tu dong', 'tai nghe thuyet minh', 'may thuyet minh', '35 cau chuyen'
-    ];
-    if (!isHist && audioGuideSignals.some(s => hasPhrase(norm, s))) {
-      return {
-        intent: INTENTS.AUDIO_GUIDE_SUPPORT,
-        subIntent: null,
-        subject: 'audioguide',
-        aspect: 'DEVICE_SERVICE',
-        confidence: 0.95,
-        reason: 'Hỏi về thiết bị và số lượng câu chuyện thuyết minh tự động Audioguide'
-      };
-    }
+    // (AUDIO_GUIDE_SUPPORT đã được ưu tiên kiểm tra ở mục 7.5 phía trên ACCESSIBILITY_SUPPORT)
 
     // 13. Tour & Trải nghiệm chuyên đề / Tour đêm (TOUR_INFORMATION)
     const tourInfoSignals = [
@@ -1022,9 +1033,9 @@ class IntentClassifier {
       };
     }
 
-    // 15. Tiện ích, cơ sở vật chất & Quy định gửi đồ, WC (FACILITY_INFORMATION)
+    // 15. Tiện ích, cơ sở vật chất & Quy định gửi đồ, WC (FACILITY_INFORMATION — loại từ đơn "ve sinh" tránh bắt nhầm công tác vệ sinh bảo tồn hiện vật!)
     const facilitySignals = [
-      've sinh', 'nha ve sinh', 'di ve sinh', 've sinh o dau', 'nha ve sinh o dau', 'toilet', 'wc',
+      'nha ve sinh', 'di ve sinh', 've sinh o dau', 'nha ve sinh o dau', 'phong ve sinh', 'toilet', 'wc',
       'gui do', 'cho gui do', 'tu gui do',
       'gui balo', 'gui hanh ly', 'nuoc uong', 'mua nuoc', 'quay luu niem',
       'mua qua', 'chup anh', 'quay phim', 'co duoc chup anh khong', 'wifi',

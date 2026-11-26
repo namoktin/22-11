@@ -702,9 +702,17 @@ class KnowledgeBase {
         if (!hasRealDrumPhrase) continue;
       }
 
-      // Bảo vệ so sánh hiện vật (VD: so sánh máy chém Hỏa Lò với máy chém ở TP.HCM không phải hiểu nhầm địa chỉ Hỏa Lò!)
-      if (item.id === 'EXP_TRAP_ADDR_HCM' && (hasPhraseLocal('so sanh') || hasPhraseLocal('may chem') || hasPhraseLocal('bao tang'))) {
-        continue;
+      // Bảo vệ địa danh có dấu & bối cảnh vị trí trong EXP_TRAP_ADDR_HCM ("đa năng" ≠ "Đà Nẵng", "chuyển tù đi Khám Lớn Sài Gòn" ≠ "Hỏa Lò ở TP.HCM"!)
+      const { matchAccentedProperNoun } = require('./semantic_router');
+      if (item.id === 'EXP_TRAP_ADDR_HCM') {
+        const hasRealSouthernCity = ['tp hcm', 'tphcm', 'sài gòn', 'hồ chí minh', 'đà nẵng'].some(p => matchAccentedProperNoun(question, p));
+        const asksSiteLocation = hasPhraseLocal('o dau') || hasPhraseLocal('nam o') || hasPhraseLocal('dia chi') ||
+          hasPhraseLocal('o tp') || hasPhraseLocal('o sai gon') || hasPhraseLocal('o ho chi minh') || hasPhraseLocal('o da nang') ||
+          hasPhraseLocal('tai tp') || hasPhraseLocal('tai sai gon') || hasPhraseLocal('tai ho chi minh') || hasPhraseLocal('tai da nang') ||
+          hasPhraseLocal('thuoc tp') || hasPhraseLocal('thuoc sai gon');
+        if (!hasRealSouthernCity || !asksSiteLocation || hasPhraseLocal('so sanh') || hasPhraseLocal('may chem') || hasPhraseLocal('bao tang') || hasPhraseLocal('kham lon') || hasPhraseLocal('chuyen tu')) {
+          continue;
+        }
       }
 
       const allGroups = item.mustMatchAll || [];

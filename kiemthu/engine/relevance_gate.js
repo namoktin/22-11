@@ -14,16 +14,16 @@
  * 4. Token-Overlap & Semantic Relevance Floor: Ngăn mọi câu trả lời lạc đề vượt qua Validator.
  */
 
-const { hasPhrase, normalizeText, hasVietnameseDiacritics, normalizeAccentedLower } = require('./semantic_router');
+const { hasPhrase, normalizeText, hasVietnameseDiacritics, normalizeAccentedLower, matchAccentedProperNoun } = require('./semantic_router');
 
 class RelevanceGate {
   constructor() {
-    // Các thực thể ngoại lai hay xuất hiện trong câu hỏi bẫy / so sánh ngoài Hỏa Lò
+    // Các thực thể ngoại lai dùng DẠNG CÓ DẤU chuẩn để matchAccentedProperNoun chặn tuyệt đối lỗi đồng âm ("con dao" ≠ "Côn Đảo", "đa năng" ≠ "Đà Nẵng", "nhà lẻ" ≠ "nhà Lê")!
     this.foreignSubjectMarkers = [
-      'chua mot cot', 'ho hoan kiem', 'van mieu', 'quoc tu giam', 'hoang thanh thang long',
-      'bastille', 'alcatraz', 'thap eiffel', 'eiffel', 'con dao', 'phu quoc', 'dien bien phu',
-      'barack obama', 'obama', 'ly thai to', '1010', 'chu tich ho chi minh', 'ho chi minh', 'bac ho',
-      'lang bac', 'nha le', '500 nam', '2015', '5 tang ham', 'da nang', '1858', 'tay ban nha'
+      'chùa một cột', 'hồ hoàn kiếm', 'văn miếu', 'quốc tử giám', 'hoàng thành thăng long',
+      'bastille', 'alcatraz', 'tháp eiffel', 'eiffel', 'côn đảo', 'phú quốc', 'điện biên phủ',
+      'barack obama', 'obama', 'lý thái tổ', '1010', 'chủ tịch hồ chí minh', 'hồ chí minh', 'bác hồ',
+      'lăng bác', 'nhà lê', '500 năm', '2015', '5 tầng hầm', 'đà nẵng', '1858', 'tây ban nha'
     ];
 
     // Các chỉ số / thuộc tính lưu trữ đặc thù hiếm khi có trong fact tổng quát
@@ -104,8 +104,10 @@ class RelevanceGate {
     const normA = normalizeText(candidateReply || '');
     const isEn = language === 'en';
 
-    // 1. KIỂM TRA CHÉO THỰC THỂ NGOẠI LAI (Foreign Entity & Generic Ruler/President Alignment)
-    const matchedForeign = this.foreignSubjectMarkers.filter(m => hasPhrase(normQ, m));
+    // 1. KIỂM TRA CHÉO THỰC THỂ NGOẠI LAI (Accent-Exact Proper Noun Guard: "con dao" ≠ "Côn Đảo", "đa năng" ≠ "Đà Nẵng"!)
+    const matchedForeign = this.foreignSubjectMarkers
+      .filter(m => matchAccentedProperNoun(question, m))
+      .map(m => normalizeText(m));
     const genericForeign = this.detectGenericForeignPersonOrRuler(normQ, question);
     if (genericForeign && !matchedForeign.includes(genericForeign)) {
       matchedForeign.push(genericForeign);
