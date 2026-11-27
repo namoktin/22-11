@@ -147,8 +147,26 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
   // 4. Ngày tháng dạng dd/mm/yyyy (17/6/1930, 24/12/1951...)
   s = s.replace(/(?:ngày\s+)?\b(\d{1,2})\/(\d{1,2})\/(18\d{2}|19\d{2}|20\d{2})\b/gi, (_, d, m, y) => formatSpokenDate(d, m, y, code));
 
-  // 5. Khung giờ dạng 8:00–17:00 hoặc 8:00 - 17:00
+  // 5. Khung giờ dạng 8:00–17:00 hoặc 8:00 - 17:00, VÀ mốc giờ đơn lẻ (17:00, 19:00, 16:15)
   s = s.replace(/\b(\d{1,2}):(\d{2})\s*(?:[-–—~]|đến|to|à)\s*(\d{1,2}):(\d{2})\b/gi, (_, h1, m1, h2, m2) => formatSpokenTimeRange(h1, m1, h2, m2, code));
+  s = s.replace(/\b(\d{1,2}):(\d{2})\b/g, (_, hStr, mStr) => {
+    const hh = parseInt(hStr, 10);
+    const mm = parseInt(mStr, 10);
+    if (isNaN(hh) || isNaN(mm) || hh > 23 || mm > 59) return `${hStr}:${mStr}`;
+    switch (code) {
+      case 'vi': return mm ? `${hh} giờ ${mm}` : `${hh} giờ`;
+      case 'en': {
+        const ampm = hh >= 12 ? 'PM' : 'AM';
+        const h12 = hh % 12 === 0 ? 12 : hh % 12;
+        return mm ? `${h12}:${String(mm).padStart(2, '0')} ${ampm}` : `${h12} ${ampm}`;
+      }
+      case 'fr': return mm ? `${hh} heures ${mm}` : `${hh} heures`;
+      case 'ja': return mm ? `${hh}時${mm}分` : `${hh}時`;
+      case 'ko': return mm ? `${hh}시 ${mm}분` : `${hh}시`;
+      case 'zh': return mm ? `${hh}点${mm}分` : `${hh}点`;
+      default: return `${hStr}:${mStr}`;
+    }
+  });
 
   // 6. Tiền tệ VNĐ / VND (50.000 VNĐ, 25,000 VND, 399.000 - 499.000 VNĐ) — hỗ trợ cả dấu câu Latin lẫn CJK (。、，！？)!
   s = s.replace(/(?<!\d)(\d{1,3}(?:[.,]\d{3})+)\s*[-–—]\s*(\d{1,3}(?:[.,]\d{3})+)\s*(?:VNĐ|VND|đồng)(?=[\s.,?!;:)/。、，！？；：]|$)/gi, (_, a, b) => {
@@ -210,7 +228,7 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
   s = s.replace(/\b(18\d{2}|19\d{2}|20\d{2})\s*[–—-]\s*(18\d{2}|19\d{2}|20\d{2})\b/g, `$1${conn.to}$2`);
   s = s.replace(/\b(\d{1,3})\s*[–—-]\s*(\d{1,3})\b/g, `$1${conn.to}$2`);
 
-  // 9.5. Chuẩn hóa từ ngoại lai / ký hiệu dễ bị TTS tiếng Việt đọc sai chính tả
+  // 9.5. Chuẩn hóa từ ngoại lai / từ viết tắt / chữ IN HOA nhấn mạnh dễ bị ElevenLabs tiếng Việt đọc sai thanh điệu
   if (code === 'vi') {
     s = s.replace(/\bWC\b/gi, 'nhà vệ sinh');
     s = s.replace(/\bCachot\b/gi, 'Ca-sô');
@@ -218,6 +236,12 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     s = s.replace(/\bCCCD\b/g, 'căn cước công dân');
     s = s.replace(/\bBQL\b/g, 'Ban quản lý');
     s = s.replace(/\b4G\/5G\b/gi, '4G hoặc 5G');
+    // Chuyển các từ tiếng Việt VIẾT HOA TOÀN BỘ (KHÔNG, MIỄN PHÍ, TẮT ĐÈN...) về chữ thường để giữ đúng 6 thanh điệu
+    const KEEP_ACRONYMS = new Set(['AI', 'QR', 'USD', 'VND', 'VNĐ', 'BLE', 'VIP', 'SMS', 'GPS', 'PIN', 'PDF', 'TP', 'HCM']);
+    s = s.replace(/\b([\p{Lu}]{2,})\b/gu, (match) => {
+      if (KEEP_ACRONYMS.has(match) || /^[A-Z0-9]{1,3}$/.test(match)) return match;
+      return match.toLowerCase();
+    });
   }
 
   // 10. Bỏ ngoặc kép thừa nhưng GIỮ NGUYÊN dấu câu chuẩn cả Latin và CJK (。、，！？；：・)
@@ -284,13 +308,14 @@ function splitIntoAudioChunks(fullText, maxChunkChars = null, lang = 'vi', optio
     .replace(/\s+/g, ' ')
     .trim();
 
-  // Bảo vệ số thập phân / hàng nghìn và chữ viết tắt
+  // Bảo vệ số thập phân / hàng nghìn (50.000), khung giờ (8:00, 17:00) và chữ viết tắt — TUYỆT ĐỐI không cắt đôi tại dấu ":" trong giờ!
   clean = clean.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
+  clean = clean.replace(/(\d{1,2}):(\d{2})/g, '$1__COLON__$2');
   clean = clean.replace(/\b(TP|QĐ|VNĐ|TS|ThS|GS|BS|No|St|Mr|Mrs|Ms|Dr|M|Mme|Mlle|tr|đ)\./gi, '$1__DOT__');
 
   const rawSentences = clean.match(/[^.!?。！？]+[.!?。！？]+|[^.!?。！？]+$/g) || [clean];
   const sentences = rawSentences.map(s => s.replace(/__DOT__/g, '.').trim()).filter(Boolean);
-  if (sentences.length === 0) return [clean.replace(/__DOT__/g, '.')];
+  if (sentences.length === 0) return [clean.replace(/__DOT__/g, '.').replace(/__COLON__/g, ':')];
 
   const chunks = [];
   const s0 = sentences[0];
@@ -330,7 +355,9 @@ function splitIntoAudioChunks(fullText, maxChunkChars = null, lang = 'vi', optio
   }
   if (currentBuf) chunks.push(currentBuf.trim());
 
-  return chunks.filter(c => c && c.length > 0);
+  return chunks
+    .map(c => c.replace(/__COLON__/g, ':').trim())
+    .filter(c => c && c.length > 0);
 }
 
 /**

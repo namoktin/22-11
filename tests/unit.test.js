@@ -723,6 +723,13 @@ test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs 
   const koSpoken = sanitizeTextForSpeech('정문 ➡️ 카쇼 독방. 입장료 50,000 VND, 8:00-17:00.', 'ko');
   assert.ok(koSpoken.includes(', 이어서 ') && koSpoken.includes('베트남 동') && koSpoken.includes('8시부터 17시까지'), `KO speech normalization failed: ${koSpoken}`);
 
+  // 1b. Never split inside timestamps like 8:00 / 17:00 across chunks, and normalize ALL-CAPS Vietnamese emphasis + standalone times
+  const hoursMsg = 'Dạ chào bạn, Di tích Lịch sử Nhà tù Hỏa Lò mở cửa liên tục từ 8:00 đến 17:00 tất cả các ngày trong tuần và KHÔNG đóng cửa nghỉ trưa (tour đêm 19:00).';
+  const hoursChunks = splitIntoAudioChunks(hoursMsg, null, 'vi', { useElevenLabs: true });
+  assert.ok(hoursChunks.every(c => !/\d:$/.test(c) && !/^00\b/.test(c)), `Timestamp 8:00 must NEVER be split across chunks: ${JSON.stringify(hoursChunks)}`);
+  const viSpoken = sanitizeTextForSpeech(hoursMsg, 'vi');
+  assert.ok(viSpoken.includes('8 giờ đến 17 giờ') && viSpoken.includes('19 giờ') && viSpoken.includes('không đóng cửa'), `VI speech normalization failed: ${viSpoken}`);
+
   // 2. Language-aware chunking: JA/ZH keep shorter natural chunks on Google TTS, longer fluent chunks on ElevenLabs
   const longJa = 'ホアロー収容所は1896年にフランス植民地当局によって建設されました。現在も歴史的な正門やカショ独房、中庭のモモタマナの木が大切に保存されています。ぜひごゆっくりご見学ください。';
   const jaGoogleChunks = splitIntoAudioChunks(longJa, null, 'ja', { useElevenLabs: false });
