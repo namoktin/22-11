@@ -20,8 +20,10 @@ const ELEVENLABS_HOST = 'api.elevenlabs.io';
 
 // Cấu hình mặc định tối ưu cho hướng dẫn viên bảo tàng đa ngôn ngữ
 const DEFAULT_ELEVENLABS_MODEL = 'eleven_flash_v2_5';
-// Giọng Rachel / Sarah / Charlie / Alice (giọng premade đa ngôn ngữ chuẩn của ElevenLabs; có thể ghi đè qua ENV theo từng ngôn ngữ)
-const DEFAULT_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah — trầm ấm, rõ chữ, đa ngôn ngữ tốt
+// Giọng đọc mặc định do dự án chọn (có thể ghi đè qua ENV theo từng ngôn ngữ)
+const DEFAULT_VOICE_ID = 'ArosID24mP18TEiQpNhs';
+const DEFAULT_ELEVENLABS_SPEED = 1.2; // Tốc độ nói tối đa chính thức của ElevenLabs API (dải hợp lệ: 0.7 - 1.2)
+const DEFAULT_ELEVENLABS_LATENCY_OPT = 4; // Tối ưu độ trễ streaming mức tối đa (0 - 4)
 
 const MONTH_NAMES = {
   en: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -361,7 +363,10 @@ class PluggableTtsEngine {
     this.elevenLabsStability = env.ELEVENLABS_STABILITY !== undefined ? Number(env.ELEVENLABS_STABILITY) : 0.52;
     this.elevenLabsSimilarity = env.ELEVENLABS_SIMILARITY !== undefined ? Number(env.ELEVENLABS_SIMILARITY) : 0.78;
     this.elevenLabsStyle = env.ELEVENLABS_STYLE !== undefined ? Number(env.ELEVENLABS_STYLE) : 0.15;
-    this.elevenLabsSpeed = env.ELEVENLABS_SPEED !== undefined ? Number(env.ELEVENLABS_SPEED) : 1.0;
+    const rawSpeed = env.ELEVENLABS_SPEED !== undefined && env.ELEVENLABS_SPEED !== '' ? Number(env.ELEVENLABS_SPEED) : DEFAULT_ELEVENLABS_SPEED;
+    this.elevenLabsSpeed = Number.isFinite(rawSpeed) ? Math.min(1.2, Math.max(0.7, rawSpeed)) : DEFAULT_ELEVENLABS_SPEED;
+    const rawLat = env.ELEVENLABS_LATENCY_OPT !== undefined && env.ELEVENLABS_LATENCY_OPT !== '' ? parseInt(env.ELEVENLABS_LATENCY_OPT, 10) : DEFAULT_ELEVENLABS_LATENCY_OPT;
+    this.elevenLabsLatencyOpt = Number.isFinite(rawLat) ? Math.min(4, Math.max(0, rawLat)) : DEFAULT_ELEVENLABS_LATENCY_OPT;
 
     const defaultVoice = String(env.ELEVENLABS_VOICE_ID || DEFAULT_VOICE_ID).trim();
     this.voiceMap = {
@@ -392,6 +397,8 @@ class PluggableTtsEngine {
       provider_preference: this.providerPref,
       elevenlabs_configured: configured,
       elevenlabs_model: this.elevenLabsModel,
+      elevenlabs_speed: this.elevenLabsSpeed,
+      elevenlabs_latency_opt: this.elevenLabsLatencyOpt,
       elevenlabs_pcm16k_direct: this.elevenLabsSupportsPcm16k,
       elevenlabs_cooldown_sec: Math.max(0, Math.ceil((this.elevenLabsCooldownUntil - Date.now()) / 1000)),
       voices_configured: configured ? Object.fromEntries(Object.entries(this.voiceMap).map(([k, v]) => [k, v ? `${v.slice(0, 6)}...` : null])) : null,
@@ -430,7 +437,7 @@ class PluggableTtsEngine {
       }
 
       const bodyStr = JSON.stringify(payload);
-      const reqPath = `/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(outputFormat)}&optimize_streaming_latency=2`;
+      const reqPath = `/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(outputFormat)}&optimize_streaming_latency=${this.elevenLabsLatencyOpt}`;
 
       const req = https.request({
         hostname: ELEVENLABS_HOST,
@@ -489,8 +496,9 @@ class PluggableTtsEngine {
         if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
         return await this.decodeMp3ToPcm(retryRes.buffer);
       }
-      // Lỗi quota / rate limit / key hết hạn -> tạm nghỉ ElevenLabs để không làm chậm trải nghiệm khách, rơi êm sang Google TTS
-      if (err.statusCode === 401 || err.statusCode === 402 || err.statusCode === 429) {
+      // Lỗi quota / rate limit / key hết hạn / dùng nhầm Key ID -> tạm nghỉ ElevenLabs để không làm chậm trải nghiệm khách, rơi êm sang Google TTS
+      const isAuthErr = err.statusCode === 401 || err.statusCode === 402 || (err.statusCode === 400 && /invalid_api_key|api_key_id/i.test(err.body || err.message));
+      if (isAuthErr || err.statusCode === 429) {
         const cooldownMs = err.statusCode === 429 ? 45 * 1000 : 10 * 60 * 1000;
         this.elevenLabsCooldownUntil = Date.now() + cooldownMs;
       }
