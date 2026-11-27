@@ -14,6 +14,7 @@
     "priority": 100,
     "mustMatchAll": [["phi cong", "mccain", "hanoi hilton", "peterson"]],
     "mustMatchAny": ["cachot", "cum chan", "cum sat", "doc nguoc", "thuc dan phap", "phap bat", "nguc toi"],
+    "mustNotMatchAny": ["sap xep kheo", "diu nhe", "nua dau", "nua sau", "bong chuyen"],
     "answer_vi": "Dạ không đúng đâu bạn nhé. Trong giai đoạn 1964–1973, các phi công Mỹ (như John McCain bị bắn rơi tại hồ Trúc Bạch ngày 26/10/1967) bị tạm giam thời kháng chiến chống Mỹ, không phải do thực dân Pháp bắt và hoàn toàn không bị cùm chân dốc ngược trong ngục tối Cachot. Chính phủ Việt Nam khi đó đã thực hiện chính sách nhân đạo: chăm sóc y tế, bảo đảm dinh dưỡng, cho nhận thư gia đình và tổ chức Giáng sinh trước khi trao trả vào năm 1973.",
     "answer_en": "That is inaccurate. From 1964 to 1973, captured American pilots (including John McCain, shot down over Truc Bach Lake on October 26, 1967) were held during the American War—not by French colonialists—and were never shackled upside down in the Cachot dungeon. They received humane treatment, medical care, family mail, and holiday observances before release in 1973."
   },
@@ -259,6 +260,7 @@
     "priority": 90,
     "mustMatchAll": [["troi mua", "mua to", "nang nong", "dieu hoa", "quat mat", "nghi chan", "ghe ngoi", "it dong", "vang khach", "sang hay chieu"]],
     "mustMatchAny": ["hoa lo", "di tich", "trong nha", "tham quan", "khung gio", "dep hon", "nguoi gia", "co"],
+    "mustNotMatchAny": ["tour dem", "dem thieng lieng", "hoat canh", "sacred night"],
     "answer_vi": "Bạn yên tâm nhé, phần lớn các phòng trưng bày tại Di tích Nhà tù Hỏa Lò đều nằm trong nhà có mái che, hệ thống thông gió/quạt mát và ghế nghỉ chân dọc lối đi, nên trời mưa hay nắng nóng bạn vẫn tham quan thuận tiện (riêng khu sân cây bàng và Đài tưởng niệm ngoài trời thì bạn nên mang theo ô hoặc áo mưa nhỏ nếu trời mưa). Để tham quan thoáng đãng và ít đông nhất, bạn nên đi vào buổi sáng sớm (8:00–9:30) hoặc đầu giờ chiều các ngày trong tuần từ Thứ 2 đến Thứ 5 ạ.",
     "answer_en": "Most exhibition rooms at Hoa Lo Prison are indoors with roofs, ventilation/fans, and seating areas, so visiting is comfortable even on rainy or hot days. Early mornings (8:00–9:30 AM) on weekdays are the quietest times to visit."
   },
@@ -277,6 +279,7 @@
     "priority": 94,
     "mustMatchAll": [["mat tui", "mat vi", "roi vi", "roi mat", "quen dien thoai", "that lac", "mat do", "bo quen"]],
     "mustMatchAny": ["bao", "o dau", "tim lai", "di tich", "san", "nha ve sinh", "trong", "vi tien"],
+    "mustNotMatchAny": ["mat do hoe", "sut sui", "khoc", "dem thieng lieng", "nuoc mat", "quen o nha", "quen vi o nha", "quen mang"],
     "answer_vi": "Bạn cứ bình tĩnh nhé: nếu bạn lỡ làm rơi hoặc bỏ quên đồ dùng (như ví tiền, điện thoại, túi xách, giấy tờ...), bạn hãy báo ngay cho nhân viên bảo vệ gần nhất hoặc quay lại Quầy Thông Tin / Quầy Gửi Đồ tại Cổng số 1 để Ban Quản lý phát loa hỗ trợ tìm kiếm và đối soát khu vực bạn vừa đi qua nhé.",
     "answer_en": "If you lost or misplaced an item, please notify the nearest security staff or visit the Information/Luggage Desk at Gate No. 1 immediately so the Management Board can assist in locating it."
   },

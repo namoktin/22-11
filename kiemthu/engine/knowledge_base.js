@@ -701,6 +701,10 @@ class KnowledgeBase {
         const hasRealDrumPhrase = ['trống đồng', 'đông sơn', 'chim lạc', 'ngôi sao 14 cánh', 'bronze drum', 'dong son drum', 'mã 001', 'số 001'].some(p => matchAccentConsistentPhrase(question, p));
         if (!hasRealDrumPhrase) continue;
       }
+      if (item.id === 'EXP_SVC_LOST_ITEM') {
+        const hasRealLostPhrase = ['mất túi', 'mất ví', 'rơi ví', 'rơi mất', 'quên điện thoại', 'thất lạc', 'mất đồ', 'bỏ quên', 'lost item', 'lost wallet', 'lost phone'].some(p => matchAccentConsistentPhrase(question, p));
+        if (!hasRealLostPhrase) continue;
+      }
 
       // Bảo vệ địa danh có dấu & bối cảnh vị trí trong EXP_TRAP_ADDR_HCM ("đa năng" ≠ "Đà Nẵng", "chuyển tù đi Khám Lớn Sài Gòn" ≠ "Hỏa Lò ở TP.HCM"!)
       const { matchAccentedProperNoun } = require('./semantic_router');
@@ -996,9 +1000,28 @@ class KnowledgeBase {
   /**
    * Tìm kiếm chính sách dịch vụ đã xác thực (Verified Service Knowledge)
    */
-  findServicePolicy(query, intent) {
+  findServicePolicy(query, intent, options = {}) {
     if (!this.servicePolicies.length) return null;
     const norm = ' ' + nlp.normalize(query) + ' ';
+    const strictIntent = Boolean(options?.strictIntent);
+
+    // Chế độ strictIntent (dùng cho bổ sung ý định phụ đa câu hỏi): chỉ trả đúng chính sách của intent được hỏi, không cross-contaminate!
+    if (strictIntent) {
+      if (intent === 'TICKET_INFORMATION') {
+        return { policy: this.servicePoliciesMap.get('POLICY_TICKET_DAYTIME'), isExpired: false, matchScore: 7 };
+      }
+      if (intent === 'OPENING_HOURS') {
+        return { policy: this.servicePoliciesMap.get('POLICY_HOURS_DAYTIME'), isExpired: false, matchScore: 7 };
+      }
+      if (intent === 'TOUR_INFORMATION') {
+        const tid = (norm.includes('gio') || norm.includes('lich') || norm.includes('may gio')) ? 'POLICY_HOURS_NIGHT_TOUR' : 'POLICY_TICKET_NIGHT_TOUR';
+        return { policy: this.servicePoliciesMap.get(tid), isExpired: false, matchScore: 7 };
+      }
+      if (intent === 'FACILITY_INFORMATION' || intent === 'FACILITY_SUPPORT') {
+        return { policy: this.servicePoliciesMap.get('POLICY_FACILITY_STORAGE_WC'), isExpired: false, matchScore: 7 };
+      }
+      return null;
+    }
 
     // 1. Kiểm tra chính sách cũ / hết hạn (EXPIRED)
     if (norm.includes('30 000') || norm.includes('30k') || norm.includes('gia ve cu') || norm.includes('truoc 2016') || norm.includes('2016')) {
@@ -1014,13 +1037,14 @@ class KnowledgeBase {
 
     // 2. Kiểm tra các trường hợp đặc thù theo từ khóa
     let targetId = null;
+    const isRealLostCameraAsk = norm.includes('camera') && (norm.includes('trich xuat') || norm.includes('mat do') || norm.includes('mat vi') || norm.includes('roi vi') || norm.includes('that lac') || norm.includes('bo quen'));
     if (norm.includes('hoan tien') || norm.includes('tra ve') || norm.includes('doi ve') || norm.includes('refund')) {
       targetId = 'POLICY_REFUND_EXCHANGE';
     } else if (norm.includes('lac con') || norm.includes('lac tre') || norm.includes('tim be') || norm.includes('tim con') || norm.includes('lac chau')) {
       targetId = 'POLICY_LOST_CHILD_URGENT';
     } else if (norm.includes('so cuu') || norm.includes('cap cuu') || norm.includes('y te') || norm.includes('ngat') || norm.includes('chong mat')) {
       targetId = 'POLICY_FIRST_AID_MEDICAL';
-    } else if (norm.includes('mat do') || norm.includes('that lac') || norm.includes('roi vi') || norm.includes('quen do') || norm.includes('lost') || norm.includes('camera')) {
+    } else if ((norm.includes('mat do') && !norm.includes('mat do hoe')) || norm.includes('that lac') || norm.includes('roi vi') || norm.includes('quen do') || norm.includes('lost') || isRealLostCameraAsk) {
       targetId = 'POLICY_LOST_AND_FOUND';
     } else if (norm.includes('tai nghe') || norm.includes('audioguide') || norm.includes('bi re') || norm.includes('re mot ben') || norm.includes('hong tai nghe')) {
       targetId = 'POLICY_AUDIOGUIDE_DEVICE';

@@ -297,6 +297,7 @@ class IntelligentAnswerComposer {
         groqCaller,
         previousPhrasings,
         intent,
+        subIntent,
         retrievedData
       });
     }
@@ -402,16 +403,36 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'PHOTOGRAPHY_POLICY') {
-      const reply = getDocentReply('PHOTOGRAPHY_POLICY', language);
+      const isEn = language === 'en';
+      let reply = getDocentReply('PHOTOGRAPHY_POLICY', language);
+      if (language === 'vi' || isEn) {
+        if (subIntent === 'PHOTO_PRO_GEAR_PERMIT') {
+          reply = isEn
+            ? 'For personal visits, hand-held phones and compact cameras are allowed with flash turned off. However, bringing tripods, external LED lighting, large professional video cameras, or interviewing visitors for media/academic projects requires prior written permission from the Hoa Lo Prison Management Board (Hotline 024.39342253 or email banquanlyditichhoalo@gmail.com).'
+            : 'Dạ với khách tham quan cá nhân, bạn được chụp ảnh, quay phim cầm tay và tắt đèn flash. Riêng việc mang chân máy tripod, đèn LED chiếu sáng, máy quay chuyên nghiệp cỡ lớn hoặc tổ chức phỏng vấn du khách để làm clip/bài tập học thuật cần đăng ký và xin phép trước với Ban Quản lý Di tích Nhà tù Hỏa Lò (Phòng Trưng bày – Tuyên truyền, Hotline 024.39342253 hoặc email banquanlyditichhoalo@gmail.com) để đảm bảo an toàn hiện vật và không cản trở lối đi nhé.';
+        } else if (subIntent === 'PHOTO_SELFIE_STICK') {
+          reply = isEn
+            ? 'Inside crowded exhibition rooms such as the American Pilots gallery, extending long selfie sticks or poles is discouraged and staff may kindly ask you to fold them away to prevent accidentally striking glass display cases, artifacts, or fellow visitors.'
+            : 'Dạ trong các phòng trưng bày đông khách và có nhiều tủ kính hiện vật như khu Phi công Mỹ, bạn không nên kéo dài gậy selfie lên cao để tránh nguy cơ va chạm trúng tủ kính, hiện vật hoặc gây bất tiện cho du khách xung quanh — nhân viên trực phòng sẽ lịch sự nhắc thu gọn lại để bảo đảm an toàn bảo tồn bạn nhé.';
+        } else if (subIntent === 'PHOTO_NIGHT_TOUR_COPYRIGHT') {
+          reply = isEn
+            ? 'During the Sacred Night Tour, guests may capture brief personal memories without flash where permitted, but recording entire live theatrical scenes of the actors to publish on YouTube is restricted to protect artistic copyright, avoid spoiling the experience for future guests, and maintain solemnity. Please follow the on-site coordinator’s announcements at each scene.'
+            : 'Dạ khi tham gia Tour Đêm thiêng liêng, du khách có thể chụp ảnh kỷ niệm ngắn không bật flash ở những chặng được phép, nhưng không nên quay phim ghi hình toàn bộ các phân đoạn hoạt cảnh diễn viên để đăng công khai lên YouTube nhằm tôn trọng bản quyền chương trình nghệ thuật, giữ sự trang nghiêm và cảm xúc bất ngờ cho khách lượt sau — bạn hãy làm theo hướng dẫn cụ thể của điều phối viên từng chặng nhé.';
+        } else if (subIntent === 'PHOTO_VISITOR_PRIVACY') {
+          reply = isEn
+            ? 'While personal filming without flash is allowed in public galleries, visitors are kindly asked to respect the privacy of other guests and especially school students—avoid close-up filming of strangers without consent and consider blurring identifiable faces before posting publicly.'
+            : 'Dạ khi chụp ảnh hoặc quay video lưu niệm trong Di tích Hỏa Lò (đã tắt đèn flash), du khách cần tôn trọng quyền riêng tư của các du khách khác, đặc biệt là các em học sinh: tránh quay cận mặt người lạ khi chưa được đồng ý và nên hạn chế góc máy hoặc làm mờ khuôn mặt người không liên quan trước khi đăng tải công khai nhé.';
+        }
+      }
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['POLICY_PHOTOGRAPHY_RULES'],
-        claims: ['Được chụp ảnh lưu niệm', 'Tắt flash phòng giam', 'Thương mại cần xin phép Ban Quản lý'],
-        responseType: 'PHOTOGRAPHY_POLICY',
-        requiresHuman: false
+        claims: ['Được chụp ảnh lưu niệm tắt flash', 'Thiết bị chuyên nghiệp/phỏng vấn xin phép BQL 024.39342253', 'Bảo tồn hiện vật và tôn trọng quyền riêng tư du khách'],
+        responseType: subIntent || 'PHOTOGRAPHY_POLICY',
+        requiresHuman: subIntent === 'PHOTO_PRO_GEAR_PERMIT'
       }, intent, retrievedData);
     }
 
@@ -661,11 +682,12 @@ class IntelligentAnswerComposer {
       }, intent, retrievedData);
     }
 
-    // 1.1. Kịch bản chăm sóc khách hàng chuyên sâu từ Customer Care Engine
+    // 1.1. Kịch bản chăm sóc khách hàng chuyên sâu từ Customer Care Engine (bao gồm TOUR_INFORMATION!)
     const careIntents = [
       'CUSTOMER_COMPLAINT', 'CUSTOMER_ASSISTANCE', 'LOST_AND_FOUND', 'EMERGENCY_SUPPORT',
       'ACCESSIBILITY_SUPPORT', 'TICKET_INFORMATION', 'OPENING_HOURS', 'CONTACT_INFORMATION',
-      'AUDIO_GUIDE_SUPPORT', 'FACILITY_INFORMATION', 'FACILITY_SUPPORT', 'TOUR_RECOMMENDATION', 'VISIT_GUIDANCE'
+      'AUDIO_GUIDE_SUPPORT', 'FACILITY_INFORMATION', 'FACILITY_SUPPORT',
+      'TOUR_INFORMATION', 'TOUR_RECOMMENDATION', 'VISIT_GUIDANCE'
     ];
     if (careIntents.includes(intent) && retrievedData?.groundTruthMatch?.type !== 'EXACT') {
       const scenarioRes = customerCareScenarios.resolveScenario({
@@ -838,19 +860,23 @@ class IntelligentAnswerComposer {
         }
         if (semGate.passed) {
           let semReply = unifiedSemHit.doc.answer.trim();
-          if (language === 'vi' && semReply && !/^(Dạ|Chào|Mình|Bạn|Hiện|Theo|Với|Xin|KHẨN)/i.test(semReply)) {
-            semReply = `Dạ, ${semReply}`;
+          const isHarshPolarDenial = /^(Dạ\s+)?không\s+(đúng|phải|có\s+chuyện)/i.test(semReply);
+          const userAskedPolarCheck = /(có phải|đúng không|phải không|có thật|có bị|có ngược đãi|có tra tấn|bị hành quyết)/i.test(question);
+          if (!(isHarshPolarDenial && !userAskedPolarCheck)) {
+            if (language === 'vi' && semReply && !/^(Dạ|Chào|Mình|Bạn|Hiện|Theo|Với|Xin|KHẨN)/i.test(semReply)) {
+              semReply = `Dạ, ${semReply}`;
+            }
+            return this.formatResponse({
+              reply: semReply,
+              style: 'DEEP_EXPLANATION',
+              confidence: unifiedSemHit.score >= 0.65 ? 'HIGH' : 'MEDIUM',
+              confidenceScore: Number(Math.min(0.95, unifiedSemHit.score + 0.12).toFixed(2)),
+              sources: [`LOCAL_SEMANTIC_VECTOR_${unifiedSemHit.doc.id} (sim=${unifiedSemHit.score.toFixed(2)})`],
+              claims: [unifiedSemHit.doc.zoneName || unifiedSemHit.doc.topic || 'Truy xuất ngữ nghĩa thống nhất (0 Groq)'],
+              responseType: 'LOCAL_SEMANTIC_VECTOR_HIT',
+              requiresHuman: false
+            }, intent, retrievedData);
           }
-          return this.formatResponse({
-            reply: semReply,
-            style: 'DEEP_EXPLANATION',
-            confidence: unifiedSemHit.score >= 0.65 ? 'HIGH' : 'MEDIUM',
-            confidenceScore: Number(Math.min(0.95, unifiedSemHit.score + 0.12).toFixed(2)),
-            sources: [`LOCAL_SEMANTIC_VECTOR_${unifiedSemHit.doc.id} (sim=${unifiedSemHit.score.toFixed(2)})`],
-            claims: [unifiedSemHit.doc.zoneName || unifiedSemHit.doc.topic || 'Truy xuất ngữ nghĩa thống nhất (0 Groq)'],
-            responseType: 'LOCAL_SEMANTIC_VECTOR_HIT',
-            requiresHuman: false
-          }, intent, retrievedData);
         }
       }
     }
@@ -1059,6 +1085,21 @@ class IntelligentAnswerComposer {
       }, intent, retrievedData);
     }
 
+    // 6.0. Cầu nối hướng dẫn viên trải nghiệm khi Groq bận/ngoại tuyến (cho câu tâm sự, cảm nhận, sáng tạo nội dung, ăn uống/lịch trình Hà Nội gắn với Hỏa Lò — KHÔNG áp dụng cho câu hỏi kiểm chứng số liệu sử học!)
+    const experientialBridge = this.composeExperientialDocentBridge(question, normQ, language, previousPhrasings, { allowNonHoaLoChitchat: false });
+    if (experientialBridge) {
+      return this.formatResponse({
+        reply: experientialBridge.reply,
+        style: 'CONVERSATIONAL_DOCENT',
+        confidence: 'HIGH',
+        confidenceScore: 0.90,
+        sources: [`DOCENT_EXPERIENTIAL_BRIDGE_${experientialBridge.theme}`],
+        claims: ['Ứng xử tinh tế, ấm áp và lái khéo về trải nghiệm Di tích Hỏa Lò'],
+        responseType: 'DOCENT_EXPERIENTIAL_BRIDGE',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
     const fallback = getDocentReply('ARCHIVE_KNOWLEDGE_GAP', language);
 
     return this.formatResponse({
@@ -1088,6 +1129,7 @@ class IntelligentAnswerComposer {
     groqCaller = null,
     previousPhrasings = [],
     intent = 'OUT_OF_SCOPE',
+    subIntent = null,
     retrievedData = {}
   }) {
     const isEn = language === 'en';
@@ -1168,7 +1210,24 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }
     }
 
-    // 3. Dự phòng ngoại tuyến / khi Groq bận: xoay vòng linh hoạt, KHÔNG lặp cứng tên một hiện vật (như Cây bàng) vào câu lạc đề!
+    // 3. Dự phòng ngoại tuyến / khi Groq bận: ưu tiên Cầu nối Hướng dẫn viên cho câu chuyện trải nghiệm/AI/lưu niệm/cảm xúc ngay tại di tích (chỉ khi không phải STRICT_OUT_OF_DOMAIN), rồi mới về fallback xoay vòng!
+    const expOosBridge = (subIntent !== 'STRICT_OUT_OF_DOMAIN')
+      ? this.composeExperientialDocentBridge(question, normQ, language, previousPhrasings, { allowNonHoaLoChitchat: true })
+      : null;
+    if (expOosBridge && (language === 'vi' || language === 'en')) {
+      return this.formatResponse({
+        reply: expOosBridge.reply,
+        style: 'CONVERSATIONAL_DOCENT',
+        confidence: 'HIGH',
+        confidenceScore: 0.88,
+        sources: [`DOCENT_EXPERIENTIAL_BRIDGE_${expOosBridge.theme}`],
+        claims: ['Ứng xử ngoài lề tinh tế, đồng cảm và lái khéo về Di tích Hỏa Lò'],
+        responseType: 'DOCENT_GRACEFUL_OUT_OF_SCOPE',
+        resolvedIntent: 'OUT_OF_SCOPE',
+        requiresHuman: false
+      }, 'OUT_OF_SCOPE', retrievedData);
+    }
+
     const fallbackSeed = (previousPhrasings.length || 0) + (question ? question.length : 0);
     const defaultViFallbacks = [
       'Dạ đây là một chủ đề thú vị nằm ngoài phạm vi tư liệu chuyên sâu tại Di tích Nhà tù Hỏa Lò, nên mình xin phép không suy đoán để giữ trọn tính chính xác. Khi trở lại hành trình khám phá Hỏa Lò hôm nay, bạn muốn mình giới thiệu về khu trưng bày hay giai đoạn lịch sử nào?',
@@ -1495,11 +1554,111 @@ ${compactContext}`;
   }
 
   /**
+   * =========================================================================
+   * CẦU NỐI HƯỚNG DẪN VIÊN TRẢI NGHIỆM (EXPERIENTIAL DOCENT BRIDGE V8.5)
+   * Xử lý mượt mà, ấm áp, chững chạc khi Groq bận/offline cho các câu tâm sự,
+   * cảm nhận, sáng tạo nội dung, quà lưu niệm ấn tượng, ẩm thực/lịch trình Hà Nội
+   * quanh Hỏa Lò — luôn giữ sự trang nghiêm và lái khéo về Di tích Nhà tù Hỏa Lò.
+   * TUYỆT ĐỐI không chen vào câu hỏi kiểm chứng niên đại/số liệu sử học thuần túy!
+   * =========================================================================
+   */
+  composeExperientialDocentBridge(question, normQ, language = 'vi', previousPhrasings = [], options = {}) {
+    if (language !== 'vi' && language !== 'en') return null;
+    const isEn = language === 'en';
+    const q = normQ || (' ' + nlp.normalize(question || '') + ' ');
+
+    // Không kích hoạt trên các câu hỏi ngoài lề tuyệt đối (tài chính, code, khám bệnh, luật, thương mại ngoài phố không liên quan thăm Hỏa Lò)
+    const isHardExternalOos = /\b(bitcoin|ethereum|chung khoan|co phieu|gia vang|sjc|shopee|ma van don|python|javascript|react|phuong trinh|ho chieu|so do|bo luat|vay ngan hang|lai suat|world cup|bong da|netflix|minecraft|tarot|murakami|vo nhat|showbiz|sao ke|tham my vien|nang mui|thu y|cat toc|karaoke|lo vi song|sim 4g|atm|vietnam airlines|vietjet)\b/.test(q);
+    if (isHardExternalOos) return null;
+
+    // 1. Ẩm thực đường phố, đặc sản quà Hà Nội, kem Tràng Tiền, Jazz/cocktail/thư giãn quanh Hỏa Lò – Hoàn Kiếm
+    if (/\b(xoi xeo|banh mi pate|nom bo kho|tra chanh|cha ca|bun dau|com lang vong|sau chin|o mai|hang duong|banh duc nong|oc nong|kem trang tien|pho trang tien|nhac jazz|cocktail|goi dau|massage chan)\b/.test(q)) {
+      return {
+        theme: 'HANOI_VICINITY_EXPERIENCE',
+        reply: isEn
+          ? 'Central Hoan Kiem around Hoa Lo, Quan Su, Hai Ba Trung, and Trang Tien streets is brimming with classic Hanoi treats—from street snacks and Trang Tien ice cream to evening cafes and Old Quarter specialties just a 10 to 15 minute walk away. While dining is not served inside the galleries, feel free to finish your tour or pick up a keepsake at Hoa Lo Prison Relic before enjoying the neighborhood!'
+          : 'Dạ quanh trung tâm Hoàn Kiếm ngay sát Cổng số 1 phố Hỏa Lò (dọc các tuyến Quán Sứ, Lý Thường Kiệt, Hai Bà Trưng nối ra Tràng Tiền, Nhà Hát Lớn và phố cổ chỉ khoảng 10–15 phút đi bộ) có rất nhiều món ngon đặc trưng Hà Nội, quà đặc sản cốm – ô mai và quán nghỉ chân thú vị để bạn khám phá sau chuyến tham quan. Vì mình chuyên trách hướng dẫn trong khuôn viên Di tích Nhà tù Hỏa Lò nên không đánh giá từng quán cụ thể ngoài phố; trước khi ra cổng thưởng thức ẩm thực Thủ đô, bạn còn muốn tìm hiểu thêm góc trưng bày nào tại Hỏa Lò không?'
+      };
+    }
+
+    // 2. Phối hợp lịch trình văn hóa Hà Nội & nhịp cảm xúc cả ngày (Hỏa Lò – Bờ Hồ – Múa rối nước / sợ tụt mood)
+    if (/\b(mua roi nuoc|tut mood|lech tong|di choi tiep|lich trinh ban ngay)\b/.test(q)) {
+      return {
+        theme: 'HANOI_ITINERARY_PACING',
+        reply: isEn
+          ? 'Pairing a morning visit to Hoa Lo Prison Relic with a gentle walk by Hoan Kiem Lake and Thang Long Water Puppetry in the evening is actually a wonderfully balanced Hanoi cultural day. Visitors leave Hoa Lo not with heaviness, but with quiet gratitude for today’s peace—making the rest of Hanoi’s beauty feel even more meaningful.'
+          : 'Dạ sự kết hợp giữa không gian lắng đọng tại Di tích Nhà tù Hỏa Lò, dạo mát quanh Bờ Hồ và thưởng thức nghệ thuật truyền thống như Múa rối nước Thăng Long thực ra lại tạo nên một hành trình văn hóa Hà Nội rất trọn vẹn và cân bằng cảm xúc bạn nhé. Rời khỏi Hỏa Lò sau khi chiêm ngưỡng ý chí kiên cường và không gian xanh yên bình dưới tán Cây bàng, nhiều du khách thấy trân quý hòa bình hôm nay hơn chứ không hề bị nặng nề hay tụt cảm xúc cho chặng đi chơi tiếp theo đâu ạ.'
+      };
+    }
+
+    // 3. Khen thiết kế quà lưu niệm, áo phông đi phỏng vấn, linh vật Bé Bàng, chặn giấy ổ khóa, tinh dầu, lý do mua sách, đồ sưu tầm
+    if (/\b(phong van xin viec|cham gu tham my|trendy|be bang|gau bong|linh vat|chan giay|o khoa sat|tinh dau|mui hoa lo|luoi doc sach|moc khoa|tang gia khong|cam giac doi lap|tui do luu niem)\b/.test(q)) {
+      return {
+        theme: 'SOUVENIR_CREATIVE_IMPRESSION',
+        reply: isEn
+          ? 'It is heartwarming to hear how much you appreciate the creative way Hoa Lo Prison Relic brings history closer to everyday life through its cultural keepsakes—from books and tote bags to thoughtful seasonal designs. While specific custom ideas or collectible valuations are beyond my guide records, you can browse what is currently on display at the official Souvenir Shop near the exit or share your creative suggestions with the Hoa Lo Prison Relic Fanpage!'
+          : 'Dạ cảm ơn góc nhìn rất thú vị và giàu thiện cảm của bạn dành cho các ấn phẩm văn hóa tại Cửa hàng lưu niệm Di tích Nhà tù Hỏa Lò! Việc kết nối ký ức lịch sử sâu sắc với những thiết kế gần gũi, tinh tế giúp tinh thần Hỏa Lò lan tỏa tự nhiên hơn trong đời sống hôm nay. Những ý tưởng sáng tạo như linh vật, đồ kỷ niệm hay ấn phẩm trưng bày theo mùa bạn cứ thoải mái ghé xem trực tiếp tại Quầy lưu niệm gần lối ra hoặc gửi góp ý tới Fanpage chính thức của Di tích Nhà tù Hỏa Lò nhé.'
+      };
+    }
+
+    // 4. Tương tác vui với AI hướng dẫn viên & đánh giá 5 sao Google Maps
+    if (/\b(luong thuong|nghi phep|tam bien|thay the|nguoi that|zalo|facebook ca nhan|ket ban|danh gia 5 sao|google maps)\b/.test(q) &&
+        (/\b(ai|ban|huong dan vien|thuyet minh vien|hoa lo|di tich|tam chuyen|hop ca)\b/.test(q) || options.allowNonHoaLoChitchat)) {
+      return {
+        theme: 'AI_COMPANION_AND_REVIEW',
+        reply: isEn
+          ? 'Thank you for your warm words! As the dedicated virtual docent of Hoa Lo Prison Relic, I work alongside—never replacing—our passionate human guides, and I am always here on duty whenever you visit (no personal social accounts needed!). If you enjoyed your experience, searching "Di tích Lịch sử Nhà tù Hỏa Lò" on Google Maps or our official Fanpage to leave a review means the world to the whole team.'
+          : 'Dạ cảm ơn sự yêu mến và lời trò chuyện dí dỏm của bạn! Với vai trò hướng dẫn viên ảo chuyên trách tại Di tích Nhà tù Hỏa Lò, mình luôn đồng hành hỗ trợ song song cùng đội ngũ anh chị thuyết minh viên người thật chứ không thay thế cảm xúc truyền lửa trực tiếp của con người, và cũng không có tài khoản mạng xã hội cá nhân nhưng lúc nào cũng sẵn sàng đón bạn tại Hỏa Lò. Nếu hành trình hôm nay để lại nhiều ấn tượng đẹp, bạn chỉ cần tìm đúng tên "Di tích Lịch sử Nhà tù Hỏa Lò" trên Google Maps hoặc Fanpage chính thức để gửi lời động viên 5 sao tới toàn thể Ban Quản lý nhé!'
+      };
+    }
+
+    // 5. Sáng tạo nội dung, CapCut, clip, caption Threads, Fanpage bắt trend, kính VR, đố vui & mẹo nhớ tên nhân vật
+    if (/\b(capcut|caption|threads|clip ngan|video|bat trend|fanpage|kinh thuc te ao|vr|do vui|do meo|meo nao nho|tu khoa duy nhat|thuyet phuc dua ban)\b/.test(q) &&
+        (/\b(hoa lo|di tich|bao tang|nha tu|chien si|hien vat|cong|san)\b/.test(q) || options.allowNonHoaLoChitchat)) {
+      return {
+        theme: 'CREATIVE_STORYTELLING_BRIDGE',
+        reply: isEn
+          ? 'We love seeing visitors share Hoa Lo Prison Relic thoughtfully with friends and online communities! For a memorable short clip, caption, or way to remember the stories, anchor it on one concrete symbol—like the historic Maison Centrale archway, the resilient Banyan Tree, or the 1951 escape sewer—paired with respectful, authentic emotion. Would you like me to share one fascinating verified detail from those stops for your story?'
+          : 'Dạ thật vui khi bạn muốn lan tỏa trải nghiệm tại Di tích Nhà tù Hỏa Lò theo cách sinh động và giàu cảm xúc! Dù là dựng clip ngắn, chọn câu mở đầu, viết caption hay ghi nhớ các câu chuyện lịch sử không bị quên, bí quyết hay nhất là gắn cảm xúc với một biểu tượng thật cụ thể tại Hỏa Lò — như cánh cổng Maison Centrale hơn trăm năm tuổi, Cây bàng cổ thụ cứu giúp tù nhân hay đường cống ngầm vượt ngục đêm Noel 1951 — vừa trang nghiêm vừa chạm tới trái tim người xem. Bạn muốn mình bật mí thêm một chi tiết lịch sử độc đáo tại Hỏa Lò để làm điểm nhấn không?'
+      };
+    }
+
+    // 6. Cảm nhận sâu lắng, xúc động, mắt đỏ hoe, tượng sáp, diện tích xưa-nay, so sánh Alcatraz, cơm tù, cai ngục, động lực vượt deadline/chia tay/hẹn hò/đi một mình
+    if (/\b(mat do hoe|sut sui|khoc|rot ca dien thoai|giong nguoi that|xuyen khong|chung xuong|chanh long|com nam|ca mam|kinh ne|lang di|goc nho|deadline|chia tay|co don|lui thui|hen ho|dinh cong|dong luc|diu nhe|mat hung|rong menh mong|alcatraz)\b/.test(q)) {
+      if (/\b(deadline|chia tay|co don|lui thui|hen ho|dinh cong|dong luc)\b/.test(q)) {
+        return {
+          theme: 'EMOTIONAL_ENCOURAGEMENT_HOA_LO',
+          reply: isEn
+            ? 'Thank you for sharing how you feel. Standing inside Hoa Lo Prison Relic—where patriots once taught themselves under harsh walls yet kept their faith in tomorrow—often gives us quiet strength, whether you are visiting solo, on a thoughtful first date, pushing through tired feet, or healing after a rough chapter. Take a breather beneath the Banyan Tree courtyard, and whenever you are ready, I am right here to walk the next gallery with you.'
+            : 'Dạ cảm ơn bạn đã chia sẻ những cảm xúc rất chân thật khi ghé thăm Di tích Nhà tù Hỏa Lò! Dù bạn đang đi dạo một mình, cùng người thương có một buổi hẹn hò giàu chiều sâu, mỏi chân giữa hành trình hay đang tìm thêm điểm tựa tinh thần trước áp lực cuộc sống, câu chuyện về ý chí kiên cường và niềm lạc quan của các thế hệ đi trước ngay tại Hỏa Lò luôn là nguồn động lực bình tĩnh và ấm áp. Bạn cứ dừng nghỉ nhẹ một chút ở sân Cây bàng thoáng đãng rồi mình cùng tiếp tục khám phá những gian trưng bày ý nghĩa tiếp theo nhé!'
+        };
+      }
+      if (/\b(mat hung|rong menh mong|12 908|alcatraz|com nam|ca mam|cai nguc)\b/.test(q)) {
+        return {
+          theme: 'HISTORICAL_REFLECTION_BRIDGE',
+          reply: isEn
+            ? 'That is a perceptive observation! Originally built in 1896 across 12,908 square meters, only the preserved core section (~2,400 square meters) remains today as a living monument in central Hanoi—contrasting harsh colonial cells and meager rations with the unbreakable spirit of Vietnamese revolutionaries who turned prison into a revolutionary school. Which exhibit or story here at Hoa Lo would you like to explore more deeply?'
+            : 'Dạ đó là một góc nhìn quan sát rất tinh tế bạn nhé! Nhà tù Hỏa Lò khởi công năm 1896 ban đầu rộng tới 12.908 mét vuông, nay bảo tồn phần lõi di tích tiêu biểu nhất khoảng 2.400 mét vuông ngay giữa lòng Hà Nội — chính sự thu gọn cô đọng ấy càng khắc họa rõ nét tương phản giữa chế độ giam cầm khắc nghiệt, bữa cơm tù đạm bạc với ý chí bất khuất biến nhà tù thành trường học cách mạng của các chiến sĩ yêu nước. Bạn muốn mình kể sâu hơn về hiện vật hay góc trưng bày nào tại Hỏa Lò tiếp theo không?'
+        };
+      }
+      return {
+        theme: 'DEEP_EMPATHY_REFLECTION_HOA_LO',
+        reply: isEn
+          ? 'Many visitors share that exact stirring feeling when stepping through the century-old walls of Hoa Lo Prison—from the lifelike wax figures and solemn dark cells to the emotional live scenes of the Sacred Night Tour, before softening at the sunlit Banyan Tree courtyard, the humane 1964–1973 gallery, and the quiet Memorial Monument. Taking five quiet minutes by the Memorial Monument or beneath the Banyan Tree is a truly moving way to conclude your visit.'
+          : 'Dạ rất nhiều du khách cũng chia sẻ trọn vẹn mạch cảm xúc đặc biệt ấy khi bước qua bức tường cổ hơn trăm năm của Di tích Nhà tù Hỏa Lò — từ sự lặng người trước các gian xà lim, tượng tái hiện chân thực và những phân đoạn xúc động trong Đêm Thiêng Liêng, cho đến khoảnh khắc dịu lại nơi sân Cây bàng xanh mát, khu trưng bày nhân đạo giai đoạn 1964–1973 và Đài tưởng niệm trang nghiêm. Nếu muốn nán lại thêm ít phút lắng đọng trước khi ra về, khoảng sân Cây bàng và Đài tưởng niệm chính là góc rất đáng dừng chân tại Hỏa Lò bạn nhé.'
+      };
+    }
+
+    return null;
+  }
+
+  /**
    * Kiểm tra và xử lý toàn diện các bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (Core Factual Traps V6.2)
    */
   checkFactualTraps(normQ, language = 'vi', session = null, rawQuestion = '') {
-    // 0. Câu hỏi tâm linh / có ma không / nặng vía / tháng cô hồn / ám quẻ tại di tích (bản ngữ 6 ngôn ngữ)
-    if (/\b(co ma khong|nhieu ma khong|bi am khong|ma am|hon ma|nang via|dot via|thang co hon|am que|haunted|ghosts|ghost)\b/i.test(normQ)) {
+    // 0. Câu hỏi tâm linh / có ma không / nặng vía / tháng cô hồn / ám quẻ / tiếng động lạ tại di tích (bản ngữ 6 ngôn ngữ)
+    if (/\b(co ma khong|co ma hay|linh hon hien ve|chuyen tam linh|nhieu ma khong|bi am khong|ma am|hon ma|nang via|dot via|thang co hon|am que|haunted|ghosts|ghost)\b/i.test(normQ) ||
+        (/\b(tieng dong la)\b/i.test(normQ) && /\b(cachot|may chem|bao ve|tuan|ban dem|toi khuya)\b/i.test(normQ))) {
       return {
         reply: getDocentReply('GHOST_MYTH_FACT_CHECK', language),
         confidence: 'HIGH',

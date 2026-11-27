@@ -861,4 +861,50 @@ test('500 Out-Of-Scope & Edge-Case Audit Regressions: security/OOS precedence, M
     });
     assert.ok(!/câu chuyện lịch sử này|hiện vật giàu giá trị|dấu tích này|Di tích Di tích|chốn lao tù/i.test(outRefusal), `Composer wrapped refusal or doubled Di tích: ${outRefusal}`);
   }
+
+  // 7. Round 2 deep regression guards (lost child near Cống ngầm, mắt đỏ ≠ mất đồ, mấy anh ≠ máy ảnh, mua về ≠ mua vé, secondary-intent leak, Tour Đêm, trà lá bàng retail, Quán Sứ navigation)
+  const lostKid = await queryKiemThuAI('Ôi chết rồi, con trai tôi mặc áo vàng vừa chạy lạc khỏi bố mẹ đoạn gần khu Cống ngầm, tôi phải báo ngay cho ai để loa nội bộ hỗ trợ tìm cháu?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_lostkid', 'vi');
+  assert.equal(lostKid.intent, 'EMERGENCY_SUPPORT');
+  assert.ok(/KHẨN CẤP|bảo vệ|loa truyền thanh/i.test(lostKid.reply), `Lost child near Cống ngầm MUST trigger emergency support: ${lostKid.reply}`);
+
+  const redEyes = await queryKiemThuAI('Thấy mấy anh chị đi suất Đêm thiêng liêng trước mắt đỏ hoe sụt sùi bước ra — bên trong có màn nào xúc động tới mức ai cũng khóc vậy ạ?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_redeyes', 'vi');
+  assert.ok(!/làm rơi hoặc bỏ quên|thất lạc|tắt đèn flash/i.test(redEyes.reply), `"mấy anh ... mắt đỏ" must NEVER hijack to lost item or camera: ${redEyes.reply}`);
+
+  const restrictedCam = await queryKiemThuAI('Ở trong khuôn viên di tích khu vực hành lang đóng cửa Khu vực chỉ dành cho nhân viên có gắn camera hay khóa từ báo động không nếu khách lỡ đẩy cửa bước vào chụp ảnh?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_staffarea', 'vi');
+  assert.ok(!/làm rơi hoặc để quên tài sản|thất lạc/i.test(restrictedCam.reply), `Restricted staff area with camera must NEVER append lost-and-found policy: ${restrictedCam.reply}`);
+
+  const nightCharter = await queryKiemThuAI('Nếu công ty tụi mình muốn đặt thuê trọn gói một suất Đêm thiêng liêng riêng vào tối thứ Năm cho khoảng 50 nhân viên thì di tích có nhận đặt riêng không?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_night', 'vi');
+  assert.equal(nightCharter.intent, 'TOUR_INFORMATION');
+  assert.ok(/Đêm thiêng liêng|024\.39342253|Fanpage/i.test(nightCharter.reply), `Night Tour private charter must be answered by TOUR_INFORMATION: ${nightCharter.reply}`);
+
+  const banyanTea = await queryKiemThuAI('Trà lá bàng ở quầy bán là dạng túi lọc nhúng tiện lợi pha nước nóng ngay tại văn phòng hay dạng lá khô nguyên cánh phải đun ấm tích?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_tea', 'vi');
+  assert.equal(banyanTea.intent, 'FACILITY_INFORMATION');
+  assert.ok(/Quầy lưu niệm|Trà lá bàng|bao bì/i.test(banyanTea.reply), `Banyan tea retail must NOT dump historical banyan tree trivia: ${banyanTea.reply}`);
+
+  const bookShop = await queryKiemThuAI('Ở quầy sách lưu niệm có bày bán các cuốn sách lịch sử về Maison Centrale viết bằng tiếng Anh hoặc tiếng Pháp để bạn tôi mua về nước đọc thêm không?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_books', 'vi');
+  assert.equal(bookShop.intent, 'FACILITY_INFORMATION');
+  assert.ok(/Quầy sách|lưu niệm|Maison Centrale/i.test(bookShop.reply), `"mua về" in souvenir bookstore must NEVER hijack to TICKET_INFORMATION: ${bookShop.reply}`);
+
+  const comboTicket = await queryKiemThuAI('Hà Nội có bán loại vé combo gộp chung tham quan Nhà tù Hỏa Lò với Bảo tàng Phụ nữ hoặc Văn Miếu để tiết kiệm hơn không bạn?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_combo', 'vi');
+  assert.equal(comboTicket.intent, 'TICKET_INFORMATION');
+  assert.ok(/50\.000|vé combo|riêng biệt/i.test(comboTicket.reply), `Combo ticket mentioning Women's Museum must NOT hijack to Trại giam Nữ: ${comboTicket.reply}`);
+
+  const quanSuWalk = await queryKiemThuAI('Tôi đang đứng ở ngã tư Lý Thường Kiệt – Quán Sứ thì rẽ hướng nào đi bộ thêm một đoạn ngắn nữa là thấy ngay mặt tiền Nhà tù Hỏa Lò?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_quansu', 'vi');
+  assert.equal(quanSuWalk.intent, 'VISIT_GUIDANCE');
+  assert.ok(/Lý Thường Kiệt|phố Hỏa Lò|đi bộ|tản bộ/i.test(quanSuWalk.reply), `Quan Su walking directions must NOT hijack to 1951 sewer escape: ${quanSuWalk.reply}`);
+
+  // 8. Final homonym guards ("thứ Năm ngoài" ≠ "năm ngoái", "để đóng/dễ đọc" ≠ "để đồ", "bánh thạch lá bàng" ≠ outside food ban, dress code vs soát vé)
+  const nightThu = await queryKiemThuAI('Nếu công ty tụi mình muốn đặt thuê trọn gói một suất Đêm thiêng liêng riêng vào tối thứ Năm ngoài lịch công cộng cho khoảng 50 nhân viên thì di tích có nhận đặt riêng không?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_thu5', 'vi');
+  assert.ok(/Đêm thiêng liêng|024\.39342253|Fanpage/i.test(nightThu.reply), `"thứ Năm ngoài" must NOT trip "năm ngoái" ANNUAL_STATS: ${nightThu.reply}`);
+
+  const banyanJelly = await queryKiemThuAI('Tôi từng thấy video review có món bánh thạch lá bàng và bánh cốm lá bàng ăn rất thơm — quầy lưu niệm ban ngày có bán sẵn mấy loại bánh đó không hay chỉ có ở Tour Đêm?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_jelly', 'vi');
+  assert.equal(banyanJelly.intent, 'FACILITY_INFORMATION');
+  assert.ok(/Quầy lưu niệm|thạch bàng|Trà lá bàng/i.test(banyanJelly.reply), `Banyan jelly at souvenir shop must NOT trigger outside food ban: ${banyanJelly.reply}`);
+
+  const teaShelf = await queryKiemThuAI('Một hộp trà lá bàng mua hôm nay để đóng vali sang cuối năm mới tặng bạn ở xa thì hạn bảo quản từ ngày sản xuất được mấy tháng hay mấy năm?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_shelf', 'vi');
+  assert.ok(/Trà lá bàng|Quầy lưu niệm|bao bì/i.test(teaShelf.reply), `"để đóng" must NOT trip "để đồ" locker storage: ${teaShelf.reply}`);
+
+  const dressGate = await queryKiemThuAI('Mình vừa chạy bộ quanh Hồ Gươm về đang mặc áo ba lỗ sát nách với dép xỏ ngón định ghé vào thăm nhanh luôn thì có được nhân viên soát vé cho vào không?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_dress', 'vi');
+  assert.equal(dressGate.intent, 'VISIT_GUIDANCE');
+  assert.ok(/trang phục|lịch sự|áo khoác/i.test(dressGate.reply), `Dress code question with "soát vé" must route to GUIDANCE_DRESS_CODE: ${dressGate.reply}`);
 });

@@ -702,11 +702,17 @@ class ProductionSmartTourGuideServer {
       }
     }
 
-    // 6.2. Bổ sung thông tin ý định phụ nếu khách hỏi ĐA Ý ĐỊNH trong 1 câu (VD: "Giá vé và giờ mở cửa?")
+    // 6.2. Bổ sung thông tin ý định phụ nếu khách hỏi ĐA Ý ĐỊNH dịch vụ trong 1 câu (VD: "Giá vé và giờ mở cửa?")
+    // Không bao giờ ghép chính sách phụ vào câu từ chối ngoài lề, bảo mật nội quy (SITE_OPERATIONS), khẩn cấp, khiếu nại hay đồng cảm!
     const secondaryIntents = intentAnalysis.secondaryIntents || [];
-    if (secondaryIntents.length > 0 && finalReply && !isLlmOutput && intent !== INTENTS.OUT_OF_SCOPE) {
+    const allowSecondaryAppend = [
+      INTENTS.TICKET_INFORMATION, INTENTS.OPENING_HOURS, INTENTS.FACILITY_INFORMATION,
+      INTENTS.PARKING_SUPPORT, INTENTS.PHOTOGRAPHY_POLICY, INTENTS.TOUR_INFORMATION,
+      INTENTS.AUDIO_GUIDE_SUPPORT, INTENTS.CONTACT_INFORMATION
+    ].includes(intent);
+    if (secondaryIntents.length > 0 && finalReply && !isLlmOutput && allowSecondaryAppend) {
       const secIntent = secondaryIntents[0];
-      const secPolicy = knowledgeBase.findServicePolicy(coreQuery, secIntent);
+      const secPolicy = knowledgeBase.findServicePolicy(coreQuery, secIntent, { strictIntent: true });
       if (secPolicy?.policy?.content) {
         const firstSecSent = secPolicy.policy.content.split(/(?<=[.!?])\s+/)[0] || '';
         const secNorm = nlp.normalize(firstSecSent);

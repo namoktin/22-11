@@ -14,7 +14,7 @@
  * 4. Token-Overlap & Semantic Relevance Floor: Ngăn mọi câu trả lời lạc đề vượt qua Validator.
  */
 
-const { hasPhrase, normalizeText, hasVietnameseDiacritics, normalizeAccentedLower, matchAccentedProperNoun } = require('./semantic_router');
+const { hasPhrase, normalizeText, hasVietnameseDiacritics, normalizeAccentedLower, matchAccentedProperNoun, matchAccentConsistentPhrase } = require('./semantic_router');
 
 class RelevanceGate {
   constructor() {
@@ -183,7 +183,11 @@ class RelevanceGate {
 
     // 2. KIỂM TRA BAO PHỦ CHỈ SỐ / THUỘC TÍNH ĐẶC THÙ (Attribute / Metric Coverage)
     for (const metric of this.specificArchiveMetrics) {
-      if (metric.qPatterns.some(p => hasPhrase(normQ, p))) {
+      const matchedMetric = metric.qPatterns.some(p => {
+        if (p === 'nam ngoai') return matchAccentConsistentPhrase(question, 'năm ngoái');
+        return hasPhrase(normQ, p);
+      });
+      if (matchedMetric) {
         const covered = metric.ansRequired.some(req => hasPhrase(normA, req));
         if (!covered) {
           let customMsg;
