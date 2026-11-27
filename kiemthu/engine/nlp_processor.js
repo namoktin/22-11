@@ -82,8 +82,22 @@ class NlpProcessor {
     const isSafeMuseumContext = norm.includes(' bo quan ao ') || norm.includes(' quan ao ') || norm.includes(' ao tu ') ||
       norm.includes(' huong dan vien ') || norm.includes(' nguoi huong dan ') || norm.includes(' thuyet minh vien ');
 
-    // Lớp 0: XSS / SQL Injection / Template Injection (raw text check trước khi bỏ ký tự đặc biệt)
+    // Lớp 0: XSS / SQL Injection / Template Injection / Hacking / Fraud / Illegal Abuse (raw & normalized check)
     if (/<\s*script|javascript\s*:|onerror\s*=|onload\s*=|\bdrop\s+table\b|\bselect\s+\*\s+from\b|\bunion\s+select\b|'\s*or\s+1\s*=\s*1|\{\{.*\}\}|\$\{\s*process\.env/i.test(text)) {
+      return true;
+    }
+    const hardSecurityAbuse = [
+      'sqlmap', 'cau lenh hack', 'hack wifi', 'tat tuong lua', 'windows defender', 'ban crack',
+      'thuat toan luhn', 'ma cvv', 'cvv gia', '10 day so the', 'tai nghe hat dau', 'phao thi',
+      'gian lan thi', 'kali clorat', 'tu che phao', 'bit ly', 'tinyurl', 'mat khau mac dinh',
+      'tp link', 'ket thuc phien', 'bat dau phien moi', 'nhap vai tuong tuong', 'tu bia ra',
+      'mo hinh groq', 'server mien phi', 'wifi noi bo', 'mat khau mang wifi noi bo'
+    ];
+    if (hardSecurityAbuse.some(p => norm.includes(' ' + p + ' '))) {
+      return true;
+    }
+    if ((norm.includes(' luu huynh ') && norm.includes(' than cui ')) ||
+        (norm.includes(' mo duong link ') && (norm.includes(' rut gon ') || norm.includes(' khuyen mai ')))) {
       return true;
     }
 

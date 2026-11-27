@@ -105,9 +105,14 @@ class RelevanceGate {
     const isEn = language === 'en';
 
     // 1. KIỂM TRA CHÉO THỰC THỂ NGOẠI LAI (Accent-Exact Proper Noun Guard: "con dao" ≠ "Côn Đảo", "đa năng" ≠ "Đà Nẵng"!)
-    const matchedForeign = this.foreignSubjectMarkers
-      .filter(m => matchAccentedProperNoun(question, m))
-      .map(m => normalizeText(m));
+    // Ngoại lệ khoảng cách đi bộ gần di tích (Hồ Hoàn Kiếm, Bờ Hồ, Tượng đài Lý Thái Tổ)
+    const isNearbyWalkQuery = (hasPhrase(normQ, 'di bo') || hasPhrase(normQ, 'may phut') || hasPhrase(normQ, 'bao xa') || hasPhrase(normQ, 'bao lau')) &&
+      (hasPhrase(normQ, 'ho guom') || hasPhrase(normQ, 'ho hoan kiem') || hasPhrase(normQ, 'bo ho') || hasPhrase(normQ, 'ly thai to'));
+    const matchedForeign = isNearbyWalkQuery
+      ? []
+      : this.foreignSubjectMarkers
+          .filter(m => matchAccentedProperNoun(question, m))
+          .map(m => normalizeText(m));
     const genericForeign = this.detectGenericForeignPersonOrRuler(normQ, question);
     if (genericForeign && !matchedForeign.includes(genericForeign)) {
       matchedForeign.push(genericForeign);

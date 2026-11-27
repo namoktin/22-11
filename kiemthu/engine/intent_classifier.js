@@ -286,7 +286,7 @@ class IntentClassifier {
       };
     }
 
-    // 0.07. CỔNG CHẶN NGOÀI LỀ TOÀN DIỆN (chạy TRƯỚC SITE_OPERATIONS để 'Giá Bitcoin' không nhảy vào vé 50k!)
+    // 0.07. CỔNG CHẶN NGOÀI LỀ TOÀN DIỆN (chạy TRƯỚC SITE_OPERATIONS để 'Giá Bitcoin', 'GrabCar', 'Shopee', 'Thẻ Visa giả' không rò sang dịch vụ/lịch sử!)
     // Lưu ý: Không coi từ chung "nha tu" là mỏ neo Hỏa Lò khi khách đang hỏi đích danh nhà tù bên ngoài (Alcatraz, Bastille, Côn Đảo, Phú Quốc)!
     const hasSpecificExternalPrison = hasPhrase(norm, 'alcatraz') || hasPhrase(norm, 'bastille') || matchAccentedProperNoun(raw, 'côn đảo') || matchAccentedProperNoun(raw, 'phú quốc');
     const hasExplicitHoaLoSite = hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'maison centrale') || hasPhrase(norm, 'hanoi hilton');
@@ -295,6 +295,36 @@ class IntentClassifier {
       : (semanticRouter.hasHoaLoCoreEntity(norm) ||
          hasPhrase(norm, 'tham quan trong nha') ||
          (earlyDiscourse.isHistoricalDiscourse && earlyDiscourse.historicalScore >= 4.5));
+
+    // Nhóm ngoài lề TUYỆT ĐỐI (chặn ngay cả khi người dùng gài tên "Hỏa Lò", "cổng số 1" hay "Hoàn Kiếm" làm mồi!)
+    // Lưu ý: TUYỆT ĐỐI dùng cụm rõ nghĩa tránh đồng âm không dấu ("sơ đồ" != "sổ đỏ", "nặng mùi" != "nâng mũi")!
+    const absoluteOosPatterns = [
+      'shopee express', 'ma van don', 'tra van don', 'grabcar', 'vinhomes', 'can ho chung cu',
+      'thue thu nhap ca nhan', 'ke khai nop thue', 'le phi truoc ba', 'dat tho cu', 'mua ban dat',
+      'bo luat hinh su', 'don khoi kien', 'toa an nhan dan', 'hop dong thue', 'vay ngan hang',
+      'lai suat tha noi', 'ethereum', 'binance', 'ty gia chuyen doi', 'xo so kien thiet',
+      'tau cao toc', 'dao co to', 'vinwonders', 'sun world', 'vietnam airlines', 'vietjet',
+      'frankfurt', 'phuot xe may', 'ha giang', 'meo vac', 'book giup', 'khach san 4 sao',
+      'chi so xet nghiem', 'nang mui cau truc', 'tham my vien', 'meo anh long ngan', 'rung long', 'luoi an hat',
+      'ham xuong bo', 'hat ca phe arabica', 'arabica', 'cold brew', 'u lanh', 'khai truong quan tra sua',
+      'code react', 'useeffect', 'phuong trinh luong giac', 'phuong trinh hoa hoc', 'hno3',
+      'career objective', 'email tieng anh', 'soan giup minh mot buc email', 'gui sep', 'bai tarot', 'sicilian defense', 'french defense',
+      'chatgpt plus', 'claude pro', 'youtube shorts', 'sony a7', 'lens 50mm', 'rung na uy',
+      'murakami', 'vo nhat', 'sao ke tu thien', 'showbiz', 'doan lanh dao cap cao',
+      'cap lai ho chieu', 'xin cap lai ho chieu'
+    ];
+    if (absoluteOosPatterns.some(p => hasPhrase(norm, p)) ||
+        hasRawPhrase(raw, 'sổ đỏ') || hasRawPhrase(raw, 'nâng mũi') ||
+        (hasPhrase(norm, 'goi giup') && (hasPhrase(norm, 'grab') || hasPhrase(norm, 'taxi')))) {
+      return {
+        intent: INTENTS.OUT_OF_SCOPE,
+        subIntent: 'STRICT_OUT_OF_DOMAIN',
+        subject: null,
+        aspect: 'OUT_OF_BOUNDS',
+        confidence: 0.99,
+        reason: 'Yêu cầu thuộc dịch vụ/đời sống/chuyên môn hoàn toàn ngoài phạm vi Di tích Nhà tù Hỏa Lò'
+      };
+    }
 
     const hardOosPatterns = [
       // Tài chính, tiền số, ngân hàng, bất động sản
@@ -601,8 +631,14 @@ class IntentClassifier {
       };
     }
 
-    // Câu hỏi lộ trình có ràng buộc thời gian ngắn ("chỉ có 20 phút nên xem gì") -> CHỈ khi không phải diễn ngôn lịch sử!
-    const hasShortTimeLimit = !isHist && (/\b(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) || hasPhrase(norm, 'it thoi gian') || hasPhrase(norm, 'co it thoi gian'));
+    // Câu hỏi lộ trình có ràng buộc thời gian ngắn ("chỉ có 20 phút nên xem gì") -> CHỈ khi thực sự hỏi lộ trình ngắn, KHÔNG cướp câu hỏi tới trễ / thời lượng tour đêm / còn 25 phút cuối!
+    const isLateArrivalOrNightDuration = hasPhrase(norm, 'toi tre') || hasPhrase(norm, 'den tre') || hasPhrase(norm, 'muon') && hasPhrase(norm, '19h') ||
+      hasPhrase(norm, 'tour dem') || hasPhrase(norm, 'dem thieng lieng') || hasPhrase(norm, 'quầy vé') || hasPhrase(norm, '16h35') || hasPhrase(norm, '17h00');
+    const hasShortTimeLimit = !isHist && !isLateArrivalOrNightDuration && (
+      (/\b(chi co|con|trong)\s*(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) && !hasPhrase(norm, 'mua ve') && !hasPhrase(norm, 'ban ve') && !hasPhrase(norm, 'ra cong')) ||
+      (/\b(15|20|30|45)\s*(phut|p|min|minutes)\b/.test(norm) && /\b(nen xem|xem gi|xem duoc gi|lo trinh|di dau|kip xem|tham quan nhanh|what to see|itinerary)\b/.test(norm)) ||
+      hasPhrase(norm, 'it thoi gian') || hasPhrase(norm, 'co it thoi gian')
+    );
     if (hasShortTimeLimit && !norm.includes('xay dung') && !norm.includes('thi cong')) {
       return {
         intent: INTENTS.TOUR_RECOMMENDATION,
@@ -678,14 +714,14 @@ class IntentClassifier {
       };
     }
 
-    if ((norm.includes('ho guom') || norm.includes('ho hoan kiem') || norm.includes('hoan kiem')) && (norm.includes('di bo') || norm.includes('bao lau') || norm.includes('may phut') || norm.includes('bao xa') || norm.includes('cach bao xa') || norm.includes('mat bao lau') || norm.includes('how far') || norm.includes('on foot') || norm.includes('walking'))) {
+    if ((norm.includes('ho guom') || norm.includes('ho hoan kiem') || norm.includes('hoan kiem') || norm.includes('bo ho') || norm.includes('ly thai to')) && (norm.includes('di bo') || norm.includes('bao lau') || norm.includes('may phut') || norm.includes('bao xa') || norm.includes('cach bao xa') || norm.includes('mat bao lau') || norm.includes('how far') || norm.includes('on foot') || norm.includes('walking'))) {
       return {
         intent: INTENTS.VICINITY_DISTANCE,
         subIntent: 'WALKING_TO_HO_GUOM',
         subject: 'ho_guom',
         aspect: 'DISTANCE_WALK',
         confidence: 0.98,
-        reason: 'Hỏi khoảng cách và thời gian đi bộ từ Hỏa Lò ra Hồ Gươm'
+        reason: 'Hỏi khoảng cách và thời gian đi bộ từ Hỏa Lò ra Hồ Gươm / Tượng đài Lý Thái Tổ'
       };
     }
 
@@ -810,17 +846,25 @@ class IntentClassifier {
     const hasAccentedAudioStatic = matchAccentSafe(raw, norm, ['bị rè', 'rè một bên', 'rè tai', 'rè tiếng'], ['bi re', 're mot ben', 're tai', 're tieng']);
     const isNightTourBookingMentioningBox = hasPhrase(norm, 'dem thieng lieng') &&
       (hasPhrase(norm, 'dat lich') || hasPhrase(norm, 'dat truoc') || hasPhrase(norm, 'dang ky') || hasPhrase(norm, 'co ve'));
+    // Chặn tuyệt đối từ đồng âm không dấu "mang" (cầm/mang theo) ≠ "mắng" (la mắng)!
+    const hasStaffRudeness = hasPhrase(norm, 'nhan vien') && (
+      hasRawPhrase(raw, 'mắng') || hasRawPhrase(raw, 'gắt') || hasRawPhrase(raw, 'quát') ||
+      matchAccentSafe(raw, norm,
+        ['gắt gỏng', 'quát mắng', 'la mắng', 'chửi mắng', 'phục vụ kém', 'khó chịu', 'thái độ', 'thô lỗ', 'cộc cằn', 'thiếu nhiệt tình', 'bất lịch sự'],
+        ['gat gong', 'quat mang', 'la mang', 'chui mang', 'phuc vu kem', 'kho chiu', 'thai do', 'tho lo', 'coc can', 'thieu nhiet tinh', 'bat lich su']
+      )
+    );
     const isFeedbackOrComplaint = !isHist && !isNightTourBookingMentioningBox && (
       hasAccentedAudioStatic ||
       complaintSignals.some(s => hasPhrase(norm, s)) ||
-      (hasPhrase(norm, 'nhan vien') && (hasPhrase(norm, 'gat') || hasPhrase(norm, 'quat') || hasPhrase(norm, 'mang') || hasPhrase(norm, 'kem') || hasPhrase(norm, 'kho chiu') || hasPhrase(norm, 'thai do'))) ||
+      hasStaffRudeness ||
       (hasPhrase(norm, 'ban quan ly') && (hasPhrase(norm, 'gap') || hasPhrase(norm, 'gop y') || hasPhrase(norm, 'y kien') || hasPhrase(norm, 'phan anh') || hasPhrase(norm, 'dong gop')))
     );
 
     if (isFeedbackOrComplaint) {
       let subIntent = 'SERVICE_QUALITY';
       let urgency = 'NORMAL';
-      if (hasPhrase(norm, 'thai do') || hasPhrase(norm, 'nhan vien') || hasPhrase(norm, 'thieu nhiet tinh') || hasPhrase(norm, 'gat gong') || hasPhrase(norm, 'quat') || hasPhrase(norm, 'rude')) {
+      if (hasStaffRudeness || hasPhrase(norm, 'thai do') || hasPhrase(norm, 'thieu nhiet tinh') || hasPhrase(norm, 'gat gong') || hasPhrase(norm, 'quat') || hasPhrase(norm, 'rude')) {
         subIntent = 'STAFF_ATTITUDE';
         urgency = 'HIGH';
       } else if (hasAccentedAudioStatic || hasPhrase(norm, 'hong tai nghe') || hasPhrase(norm, 'tai nghe bi') || hasPhrase(norm, 'audioguide')) {
@@ -846,10 +890,14 @@ class IntentClassifier {
     }
 
     // 5. Thất lạc tài sản & Hỗ trợ mất đồ (LOST_AND_FOUND)
-    const isLostItem = !isHist && (
+    // Loại trừ quên đồ Ở NHÀ (quên ví ở nhà, quên mang áo khoác, quên mang CCCD) và "rơi nước mắt/rơi lệ"!
+    const isForgotAtHomeOrTears = hasPhrase(norm, 'quen vi o nha') || hasPhrase(norm, 'o nha') && hasPhrase(norm, 'quen') ||
+      hasPhrase(norm, 'quen mang') || hasPhrase(norm, 'roi nuoc mat') || hasPhrase(norm, 'roi le') ||
+      (hasPhrase(norm, 'mat do hoe') || hasPhrase(norm, 'sut sui'));
+    const isLostItem = !isHist && !isForgotAtHomeOrTears && (
       !norm.includes('ban roi') && !norm.includes('may bay') && !norm.includes('phi cong') &&
       (
-        /\b(?:bi roi|danh roi|lam roi|bi mat|that lac|de quen|bo quen|quen)\b.*?\b(?:vi tien|chiec vi|cai vi|bop tien|bop|dien thoai|ao khoac|tui xach|balo|giay to|tai san|do dac|do ca nhan)\b/i.test(norm) ||
+        /\b(?:bi roi|danh roi|lam roi|bi mat|that lac|de quen|bo quen)\b.*?\b(?:vi tien|chiec vi|cai vi|bop tien|bop|dien thoai|ao khoac|tui xach|balo|giay to|tai san|do dac|do ca nhan|the tu)\b/i.test(norm) ||
         hasPhrase(norm, 'mat do') || hasPhrase(norm, 'that lac') || hasPhrase(norm, 'quen do') ||
         hasPhrase(norm, 'roi vi') || hasPhrase(norm, 'roi do') || hasPhrase(norm, 'danh roi') ||
         hasPhrase(norm, 'lam roi') || hasPhrase(norm, 'mat vi') || hasPhrase(norm, 'mat dien thoai') ||
@@ -912,7 +960,8 @@ class IntentClassifier {
 
     // 7.5. Hướng dẫn & Dịch vụ thuyết minh tự động (AUDIO_GUIDE_SUPPORT — đặt TRƯỚC Accessibility để câu hỏi Audioguide có nhắc "trẻ em" không bị kéo sang vé trẻ em!)
     const audioGuideSignals = [
-      'audioguide', 'thuyet minh tu dong', 'tai nghe thuyet minh', 'may thuyet minh', '35 cau chuyen'
+      'audioguide', 'thuyet minh tu dong', 'tai nghe thuyet minh', 'may thuyet minh', '35 cau chuyen',
+      'thue may nghe', 'may nghe', 'app bao tang', 'tai ung dung'
     ];
     if (!isHist && audioGuideSignals.some(s => hasPhrase(norm, s))) {
       return {
@@ -926,13 +975,16 @@ class IntentClassifier {
     }
 
     // 8. Hỗ trợ đối tượng đặc thù, xe lăn, người cao tuổi (ACCESSIBILITY_SUPPORT)
+    // Nếu câu hỏi trực tiếp về GIÁ VÉ / MIỄN GIẢM VÉ (người khuyết tật, trẻ em, người cao tuổi) hoặc TOUR ĐÊM -> để mục Vé/Tour xử lý đúng trọng tâm!
+    const isAskingTicketPriceForGroup = /\b(gia ve|mien phi ve|giam gia ve|mien giam|duoc mien|duoc giam|tinh ve|ve tre em|mua ve|tien ve|can cuoc|giay xac nhan)\b/.test(norm);
+    const isAskingNightTourDetail = hasPhrase(norm, 'tour dem') || hasPhrase(norm, 'dem thieng lieng') || hasPhrase(norm, 'hoat canh ban dem');
     const accessibilitySignals = [
       'xe lan', 'khuyet tat', 'nguoi tan tat', 'nguoi cao tuoi', 'nguoi gia',
       'ong ba gia', 'tre em', 'tre con', 'con nho', 'tre nho', 'tre so sinh', 'xe day tre em', 'xe day em be', 'xe day', 'em be', 'bac thang',
       'loi di rieng', 'co cho ngoi nghi khong', 'ghe ngoi nghi', 'khiem thi', 'khiem thinh', 'nguoi mu', 'gay dan duong',
       'wheelchair', 'disabled', 'handicapped', 'elderly', 'senior', 'baby stroller', 'children', 'kids', 'ramp'
     ];
-    if (!isHist && accessibilitySignals.some(s => hasPhrase(norm, s))) {
+    if (!isHist && !isAskingTicketPriceForGroup && !isAskingNightTourDetail && accessibilitySignals.some(s => hasPhrase(norm, s))) {
       return {
         intent: INTENTS.ACCESSIBILITY_SUPPORT,
         subIntent: null,
@@ -968,8 +1020,9 @@ class IntentClassifier {
     // 10. Thông tin giá vé & Chính sách miễn giảm (TICKET_INFORMATION)
     const strongTicketSignals = [
       'gia ve', 've vao cong', 've vao cua', 'mua ve', 'tien ve', 've xem', 'mua o dau', 'gia bao nhieu',
-      'hssv', 'the sinh vien', 'the hoc sinh', 'giam gia ve', 'mien phi ve', 'dat ve truoc', 'dat ve',
-      'doi ve', 'tra ve', 'hoan tien ve',
+      'hssv', 'the sinh vien', 'the hoc sinh', 'giam gia ve', 'mien phi ve', 've mien phi', 'dat ve truoc', 'dat ve',
+      'doi ve', 'tra ve', 'hoan tien ve', 've dien tu', 'mua nham', 'mua san ve', 'quay ve', 'cuu chien binh', 'thuong binh',
+      'klook', 'traveloka', 've tham quan',
       'ticket', 'admission', 'entry fee', 'ticket price', 'how much is the ticket', 'how much for a ticket', 'student discount', 'free admission', 'book ticket', 'buy ticket'
     ];
     const personaDiscountSignals = ['hoc sinh', 'sinh vien', 'sv', 'uu dai', 'giam gia', 'mien phi', 'discount', 've tham quan'];
@@ -987,10 +1040,10 @@ class IntentClassifier {
       };
     }
 
-    // 11. Thông tin liên hệ, địa chỉ, hotline, website (CONTACT_INFORMATION)
+    // 11. Thông tin liên hệ, địa chỉ, hotline, website (CONTACT_INFORMATION — không khớp từ đơn "email" trong yêu cầu viết email cá nhân!)
     const contactSignals = [
       'dia chi hien nay', 'dia chi o dau', 'dia chi nha tu', 'so dien thoai', 'hotline',
-      'website', 'email', 'trang web', 'so 1 pho hoa lo', 'thong tin lien he', 'dia chi cu the'
+      'website', 'email lien he', 'dia chi email', 'email cua di tich', 'trang web', 'so 1 pho hoa lo', 'thong tin lien he', 'dia chi cu the'
     ];
     if (!isHist && contactSignals.some(s => hasPhrase(norm, s)) && !norm.includes('lang phu khanh') && !norm.includes('xay tren dat')) {
       return {
@@ -1047,13 +1100,15 @@ class IntentClassifier {
       };
     }
 
-    // 15. Tiện ích, cơ sở vật chất & Quy định gửi đồ, WC (FACILITY_INFORMATION — loại từ đơn "ve sinh" tránh bắt nhầm công tác vệ sinh bảo tồn hiện vật!)
+    // 15. Tiện ích, cơ sở vật chất & Quy định gửi đồ, WC, lưu niệm, sơ cứu nhẹ (FACILITY_INFORMATION)
     const facilitySignals = [
-      'nha ve sinh', 'di ve sinh', 've sinh o dau', 'nha ve sinh o dau', 'phong ve sinh', 'toilet', 'wc',
-      'gui do', 'cho gui do', 'tu gui do',
-      'gui balo', 'gui hanh ly', 'nuoc uong', 'mua nuoc', 'quay luu niem',
+      'nha ve sinh', 'khu ve sinh', 'di ve sinh', 've sinh o dau', 'nha ve sinh o dau', 'phong ve sinh', 'toilet', 'wc',
+      'gui do', 'cho gui do', 'tu gui do', 'quay giu do', 'mu bao hiem', 'ao mua', 'binh giu nhiet',
+      'gui balo', 'gui hanh ly', 'tui deo cheo', 'nuoc uong', 'mua nuoc', 'quay luu niem', 'cua hang luu niem',
+      'ao phong luu niem', 'coc su luu niem', 'ban dao', 'bong bang', 'urgo', 'thung rac', 'loi thoat hiem',
+      'ong xit', 'tui thuoc nho', 'diem hen',
       'mua qua', 'chup anh', 'quay phim', 'co duoc chup anh khong', 'wifi',
-      'flycam', 'may quay', 'dang huong', 'hoat dong trai nghiem'
+      'flycam', 'may quay', 'osmo pocket', 'gopro', 'quay video', 'dang huong', 'hoat dong trai nghiem'
     ];
     if (!isHist && facilitySignals.some(s => hasPhrase(norm, s))) {
       return {
@@ -1083,13 +1138,18 @@ class IntentClassifier {
       };
     }
 
-    // 16. Hướng dẫn & Lưu ý trước chuyến đi (VISIT_GUIDANCE)
+    // 16. Hướng dẫn & Lưu ý trước chuyến đi / Ứng xử tôn trọng di tích (VISIT_GUIDANCE)
+    const strictEtiquetteSignals = [
+      'ao ba lo', 'dep xo ngon', 'vay qua ngan', 'ao ho vai', 'cam cham tay', 'so nan',
+      'tao dang', 'dua lung', 'treu choc', 'nhay dieu'
+    ];
     const guidanceSignals = [
       'can biet truoc khi toi', 'truoc chuyen di', 'snapshot', 'gio mo cua, dia chi va gia ve',
       'di nhu the nao', 'loi di vao', 'loi di ra', 'huong di nao', 'tim khu vuc', 'cach quan sat',
-      'quy dinh tham quan', 'trang phuc tham quan', 'trang phuc', 'mac do gi'
+      'quy dinh tham quan', 'trang phuc tham quan', 'trang phuc', 'mac do gi',
+      'dieu hoa', 'khoang san thoang', 'tam dong cua', 'tu sua'
     ];
-    if (!isHist && guidanceSignals.some(s => hasPhrase(norm, s))) {
+    if (strictEtiquetteSignals.some(s => hasPhrase(norm, s)) || (!isHist && guidanceSignals.some(s => hasPhrase(norm, s)))) {
       return {
         intent: INTENTS.VISIT_GUIDANCE,
         subIntent: null,

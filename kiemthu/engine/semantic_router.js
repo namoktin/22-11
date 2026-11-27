@@ -290,8 +290,8 @@ function analyzeDiscourseMode(rawText, normText = null) {
   // Nhận diện tình huống Khẩn cấp thực địa của du khách hiện tại (không bao giờ bị khóa nhầm!)
   const hasPresentVictimOrCall =
     matchAccentSafe(raw, norm,
-      ['tôi bị', 'mình bị', 'em bị', 'mẹ tôi', 'bố tôi', 'con tôi', 'bé nhà tôi', 'cháu tôi', 'bạn tôi', 'vợ tôi', 'chồng tôi', 'người nhà tôi', 'vừa bị ngất', 'vừa ngất', 'đang ngất', 'gọi cấp cứu', 'bệnh viện gần nhất', 'phòng y tế ở đâu', 'trạm y tế ở đâu', 'lạc con', 'lạc bé', 'lạc cháu', 'tìm bé', 'tìm con', 'cứu với', 'khẩn cấp'],
-      ['toi bi', 'minh bi', 'me toi', 'bo toi', 'con toi', 'be nha toi', 'chau toi', 'ban toi', 'vo toi', 'chong toi', 'nguoi nha toi', 'vua bi ngat', 'vua ngat', 'dang ngat', 'goi cap cuu', 'benh vien gan nhat', 'phong y te o dau', 'tram y te o dau', 'lac con', 'lac be', 'lac chau', 'tim be', 'tim con', 'khan cap']
+      ['tôi bị', 'mình bị', 'em bị', 'mẹ tôi', 'bố tôi', 'con tôi', 'bé nhà tôi', 'cháu tôi', 'bạn tôi', 'vợ tôi', 'chồng tôi', 'người nhà tôi', 'du khách đột ngột', 'khó thở', 'bị choáng', 'vừa bị ngất', 'vừa ngất', 'đang ngất', 'gọi cấp cứu', 'bệnh viện gần nhất', 'phòng y tế ở đâu', 'trạm y tế ở đâu', 'lạc con', 'lạc bé', 'lạc cháu', 'tìm bé', 'tìm con', 'cứu với', 'khẩn cấp'],
+      ['toi bi', 'minh bi', 'me toi', 'bo toi', 'con toi', 'be nha toi', 'chau toi', 'ban toi', 'vo toi', 'chong toi', 'nguoi nha toi', 'du khach dot ngot', 'kho tho', 'bi choang', 'vua bi ngat', 'vua ngat', 'dang ngat', 'goi cap cuu', 'benh vien gan nhat', 'phong y te o dau', 'tram y te o dau', 'lac con', 'lac be', 'lac chau', 'tim be', 'tim con', 'khan cap']
     ) ||
     /\b(my son|my daughter|my child|my kid|lost child|missing kid|nearest hospital|medical emergency|ambulance|call an ambulance|just fainted|fainted right)\b/.test(norm);
 
@@ -452,7 +452,9 @@ class SemanticRouter {
       'nguyen quyen', 'le dai', 'xo viet nghe tinh', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
       'so 001', 'so 002', 'so 003', 'so 004', 'vuot nguc', 'tuong bao', 'manh thuy tinh',
       'manh sanh', 'trai j', 'trai d', 'trai i', 'lap la', 'phong giam', 'buong giam', 'nha tu', 'di tich',
-      'nha de lao', 'tuong sap', 'sa ban', 'quay luu niem', 'tui tote', 'cai nguc', 'giam nguc', 'cap rang'
+      'nha de lao', 'tuong sap', 'sa ban', 'quay luu niem', 'tui tote', 'cai nguc', 'giam nguc', 'cap rang',
+      'quay ve', 'cong kiem soat', 'quay giu do', 'tu gui do', 'quay thong tin', 'may nghe', 'suat dien',
+      'hoat canh', 've dien tu', 'cua hang luu niem', 'tuong tu nhan', 'cuu tu', 'khu giam', 'san di tich'
     ];
     return coreTerms.some(t => hasPhrase(normText, t));
   }
@@ -548,7 +550,21 @@ class SemanticRouter {
       return { isOps: false, subType: null };
     }
 
+    // Khu vực nội bộ / đóng cửa chỉ dành cho nhân viên & Bảo mật thông tin cá nhân/tài chính nội bộ
+    if (hasPhrase(normText, 'khu vuc chi danh cho nhan vien') || hasPhrase(normText, 'chi danh cho nhan vien') ||
+        (hasPhrase(normText, 'hanh lang dong cua') && hasPhrase(normText, 'nhan vien')) ||
+        hasPhrase(normText, 'tai lieu tuyet mat')) {
+      return { isOps: true, subType: 'OPS_RESTRICTED_STAFF_AREA' };
+    }
+    if ((hasPhrase(normText, 'ten day du') && (hasPhrase(normText, 'huong dan vien') || hasPhrase(normText, 'nhan vien'))) ||
+        (hasPhrase(normText, 'luong thuong') && (hasPhrase(normText, 'giam doc') || hasPhrase(normText, 'nhan vien'))) ||
+        hasPhrase(normText, 'tong doanh thu') || hasPhrase(normText, 'doanh thu ban ve')) {
+      return { isOps: true, subType: 'OPS_PRIVACY_STAFF_DATA' };
+    }
+
     // Mang đồ ăn / thức uống / rượu bia / kẹo bánh vào di tích (OPS_FOOD_DRINK_PROHIBITED)
+    // Loại trừ rõ câu hỏi công thức nấu ăn/pha chế tại nhà và chăm sóc thú cưng ở nhà!
+    const isCookingOrPetHomeQuery = /\b(cong thuc|ham xuong|rang vua|u lanh|cold brew|arabica|nau pho|pha che|rung long|luoi an|thu y|meo anh)\b/.test(normText);
     const hasExplicitAccentedSnack = matchAccentSafe(rawText, normText, ['kẹo', 'bánh'], []);
     const hasViFoodCompound = /\b(do an|thuc an|thuc pham|nuoc uong|do uong|an uong|ruou bia|uong bia|lon bia|chai bia|nuoc ngot|keo cao su|banh keo|banh mi|banh ngot|tra sua|ca phe)\b/.test(normText);
     const hasEnFoodWord = mode.isEnglishInput && /\b(food|drink|drinks|beverage|snack|snacks)\b/.test(normText);
@@ -556,6 +572,7 @@ class SemanticRouter {
     const hasPrisonerHistoricalMeal = /\b(tu nhan|tu chinh tri|chien si|ngay xua|thoi phap|trong tu|bua an tu|com tu|rau muong|ca mam|prisoners|inmates|rations)\b/.test(normText);
 
     if ((hasViFoodCompound || hasEnFoodWord || hasExplicitAccentedSnack) &&
+        !isCookingOrPetHomeQuery &&
         !hasHistoricalExecutionOrPlaque &&
         !hasPrisonerHistoricalMeal &&
         /\b(mang|dem|duoc khong|co duoc|cho phep|cam|quy dinh|vao|trong|bring|inside|allowed|prohibited)\b/.test(normText)) {
@@ -565,14 +582,15 @@ class SemanticRouter {
     if ((hasPhrase(normText, 'hut thuoc') || (mode.isEnglishInput && hasPhrase(normText, 'smoking'))) && !hasPhrase(normText, 'tau hut thuoc')) {
       return { isOps: true, subType: 'OPS_SMOKING_VIOLATION' };
     }
-    // Mang thú cưng / chó mèo (Nguyên lý 1: Luật tiếng Anh cat/dog/pet CHỈ chạy khi câu là tiếng Anh! Chấm dứt 100% lỗi cắt/cất -> cat!)
-    // Với từ đơn "chó" / "mèo" / "cún": chỉ khớp dạng có dấu khi có dấu, còn không dấu dùng cụm ghép ("cho meo", "thu cung", "cho cung", "dan cho"...) để không bắt nhầm giới từ "cho"!
-    const hasViPet =
+    // Mang thú cưng / chó mèo (Nguyên lý 1: Luật tiếng Anh cat/dog/pet CHỈ chạy khi câu là tiếng Anh! Chặn địa danh "Mèo Vạc" Hà Giang & bệnh thú cưng ở nhà!)
+    const isMeoVacOrPetCareHome = hasPhrase(normText, 'meo vac') || hasPhrase(normText, 'ha giang') || hasPhrase(normText, 'rung long') || hasPhrase(normText, 'thu y') || hasPhrase(normText, 'luoi an');
+    const hasViPet = !isMeoVacOrPetCareHome && (
       ['chó', 'mèo', 'cún'].some(w => hasRawPhrase(rawText, w)) ||
       matchAccentSafe(rawText, normText,
         ['thú cưng', 'vật nuôi', 'động vật', 'chó mèo', 'chó cưng', 'mèo con', 'chú mèo', 'chó con', 'cún con', 'dẫn chó', 'dắt chó', 'dẫn mèo'],
         ['thu cung', 'vat nuoi', 'dong vat', 'cho meo', 'cho cung', 'meo con', 'chu meo', 'cho con', 'cun con', 'dan cho', 'dat cho', 'dan meo']
-      );
+      )
+    );
     const hasEnPet = mode.isEnglishInput && /\b(pet|pets|dog|cat|puppy|kitten)\b/.test(normText);
     if ((hasViPet || hasEnPet) &&
         /\b(tham quan|vao|vo|mang|dan|dem|xem|bring|inside|enter|allowed)\b/.test(normText)) {
@@ -582,8 +600,9 @@ class SemanticRouter {
     if (hasPhrase(normText, 'flycam') || hasPhrase(normText, 'drone')) {
       return { isOps: true, subType: 'OPS_DRONE_PROHIBITED' };
     }
-    // Livestream bán hàng / Chụp ảnh cưới / Sự kiện thương mại / Thuê mặt bằng tiệc gala
-    if (hasPhrase(normText, 'livestream') || hasPhrase(normText, 'ban hang') || hasPhrase(normText, 'chup anh cuoi') || hasPhrase(normText, 'anh cuoi') || hasPhrase(normText, 'tiec gala') || (hasPhrase(normText, 'thue') && (hasPhrase(normText, 'mat bang') || hasPhrase(normText, 'khong gian') || hasPhrase(normText, 'su kien')))) {
+    // Livestream bán hàng / Chụp ảnh cưới / Sự kiện thương mại / Thuê mặt bằng tiệc gala (loại trừ hợp đồng thuê nhà dân sinh / thuế TNCN!)
+    const isExternalContractOrTax = hasPhrase(normText, 'hop dong thue') || hasPhrase(normText, 'thue nha') || hasPhrase(normText, 'thue phong') || hasPhrase(normText, 'thue thu nhap') || hasPhrase(normText, 'ke khai');
+    if (!isExternalContractOrTax && (hasPhrase(normText, 'livestream') || hasPhrase(normText, 'ban hang') || hasPhrase(normText, 'chup anh cuoi') || hasPhrase(normText, 'anh cuoi') || hasPhrase(normText, 'tiec gala') || (hasPhrase(normText, 'thue') && (hasPhrase(normText, 'mat bang') || hasPhrase(normText, 'khong gian') || hasPhrase(normText, 'su kien'))))) {
       return { isOps: true, subType: 'OPS_COMMERCIAL_INAPPROPRIATE' };
     }
     // Sạc pin / ổ cắm / sạc dự phòng
@@ -592,12 +611,14 @@ class SemanticRouter {
         hasPhrase(normText, 'diem sac') || hasPhrase(normText, 'power bank') || hasPhrase(normText, 'charge my phone')) {
       return { isOps: true, subType: 'OPS_PHONE_CHARGING' };
     }
-    // WiFi / Mật khẩu WiFi
-    if (hasPhrase(normText, 'wifi') || hasPhrase(normText, 'wi fi')) {
+    // WiFi / Mật khẩu WiFi (loại trừ tấn công/mật khẩu router TP-Link hoặc WiFi nội bộ BQL!)
+    if ((hasPhrase(normText, 'wifi') || hasPhrase(normText, 'wi fi')) &&
+        !hasPhrase(normText, 'tp link') && !hasPhrase(normText, 'mac dinh') && !hasPhrase(normText, 'wifi noi bo')) {
       return { isOps: true, subType: 'OPS_WIFI_ACCESS' };
     }
-    // Phương thức thanh toán: USD, thẻ tín dụng, quẹt thẻ, chuyển khoản, QR
-    if (hasPhrase(normText, 'credit card') || hasPhrase(normText, 'us dollars') || hasPhrase(normText, 'usd') || hasPhrase(normText, 'the tin dung') || hasPhrase(normText, 'the visa') || hasPhrase(normText, 'quet the') || hasPhrase(normText, 'chuyen khoan') || hasPhrase(normText, 'thanh toan qr') || (mode.isEnglishInput && hasPhrase(normText, 'accept') && hasPhrase(normText, 'dollar'))) {
+    // Phương thức thanh toán: USD, thẻ tín dụng, quẹt thẻ, chuyển khoản, QR, Apple Pay (loại trừ gian lận thẻ giả/Luhn/CVV & vay ngân hàng!)
+    const isCardFraudOrLoan = hasPhrase(normText, 'luhn') || hasPhrase(normText, 'cvv') || hasPhrase(normText, 'vay ngan hang') || hasPhrase(normText, 'chuyen khoan giu cho') || hasPhrase(normText, 'bao tru tien');
+    if (!isCardFraudOrLoan && (hasPhrase(normText, 'credit card') || hasPhrase(normText, 'us dollars') || hasPhrase(normText, 'usd') || hasPhrase(normText, 'the tin dung') || hasPhrase(normText, 'the visa') || hasPhrase(normText, 'quet the') || hasPhrase(normText, 'apple pay') || hasPhrase(normText, 'samsung pay') || hasPhrase(normText, 'chuyen khoan') || hasPhrase(normText, 'thanh toan qr') || (mode.isEnglishInput && hasPhrase(normText, 'accept') && hasPhrase(normText, 'dollar')))) {
       return { isOps: true, subType: 'OPS_PAYMENT_METHODS' };
     }
     // Rách vé / Hỏng vé giấy / Mất vé giấy (bảo toàn dấu tránh "về" / "vẽ")
@@ -614,6 +635,7 @@ class SemanticRouter {
     const hasGroupBookingAction = hasPhrase(normText, 'dang ky') || hasPhrase(normText, 'dat truoc') || hasPhrase(normText, 'dat lich') ||
       hasPhrase(normText, 'thu tuc') || hasPhrase(normText, 'huong dan vien') || hasPhrase(normText, 'thuyet minh vien') ||
       hasPhrase(normText, 'group booking') || hasPhrase(normText, 'school group') || hasPhrase(normText, 'mien phi') || hasPhrase(normText, 'gia ve') ||
+      hasPhrase(normText, 'hoa don') || hasPhrase(normText, 'lien he') || hasPhrase(normText, 'cong ty du lich') ||
       /\b[2-9]\d\s*(?:nguoi|hoc sinh|khach|em|be)\b/.test(normText);
     const isSoloCrowdTimingAsk = (hasPhrase(normText, 'khung gio') || hasPhrase(normText, 'khong bi on') || hasPhrase(normText, 'lang dong') || hasPhrase(normText, 'it dong') || hasPhrase(normText, 'vang khach')) && !hasGroupBookingAction;
     if (isGroupEntity && hasGroupBookingAction && !isSoloCrowdTimingAsk) {

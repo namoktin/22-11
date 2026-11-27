@@ -697,7 +697,11 @@ class IntelligentAnswerComposer {
           'FACILITY_INFORMATION', 'FACILITY_SUPPORT', 'TOUR_RECOMMENDATION',
           'ACCESSIBILITY_SUPPORT', 'VISIT_GUIDANCE'
         ]);
-        if (nonUrgentCareIntents.has(intent) && qWordCount >= 22) {
+        const genericScenarioIds = new Set([
+          'TICKET_GENERAL_DAYTIME', 'HOURS_GENERAL', 'FACILITY_GENERAL',
+          'TOUR_STANDARD_ITINERARY', 'AUDIO_GUIDE_SERVICE', 'ACCESSIBILITY_WHEELCHAIR'
+        ]);
+        if (nonUrgentCareIntents.has(intent) && genericScenarioIds.has(scenarioRes.scenarioId) && qWordCount >= 22) {
           retrievedData.facts.push(scenarioRes.response);
           if (groqCaller) {
             const nuancedRag = await this.runUniversalGroundedRAG({
@@ -833,8 +837,12 @@ class IntelligentAnswerComposer {
           }, intent, retrievedData);
         }
         if (semGate.passed) {
+          let semReply = unifiedSemHit.doc.answer.trim();
+          if (language === 'vi' && semReply && !/^(Dạ|Chào|Mình|Bạn|Hiện|Theo|Với|Xin|KHẨN)/i.test(semReply)) {
+            semReply = `Dạ, ${semReply}`;
+          }
           return this.formatResponse({
-            reply: unifiedSemHit.doc.answer,
+            reply: semReply,
             style: 'DEEP_EXPLANATION',
             confidence: unifiedSemHit.score >= 0.65 ? 'HIGH' : 'MEDIUM',
             confidenceScore: Number(Math.min(0.95, unifiedSemHit.score + 0.12).toFixed(2)),
@@ -1191,7 +1199,11 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }, 'OUT_OF_SCOPE', retrievedData);
     }
 
-    if (/\b(con dao|phu quoc|alcatraz|bastille)\b/.test(normQ)) {
+    if (/\b(thoi tiet|weather|nhiet do|du bao)\b/.test(normQ)) {
+      reply = isEn
+        ? 'I do not have access to live meteorological forecasts, so checking a weather app will give you the most accurate hour-by-hour update. The comforting news for your visit is that roughly 85 to 90 percent of Hoa Lo Prison Relic’s galleries are comfortably indoors with sheltered walkways—how can I assist your tour here?'
+        : 'Dạ hệ thống hướng dẫn tại di tích không kết nối dữ liệu dự báo thời tiết theo thời gian thực, nên bạn có thể xem nhanh trên ứng dụng thời tiết cho chính xác nhất. Rất thuận tiện là khoảng 85 đến 90 phần trăm không gian tham quan tại Di tích Nhà tù Hỏa Lò đều ở trong nhà có mái che kiên cố, bạn hoàn toàn yên tâm khám phá cùng mình.';
+    } else if (/\b(alcatraz|bastille)\b/.test(normQ) || (/\b(con dao|phu quoc)\b/.test(normQ) && /\b(nha tu|trai giam|di tich|lich su|tu nhan|so sanh)\b/.test(normQ))) {
       reply = isEn
         ? 'Those renowned historic prisons—such as Con Dao, Phu Quoc, the Bastille, or Alcatraz—each carry powerful chapters of history in their own right, though their archives lie outside our site. Here at Hoa Lo Prison in the heart of Hanoi, you can experience a uniquely Vietnamese story of resilience from the French colonial era through 1973; would you like to explore one of our galleries?'
         : 'Dạ những nhà tù lịch sử như Côn Đảo, Phú Quốc hay Bastille, Alcatraz đều ghi dấu những trang sử đặc biệt, song mỗi nơi có hệ thống tư liệu riêng ngoài phạm vi Di tích Hỏa Lò. Riêng tại Nhà tù Hỏa Lò giữa lòng thủ đô Hà Nội, câu chuyện về ý chí biến nhà tù thành trường học cách mạng mang một dấu ấn rất riêng—bạn có muốn mình chia sẻ sâu hơn về điểm khác biệt này không?';
@@ -1486,14 +1498,14 @@ ${compactContext}`;
    * Kiểm tra và xử lý toàn diện các bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (Core Factual Traps V6.2)
    */
   checkFactualTraps(normQ, language = 'vi', session = null, rawQuestion = '') {
-    // 0. Câu hỏi tâm linh / có ma không tại di tích (bản ngữ 6 ngôn ngữ)
-    if (/\b(co ma khong|nhieu ma khong|bi am khong|ma am|hon ma|haunted|ghosts|ghost)\b/i.test(normQ)) {
+    // 0. Câu hỏi tâm linh / có ma không / nặng vía / tháng cô hồn / ám quẻ tại di tích (bản ngữ 6 ngôn ngữ)
+    if (/\b(co ma khong|nhieu ma khong|bi am khong|ma am|hon ma|nang via|dot via|thang co hon|am que|haunted|ghosts|ghost)\b/i.test(normQ)) {
       return {
         reply: getDocentReply('GHOST_MYTH_FACT_CHECK', language),
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['HOA_LO_AUTHENTICITY_GUIDANCE'],
-        claims: ['Di tích lịch sử trang nghiêm, không có yếu tố ma quái'],
+        claims: ['Di tích lịch sử trang nghiêm, không có yếu tố ma quái hay xui xẻo'],
         responseType: 'FACTUAL_TRAP_CORRECTED'
       };
     }

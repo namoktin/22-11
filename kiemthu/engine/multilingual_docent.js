@@ -305,12 +305,30 @@ const DOCENT_MESSAGES = {
   },
 
   OPS_GROUP_BOOKING: {
-    vi: 'Trẻ em dưới 15 tuổi (bao gồm học sinh tiểu học) được MIỄN PHÍ vé tham quan tại Di tích Nhà tù Hỏa Lò bạn nhé! Với các đoàn đông học sinh hoặc đoàn tham quan theo nhóm lớn, nhà trường nên liên hệ đăng ký trước với Phòng Trưng bày - Tuyên truyền qua số 024.39342253 hoặc email banquanlyditichhoalo@gmail.com để Ban Quản lý hỗ trợ đón tiếp chu đáo, phân luồng an toàn và bố trí thuyết minh đoàn phù hợp.',
-    en: 'Children under 15 years old (including elementary school students) receive FREE admission to Hoa Lo Prison Relic! For large school or tour groups, we strongly recommend contacting the Exhibition & Education Department in advance via 024.39342253 or email banquanlyditichhoalo@gmail.com to arrange smooth entry and optional guided support.',
-    fr: 'L’entrée à la Prison de Hoa Lo est gratuite pour les enfants de moins de 15 ans. Pour les groupes scolaires ou les grands groupes touristiques, il est vivement recommandé de réserver à l’avance auprès du service éducatif au 024 3934 2253 afin d’organiser un accueil fluide et un guide dédié.',
-    ja: '15歳未満のお子様はホアロー収容所の入場料が無料となっております。学校団体や大人数のグループでお越しの際は、円滑なご案内とガイド手配のため、事前に遺跡管理委員会の電話番号024-3934-2253までご連絡いただくことをおすすめいたします。',
-    ko: '만 15세 미만 어린이는 호아로 수용소 입장이 무료입니다. 대규모 학생 단체나 투어 그룹은 원활한 입장과 단체 해설 배정을 위해 사전에 유적 관리위원회 전화 024-3934-2253으로 예약 문의하시는 것을 권장합니다.',
-    zh: '15岁以下儿童可免费参观河内火炉监狱。对于大型学生团队或旅游团体，建议提前致电遗迹管理委员会 024-3934-2253 预约登记，以便妥善安排入馆分流与团队讲解服务。'
+    vi: 'Với các đoàn tham quan đông người (cơ quan, công ty, công ty du lịch hoặc đoàn học sinh, trường học), bạn nên liên hệ đăng ký trước với Phòng Trưng bày - Tuyên truyền qua số 024.39342253 hoặc email banquanlyditichhoalo@gmail.com để Ban Quản lý hỗ trợ đón tiếp chu đáo, phân luồng an toàn và bố trí thuyết minh viên phù hợp. Riêng trẻ em và học sinh dưới 15 tuổi được miễn phí vé tham quan bạn nhé!',
+    en: 'For large delegations, corporate groups, travel agencies, or school groups, we strongly recommend contacting the Exhibition & Education Department in advance via 024.39342253 or email banquanlyditichhoalo@gmail.com to arrange smooth entry and optional guided support. Children under 15 years old receive free admission.',
+    fr: 'Pour les groupes scolaires, entreprises ou agences de voyage, il est vivement recommandé de réserver à l’avance auprès du service éducatif au 024 3934 2253 afin d’organiser un accueil fluide et un guide dédié. L’entrée est gratuite pour les enfants de moins de 15 ans.',
+    ja: '学校団体や企業・旅行会社の大人数グループでお越しの際は、円滑なご案内とガイド手配のため、事前に遺跡管理委員会の電話番号024-3934-2253までご連絡いただくことをおすすめいたします。15歳未満のお子様は入場無料です。',
+    ko: '기관, 기업, 여행사 또는 대규모 학생 단체로 방문하실 경우 원활한 입장과 단체 해설 배정을 위해 사전에 유적 관리위원회 전화 024-3934-2253으로 예약 문의하시는 것을 권장합니다. 만 15세 미만 어린이는 무료 입장입니다.',
+    zh: '对于机关单位、旅行社或大型学生团队，建议提前致电遗迹管理委员会 024-3934-2253 预约登记，以便妥善安排入馆分流与团队讲解服务。15岁以下儿童可免费参观。'
+  },
+
+  OPS_RESTRICTED_STAFF_AREA: {
+    vi: 'Dạ các khu vực có biển "Chỉ dành cho nhân viên", hành lang đóng cửa hoặc kho lưu trữ bảo quản hiện vật đều là khu vực nội bộ nghiêm cấm du khách tự ý đi vào để đảm bảo an ninh và an toàn bảo tồn di tích. Bạn vui lòng chỉ tham quan trong tuyến trưng bày mở cửa đón khách theo biển chỉ dẫn nhé.',
+    en: 'Areas marked "Staff Only," closed corridors, and relic storage archives are strictly restricted to authorized personnel to protect site security and artifact conservation. Visitors are kindly requested to remain within the designated public exhibition route.',
+    fr: 'Les zones réservées au personnel, couloirs fermés et réserves d’archives sont strictement interdits au public afin de préserver la sécurité et les collections. Merci de suivre uniquement le parcours de visite balisé.',
+    ja: '「関係者以外立入禁止」エリアや閉鎖中の廊下、収蔵庫は文化財保護と安全管理のため立ち入りが固く禁止されております。必ず一般公開されている見学ルート内をご移動ください。',
+    ko: '직원 전용 구역, 폐쇄된 복도 및 유물 수장고는 보안과 유물 보존을 위해 관람객 출입이 엄격히 금지되어 있습니다. 지정된 공개 관람 동선 안에서만 관람해 주세요.',
+    zh: '标有“仅限工作人员进入”的区域、封闭走廊及文物库房均属内部管控区，严禁游客擅自进入，请您沿开放展区指引有序参观。'
+  },
+
+  OPS_PRIVACY_STAFF_DATA: {
+    vi: 'Dạ để tôn trọng quyền riêng tư cá nhân và tuân thủ quy định bảo mật thông tin nội bộ của Ban Quản lý Di tích Nhà tù Hỏa Lò, mình không thể cung cấp thông tin cá nhân của nhân viên (như họ tên riêng, số điện thoại, mạng xã hội) hay số liệu lương thưởng, doanh thu nội bộ. Nếu cần liên hệ công tác chính thức, bạn vui lòng gọi số 024.39342253 hoặc 024.39342317 nhé.',
+    en: 'To protect personal privacy and internal confidentiality of Hoa Lo Prison Relic Management Board, I cannot disclose personal staff details (full names, phone numbers, social media) or internal financial/payroll figures. For official inquiries, please contact 024.39342253 or 024.39342317.',
+    fr: 'Par respect pour la vie privée du personnel et la confidentialité interne de la direction du site, je ne peux communiquer ni coordonnées personnelles ni données financières internes. Pour toute demande officielle, veuillez appeler le 024 3934 2253.',
+    ja: '職員のプライバシーおよび管理委員会の内部機密保護のため、個人連絡先や内部の給与・売上データはお伝えできません。公式なお問い合わせは 024-3934-2253 までご連絡ください。',
+    ko: '직원의 개인정보 및 내부 기밀 보호를 위해 개인 연락처나 내부 급여·매출 정보는 제공해 드릴 수 없습니다. 공식 문의는 024-3934-2253으로 연락해 주세요.',
+    zh: '为保护工作人员个人隐私及遗迹管理委员会内部保密规定，我无法提供员工个人联系方式或内部薪酬、营收数据。如有公务咨询，请致电 024-3934-2253。'
   },
 
   OPS_COMMERCIAL_INAPPROPRIATE: {

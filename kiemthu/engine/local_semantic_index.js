@@ -236,10 +236,10 @@ class LocalSemanticIndex {
         }
         if (!sharedEntity) continue;
       } else if (qVec.entities.size === 0 && docEnts.size > 0) {
-        // Câu hỏi KHÔNG nhắc phi công Mỹ / cống ngầm / trống đồng / chuông / bảo kiếm nhưng đáp án chuyên biệt về chúng -> phạt điểm mạnh
-        const specializedExclusives = ['E_PILOTS', 'E_SEWER', 'E_DRUM', 'E_BELL', 'E_SWORD', 'E_GUILLOTINE'];
+        // Câu hỏi KHÔNG nhắc phi công Mỹ / cống ngầm / trống đồng / chuông / bảo kiếm / máy chém / cây bàng / Cachot -> phạt điểm mạnh để chống lạc đề!
+        const specializedExclusives = ['E_PILOTS', 'E_SEWER', 'E_DRUM', 'E_BELL', 'E_SWORD', 'E_GUILLOTINE', 'E_BANYAN', 'E_CACHOT'];
         if (specializedExclusives.some(e => docEnts.has(e))) {
-          entityPenalty = -0.24;
+          entityPenalty = -0.26;
         }
       }
 

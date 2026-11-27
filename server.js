@@ -1672,11 +1672,14 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
         return await enforceStrictLang(await answerFromBeaconData(rawQuery, matchedByName, lockedLang));
       }
 
-      // Không để từ chỉ định đời thường ("quanh đây", "hôm nay", "it", "this") ghi đè câu trả lời ngoài lề tinh tế thành bài thuyết minh Beacon!
-      const hasDeicticPronoun = /\b(cai nay|hien vat nay|vat nay|cho nay|khu nay|o day|tai day|tai cho nay|cay nay|trong nay|chuong nay|kiem nay|truoc mat|no|day|this|it|here)\b/.test(normQ);
-      if (!isGracefulDocentOos && kiemthuResult.intent !== 'OUT_OF_SCOPE' && hasDeicticPronoun && artifactContext) {
-        const normArtifact = normalizeVnText(artifactName);
-        const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|chỗ này|cho nay|khu này|khu nay|tại đây|tai day|ở đây|o day|\bnó\b)/gi, artifactName);
+      // CHỈ retry kèm vị trí BLE khi khách ĐÍCH DANH chỉ vào hiện vật không nêu tên ngay trước mặt!
+      // Tuyệt đối KHÔNG khớp từ đơn "day" (dãy/dây/dày/đây), "no" (nọ/nổ), hay "o day" (chỉ cả Di tích Hỏa Lò)!
+      const mentionsConcreteTopicOrSite = /\b(hoa lo|nha tu|di tich|buong giam|xa lim|quay ve|ve tham quan|chup anh|quay phim|tiktok|gopro|hack|mat khau|o khoa|tuong gach)\b/.test(normQ);
+      const hasExplicitExhibitDeictic = !mentionsConcreteTopicOrSite && (
+        /\b(cai nay|hien vat nay|vat nay|cho toi dang dung|noi toi dang dung|cho nay la gi|khu nay la gi|cay nay|trong nay|chuong nay|kiem nay|truoc mat toi|truoc mat minh|this exhibit|this artifact|in front of me|where am i)\b/.test(normQ)
+      );
+      if (!isGracefulDocentOos && kiemthuResult.intent !== 'OUT_OF_SCOPE' && hasExplicitExhibitDeictic && artifactContext) {
+        const replacedQuery = lookupQuery.replace(/(cái này|cai nay|hiện vật này|hien vat nay|vật này|vat nay|cây này|cay nay|trống này|trong nay|chuông này|chuong nay|kiếm này|kiem nay)/gi, artifactName);
         const contextualQuery = replacedQuery !== lookupQuery ? replacedQuery : `${artifactName}: ${lookupQuery}`;
         console.log(`📍 [BLE Context Retry] Hỏi lại kèm vị trí BLE (${artifactName}): "${contextualQuery}"`);
         const retryResult = await callKiemThuOnce(contextualQuery, sessionId, lockedLang, artifactContext);

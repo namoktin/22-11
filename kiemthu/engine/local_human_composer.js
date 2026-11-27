@@ -20,7 +20,7 @@ const crypto = require('crypto');
 const VI_SAFE_SYNONYMS = [
   [/Di tích Lịch sử Nhà tù Hỏa Lò/g, ['Di tích Lịch sử Nhà tù Hỏa Lò', 'Di tích Nhà tù Hỏa Lò', 'khu di tích lịch sử Hỏa Lò']],
   [/Di tích Nhà tù Hỏa Lò/g, ['Di tích Nhà tù Hỏa Lò', 'Nhà tù Hỏa Lò', 'khu di tích Hỏa Lò']],
-  [/Nhà tù Hỏa Lò/g, ['Nhà tù Hỏa Lò', 'Di tích Hỏa Lò', 'chốn lao tù Hỏa Lò']],
+  [/(?<!Di tích\s+)(?<!Lịch sử\s+)Nhà tù Hỏa Lò/g, ['Nhà tù Hỏa Lò', 'Di tích Nhà tù Hỏa Lò', 'Di tích Hỏa Lò']],
   [/các tù nhân chính trị/g, ['các tù nhân chính trị', 'các chiến sĩ cách mạng', 'những người tù yêu nước', 'anh chị em tù chính trị']],
   [/các chiến sĩ cách mạng/g, ['các chiến sĩ cách mạng', 'những người chiến sĩ kiên trung', 'các tù nhân chính trị', 'những người yêu nước']],
   [/du khách/g, ['du khách', 'quý khách', 'khách tham quan', 'anh chị']],
@@ -215,6 +215,10 @@ function composeLocalHumanVariation({
     'CUSTOMER_COMPLAINT'
   ]);
   if (BYPASS_INTENTS.has(intent)) {
+    return baseReply;
+  }
+  // TUYỆT ĐỐI KHÔNG bọc lời dẫn lịch sử ("kể cùng bạn về dấu tích này", "câu chuyện lịch sử này") vào câu khước từ / thiếu tư liệu / dịch vụ thực địa!
+  if (/chưa được ghi nhận|không được ghi nhận|ngoài phạm vi|vượt ra ngoài kho tư liệu|chưa tìm thấy trong hồ sơ|rất tiếc.*không thể|phòng thường trực bảo vệ|quầy vé|vé vào cổng|vé tham quan|máy thuyết minh|xe buýt|điểm ghim|điều hòa|hộp xốp|cửa hàng tiện lợi|xích lô|nhà vệ sinh/i.test(baseReply)) {
     return baseReply;
   }
 

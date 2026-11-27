@@ -305,6 +305,34 @@ class CustomerCareScenarioEngine {
         };
       }
 
+      const isTicketEdgeRefundOrBuyAhead = /mua nham|huy tra|doi gio|ve dien tu|mua san ve|bao tru tien|chua thay.*xuat ve|khong qua duoc|hoan ve|doi ngay/i.test(normQuery);
+      if (isTicketEdgeRefundOrBuyAhead) {
+        return {
+          scenarioId: 'TICKET_EXCHANGE_OR_PAYMENT_SUPPORT',
+          response: isEn
+            ? 'Daytime tickets are normally valid on the day of issue and non-refundable once printed. If you accidentally bought the wrong quantity, need to hand a pre-bought ticket to a companion arriving shortly, wish to check e-ticket rescheduling, or saw your payment deducted without receiving a ticket, please show your transfer receipt/booking confirmation directly to the Cashier Supervisor at Ticket Counter Gate No. 1 for prompt verification.'
+            : 'Dạ vé tham quan ban ngày thông thường có giá trị trong ngày và không tự động hoàn hủy sau khi xuất vé. Nếu bạn mua nhầm số lượng, cần mua sẵn vé cho người thân đến sau ít phút, muốn hỏi đổi khung giờ vé điện tử hay gặp lỗi app đã trừ tiền nhưng chưa nhận được vé, bạn hãy mang ngay biên lai chuyển khoản hoặc mã xác nhận tới Quầy vé Cổng chính số 1 để Trưởng quầy vé kiểm tra đối chiếu và hỗ trợ kịp thời nhé.',
+          authorityBoundary: 'Trưởng quầy vé Cổng chính số 1 trực tiếp kiểm tra giao dịch và hỗ trợ.',
+          actionableGuidance: 'Đưa biên lai/mã đặt vé cho Trưởng quầy vé tại Cổng chính số 1.',
+          requiresHuman: true,
+          style: 'CUSTOMER_CARE'
+        };
+      }
+
+      const isSpecialExemption = /khuyet tat|huong dan vien|the nha bao|nha bao|cuu tu|cuu chien binh|thuong binh|nguoi co cong|can cuoc|vneid|anh chup the|quen vi o nha|quen the/i.test(normQuery);
+      if (isSpecialExemption) {
+        return {
+          scenarioId: 'TICKET_SPECIAL_EXEMPTION',
+          response: isEn
+            ? 'Under current policy, free entry applies to children under 15 and revolutionary contributors, while a 50% discount (25,000 VND) applies to students with valid ID, seniors 60+, and severely disabled visitors. For licensed tour guides, press cards, companions of disabled guests, ex-prisoner relatives, or presenting a digital ID (VNeID/school app) when forgetting your physical card, please show your documents directly at Ticket Counter Gate No. 1 for staff verification.'
+            : 'Dạ theo quy định hiện hành, Di tích Hỏa Lò miễn phí vé cho trẻ em dưới 15 tuổi và người có công với cách mạng; giảm 50% (còn 25.000 VNĐ) cho học sinh, sinh viên có thẻ hợp lệ, người cao tuổi từ 60 tuổi và người khuyết tật nặng. Với trường hợp người đi cùng người khuyết tật, thẻ hướng dẫn viên du lịch, thẻ nhà báo, thân nhân cựu tù hoặc quên thẻ cứng muốn xuất trình VNeID/thẻ điện tử, bạn vui lòng trình giấy tờ liên quan trực tiếp tại Quầy vé Cổng số 1 để nhân viên kiểm tra và áp dụng đúng chế độ ưu đãi nhé.',
+          authorityBoundary: 'Nhân viên Quầy vé Cổng số 1 kiểm tra giấy tờ miễn giảm theo quy định.',
+          actionableGuidance: 'Xuất trình giấy tờ xác nhận/VNeID tại Quầy vé Cổng số 1.',
+          requiresHuman: false,
+          style: 'CUSTOMER_CARE'
+        };
+      }
+
       if (normQuery.includes('sinh vien') || normQuery.includes('hoc sinh') || normQuery.includes('hssv') || normQuery.includes('giam gia')) {
         return {
           scenarioId: 'TICKET_DISCOUNT_STUDENT',
@@ -380,9 +408,23 @@ class CustomerCareScenarioEngine {
         };
       }
       const isRestroom = /ve sinh|toilet|wc|nha ve sinh/i.test(normQuery);
-      const isStorage = /gui do|de do|ba lo|balo|hanh ly|gui balo|cho gui do|tu gui do/i.test(normQuery);
-      const isSouvenir = /luu niem|mua qua|qua tang|quay luu niem/i.test(normQuery);
-      const isPhoto = /chup anh|quay phim/i.test(normQuery);
+      const isStorage = /gui do|de do|ba lo|balo|hanh ly|gui balo|cho gui do|tu gui do|mu bao hiem|cap laptop|laptop|ao mua|o dai|o gap|binh giu nhiet|binh nuoc/i.test(normQuery);
+      const isMinorFirstAid = /xuoc.*ngon tay|bong bang|urgo|bang ca nhan|con sat khuan|quay y te/i.test(normQuery);
+      const isSouvenir = /luu niem|mua qua|qua tang|quay luu niem|ao phong|coc su|tui tote|ban dao|nam cham|buu thiep|tinh dau|linh vat/i.test(normQuery);
+      const isPhoto = /chup anh|quay phim|gopro|osmo|youtube|tao dang|tuong|cham tay|tua lung/i.test(normQuery);
+
+      if (isMinorFirstAid) {
+        return {
+          scenarioId: 'FACILITY_MINOR_FIRST_AID',
+          response: isEn
+            ? 'Yes, the Reception and First Aid Station at Gate No. 1 keeps a basic first-aid kit with band-aids and antiseptic. Please approach the nearest staff member or Gate No. 1 reception for immediate help cleaning and dressing your scratch.'
+            : 'Dạ có bạn nhé! Phòng trực và Trạm sơ cứu tại Cổng chính số 1 Hỏa Lò có sẵn tủ thuốc sơ cứu cơ bản (băng cá nhân urgo, bông gạc, cồn sát khuẩn). Bạn hãy báo nhân viên gần nhất hoặc ghé ngay quầy lễ tân Cổng số 1 để được hỗ trợ sát khuẩn và băng vết xước kịp thời nhé.',
+          authorityBoundary: 'Tủ sơ cứu cơ bản tại Phòng trực Cổng số 1.',
+          actionableGuidance: 'Ghé quầy thông tin / phòng trực Cổng số 1 để lấy bông băng sát khuẩn.',
+          requiresHuman: true,
+          style: 'EMPATHETIC_SUPPORT'
+        };
+      }
 
       if (isRestroom) {
         const isNearGuillotine = /máy chém|may chem/i.test(normQuery);
@@ -411,26 +453,39 @@ class CustomerCareScenarioEngine {
         return {
           scenarioId: 'FACILITY_STORAGE',
           response: isEn
-            ? 'Free personal luggage lockers are available right next to the entrance turnstile (Gate No. 1 Hoa Lo Street) for large backpacks and bags. Visitors are advised to keep high-value items (wallets, phones) with them.'
-            : 'Bạn hoàn toàn yên tâm nhé! Di tích Nhà tù Hỏa Lò có trang bị hệ thống tủ khóa gửi đồ cá nhân miễn phí nằm ngay cạnh lối vào soát vé (Cổng số 1 phố Hỏa Lò). Bạn có thể gửi ba lô và hành lý cồng kềnh tại đây trước khi vào tham quan; đối với các tài sản có giá trị cao như ví tiền, điện thoại, bạn nên mang theo bên mình ạ.',
-          authorityBoundary: 'Tủ khóa gửi đồ miễn phí cạnh lối soát vé.',
-          actionableGuidance: 'Gửi ba lô tại tủ khóa miễn phí cạnh cửa soát vé Cổng số 1.',
+            ? 'Plain personal water bottles and compact folding umbrellas may be carried carefully inside. For bulky or wet belongings such as backpacks, motorbike helmets, long umbrellas, wet raincoats, or heavy bags, free personal lockers are available right beside Gate No. 1 entrance (please keep high-value laptops, wallets, and phones with you or check with Gate No. 1 staff for guidance).'
+            : 'Dạ bạn yên tâm nhé! Với bình nước lọc cá nhân và ô gấp nhỏ gọn, bạn có thể cầm theo cẩn thận khi tham quan. Còn các vật dụng cồng kềnh hoặc ướt như ba lô, mũ bảo hiểm, ô dài, áo mưa ướt hay túi nặng, Di tích Hỏa Lò có tủ khóa gửi đồ miễn phí và khu vực hỗ trợ ngay gần lối vào Cổng chính số 1 (riêng tài sản giá trị cao như laptop, ví tiền, điện thoại bạn nên giữ bên mình hoặc trao đổi trực tiếp nhân viên quầy Cổng số 1 để yên tâm nhất ạ).',
+          authorityBoundary: 'Tủ khóa gửi đồ miễn phí cạnh lối soát vé Cổng số 1.',
+          actionableGuidance: 'Gửi đồ cồng kềnh tại tủ khóa miễn phí Cổng số 1; giữ đồ giá trị cao bên mình.',
           requiresHuman: false,
           style: 'QUICK_ANSWER'
         };
       }
 
       if (isSouvenir) {
+        const isStreetVendor = /ban dao|via he|chinh hang/i.test(normQuery);
         const isBanyanSouvenir = /cây bàng|cay bang|lá bàng|la bang/i.test(normQuery);
+        if (isStreetVendor) {
+          return {
+            scenarioId: 'FACILITY_SOUVENIR_OFFICIAL',
+            response: isEn
+              ? 'Official cultural souvenirs of Hoa Lo Prison Relic are sold exclusively inside the official souvenir shop near the exit—street vendors outside the gate are independent and not affiliated with the Management Board.'
+              : 'Dạ các sản phẩm lưu niệm chính thức của Di tích Nhà tù Hỏa Lò chỉ được bày bán tại Cửa hàng lưu niệm bên trong khuôn viên gần lối ra bạn nhé; các hàng bán dạo ngoài vỉa hè là hộ kinh doanh tự phát, không thuộc hệ thống của Ban Quản lý Di tích ạ.',
+            authorityBoundary: 'Cửa hàng lưu niệm chính thức nằm gần lối ra di tích.',
+            actionableGuidance: 'Mua ấn phẩm chính thức tại Cửa hàng lưu niệm bên trong lối ra.',
+            requiresHuman: false,
+            style: 'QUICK_ANSWER'
+          };
+        }
         return {
           scenarioId: 'FACILITY_SOUVENIR',
           response: isEn
             ? (isBanyanSouvenir
               ? 'Currently, our catalogue does not list specific retail items made from the banyan tree at the souvenir shop (though banyan tea and jelly are served during the Sacred Night Tour). Please visit the souvenir counter near the exit directly to consult our staff on available cultural items.'
-              : 'The cultural souvenir shop is located near the exit, featuring tote bags, notebooks, badges, and historical documents. During the Sacred Night Tour, visitors can enjoy special banyan tea and banyan jelly.')
+              : 'The official cultural souvenir shop near the exit features tote bags, T-shirts, ceramic mugs, notebooks, badges, and historical books. For exact sizes, protective gift packaging, or current seasonal stock, please ask our staff directly at the exit counter.')
             : (isBanyanSouvenir
               ? 'Hiện tại trong dữ liệu danh mục của mình chưa có thông tin chi tiết về các sản phẩm cụ thể làm từ cây bàng tại quầy lưu niệm (ngoại trừ trong tour đêm có phục vụ trà bàng và thạch bàng tri ân). Bạn vui lòng ghé trực tiếp quầy lưu niệm đặt gần lối ra của di tích để các bạn nhân viên tư vấn các sản phẩm lưu niệm độc đáo đang có sẵn nhé!'
-              : 'Quầy lưu niệm nằm ở khu vực gần lối ra, giới thiệu nhiều ấn phẩm văn hóa đặc sắc như sổ tay, túi tote, huy hiệu và sách lịch sử. Trong tour đêm, du khách còn được thưởng thức đặc sản trà bàng và thạch bàng tri ân.'),
+              : 'Quầy lưu niệm chính thức đặt gần lối ra giới thiệu nhiều ấn phẩm văn hóa đặc sắc như túi tote, áo phông, cốc sứ, sổ tay, huy hiệu và sách lịch sử. Về size áo cụ thể, hộp bọc chống sốc hay các mẫu theo mùa hiện có sẵn, bạn vui lòng hỏi trực tiếp nhân viên tại quầy lưu niệm lối ra để được tư vấn và đóng gói chu đáo nhé.'),
           authorityBoundary: 'Quầy lưu niệm khu vực lối ra.',
           actionableGuidance: 'Ghé quầy lưu niệm tại lối ra để xem các ấn phẩm văn hóa Hỏa Lò.',
           requiresHuman: false,
@@ -485,8 +540,8 @@ class CustomerCareScenarioEngine {
         response: isOtherForeign
           ? getDocentReply('SERVICE_AUDIOGUIDE', language)
           : (isEn
-            ? 'Hoa Lo Prison provides an automated Audioguide system featuring 35 historical stories narrated through the voices of political prisoners. You can rent the device at the ticket counter for 50,000 VND per unit (available in Vietnamese, English, French, etc.).'
-            : 'Di tích Hỏa Lò trang bị hệ thống thuyết minh tự động Audioguide với 35 câu chuyện lịch sử xúc động được kể qua lời của các cựu tù chính trị. Bạn có thể thuê thiết bị ngay tại quầy vé ở cổng chính với mức phí 50.000 VNĐ/máy (hỗ trợ đa ngôn ngữ: Việt, Anh, Pháp...). Nếu máy bị rè hoặc lỗi âm thanh, nhân viên quầy vé sẽ đổi máy mới miễn phí ngay trong 1-2 phút nhé.'),
+            ? 'Hoa Lo Prison provides an automated Audioguide handset (no app download required) with 35 historical stories for 50,000 VND per unit at Ticket Counter Gate No. 1. Each handset selects its own language independently—so mixed-language groups can walk together—headsets are cleaned between uses, and any defective unit is replaced free in 1–2 minutes.'
+            : 'Di tích Hỏa Lò trang bị thiết bị thuyết minh tự động Audioguide gồm 35 câu chuyện lịch sử (không cần tải app điện thoại), thuê trực tiếp tại quầy vé Cổng số 1 với phí 50.000 VNĐ/máy. Mỗi máy cho phép chọn ngôn ngữ độc lập (Việt, Anh, Pháp, Nhật, Hàn...) nên nhóm đa quốc tịch hoàn toàn đi chung tuyến rất tiện; tai nghe được vệ sinh kiểm tra và đổi mới miễn phí trong 1–2 phút nếu có lỗi âm thanh nhé.'),
         authorityBoundary: 'Thuê thiết bị tại quầy vé cổng chính số 1 Hỏa Lò.',
         actionableGuidance: 'Thuê tai nghe Audioguide tại quầy vé cổng chính (50.000 VNĐ/máy).',
         requiresHuman: false,
@@ -497,6 +552,19 @@ class CustomerCareScenarioEngine {
     // 6.3. KỊCH BẢN TOUR ĐÊM & TRƯNG BÀY CHUYÊN ĐỀ (TOUR_INFORMATION)
     if (intent === 'TOUR_INFORMATION') {
       const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
+      const isNightLogistics = /thue tron goi|rieng|doi ten|nhuong lai|om dot xuat|toi tre|19h15|khoi|phao sang|cho ngoi/i.test(normQuery);
+      if (isNightLogistics && !isOtherForeign) {
+        return {
+          scenarioId: 'TOUR_NIGHT_LOGISTICS',
+          response: isEn
+            ? 'The Sacred Night Tour starts at 7:00 PM on Fri–Sun (approx. 90 minutes, combining walking through galleries with live theatrical scenes, lighting, and sound effects). For private group charters, transferring tickets due to illness, late-arrival entry, or seating needs, please contact our official Fanpage or Hotline 024.39342253 directly so the organizing team can arrange support.'
+            : 'Dạ Tour đêm "Đêm thiêng liêng" khởi hành từ 19:00 các tối Thứ Sáu, Thứ Bảy và Chủ Nhật (khoảng 90 phút, kết hợp di chuyển qua các phòng giam và thưởng thức hoạt cảnh âm thanh, ánh sáng sống động). Với nhu cầu đặt suất riêng cho doanh nghiệp, đổi tên/nhượng vé khi ốm đột xuất, tới trễ giờ hay lưu ý hiệu ứng sân khấu cho trẻ nhỏ, bạn vui lòng liên hệ trực tiếp Fanpage chính thức hoặc Hotline 024.39342253 để Ban tổ chức hỗ trợ chuẩn xác nhất nhé.',
+          authorityBoundary: 'Liên hệ Fanpage chính thức hoặc Hotline 024.39342253.',
+          actionableGuidance: 'Liên hệ Hotline 024.39342253 / Fanpage Hỏa Lò để xác nhận suất tour đêm.',
+          requiresHuman: true,
+          style: 'TOUR_GUIDANCE'
+        };
+      }
       return {
         scenarioId: 'TOUR_NIGHT_AND_THEMATIC',
         response: isOtherForeign
@@ -582,8 +650,44 @@ class CustomerCareScenarioEngine {
       };
     }
 
-    // 7. KỊCH BẢN TƯ VẤN HÀNH TRÌNH (TOUR_RECOMMENDATION)
+    // 7. KỊCH BẢN TƯ VẤN HÀNH TRÌNH & QUY ĐỊNH THAM QUAN (TOUR_RECOMMENDATION / VISIT_GUIDANCE)
     if (intent === 'TOUR_RECOMMENDATION' || intent === 'VISIT_GUIDANCE') {
+      if (/trang phuc|mac do gi|ao ba lo|dep xo ngon|vay qua ngan|ao ho vai|ao lop/i.test(normQuery)) {
+        return {
+          scenarioId: 'GUIDANCE_DRESS_CODE',
+          response: isEn
+            ? 'Hoa Lo Prison is a solemn national historical memorial, so visitors are kindly asked to wear neat, respectful attire (avoid overly short skirts, revealing tops, or offensive slogans). If you forgot a light jacket or shawl, please check with our reception staff at Gate No. 1 for assistance.'
+            : 'Dạ Di tích Nhà tù Hỏa Lò là không gian lịch sử trang nghiêm nên du khách cần mặc trang phục lịch sự, gọn gàng, tránh đồ quá hở hang hoặc phản cảm. Nếu bạn lỡ mặc áo sát nách, váy ngắn mà quên mang áo khoác che vai, bạn cứ trao đổi với nhân viên lễ tân tại Cổng chính số 1 để được hướng dẫn hỗ trợ phù hợp nhé.',
+          authorityBoundary: 'Quy định trang phục trang nghiêm tại Di tích Quốc gia.',
+          actionableGuidance: 'Mặc trang phục gọn gàng, lịch sự khi vào tham quan di tích.',
+          requiresHuman: false,
+          style: 'CUSTOMER_CARE'
+        };
+      }
+      if (/cam cham tay|so nan|tao dang|treu choc|nhay dieu|dua lung|tuong gach|buc tuong|tuong.*tu nhan|linh gac/i.test(normQuery)) {
+        return {
+          scenarioId: 'GUIDANCE_CONSERVATION_RESPECT',
+          response: isEn
+            ? 'To preserve the historic walls, ironwork, and wax figures, visitors are strictly asked not to touch exhibits, lean heavily against ancient brick walls, or strike mocking poses or dance trends inside the prison cells. Quiet, respectful photography is welcome with flash turned off.'
+            : 'Dạ để bảo tồn nguyên trạng hiện vật, tượng sáp và tường gạch cổ hơn trăm năm tuổi, di tích đề nghị du khách không chạm tay vào hiện vật, không tựa mạnh lên tường cổ, và giữ thái độ trang nghiêm khi chụp ảnh (không tạo dáng trêu chọc bên tượng tù nhân hay quay nhảy bắt trend trong buồng giam) bạn nhé.',
+          authorityBoundary: 'Nội quy bảo tồn hiện vật và giữ gìn sự trang nghiêm di tích.',
+          actionableGuidance: 'Không chạm hiện vật, giữ thái độ trang nghiêm khi tham quan chụp ảnh.',
+          requiresHuman: false,
+          style: 'CUSTOMER_CARE'
+        };
+      }
+      if (/khoang san thoang|nang triu|dieu hoa|tam dong cua|tu sua/i.test(normQuery)) {
+        return {
+          scenarioId: 'GUIDANCE_COMFORT_AND_STATUS',
+          response: isEn
+            ? 'Indoor thematic galleries are ventilated and climate-controlled, and right after passing the darker cells you step into the open-air prison courtyard shaded by the historic Banyan Tree with benches to rest and catch fresh air. For any temporary gallery maintenance notices, please check with Gate No. 1 staff or call 024.39342253.'
+            : 'Dạ các gian trưng bày trong nhà có hệ thống thông gió, làm mát hợp lý; và ngay sau khu xà lim tối là khoảng sân trại giam mở thoáng đãng dưới tán Cây bàng cổ thụ và Đài tưởng niệm có ghế ngồi để bạn nghỉ chân hít thở không khí trong lành. Riêng thông tin gian nào đang tạm bảo trì trong tuần, bạn vui lòng xác nhận trực tiếp tại Quầy vé Cổng số 1 hoặc hotline 024.39342253 nhé.',
+          authorityBoundary: 'Không gian sân trại mở & thông tin vận hành tại Cổng số 1.',
+          actionableGuidance: 'Nghỉ chân tại Sân cây bàng cổ thụ thoáng đãng sau khi qua buồng giam.',
+          requiresHuman: false,
+          style: 'EMPATHETIC_SUPPORT'
+        };
+      }
       const timeConstraint = userProfile?.timeConstraint;
       const isUltraShort = (timeConstraint != null && timeConstraint <= 20) || /15 phút|15 phut|15p|rất vội|rat voi|cực nhanh|cuc nhanh/i.test(normQuery);
       const isShort = (timeConstraint != null && timeConstraint <= 45) || /ít thời gian|it thoi gian|20 phút|20 phut|30 phút|30 phut|45 phút|45 phut|vội|voi|nhanh/i.test(normQuery);
