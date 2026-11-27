@@ -636,7 +636,12 @@ class IntentClassifier {
     }
 
     const isBuyingCameraOutside = (hasPhrase(norm, 'mua may anh') || hasPhrase(norm, 'may anh cu') || hasPhrase(norm, 'sua may anh') || hasPhrase(norm, 'ban may anh'));
-    if (!isHist && !isBuyingCameraOutside && (hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') || hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash') || hasPhrase(norm, 'take photos') || hasPhrase(norm, 'take pictures') || hasPhrase(norm, 'photos inside'))) {
+    if (!isHist && !isBuyingCameraOutside && (
+      hasPhrase(norm, 'chup anh') || hasPhrase(norm, 'may anh') || hasPhrase(norm, 'quay phim') ||
+      hasPhrase(norm, 'chup hinh') || hasPhrase(norm, 'bat flash') || hasPhrase(norm, 'den flash') ||
+      hasPhrase(norm, 'take photos') || hasPhrase(norm, 'take pictures') || hasPhrase(norm, 'photos inside') ||
+      (discourse.isEnglishInput && (hasPhrase(norm, 'photography') || hasPhrase(norm, 'flash')))
+    )) {
       return {
         intent: INTENTS.PHOTOGRAPHY_POLICY,
         subIntent: 'PHOTO_RULE',

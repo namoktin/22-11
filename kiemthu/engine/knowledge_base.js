@@ -104,7 +104,7 @@ const HISTORICAL_EXHIBITS = {
     id: 'phong_giam_tap_the',
     name: 'Phòng giam tập thể',
     category: 'Khu phòng giam tập thể',
-    keywords: ['phong giam tap the', 'trai nam', 'trai e', 'trai g', 'be cum chan', 'cap rang', 'song sat mat cao', 'ngot ngat'],
+    keywords: ['phong giam tap the', 'phong tap the', 'buong tap the', 'trai nam', 'trai e', 'trai g', 'be cum chan', 'cap rang', 'song sat mat cao', 'ngot ngat'],
     facts: [
       'Phòng giam tập thể nam (Trại E, G) từng giam giữ hàng trăm tù nhân chen chúc trên hai dãy bệ xi măng.',
       'Chân tù nhân bị khóa cố định vào thanh cùm sắt dài dọc bệ xi măng vào ban đêm.',
@@ -736,6 +736,35 @@ class KnowledgeBase {
         reply
       };
     }
+
+    // Dự phòng song ngữ theo Khái niệm (Bilingual Concept Fallback cho câu hỏi tiếng Anh khi Groq 429/offline):
+    // Dùng hệ thống CONCEPT_CLUSTERS có sẵn để ánh xạ câu hỏi tiếng Anh tới đúng hồ sơ answer_en thay vì từ chối thiếu dữ liệu!
+    if (language === 'en' && minPriority === 0 && !excludeCategories.has('HISTORICAL')) {
+      const { extractConceptSet } = require('./local_semantic_index');
+      const concepts = extractConceptSet(norm);
+      let targetId = null;
+      if (concepts.has('E_BANYAN')) targetId = 'EXP_HIST_BANYAN_SIGNIFICANCE';
+      else if (concepts.has('E_SEWER') || concepts.has('C_ESCAPE')) {
+        targetId = norm.includes(' 1945 ') ? 'EXP_HIST_ESCAPE_1945' : 'EXP_HIST_ESCAPE_ROUTES';
+      } else if (concepts.has('E_PILOTS')) targetId = 'EXP_EN_BANYAN_GUILLOTINE_CACHOT_MCCAIN';
+      else if (concepts.has('E_GUILLOTINE') || concepts.has('E_CACHOT')) targetId = 'EXP_EN_BANYAN_GUILLOTINE_CACHOT_MCCAIN';
+      else if (concepts.has('E_WOMEN') || concepts.has('C_WOMEN')) targetId = 'EXP_HIST_FEMALE_PRISONERS';
+      else if (concepts.has('E_PRESS')) targetId = 'EXP_HIST_SECRET_PRESS_POETRY';
+      else if (concepts.has('E_MEMORIAL')) targetId = 'EXP_HIST_MEMORIAL_MONUMENT';
+      else if (concepts.has('E_MAISON') || concepts.has('E_WALL')) targetId = 'EXP_HIST_ARCHITECTURE_PHU_KHANH';
+      if (targetId) {
+        const hit = this.expandedKnowledge.find(x => x.id === targetId && x.answer_en);
+        if (hit) {
+          return {
+            id: hit.id,
+            category: hit.category,
+            priority: hit.priority || 80,
+            reply: hit.answer_en
+          };
+        }
+      }
+    }
+
     return null;
   }
 
@@ -1292,8 +1321,9 @@ class KnowledgeBase {
             }
           }
 
+          // Yêu cầu tỷ lệ phủ từ khóa nội dung >= 70% (chặn tuyệt đối lỗi 4/18 = 22% khớp bừa sang John McCain / Trần Tử Bình / Diện tích!)
           const overlapRatio = bestHits / coreTokens.length;
-          if (bestDocIdx !== -1 && (overlapRatio >= 0.80 || (coreTokens.length >= 5 && bestHits >= 4))) {
+          if (bestDocIdx !== -1 && (overlapRatio >= 0.78 || (overlapRatio >= 0.68 && bestHits >= 4))) {
             const item = this.facts100[bestDocIdx];
             return {
               item,

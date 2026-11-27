@@ -894,14 +894,12 @@ class IntelligentAnswerComposer {
     // 3.05. NGUYÊN LÝ 4 (UNIFIED SEMANTIC VECTOR FIRST KHI GROQ 429 / COOLDOWN / OFFLINE):
     // Khi không phải EXACT match và Groq bận/offline -> ưu tiên tra kho 3.128 vector ngữ nghĩa (dataset_hoa_lo_vi + custom/ + facts100 + GT500)
     // TRƯỚC khi rơi về các đoạn văn mẫu tổng quan 1 dòng ở Bước 3.1 / 4.0 / 5.5!
-    // Nếu có GroundTruth SEMANTIC_FACT điểm cao (>=0.95 trên câu ngắn <=18 từ như lịch tour đêm / công dụng cây bàng),
-    // chỉ để vector đè khi vector khớp thực sự sát (>=0.78)!
     const hasHighConfShortFact = Boolean(retrievedData?.groundTruthMatch && retrievedData.groundTruthMatch.score >= 0.95 && qWordCount <= 18);
     if (!isExactGroundTruth) {
       const unifiedSemHit = knowledgeBase.findSemanticLocalMatch(question, {
         language: language === 'en' ? 'en' : 'vi',
         stationCode: artifactContext?.code || null,
-        minScore: hasHighConfShortFact ? 0.78 : (qWordCount >= 16 ? 0.46 : 0.54)
+        minScore: hasHighConfShortFact ? 0.78 : (qWordCount >= 14 ? 0.41 : 0.50)
       });
       if (unifiedSemHit && unifiedSemHit.doc?.answer) {
         const semGate = relevanceGate.verifyCandidate(question, unifiedSemHit.doc.answer, {
@@ -997,9 +995,26 @@ class IntelligentAnswerComposer {
     }
 
     // =========================================================================
+    // 3.9. HỒ SƠ CHUYÊN ĐỀ XÁC THỰC SONG NGỮ VI/EN (khi Groq 429/offline & 3.128 vector chưa có bản khớp sâu hơn)
+    // =========================================================================
+    const topicExpanded = knowledgeBase.findExpandedMatch(question, language, language === 'en' ? 0 : 88, { discourse });
+    if (topicExpanded && topicExpanded.reply) {
+      return this.formatResponse({
+        reply: topicExpanded.reply,
+        style: 'HISTORICAL_EXPLANATION',
+        confidence: 'HIGH',
+        confidenceScore: 0.93,
+        sources: [`EXPANDED_VERIFIED_${topicExpanded.id}`],
+        claims: [topicExpanded.category],
+        responseType: 'VERIFIED_EXPANDED_KNOWLEDGE',
+        requiresHuman: false
+      }, intent, retrievedData);
+    }
+
+    // =========================================================================
     // 4. TRUY XUẤT TỪ 13 HỒ SƠ PHÂN KHU (EXHIBIT DOSSIER + RELEVANCE GATE V7.0)
     // =========================================================================
-    if (retrievedData?.exhibitMatch) {
+    if (retrievedData?.exhibitMatch && language === 'vi') {
       const exhibit = retrievedData.exhibitMatch.exhibit;
       const reply = exhibit.directAnswer || (exhibit.facts ? exhibit.facts.slice(0, 3).join(' ') : '');
       const gate = relevanceGate.verifyCandidate(question, reply, { intent, sourceType: 'EXHIBIT_DOSSIER', language });
