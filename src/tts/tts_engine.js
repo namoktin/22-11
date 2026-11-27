@@ -22,6 +22,8 @@ const ELEVENLABS_HOST = 'api.elevenlabs.io';
 const DEFAULT_ELEVENLABS_MODEL = 'eleven_flash_v2_5';
 // Giọng đọc mặc định do dự án chọn (có thể ghi đè qua ENV theo từng ngôn ngữ)
 const DEFAULT_VOICE_ID = 'ArosID24mP18TEiQpNhs';
+// Giọng premade dự phòng khi tài khoản ElevenLabs đang ở gói Free (gói Free chặn Library Voice -> HTTP 402 paid_plan_required)
+const DEFAULT_FALLBACK_PREMADE_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah — trầm ấm, hỗ trợ cả gói Free & 32 ngôn ngữ
 const DEFAULT_ELEVENLABS_SPEED = 1.2; // Tốc độ nói tối đa chính thức của ElevenLabs API (dải hợp lệ: 0.7 - 1.2)
 const DEFAULT_ELEVENLABS_LATENCY_OPT = 4; // Tối ưu độ trễ streaming mức tối đa (0 - 4)
 
@@ -343,6 +345,7 @@ class PluggableTtsEngine {
     // Trạng thái tự phục hồi cho ElevenLabs (cooldown khi chạm hạn mức hoặc lỗi xác thực, và tự nhận biết hỗ trợ pcm_16000)
     this.elevenLabsCooldownUntil = 0;
     this.elevenLabsSupportsPcm16k = true;
+    this.paidLibraryVoiceBlocked = false;
     this.lastError = null;
     this.stats = {
       cacheHits: 0,
@@ -369,6 +372,7 @@ class PluggableTtsEngine {
     this.elevenLabsLatencyOpt = Number.isFinite(rawLat) ? Math.min(4, Math.max(0, rawLat)) : DEFAULT_ELEVENLABS_LATENCY_OPT;
 
     const defaultVoice = String(env.ELEVENLABS_VOICE_ID || DEFAULT_VOICE_ID).trim();
+    this.fallbackPremadeVoiceId = String(env.ELEVENLABS_FALLBACK_VOICE_ID || DEFAULT_FALLBACK_PREMADE_VOICE_ID).trim();
     this.voiceMap = {
       vi: String(env.ELEVENLABS_VOICE_VI || defaultVoice).trim(),
       en: String(env.ELEVENLABS_VOICE_EN || defaultVoice).trim(),
@@ -385,6 +389,9 @@ class PluggableTtsEngine {
   }
 
   getVoiceIdForLang(lang = 'vi') {
+    if (this.paidLibraryVoiceBlocked && this.fallbackPremadeVoiceId) {
+      return this.fallbackPremadeVoiceId;
+    }
     const code = normalizeLang(lang);
     return this.voiceMap[code] || this.voiceMap.vi || DEFAULT_VOICE_ID;
   }
@@ -400,6 +407,8 @@ class PluggableTtsEngine {
       elevenlabs_speed: this.elevenLabsSpeed,
       elevenlabs_latency_opt: this.elevenLabsLatencyOpt,
       elevenlabs_pcm16k_direct: this.elevenLabsSupportsPcm16k,
+      elevenlabs_active_voice: configured ? this.getVoiceIdForLang('vi') : null,
+      elevenlabs_library_voice_blocked_free_tier: this.paidLibraryVoiceBlocked,
       elevenlabs_cooldown_sec: Math.max(0, Math.ceil((this.elevenLabsCooldownUntil - Date.now()) / 1000)),
       voices_configured: configured ? Object.fromEntries(Object.entries(this.voiceMap).map(([k, v]) => [k, v ? `${v.slice(0, 6)}...` : null])) : null,
       cache_entries: this.pcmCache.size,
@@ -489,6 +498,17 @@ class PluggableTtsEngine {
       }
       return await this.decodeMp3ToPcm(res.buffer);
     } catch (err) {
+      // Nếu gói ElevenLabs Free chặn Library Voice (HTTP 402 paid_plan_required) -> tự động chuyển sang giọng premade (Sarah) vẫn chạy ElevenLabs 100%!
+      if (!this.paidLibraryVoiceBlocked && err.statusCode === 402 && /paid_plan_required|library voice/i.test(err.body || err.message) && this.fallbackPremadeVoiceId && this.getVoiceIdForLang(lang) !== this.fallbackPremadeVoiceId) {
+        this.paidLibraryVoiceBlocked = true;
+        this.logEvent('WARN', 'ElevenLabsTTS', 'Library Voice yêu cầu gói trả phí -> tự động chuyển sang giọng premade ElevenLabs', { fallbackVoice: this.fallbackPremadeVoiceId });
+        const retryRes = await this.callElevenLabsRaw(cleanText, lang, firstFormat);
+        if (retryRes.outputFormat === 'pcm_16000') {
+          return this.trimPcmSilence(retryRes.buffer);
+        }
+        if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
+        return await this.decodeMp3ToPcm(retryRes.buffer);
+      }
       // Nếu gói ElevenLabs Free/Starter không hỗ trợ pcm_16000 (403 output_format_not_allowed) -> tự động hạ sang mp3_44100_128 ngay!
       if (firstFormat === 'pcm_16000' && (err.statusCode === 403 || err.statusCode === 400) && /output_format|pcm|tier|subscription/i.test(err.body || err.message)) {
         this.elevenLabsSupportsPcm16k = false;
