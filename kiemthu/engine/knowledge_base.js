@@ -1608,11 +1608,11 @@ class KnowledgeBase {
           addSnippet(`Tài liệu mới (${doc.fileLabel || 'custom'}${doc.topic ? ' • ' + doc.topic : ''})`, doc.answer);
         }
       }
-      // Tìm kiếm thống nhất trên toàn kho 3.128 vector ngữ nghĩa
+      // Tìm kiếm thống nhất trên toàn kho 3.128 vector ngữ nghĩa (Top-3 sắc nét nhất để nhường chỗ cho Hồ sơ phân khu!)
       const unifiedHits = this.localSemanticIndex.search(cleanQ, {
         lang: null,
-        topK: 4,
-        minScore: 0.32
+        topK: 3,
+        minScore: 0.34
       });
       for (const hit of unifiedHits) {
         const doc = hit.doc;

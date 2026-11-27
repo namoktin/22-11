@@ -174,8 +174,8 @@ function analyzeDiscourseMode(rawText, normText = null) {
 
   // Trục 1B: Dấu hiệu thời gian / không gian lịch sử quá khứ (+2.5)
   const historicalTimeMarkers = [
-    'ngay xua', 'xua kia', 'thoi phap', 'thoi chong phap', 'thoi thuoc dia', 'thoi ay', 'hoi ay', 'hoi do',
-    'nam ay', 'dem noel', 'thap nien', 'the ky', 'giai doan', 'sau chien tranh',
+    'ngay xua', 'xua kia', 'thoi phap', 'thoi chong phap', 'thoi thuoc dia', 'thoi ay', 'hoi ay', 'hoi do', 'hoi xua',
+    'nam ay', 'dem noel', 'thap nien', 'the ky', 'giai doan', 'sau chien tranh', 'bi nhot', 'bi giam', 'phong tap the',
     'trong tu', 'chon lao tu', 'trong nguc', 'thoi ky', 'ngay ay', 'nhung nam', 'tuyet thuc',
     'khang chien', 'thoi chien tranh', 'chinh quyen phap', 'bac ky', 'dong duong',
     'nam 19', 'nam 18', 'thang 3 1945', '24 12 1951', '1945', '1951', '1954', '1964', '1973',

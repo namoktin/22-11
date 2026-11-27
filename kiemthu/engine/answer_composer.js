@@ -901,7 +901,7 @@ class IntelligentAnswerComposer {
       const unifiedSemHit = knowledgeBase.findSemanticLocalMatch(question, {
         language: language === 'en' ? 'en' : 'vi',
         stationCode: artifactContext?.code || null,
-        minScore: hasHighConfShortFact ? 0.78 : (qWordCount >= 12 ? 0.42 : 0.50)
+        minScore: hasHighConfShortFact ? 0.78 : (qWordCount >= 16 ? 0.46 : 0.54)
       });
       if (unifiedSemHit && unifiedSemHit.doc?.answer) {
         const semGate = relevanceGate.verifyCandidate(question, unifiedSemHit.doc.answer, {
@@ -1338,10 +1338,10 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       }
     }
     let compactContext = '';
-    for (const s of mergedSnippets.slice(0, 5)) {
-      const cap = s.startsWith('[Tài liệu mới') || s.startsWith('[Tư liệu ') ? 480 : 340;
+    for (const s of mergedSnippets.slice(0, 6)) {
+      const cap = s.startsWith('[Hồ sơ ') || s.startsWith('[Tài liệu mới') || s.startsWith('[Tư liệu ') ? 520 : 360;
       const piece = s.length > cap ? s.slice(0, cap) + '...' : s;
-      if (compactContext.length + piece.length > 1280 && compactContext.length > 360) break;
+      if (compactContext.length + piece.length > 1520 && compactContext.length > 420) break;
       compactContext += (compactContext ? '\n' : '') + piece;
     }
 
@@ -1651,11 +1651,12 @@ ${compactContext}`;
       };
     }
 
-    // 8. Tường bao nhà tù chính xác cao 4 mét hay 5 mét (CHỈ kích hoạt khi thực sự hỏi so sánh/xác minh chiều cao 4m vs 5m!)
+    // 8. Tường bao/tường đá nhà tù chính xác cao 4 mét hay 5 mét (CHỈ kích hoạt khi thực sự hỏi chiều cao 4m vs 5m!)
+    const mentionsPrisonWall = normQ.includes('tuong bao') || normQ.includes('tuong da');
     const asksWallHeightConflict = normQ.includes('hay 5') || normQ.includes('hay 4') || normQ.includes('chinh xac cao') ||
-      (normQ.includes('cao bao nhieu') && normQ.includes('tuong bao')) ||
+      (mentionsPrisonWall && (normQ.includes('cao bao nhieu') || normQ.includes('cao may met'))) ||
       ((normQ.includes('4 met') || normQ.includes('4m')) && (normQ.includes('5 met') || normQ.includes('5m')));
-    if (normQ.includes('tuong bao') && asksWallHeightConflict) {
+    if (mentionsPrisonWall && asksWallHeightConflict) {
       return {
         reply: 'Về chiều cao tường bao Nhà tù Hỏa Lò, các nguồn tư liệu chính thức công khai hiện có sự khác nhau: trên trang thông tin chính thức của di tích (hoalo.vn) mô tả tường bao đá kiên cố cao khoảng 5 mét; trong khi hồ sơ tư liệu của Cục Di sản văn hóa ghi nhận tường cao khoảng 4 mét. Do các nguồn lưu trữ chưa thống nhất một con số tuyệt đối, di tích luôn nêu rõ cả hai số liệu này để du khách tham khảo.',
         confidence: 'HIGH',

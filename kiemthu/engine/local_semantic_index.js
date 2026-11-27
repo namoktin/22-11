@@ -155,6 +155,9 @@ class LocalSemanticIndex {
     if (!doc || !doc.question || !doc.answer) return;
     const textForIndex = [doc.question, ...(doc.aliases || [])].join(' | ');
     const vector = buildSparseVector(textForIndex, this.idfMap.size > 0 ? this.idfMap : null, this.avgDocLen);
+    const fullNormSpaced = ' ' + nlp.normalize(`${doc.question} ${(doc.aliases || []).join(' ')} ${doc.answer}`) + ' ';
+    const fullConcepts = extractConceptSet(fullNormSpaced);
+    const allEntities = new Set([...fullConcepts].filter(c => c.startsWith('E_')));
     this.docs.push({
       id: doc.id || `SEM_${this.docs.length + 1}`,
       source: doc.source || 'LOCAL_KB',
@@ -172,6 +175,7 @@ class LocalSemanticIndex {
       fileLabel: doc.fileLabel || null,
       isDynamic: Boolean(doc.isDynamic),
       isUserCustom: Boolean(doc.isUserCustom),
+      allEntities,
       vector
     });
   }
@@ -221,13 +225,22 @@ class LocalSemanticIndex {
         continue;
       }
 
-      // Entity Consistency Guard: nếu câu hỏi nhắc rõ 1 thực thể (VD: Bảo Kiếm) thì không được khớp nhầm tài liệu thực thể khác (VD: Trống Đồng)!
-      if (qVec.entities.size > 0 && doc.vector.entities.size > 0) {
+      // Entity Consistency Guard V2 (kiểm tra CẢ thực thể trong câu hỏi LẪN thực thể trong câu trả lời!):
+      // Chặn triệt để câu hỏi Cachot/bát sắt/thùng vệ sinh khớp nhầm sang câu trả lời John McCain hay nắp cống 1945!
+      const docEnts = doc.allEntities || doc.vector.entities;
+      let entityPenalty = 0;
+      if (qVec.entities.size > 0 && docEnts.size > 0) {
         let sharedEntity = false;
         for (const e of qVec.entities) {
-          if (doc.vector.entities.has(e)) { sharedEntity = true; break; }
+          if (docEnts.has(e)) { sharedEntity = true; break; }
         }
         if (!sharedEntity) continue;
+      } else if (qVec.entities.size === 0 && docEnts.size > 0) {
+        // Câu hỏi KHÔNG nhắc phi công Mỹ / cống ngầm / trống đồng / chuông / bảo kiếm nhưng đáp án chuyên biệt về chúng -> phạt điểm mạnh
+        const specializedExclusives = ['E_PILOTS', 'E_SEWER', 'E_DRUM', 'E_BELL', 'E_SWORD', 'E_GUILLOTINE'];
+        if (specializedExclusives.some(e => docEnts.has(e))) {
+          entityPenalty = -0.24;
+        }
       }
 
       // Tránh nhầm C_BOT_POS ("bạn ở đâu") với C_SELF_POS ("tôi đang đứng ở đâu")
@@ -246,7 +259,7 @@ class LocalSemanticIndex {
         }
       }
 
-      let sim = cosineSimilarity(qVec, doc.vector) + yearAdj;
+      let sim = cosineSimilarity(qVec, doc.vector) + yearAdj + entityPenalty;
       // Cộng điểm thưởng nhỏ cho dữ liệu đã được kiểm chứng / tự học
       if (doc.priorityBoost) sim += doc.priorityBoost;
       if (sim >= minScore) {
