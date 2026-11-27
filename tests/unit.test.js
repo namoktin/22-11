@@ -768,6 +768,17 @@ test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs 
   });
   assert.equal(resStub, null, 'Ultra-short bare 2-word RAG stub must be rejected cleanly');
 
+  // 5b. eleven_v3 payload guard: omits optimize_streaming_latency, snaps stability to 0.0/0.5/1.0, keeps language_code='vi'
+  const v3Engine = new PluggableTtsEngine({
+    env: { ELEVENLABS_API_KEY: 'sk_test_mock_key', ELEVENLABS_MODEL_ID: 'eleven_v3', ELEVENLABS_STABILITY: '0.70', ELEVENLABS_SPEED: '1.05' }
+  });
+  const v3Req = v3Engine.buildElevenLabsRequest('Nhà tù Hỏa Lò', 'vi', 'pcm_16000');
+  assert.equal(v3Req.reqPath.includes('optimize_streaming_latency'), false, 'eleven_v3 must omit unsupported optimize_streaming_latency');
+  assert.equal(v3Req.payload.language_code, 'vi');
+  assert.equal(v3Req.payload.voice_settings.stability, 0.5, 'eleven_v3 stability must snap to valid discrete value (0.5)');
+  assert.equal(v3Req.payload.voice_settings.speed, 1.05);
+  assert.equal(v3Engine.elevenLabsTimeoutMs, 16000);
+
   // 5. PluggableTtsEngine: ElevenLabs direct PCM 16kHz, automatic 403 pcm->mp3 fallback, and 429 Google fallback
   const fakePcm = Buffer.alloc(1200, 12);
   const elEngine = new PluggableTtsEngine({

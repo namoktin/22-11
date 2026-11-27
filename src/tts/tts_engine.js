@@ -19,13 +19,27 @@ const crypto = require('crypto');
 const ELEVENLABS_HOST = 'api.elevenlabs.io';
 
 // Cấu hình mặc định tối ưu cho hướng dẫn viên bảo tàng đa ngôn ngữ
-const DEFAULT_ELEVENLABS_MODEL = 'eleven_flash_v2_5';
+// eleven_v3: Model flagship 70+ ngôn ngữ — giữ CHUẨN 100% 6 thanh điệu tiếng Việt (Hỏa Lò, kiết lỵ, lở loét, quản bút, hốc cây)
+// (eleven_flash_v2_5 nhanh hơn nhưng hay rớt dấu hỏi/ngã tiếng Việt như "Hỏa Lò" -> "Hoa Lò/Họa Lọ")
+const DEFAULT_ELEVENLABS_MODEL = 'eleven_v3';
 // Giọng đọc mặc định do dự án chọn (có thể ghi đè qua ENV theo từng ngôn ngữ)
 const DEFAULT_VOICE_ID = 'ArosID24mP18TEiQpNhs';
 // Giọng premade dự phòng khi tài khoản ElevenLabs đang ở gói Free (gói Free chặn Library Voice -> HTTP 402 paid_plan_required)
 const DEFAULT_FALLBACK_PREMADE_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah — trầm ấm, hỗ trợ cả gói Free & 32 ngôn ngữ
 const DEFAULT_ELEVENLABS_SPEED = 1.05; // Tốc độ trên trung bình một chút (+5%): gọn gàng, tự nhiên, giữ tròn vành rõ chữ cả 6 thanh điệu tiếng Việt
-const DEFAULT_ELEVENLABS_LATENCY_OPT = 0; // Mức 0 chuẩn phòng thu ElevenLabs (giữ nguyên 100% bộ chuẩn hóa văn bản, không méo âm, vẫn xuất thẳng pcm_16000!)
+const DEFAULT_ELEVENLABS_LATENCY_OPT = 0; // Dùng cho flash/turbo v2.5 (eleven_v3 KHÔNG gửi tham số này theo chuẩn API ElevenLabs)
+
+function isElevenV3Model(modelId) {
+  return /^eleven_v3/i.test(String(modelId || '').trim());
+}
+
+function snapV3Stability(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0.5;
+  if (n < 0.25) return 0.0;
+  if (n < 0.75) return 0.5;
+  return 1.0;
+}
 
 const MONTH_NAMES = {
   en: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -258,9 +272,15 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
  * - ElevenLabs đọc nguyên cụm dài cực mượt (nên chunk lớn hơn -> ít request hơn, ngữ điệu tự nhiên hơn!)
  * - Google TTS giới hạn cứng ~185 ký tự và CJK nên ngắt ngắn hơn để phát tiếng đầu nhanh (~250-400ms).
  */
-function getChunkProfile(lang = 'vi', useElevenLabs = false) {
+function getChunkProfile(lang = 'vi', useElevenLabs = false, modelId = DEFAULT_ELEVENLABS_MODEL) {
   const code = normalizeLang(lang);
   if (useElevenLabs) {
+    if (isElevenV3Model(modelId)) {
+      // eleven_v3 đọc giàu cảm xúc và chuẩn 6 thanh điệu, chia câu đầu vừa gọn (~1 câu) để phát tiếng nhanh (~2s) trong khi các đoạn sau chạy song song!
+      if (code === 'ja' || code === 'zh') return { firstMax: 55, maxChunk: 190 };
+      if (code === 'ko') return { firstMax: 75, maxChunk: 220 };
+      return { firstMax: 120, maxChunk: 280 };
+    }
     if (code === 'ja' || code === 'zh') return { firstMax: 70, maxChunk: 240 };
     if (code === 'ko') return { firstMax: 95, maxChunk: 280 };
     return { firstMax: 185, maxChunk: 380 };
@@ -298,7 +318,7 @@ function splitIntoAudioChunks(fullText, maxChunkChars = null, lang = 'vi', optio
   if (!fullText) return [''];
   const code = normalizeLang(lang);
   const conn = SPOKEN_CONNECTORS[code];
-  const profile = getChunkProfile(code, Boolean(options.useElevenLabs));
+  const profile = getChunkProfile(code, Boolean(options.useElevenLabs), options.modelId || DEFAULT_ELEVENLABS_MODEL);
   const effectiveMax = maxChunkChars || profile.maxChunk;
   const effectiveFirst = Math.min(profile.firstMax, effectiveMax);
 
@@ -400,8 +420,11 @@ class PluggableTtsEngine {
     this.providerPref = String(env.TTS_PROVIDER || 'auto').toLowerCase().trim(); // 'auto' | 'elevenlabs' | 'google'
     this.elevenLabsApiKey = String(env.ELEVENLABS_API_KEY || '').trim();
     this.elevenLabsModel = String(env.ELEVENLABS_MODEL_ID || DEFAULT_ELEVENLABS_MODEL).trim();
-    this.elevenLabsTimeoutMs = Number(env.ELEVENLABS_TIMEOUT_MS) || 6500;
-    this.elevenLabsStability = env.ELEVENLABS_STABILITY !== undefined && env.ELEVENLABS_STABILITY !== '' ? Number(env.ELEVENLABS_STABILITY) : 0.70;
+    const isV3 = isElevenV3Model(this.elevenLabsModel);
+    this.elevenLabsTimeoutMs = Number(env.ELEVENLABS_TIMEOUT_MS) || (isV3 ? 16000 : 6500);
+    const defaultStability = isV3 ? 0.5 : 0.70;
+    const rawStability = env.ELEVENLABS_STABILITY !== undefined && env.ELEVENLABS_STABILITY !== '' ? Number(env.ELEVENLABS_STABILITY) : defaultStability;
+    this.elevenLabsStability = isV3 ? snapV3Stability(rawStability) : (Number.isFinite(rawStability) ? rawStability : defaultStability);
     this.elevenLabsSimilarity = env.ELEVENLABS_SIMILARITY !== undefined && env.ELEVENLABS_SIMILARITY !== '' ? Number(env.ELEVENLABS_SIMILARITY) : 0.80;
     this.elevenLabsStyle = env.ELEVENLABS_STYLE !== undefined && env.ELEVENLABS_STYLE !== '' ? Number(env.ELEVENLABS_STYLE) : 0.0;
     const rawSpeed = env.ELEVENLABS_SPEED !== undefined && env.ELEVENLABS_SPEED !== '' ? Number(env.ELEVENLABS_SPEED) : DEFAULT_ELEVENLABS_SPEED;
@@ -444,11 +467,12 @@ class PluggableTtsEngine {
       elevenlabs_model: this.elevenLabsModel,
       elevenlabs_vietnamese_supported: /flash_v2_5|turbo_v2_5|eleven_v3/i.test(this.elevenLabsModel),
       elevenlabs_speed: this.elevenLabsSpeed,
-      elevenlabs_latency_opt: this.elevenLabsLatencyOpt,
+      elevenlabs_latency_opt: isElevenV3Model(this.elevenLabsModel) ? null : this.elevenLabsLatencyOpt,
+      elevenlabs_timeout_ms: this.elevenLabsTimeoutMs,
       elevenlabs_voice_settings: {
         stability: this.elevenLabsStability,
         similarity_boost: this.elevenLabsSimilarity,
-        style: this.elevenLabsStyle
+        style: isElevenV3Model(this.elevenLabsModel) ? null : this.elevenLabsStyle
       },
       elevenlabs_pcm16k_direct: this.elevenLabsSupportsPcm16k,
       elevenlabs_active_voice: configured ? this.getVoiceIdForLang('vi') : null,
@@ -466,31 +490,50 @@ class PluggableTtsEngine {
   }
 
   /**
-   * Gọi ElevenLabs REST TTS v1 qua HTTPS Keep-Alive:
-   * POST /v1/text-to-speech/{voice_id}?output_format=pcm_16000|mp3_44100_128&optimize_streaming_latency=2
+   * Dựng request path & payload tương thích chuẩn từng thế hệ ElevenLabs API:
+   * - eleven_v3 / eleven_v3_conversational: bỏ optimize_streaming_latency, khóa stability vào 0.0 / 0.5 / 1.0, gửi language_code!
+   * - eleven_flash_v2_5 / eleven_turbo_v2_5: hỗ trợ optimize_streaming_latency, style, use_speaker_boost, language_code.
    */
-  callElevenLabsRaw(text, lang = 'vi', outputFormat = 'pcm_16000') {
-    return new Promise((resolve, reject) => {
-      const code = normalizeLang(lang);
-      const voiceId = this.getVoiceIdForLang(code);
-      const payload = {
-        text,
-        model_id: this.elevenLabsModel,
-        voice_settings: {
+  buildElevenLabsRequest(text, lang = 'vi', outputFormat = 'pcm_16000') {
+    const code = normalizeLang(lang);
+    const voiceId = this.getVoiceIdForLang(code);
+    const isV3 = isElevenV3Model(this.elevenLabsModel);
+    const voiceSettings = isV3
+      ? {
+          stability: snapV3Stability(this.elevenLabsStability),
+          similarity_boost: this.elevenLabsSimilarity,
+          speed: this.elevenLabsSpeed
+        }
+      : {
           stability: this.elevenLabsStability,
           similarity_boost: this.elevenLabsSimilarity,
           style: this.elevenLabsStyle,
           use_speaker_boost: true,
           speed: this.elevenLabsSpeed
-        }
-      };
-      // `language_code` được hỗ trợ chính thức trên eleven_flash_v2_5 và eleven_turbo_v2_5 (giúp phát âm cực chuẩn 6 ngôn ngữ!)
-      if (/flash_v2_5|turbo_v2_5/i.test(this.elevenLabsModel)) {
-        payload.language_code = code;
-      }
+        };
+    const payload = {
+      text,
+      model_id: this.elevenLabsModel,
+      voice_settings: voiceSettings
+    };
+    if (/flash_v2_5|turbo_v2_5|eleven_v3/i.test(this.elevenLabsModel)) {
+      payload.language_code = code;
+    }
+    const query = isV3
+      ? `output_format=${encodeURIComponent(outputFormat)}`
+      : `output_format=${encodeURIComponent(outputFormat)}&optimize_streaming_latency=${this.elevenLabsLatencyOpt}`;
+    const reqPath = `/v1/text-to-speech/${encodeURIComponent(voiceId)}?${query}`;
+    return { voiceId, reqPath, payload };
+  }
 
+  /**
+   * Gọi ElevenLabs REST TTS v1 qua HTTPS Keep-Alive:
+   * POST /v1/text-to-speech/{voice_id}?output_format=pcm_16000|mp3_44100_128
+   */
+  callElevenLabsRaw(text, lang = 'vi', outputFormat = 'pcm_16000') {
+    return new Promise((resolve, reject) => {
+      const { voiceId, reqPath, payload } = this.buildElevenLabsRequest(text, lang, outputFormat);
       const bodyStr = JSON.stringify(payload);
-      const reqPath = `/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=${encodeURIComponent(outputFormat)}&optimize_streaming_latency=${this.elevenLabsLatencyOpt}`;
 
       const req = https.request({
         hostname: ELEVENLABS_HOST,

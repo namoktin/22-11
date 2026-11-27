@@ -1001,7 +1001,7 @@ async function synthesizeCachedBeaconWav(beacon, translatedText, lang) {
     return cachedFilename;
   }
 
-  const chunks = splitIntoAudioChunks(translatedText, null, lang, { useElevenLabs: ttsEngine.isElevenLabsActive() });
+  const chunks = splitIntoAudioChunks(translatedText, null, lang, { useElevenLabs: ttsEngine.isElevenLabsActive(), modelId: ttsEngine.elevenLabsModel });
   const pcmList = await Promise.all(chunks.map(c => fastTextToPcm(c, lang)));
   const pcmParts = [];
   for (const pcm of pcmList) {
@@ -2177,7 +2177,7 @@ const server = http.createServer(async (req, res) => {
       const tAiDone = Date.now();
 
       const fullReply = kiemthuResult.reply;
-      const chunks = splitIntoAudioChunks(fullReply, null, lockedLang, { useElevenLabs: ttsEngine.isElevenLabsActive() });
+      const chunks = splitIntoAudioChunks(fullReply, null, lockedLang, { useElevenLabs: ttsEngine.isElevenLabsActive(), modelId: ttsEngine.elevenLabsModel });
       const baseName = `reply_${Date.now()}`;
 
       // BƯỚC 2: TỔNG HỢP SIÊU TỐC 100% TRONG RAM (KHÔNG GHI ĐĨA TẠM) + BẮN SONG SONG CÁC ĐOẠN SAU NGAY LẬP TỨC!
