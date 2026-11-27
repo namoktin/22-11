@@ -16,6 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { getDocentReply } = require('./multilingual_docent');
 
 class CustomerCareScenarioEngine {
   constructor() {
@@ -332,11 +333,14 @@ class CustomerCareScenarioEngine {
       }
 
       const pol = this.getPolicy('POLICY_TICKET_DAYTIME');
+      const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
       return {
         scenarioId: 'TICKET_GENERAL_DAYTIME',
-        response: isEn
-          ? 'Daytime ticket to Hoa Lo Prison is 50,000 VND for adults. A 50% discount (25,000 VND) applies to students with valid student ID, seniors aged 60+ with ID, and severely disabled visitors. Free entry is granted to children under 15 and revolutionary contributors. Audio guides are available for rent at the ticket booth for around 50,000 VND. For the Sacred Night Tour (399,000 - 499,000 VND), advance booking via the official page is required.'
-          : 'Giá vé tham quan ban ngày tại Di tích Hỏa Lò là 50.000 VNĐ/người lớn. Học sinh, sinh viên (xuất trình thẻ HSSV), người cao tuổi từ 60 tuổi trở lên và người khuyết tật nặng được giảm 50% còn 25.000 VNĐ. Miễn phí vé cho trẻ em dưới 15 tuổi và người có công với cách mạng. Bạn có thể thuê tai nghe thuyết minh Audioguide tại quầy vé với phí 50.000 VNĐ/máy. Riêng tour đêm "Đêm thiêng liêng" có giá từ 399.000 - 499.000 VNĐ và cần đặt trước qua fanpage chính thức.',
+        response: isOtherForeign
+          ? getDocentReply('SERVICE_TICKET_DAYTIME', language)
+          : (isEn
+            ? 'Daytime ticket to Hoa Lo Prison is 50,000 VND for adults. A 50% discount (25,000 VND) applies to students with valid student ID, seniors aged 60+ with ID, and severely disabled visitors. Free entry is granted to children under 15 and revolutionary contributors. Audio guides are available for rent at the ticket booth for around 50,000 VND. For the Sacred Night Tour (399,000 - 499,000 VND), advance booking via the official page is required.'
+            : 'Giá vé tham quan ban ngày tại Di tích Hỏa Lò là 50.000 VNĐ/người lớn. Học sinh, sinh viên (xuất trình thẻ HSSV), người cao tuổi từ 60 tuổi trở lên và người khuyết tật nặng được giảm 50% còn 25.000 VNĐ. Miễn phí vé cho trẻ em dưới 15 tuổi và người có công với cách mạng. Bạn có thể thuê tai nghe thuyết minh Audioguide tại quầy vé với phí 50.000 VNĐ/máy. Riêng tour đêm "Đêm thiêng liêng" có giá từ 399.000 - 499.000 VNĐ và cần đặt trước qua fanpage chính thức.'),
         authorityBoundary: pol?.authority_boundary || 'Niêm yết tại quầy vé cổng chính số 1 Hỏa Lò.',
         actionableGuidance: 'Mua vé trực tiếp tại Quầy vé cổng chính số 1 Hỏa Lò.',
         requiresHuman: false,
@@ -347,11 +351,14 @@ class CustomerCareScenarioEngine {
     // 5. KỊCH BẢN GIỜ HOẠT ĐỘNG (OPENING_HOURS)
     if (intent === 'OPENING_HOURS') {
       const pol = this.getPolicy('POLICY_HOURS_DAYTIME');
+      const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
       return {
         scenarioId: 'HOURS_GENERAL',
-        response: isEn
-          ? 'Hoa Lo Prison Relic is open daily from 8:00 AM to 5:00 PM without lunch break, including weekends, public holidays, and Tet. The Sacred Night Tour takes place on Friday, Saturday, and Sunday evenings starting at 7:00 PM (booking in advance is mandatory).'
-          : 'Di tích Lịch sử Nhà tù Hỏa Lò mở cửa từ 8:00 đến 17:00 tất cả các ngày trong tuần (từ Thứ Hai đến Chủ Nhật, kể cả ngày Lễ và Tết), mở cửa liên tục không nghỉ trưa. Các chương trình tour đêm "Đêm thiêng liêng" đón khách từ 19:00 các tối thứ Sáu, thứ Bảy và Chủ Nhật (cần đặt trước).',
+        response: isOtherForeign
+          ? getDocentReply('SERVICE_OPENING_HOURS', language)
+          : (isEn
+            ? 'Hoa Lo Prison Relic is open daily from 8:00 AM to 5:00 PM without lunch break, including weekends, public holidays, and Tet. The Sacred Night Tour takes place on Friday, Saturday, and Sunday evenings starting at 7:00 PM (booking in advance is mandatory).'
+            : 'Di tích Lịch sử Nhà tù Hỏa Lò mở cửa từ 8:00 đến 17:00 tất cả các ngày trong tuần (từ Thứ Hai đến Chủ Nhật, kể cả ngày Lễ và Tết), mở cửa liên tục không nghỉ trưa. Các chương trình tour đêm "Đêm thiêng liêng" đón khách từ 19:00 các tối thứ Sáu, thứ Bảy và Chủ Nhật (cần đặt trước).'),
         authorityBoundary: pol?.authority_boundary || 'Cố định 8:00 - 17:00 tất cả các ngày.',
         actionableGuidance: 'Tham quan ban ngày từ 8:00 đến 17:00 không nghỉ trưa.',
         requiresHuman: false,
@@ -361,6 +368,17 @@ class CustomerCareScenarioEngine {
 
     // 6. KỊCH BẢN TIỆN ÍCH & CƠ SỞ VẬT CHẤT (FACILITY_INFORMATION / FACILITY_SUPPORT)
     if (intent === 'FACILITY_INFORMATION' || intent === 'FACILITY_SUPPORT') {
+      const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
+      if (isOtherForeign && !/luu niem|mua qua|qua tang|chup anh|quay phim/i.test(normQuery)) {
+        return {
+          scenarioId: 'FACILITY_MULTILINGUAL',
+          response: getDocentReply('SERVICE_RESTROOM_LOCKER', language),
+          authorityBoundary: 'Biển chỉ dẫn tại sân trại và lối ra.',
+          actionableGuidance: 'Đi theo biển chỉ dẫn tại sân trại giam hoặc gần lối ra.',
+          requiresHuman: false,
+          style: 'QUICK_ANSWER'
+        };
+      }
       const isRestroom = /ve sinh|toilet|wc|nha ve sinh/i.test(normQuery);
       const isStorage = /gui do|de do|ba lo|balo|hanh ly|gui balo|cho gui do|tu gui do/i.test(normQuery);
       const isSouvenir = /luu niem|mua qua|qua tang|quay luu niem/i.test(normQuery);
@@ -461,11 +479,14 @@ class CustomerCareScenarioEngine {
 
     // 6.2. KỊCH BẢN HƯỚNG DẪN THUYẾT MINH TỰ ĐỘNG (AUDIO_GUIDE_SUPPORT)
     if (intent === 'AUDIO_GUIDE_SUPPORT') {
+      const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
       return {
         scenarioId: 'AUDIO_GUIDE_SERVICE',
-        response: isEn
-          ? 'Hoa Lo Prison provides an automated Audioguide system featuring 35 historical stories narrated through the voices of political prisoners. You can rent the device at the ticket counter for 50,000 VND per unit (available in Vietnamese, English, French, etc.).'
-          : 'Di tích Hỏa Lò trang bị hệ thống thuyết minh tự động Audioguide với 35 câu chuyện lịch sử xúc động được kể qua lời của các cựu tù chính trị. Bạn có thể thuê thiết bị ngay tại quầy vé ở cổng chính với mức phí 50.000 VNĐ/máy (hỗ trợ đa ngôn ngữ: Việt, Anh, Pháp...). Nếu máy bị rè hoặc lỗi âm thanh, nhân viên quầy vé sẽ đổi máy mới miễn phí ngay trong 1-2 phút nhé.',
+        response: isOtherForeign
+          ? getDocentReply('SERVICE_AUDIOGUIDE', language)
+          : (isEn
+            ? 'Hoa Lo Prison provides an automated Audioguide system featuring 35 historical stories narrated through the voices of political prisoners. You can rent the device at the ticket counter for 50,000 VND per unit (available in Vietnamese, English, French, etc.).'
+            : 'Di tích Hỏa Lò trang bị hệ thống thuyết minh tự động Audioguide với 35 câu chuyện lịch sử xúc động được kể qua lời của các cựu tù chính trị. Bạn có thể thuê thiết bị ngay tại quầy vé ở cổng chính với mức phí 50.000 VNĐ/máy (hỗ trợ đa ngôn ngữ: Việt, Anh, Pháp...). Nếu máy bị rè hoặc lỗi âm thanh, nhân viên quầy vé sẽ đổi máy mới miễn phí ngay trong 1-2 phút nhé.'),
         authorityBoundary: 'Thuê thiết bị tại quầy vé cổng chính số 1 Hỏa Lò.',
         actionableGuidance: 'Thuê tai nghe Audioguide tại quầy vé cổng chính (50.000 VNĐ/máy).',
         requiresHuman: false,
@@ -475,11 +496,14 @@ class CustomerCareScenarioEngine {
 
     // 6.3. KỊCH BẢN TOUR ĐÊM & TRƯNG BÀY CHUYÊN ĐỀ (TOUR_INFORMATION)
     if (intent === 'TOUR_INFORMATION') {
+      const isOtherForeign = ['fr', 'ja', 'ko', 'zh'].includes(language);
       return {
         scenarioId: 'TOUR_NIGHT_AND_THEMATIC',
-        response: isEn
-          ? 'The Sacred Night Tour takes place on Friday, Saturday, and Sunday evenings starting at 7:00 PM (90-minute duration) with 3 themes: "Sacred Night 1 - Shining Vietnamese Spirit", "Sacred Night 2 - Living Like Flowers", and "Sacred Night 3 - Youthful Fire". Ticket prices range from 399,000 to 499,000 VND and advance booking via our official fanpage/hotline is mandatory due to limited capacity.'
-          : 'Tour đêm "Đêm thiêng liêng" diễn ra vào các tối thứ Sáu, thứ Bảy và Chủ Nhật (bắt đầu đón khách từ 19:00, thời lượng khoảng 90 phút) gồm 3 chủ đề: "Đêm thiêng liêng 1 - Sáng ngời tinh thần Việt", "Đêm thiêng liêng 2 - Sống như những đóa hoa", và "Đêm thiêng liêng 3 - Lửa thanh xuân". Giá vé từ 399.000 - 499.000 VNĐ và bắt buộc phải đặt trước qua hotline hoặc fanpage chính thức của di tích vì số lượng khách mỗi tour có giới hạn.',
+        response: isOtherForeign
+          ? getDocentReply('SERVICE_NIGHT_TOUR', language)
+          : (isEn
+            ? 'The Sacred Night Tour takes place on Friday, Saturday, and Sunday evenings starting at 7:00 PM (90-minute duration) with 3 themes: "Sacred Night 1 - Shining Vietnamese Spirit", "Sacred Night 2 - Living Like Flowers", and "Sacred Night 3 - Youthful Fire". Ticket prices range from 399,000 to 499,000 VND and advance booking via our official fanpage/hotline is mandatory due to limited capacity.'
+            : 'Tour đêm "Đêm thiêng liêng" diễn ra vào các tối thứ Sáu, thứ Bảy và Chủ Nhật (bắt đầu đón khách từ 19:00, thời lượng khoảng 90 phút) gồm 3 chủ đề: "Đêm thiêng liêng 1 - Sáng ngời tinh thần Việt", "Đêm thiêng liêng 2 - Sống như những đóa hoa", và "Đêm thiêng liêng 3 - Lửa thanh xuân". Giá vé từ 399.000 - 499.000 VNĐ và bắt buộc phải đặt trước qua hotline hoặc fanpage chính thức của di tích vì số lượng khách mỗi tour có giới hạn.'),
         authorityBoundary: 'Chương trình tour đêm trải nghiệm cuối tuần (cần đặt chỗ trước).',
         actionableGuidance: 'Đặt vé tour đêm trước qua hotline hoặc fanpage chính thức.',
         requiresHuman: false,

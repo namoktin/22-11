@@ -36,6 +36,8 @@ const {
 } = require('./src/security/security_middleware');
 const { BleAndDeviceManager } = require('./src/iot/ble_manager');
 const { getGlossaryPromptHint, postPolishForeignTerms } = require('./kiemthu/engine/heritage_glossary');
+const { getNativeRegisterInstruction } = require('./kiemthu/engine/multilingual_docent');
+const { PluggableTtsEngine, sanitizeTextForSpeech, splitIntoAudioChunks } = require('./src/tts/tts_engine');
 
 // BẢO VỆ TIẾN TRÌNH CHUẨN PRODUCTION:
 // - Chỉ bỏ qua lỗi ngắt kết nối socket/stream bình thường (EPIPE, ECONNRESET...)
@@ -155,16 +157,27 @@ const kiemthuDir = (!IS_RENDER && fs.existsSync(path.join(externalKiemthuDir, 's
   ? externalKiemthuDir
   : bundledKiemthuDir;
 
+// NẠP BIẾN MÔI TRƯỜNG (.env tại gốc server và kiemthu/.env — KHÔNG ghi đè process.env đã set)
+for (const envCandidate of [path.join(__dirname, '.env'), path.join(kiemthuDir, '.env')]) {
+  if (fs.existsSync(envCandidate)) {
+    try {
+      const envContent = fs.readFileSync(envCandidate, 'utf8');
+      for (const line of envContent.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue;
+        const idx = trimmed.indexOf('=');
+        const k = trimmed.slice(0, idx).trim();
+        const v = trimmed.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+        if (k && process.env[k] === undefined) {
+          process.env[k] = v;
+        }
+      }
+    } catch (e) {}
+  }
+}
+
 // NẠP GROQ_API_KEY ĐỂ TRANSCRIBE FILE .WAV TỪ ESP32 QUA WHISPER-LARGE-V3-TURBO
 let GROQ_API_KEY = process.env.GROQ_API_KEY || '';
-const kiemthuEnvPath = path.join(kiemthuDir, '.env');
-if (!GROQ_API_KEY && fs.existsSync(kiemthuEnvPath)) {
-  try {
-    const envContent = fs.readFileSync(kiemthuEnvPath, 'utf8');
-    const match = envContent.match(/GROQ_API_KEY=([^\r\n]+)/);
-    if (match) GROQ_API_KEY = match[1].trim();
-  } catch (e) {}
-}
 
 if (!fs.existsSync(AUDIO_DIR)) fs.mkdirSync(AUDIO_DIR, { recursive: true });
 if (!fs.existsSync(PUBLIC_DIR)) fs.mkdirSync(PUBLIC_DIR, { recursive: true });
@@ -854,9 +867,6 @@ async function transcribeWavToText(wavBuffer, fallbackContentType = '', targetLa
   };
 }
 
-// Bộ đệm PCM 16kHz Mono sạch trong RAM (0ms khi lặp cụm mở đầu / câu quen thuộc, KHÔNG ghi file tạm lên đĩa!)
-const pcmCache = new Map(); // md5 -> Buffer (raw Int16 PCM 16kHz mono đã cắt khoảng lặng)
-
 function trimRawPcmSilence(pcm) {
   if (!pcm || pcm.length < 320) return pcm || Buffer.alloc(0);
   const evenLen = pcm.length - (pcm.length % 2);
@@ -871,34 +881,6 @@ function trimRawPcmSilence(pcm) {
   const trimEnd = Math.min(totalSamples, endSample + padSamples);
   if (trimEnd <= trimStart) return pcm.slice(0, evenLen);
   return pcm.slice(trimStart * 2, trimEnd * 2);
-}
-
-// Tải MP3 từ Google TTS qua native https.get + Keep-Alive Agent THẬT (tránh Node fetch undici bỏ qua agent gây TLS handshake lại!)
-function fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, timeoutMs = 3500) {
-  return new Promise((resolve, reject) => {
-    const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${encodeURIComponent(ttsCode)}&client=tw-ob`;
-    const req = https.get(ttsUrl, {
-      agent: httpsKeepAliveAgent,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        'Connection': 'keep-alive'
-      },
-      timeout: timeoutMs
-    }, (res) => {
-      if (res.statusCode !== 200) {
-        res.resume();
-        return reject(new Error(`Google TTS HTTP ${res.statusCode}`));
-      }
-      const chunks = [];
-      res.on('data', c => chunks.push(c));
-      res.on('end', () => resolve(Buffer.concat(chunks)));
-      res.on('error', reject);
-    });
-    req.on('timeout', () => {
-      req.destroy(new Error('Google TTS timeout'));
-    });
-    req.on('error', reject);
-  });
 }
 
 // Hàng đợi giới hạn luồng giải mã FFmpeg (tránh bão tiến trình OS khi 50+ CCU cùng hỏi!)
@@ -972,80 +954,20 @@ function decodeMp3BufferToPcmRam(mp3Buffer) {
 
 /**
  * =========================================================================================
- * ⚡ TỔNG HỢP PCM 16kHz SIÊU TỐC 100% TRONG RAM (KEEP-ALIVE TLS + ZERO DISK I/O + PCM CACHE)
- * Thời gian: ~250ms - 400ms (và 0ms khi trúng cụm mở đầu / câu đã có trong RAM!)
+ * ⚡ TỔNG HỢP PCM 16kHz SIÊU TỐC (ELEVENLABS PLUGGABLE + GOOGLE TTS FALLBACK + ZERO DISK I/O)
+ * - Khi có ELEVENLABS_API_KEY: ưu tiên giọng ElevenLabs (pcm_16000 trực tiếp 0ms FFmpeg hoặc MP3 RAM decode).
+ * - Khi chưa có key / chạm quota: hạ cấp mượt sang Google TTS Keep-Alive + chuẩn hóa phát âm 6 ngôn ngữ!
  * =========================================================================================
  */
-function sanitizeTextForSpeech(text, lang = 'vi') {
-  if (!text) return '';
-  let s = String(text);
-  // Chuyển mũi tên lộ trình thành từ nối tự nhiên để AI Voice đọc mượt có mạch câu
-  s = s.replace(/\s*(?:➡️|→|➡)\s*/g, lang === 'vi' ? ', tiếp theo tới ' : ', then ');
-  // Chuyển đánh số đầu đoạn kiểu "1) ", "2) " thành từ nối tự nhiên thay vì đọc cộc
-  s = s.replace(/(?:^|\s)\d+\)\s+/g, ', ');
-  // Loại bỏ Markdown: **bold**, *italic*, __underline__, `code`, # header
-  s = s.replace(/[*_#`~]/g, ' ');
-  // Loại bỏ Markdown links [anchor](url) -> anchor
-  s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-  // Thay thế dấu ngoặc kép dạng fancy: “ ” « » " '
-  s = s.replace(/[“”«»"'`]/g, ' ');
-  // Chuyển ký hiệu đặc biệt thành lời đọc tự nhiên cho khách
-  if (lang === 'vi') {
-    s = s.replace(/\/người\b/gi, ' một người');
-    s = s.replace(/\/vé\b/gi, ' một vé');
-    s = s.replace(/\/lượt\b/gi, ' một lượt');
-    s = s.replace(/\+/g, ' cộng ');
-    s = s.replace(/&/g, ' và ');
-    s = s.replace(/%/g, ' phần trăm');
-  } else {
-    s = s.replace(/\/person\b/gi, ' per person');
-    s = s.replace(/\/ticket\b/gi, ' per ticket');
-    s = s.replace(/\+/g, ' plus ');
-    s = s.replace(/&/g, ' and ');
-    s = s.replace(/%/g, ' percent');
-  }
-  // Loại bỏ ký tự thừa thãi
-  s = s.replace(/[^\p{L}\p{N}\s.,?!:;-]/gu, ' ');
-  // Chuẩn hóa khoảng trắng và dấu phẩy thừa
-  s = s.replace(/\s*,\s*,+/g, ',').replace(/^\s*,\s*/, '').replace(/\s+/g, ' ').trim();
-  return s;
-}
-
-const MAX_PCM_CACHE = 800;
+const ttsEngine = new PluggableTtsEngine({
+  httpsAgent: httpsKeepAliveAgent,
+  decodeMp3ToPcm: decodeMp3BufferToPcmRam,
+  trimPcmSilence: trimRawPcmSilence,
+  logEvent
+});
 
 async function fastTextToPcm(text, lang = 'vi') {
-  const langInfo = SUPPORTED_LANGUAGES[normalizeLangCode(lang) || 'vi'];
-  const ttsCode = langInfo.ttsCode;
-  const sanitized = sanitizeTextForSpeech(text, lang);
-  const cleanText = sanitized.slice(0, 185).trim();
-  if (!cleanText) return Buffer.alloc(0);
-
-  const cacheKey = crypto.createHash('md5').update(`${ttsCode}:${cleanText.toLowerCase()}`).digest('hex');
-  if (pcmCache.has(cacheKey)) {
-    const hit = pcmCache.get(cacheKey);
-    pcmCache.delete(cacheKey);
-    pcmCache.set(cacheKey, hit);
-    return hit;
-  }
-
-  // Bounded retry (tối đa 2 lượt) để chống lỗi mạng thoáng qua khi tải Google TTS
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const mp3Buffer = await fetchGoogleTtsMp3KeepAlive(cleanText, ttsCode, 3500);
-      const cleanPcm = await decodeMp3BufferToPcmRam(mp3Buffer);
-      if (pcmCache.size >= MAX_PCM_CACHE) {
-        const oldest = pcmCache.keys().next().value;
-        if (oldest) pcmCache.delete(oldest);
-      }
-      pcmCache.set(cacheKey, cleanPcm);
-      return cleanPcm;
-    } catch (err) {
-      if (attempt === 2) {
-        logEvent('WARN', 'FastTTS', 'TTS synthesis failed after retry', { error: err.message, lang: ttsCode });
-      }
-    }
-  }
-  return Buffer.alloc(0);
+  return ttsEngine.synthesizeToPcm(text, lang, SUPPORTED_LANGUAGES);
 }
 
 async function fastTextToWav(text, outputFilename, lang = 'vi') {
@@ -1067,101 +989,10 @@ function fallbackToDefaultWav(outputPath, resolve, outputFilename) {
   resolve(outputFilename);
 }
 
-/**
- * =========================================================================================
- * ✂️ BÓC TÁCH CÂU ĐẦU TIÊN & CHUNKS ÂM THANH (PROGRESSIVE AUDIO CHUNKER)
- * - Tách ngay vế/câu đầu tiên (8-14 từ) để sinh file âm thanh nhỏ (Chunk 1) trả ngay <1s.
- * - Các đoạn sau được đẩy dần lên ở chế độ nền trong khi khách đang nghe Chunk 1!
- * =========================================================================================
- */
-// Cắt 1 đoạn văn dài thành các mảnh <= maxLen ký tự tại dấu câu / ranh giới từ (KHÔNG BAO GIỜ cắt cụt giữa từ hoặc bỏ sót cuối câu!)
-function splitLongSegmentSafely(segment, maxLen = 148) {
-  const parts = [];
-  let remaining = (segment || '').trim();
-  while (remaining.length > maxLen) {
-    const windowStr = remaining.slice(0, maxLen);
-    // Ưu tiên ngắt tại dấu câu tự nhiên (, ; : — – 、 ，) trong nửa sau cửa sổ
-    let cutIdx = -1;
-    for (let i = windowStr.length - 1; i >= Math.floor(maxLen * 0.45); i--) {
-      if (/[,;:—–、，]/.test(windowStr[i])) {
-        cutIdx = i + 1;
-        break;
-      }
-    }
-    // Nếu không có dấu phẩy -> ngắt tại dấu cách gần nhất (với CJK không dấu cách thì ngắt thẳng maxLen)
-    if (cutIdx === -1) {
-      const lastSpace = windowStr.lastIndexOf(' ');
-      cutIdx = lastSpace >= Math.floor(maxLen * 0.4) ? lastSpace : maxLen;
-    }
-    const piece = remaining.slice(0, cutIdx).trim();
-    if (piece) parts.push(piece);
-    remaining = remaining.slice(cutIdx).trim();
-  }
-  if (remaining) parts.push(remaining);
-  return parts;
-}
-
-function splitIntoAudioChunks(fullText, maxChunkChars = 148, lang = 'vi') {
-  if (!fullText) return [''];
-  let clean = fullText
-    .replace(/\s*(?:➡️|→|➡)\s*/g, lang === 'vi' ? ', tiếp theo tới ' : ', then ')
-    .replace(/[\n\r]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  // Bảo vệ số có dấu chấm thập phân hoặc phân cách hàng nghìn (50.000, 25.000, 4.5m)
-  clean = clean.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
-  // Bảo vệ các từ viết tắt phổ biến
-  clean = clean.replace(/\b(TP|QĐ|VNĐ|TS|ThS|GS|BS|No|St|Mr|Mrs|Ms|Dr|tr|đ)\./gi, '$1__DOT__');
-  // Hỗ trợ dấu kết câu cả Latin (. ! ?) và CJK (。 ！ ？)
-  const rawSentences = clean.match(/[^.!?。！？]+[.!?。！？]+|[^.!?。！？]+$/g) || [clean];
-  const sentences = rawSentences.map(s => s.replace(/__DOT__/g, '.').trim()).filter(Boolean);
-  if (sentences.length === 0) return [clean.replace(/__DOT__/g, '.')];
-
-  const chunks = [];
-
-  // Đoạn 1 SIÊU GỌN (ưu tiên ngắt ngay tại dấu phẩy/hai chấm đầu tiên trong 18..68 ký tự để tiếng đầu tiên phát ra chỉ ~250-380ms, hoặc 0ms khi trúng cache cụm mở đầu!)
-  const s0 = sentences[0];
-  let firstParts;
-  if (s0.length > 68) {
-    const commaIdx = s0.slice(18, 68).search(/[,;:—–、，]/);
-    if (commaIdx !== -1) {
-      const cut = 18 + commaIdx + 1;
-      firstParts = [s0.slice(0, cut).trim(), ...splitLongSegmentSafely(s0.slice(cut).trim(), maxChunkChars)];
-    } else {
-      firstParts = splitLongSegmentSafely(s0, 68);
-    }
-  } else {
-    firstParts = [s0];
-  }
-  chunks.push(firstParts[0]);
-
-  // Gom phần dư của câu 1 (nếu câu 1 dài) + TẤT CẢ các câu còn lại thành các đoạn <= maxChunkChars (không bỏ sót bất kỳ chữ nào!)
-  const tailSegments = [...firstParts.slice(1), ...sentences.slice(1)];
-  let currentBuf = '';
-  for (const seg of tailSegments) {
-    if (seg.length > maxChunkChars) {
-      if (currentBuf) {
-        chunks.push(currentBuf.trim());
-        currentBuf = '';
-      }
-      chunks.push(...splitLongSegmentSafely(seg, maxChunkChars));
-    } else if (!currentBuf) {
-      currentBuf = seg;
-    } else if ((currentBuf.length + 1 + seg.length) <= maxChunkChars) {
-      currentBuf += ' ' + seg;
-    } else {
-      chunks.push(currentBuf.trim());
-      currentBuf = seg;
-    }
-  }
-  if (currentBuf) chunks.push(currentBuf.trim());
-
-  return chunks.filter(c => c && c.length > 0);
-}
-
 // Tạo & cache 1 file .WAV hoàn chỉnh cho lời thoại BLE Beacon khi thuyết minh bằng ngôn ngữ khác tiếng Việt
 async function synthesizeCachedBeaconWav(beacon, translatedText, lang) {
-  const hash = crypto.createHash('md5').update(`${beacon.id}:${lang}:${translatedText.trim()}`).digest('hex').slice(0, 10);
+  const providerTag = ttsEngine.isElevenLabsActive() ? `el_${ttsEngine.getVoiceIdForLang(lang).slice(0, 6)}` : 'gg';
+  const hash = crypto.createHash('md5').update(`${providerTag}:${beacon.id}:${lang}:${translatedText.trim()}`).digest('hex').slice(0, 10);
   const safeId = (beacon.id || beacon.code || 'beacon').replace(/[^a-zA-Z0-9_\-]/g, '_');
   const cachedFilename = `beacon_${safeId}_${lang}_${hash}.wav`;
   const cachedPath = path.join(AUDIO_DIR, cachedFilename);
@@ -1170,7 +1001,7 @@ async function synthesizeCachedBeaconWav(beacon, translatedText, lang) {
     return cachedFilename;
   }
 
-  const chunks = splitIntoAudioChunks(translatedText, 148, lang);
+  const chunks = splitIntoAudioChunks(translatedText, null, lang, { useElevenLabs: ttsEngine.isElevenLabsActive() });
   const pcmList = await Promise.all(chunks.map(c => fastTextToPcm(c, lang)));
   const pcmParts = [];
   for (const pcm of pcmList) {
@@ -1558,9 +1389,10 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
   const runTranslate = async () => {
     const glossaryHint = mode === 'answer' ? getGlossaryPromptHint(targetLang) : '';
     const glossaryLine = glossaryHint ? ` ${glossaryHint}` : '';
+    const registerLine = mode === 'answer' ? ` ${getNativeRegisterInstruction(targetLang)}` : '';
     const groqSysPrompt = mode === 'query'
       ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
-      : `You are a refined senior museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY with a poised, natural spoken docent tone. Keep all historical dates, numbers, and proper names accurate.${glossaryLine} Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no parenthetical Vietnamese translations, no markdown, no notes.`;
+      : `You are a refined senior museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY with a poised, natural spoken docent tone. Keep all historical dates, numbers, and proper names accurate.${glossaryLine}${registerLine} Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no parenthetical Vietnamese translations, no markdown, no notes.`;
 
     if (mode === 'query') {
       // Chiến lược tiết kiệm Groq tối đa: dịch câu hỏi đầu vào bằng MyMemory / GTX TRƯỚC (0 token Groq!)
@@ -1648,11 +1480,12 @@ async function answerFromBeaconData(question, beacon, targetLang = 'vi') {
   const langInfo = SUPPORTED_LANGUAGES[targetLang] || SUPPORTED_LANGUAGES.vi;
   const glossaryHint = getGlossaryPromptHint(targetLang);
   const glossaryLine = glossaryHint ? `\n${glossaryHint}` : '';
+  const registerLine = `\n${getNativeRegisterInstruction(targetLang)}`;
   if (GROQ_API_KEY) {
     const ans = await callLightGroqMessages([
       {
         role: 'system',
-        content: `You are a seasoned, dignified museum docent. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer in 2-3 poised, complete, natural spoken sentences based faithfully on the artifact info below. Never cut off mid-sentence. No markdown, no parenthetical Vietnamese translations.${glossaryLine}\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
+        content: `You are a seasoned, dignified museum docent. You MUST reply STRICTLY in ${langInfo.nativeName} ONLY (even if the visitor spoke another language). Answer in 2-3 poised, complete, natural spoken sentences based faithfully on the artifact info below. Never cut off mid-sentence. No markdown, no parenthetical Vietnamese translations.${glossaryLine}${registerLine}\nArtifact: ${beacon.artifact_name} (Code ${beacon.code}, ${beacon.location || ''})\nNotes: ${baseText}`
       },
       { role: 'user', content: question }
     ], 0.25, 270, 4200);
@@ -2325,7 +2158,7 @@ const server = http.createServer(async (req, res) => {
       const tAiDone = Date.now();
 
       const fullReply = kiemthuResult.reply;
-      const chunks = splitIntoAudioChunks(fullReply, 148, lockedLang);
+      const chunks = splitIntoAudioChunks(fullReply, null, lockedLang, { useElevenLabs: ttsEngine.isElevenLabsActive() });
       const baseName = `reply_${Date.now()}`;
 
       // BƯỚC 2: TỔNG HỢP SIÊU TỐC 100% TRONG RAM (KHÔNG GHI ĐĨA TẠM) + BẮN SONG SONG CÁC ĐOẠN SAU NGAY LẬP TỨC!
@@ -2386,6 +2219,7 @@ const server = http.createServer(async (req, res) => {
         ai_source: kiemthuResult.source,
         locked_language: lockedLang,
         language_label: SUPPORTED_LANGUAGES[lockedLang]?.label || lockedLang,
+        tts_provider: ttsEngine.isElevenLabsActive() ? 'elevenlabs' : 'google_tts_fallback',
         audio_mode: 'SINGLE_STREAMING_WAV',
         audio_wav_url: unifiedStreamUrl,
         current_chunk: 1,
@@ -2824,7 +2658,8 @@ const server = http.createServer(async (req, res) => {
       kiemthu_dir: kiemthuDir,
       kiemthu_ready: fs.existsSync(path.join(kiemthuDir, 'smart_ai_server.js')),
       kb_stats: kbStats,
-      groq_key_configured: Boolean(GROQ_API_KEY)
+      groq_key_configured: Boolean(GROQ_API_KEY),
+      tts_status: ttsEngine.getStatus()
     }));
   }
 
@@ -2892,5 +2727,6 @@ module.exports = {
   normalizeLangCode,
   isTextInLanguage,
   translateTextStrict,
-  normalizeForeignQueryForLookup
+  normalizeForeignQueryForLookup,
+  ttsEngine
 };

@@ -1,35 +1,52 @@
 /**
  * =========================================================================================
- * 🌐 CANONICAL 6-LANGUAGE HERITAGE GLOSSARY & FOREIGN TERM POLISHER (V1.0)
+ * 🌐 CANONICAL 6-LANGUAGE HERITAGE GLOSSARY & FOREIGN TERM POLISHER (V2.0)
  * =========================================================================================
  * Chuẩn hóa danh từ riêng, địa danh, nhân vật và hiện vật Di tích Nhà tù Hỏa Lò + 4 trạm BLE
  * trên cả 6 ngôn ngữ: VI / EN / FR / JA / KO / ZH.
- * - Ngăn lỗi dịch máy / LLM bịa sai tên riêng ("Nguyễn 왕조", "전투기계", "延边", "machine à couper")
+ * - Ngăn lỗi dịch máy / LLM bịa sai tên riêng ("Stove Prison", "Nguyễn 왕조", "전투기계",
+ *   "延边", "machine à couper", "ストーブ刑務所", "난로 수용소", "bang tree")
  * - Loại bỏ chú thích thừa tiếng Việt có dấu trong ngoặc đơn ở đầu ra ngoại ngữ.
+ * =========================================================================================
  */
 
 const GLOSSARY_BY_LANG = {
   vi: {
-    promptHint: 'Viết đúng chính tả có dấu tiếng Việt: Nhà tù Hỏa Lò, Hà Nội, Yên Bái, Nguyễn Thái Học, Hoàng Văn Thụ, Đông Sơn, Đạt Hồng, Bảo kiếm Hoàng gia.',
+    promptHint: 'Viết đúng chính tả có dấu tiếng Việt: Nhà tù Hỏa Lò, Hà Nội, Yên Bái, Nguyễn Thái Học, Hoàng Văn Thụ, Trường Chinh, Trần Tử Bình, Nguyễn Đức Cảnh, Phụ Khánh, Đông Sơn, Đạt Hồng, Bảo kiếm Hoàng gia.',
     replacements: [
       [/\bHoa\s+Lo\b/g, 'Hỏa Lò'],
       [/\bHa\s+Noi\b/g, 'Hà Nội'],
       [/\bYen\s+Bai\b/g, 'Yên Bái'],
       [/\bNguyen\s+Thai\s+Hoc\b/g, 'Nguyễn Thái Học'],
       [/\bHoang\s+Van\s+Thu\b/g, 'Hoàng Văn Thụ'],
+      [/\bTruong\s+Chinh\b/g, 'Trường Chinh'],
+      [/\bTran\s+Tu\s+Binh\b/g, 'Trần Tử Bình'],
+      [/\bNguyen\s+Duc\s+Canh\b/g, 'Nguyễn Đức Cảnh'],
+      [/\bPhu\s+Khanh\b/g, 'Phụ Khánh'],
       [/\bDong\s+Son\b/g, 'Đông Sơn'],
       [/\bCon\s+Dao\b/g, 'Côn Đảo']
     ]
   },
   en: {
-    promptHint: 'Canonical terms: Hoa Lo Prison, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachot dark cells, Guillotine, Ancient Banyan Tree, Dong Son Bronze Drum, Dat Hong Great Bronze Bell, Nguyen Dynasty Royal Sword, Twin Dragons Facing the Sun motif, Sacred Night.',
+    promptHint: 'Canonical terms: Hoa Lo Prison, Maison Centrale, Phu Khanh village, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Truong Chinh, Tran Tu Binh, Nguyen Duc Canh, Cachot dark cells, Guillotine, Ancient Banyan Tree (Terminalia catappa / Banyan), Hanoi Hilton, Dong Son Bronze Drum, Dat Hong Great Bronze Bell, Nguyen Dynasty Royal Sword, Twin Dragons Facing the Sun motif, Sacred Night.',
     replacements: [
+      [/\b(?:stove|oven|furnace)\s+prison\b/gi, 'Hoa Lo Prison'],
+      [/\bcutting\s+machine\b/gi, 'guillotine'],
+      [/\bbang\s+tree\b/gi, 'historic banyan tree'],
       [/Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison'],
       [/Di tích (?:Lịch sử )?Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison Historical Relic'],
       [/Hỏa Lò/gi, 'Hoa Lo'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'Nguyen Thai Hoc'],
       [/Hoàng\s+Văn\s+Th[uụ]/gi, 'Hoang Van Thu'],
       [/Nguyễn\s+Thị\s+Minh\s+Khai/gi, 'Nguyen Thi Minh Khai'],
+      [/Trường\s+Chinh/gi, 'Truong Chinh'],
+      [/Trần\s+Tử\s+Bình/gi, 'Tran Tu Binh'],
+      [/Nguyễn\s+Đức\s+Cảnh/gi, 'Nguyen Duc Canh'],
+      [/Nguyễn\s+Hoàng\s+Tôn/gi, 'Nguyen Hoang Ton'],
+      [/Phụ\s+Khánh/gi, 'Phu Khanh'],
+      [/Thợ\s+Nhuộm/gi, 'Tho Nhuom'],
+      [/Quán\s+Sứ/gi, 'Quan Su'],
+      [/Trúc\s+Bạch/gi, 'Truc Bach'],
       [/Yên\s+Bái/gi, 'Yen Bai'],
       [/Trống đồng Đông Sơn/gi, 'Dong Son Bronze Drum'],
       [/Đông Sơn/gi, 'Dong Son'],
@@ -43,14 +60,20 @@ const GLOSSARY_BY_LANG = {
     ]
   },
   fr: {
-    promptHint: 'Termes officiels : Prison de Hoa Lo, Maison Centrale, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Cachots, Guillotine, Badamier historique, Tambour de bronze de Dong Son, Grande Cloche de bronze Dat Hong, Épée royale de la dynastie Nguyen, motif des Deux Dragons face au Soleil, Nuit Sacrée.',
+    promptHint: 'Termes officiels : Prison de Hoa Lo, Maison Centrale, village de Phu Khanh, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Truong Chinh, Tran Tu Binh, Cachots, Guillotine, Badamier historique, Hanoi Hilton, Tambour de bronze de Dong Son, Grande Cloche de bronze Dat Hong, Épée royale de la dynastie Nguyen, Deux Dragons face au Soleil, Nuit Sacrée.',
     replacements: [
       [/\bmachines?\s+à\s+couper(?:\s+(?:les?\s+)?têtes?)?\b/gi, 'guillotine'],
       [/\bmachine\s+à\s+décapiter\b/gi, 'guillotine'],
+      [/\bprison\s+du\s+fourneau\b/gi, 'Prison de Hoa Lo'],
+      [/\bprison\s+du\s+poêle\b/gi, 'Prison de Hoa Lo'],
       [/Nhà tù Hỏa Lò/gi, 'Prison de Hoa Lo'],
       [/Hỏa Lò/gi, 'Hoa Lo'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'Nguyen Thai Hoc'],
       [/Hoàng\s+Văn\s+Th[uụ]/gi, 'Hoang Van Thu'],
+      [/Trường\s+Chinh/gi, 'Truong Chinh'],
+      [/Trần\s+Tử\s+Bình/gi, 'Tran Tu Binh'],
+      [/Nguyễn\s+Đức\s+Cảnh/gi, 'Nguyen Duc Canh'],
+      [/Phụ\s+Khánh/gi, 'Phu Khanh'],
       [/Yên\s+Bái/gi, 'Yen Bai'],
       [/Trống đồng Đông Sơn/gi, 'Tambour de bronze de Dong Son'],
       [/Đông Sơn/gi, 'Dong Son'],
@@ -61,14 +84,20 @@ const GLOSSARY_BY_LANG = {
     ]
   },
   ja: {
-    promptHint: '公式用語: ホアロー収容所 (Hoa Lo), メゾン・サントラル (Maison Centrale), イエンバイ (Yen Bai), グエン・タイ・ホック (Nguyen Thai Hoc), ホアン・ヴァン・トゥー (Hoang Van Thu), カショ独房 (Cachot), ギロチン, 歴史的なモモタマナの木, ドンソン銅鼓, ダットホン大洪鐘, グエン朝王室の宝剣, 双龍朝日文様, 聖なる夜.',
+    promptHint: '公式用語: ホアロー収容所 (Hoa Lo), メゾン・サントラル (Maison Centrale), フーカイン村, イエンバイ (Yen Bai), グエン・タイ・ホック, ホアン・ヴァン・トゥー, チュオン・チン, チャン・トゥー・ビン, カショ独房 (Cachot), ギロチン, 歴史的なモモタマナの木, ハノイ・ヒルトン, ドンソン銅鼓, ダットホン大洪鐘, グエン朝王室の宝剣, 双龍朝日文様, 聖なる夜.',
     replacements: [
+      [/ストーブ刑務所|かまど刑務所|炉刑務所/g, 'ホアロー収容所'],
+      [/切断機/g, 'ギロチン'],
       [/ノイ[・\s]?タイ[・\s]?ホク/g, 'グエン・タイ・ホック'],
       [/トゥンマイ射撃場/g, 'トゥオンマイ射撃場'],
       [/Nhà tù Hỏa Lò/gi, 'ホアロー収容所'],
       [/Hỏa Lò/gi, 'ホアロー'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, 'グエン・タイ・ホック'],
       [/Hoàng\s+Văn\s+Th[uụ]/gi, 'ホアン・ヴァン・トゥー'],
+      [/Trường\s+Chinh/gi, 'チュオン・チン'],
+      [/Trần\s+Tử\s+Bình/gi, 'チャン・トゥー・ビン'],
+      [/Nguyễn\s+Đức\s+Cảnh/gi, 'グエン・ドゥック・カイン'],
+      [/Phụ\s+Khánh/gi, 'フーカイン'],
       [/Yên\s+Bái/gi, 'イエンバイ'],
       [/Đông Sơn/gi, 'ドンソン'],
       [/Đạt Hồng/gi, 'ダットホン'],
@@ -78,9 +107,10 @@ const GLOSSARY_BY_LANG = {
     ]
   },
   ko: {
-    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 옌바이 (Yen Bai), 응우옌 타이 혹 (Nguyen Thai Hoc), 호앙 반 투 (Hoang Van Thu), 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 방나무, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검 (Bảo kiếm Hoàng gia = Royal/Imperial Sword, NEVER Hoang Van Thu), 쌍룡조일(두 마리 용이 태양을 향하는 문양), 성스러운 밤.',
+    promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 푸카인 마을, 옌바이 (Yen Bai), 응우옌 타이 혹, 호앙 반 투, 쯔엉 찐, 쩐 뜨 빈, 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 반얀나무(방나무), 하노이 힐튼, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검 (NEVER Hoang Van Thu), 쌍룡조일 문양, 성스러운 밤.',
     replacements: [
-      [/전투\s*기계|전쟁\s*기계/g, '단두대'],
+      [/난로\s*(?:감옥|수용소)|화덕\s*(?:감옥|수용소)|화롯불\s*(?:감옥|수용소)/g, '호아로 수용소'],
+      [/전투\s*기계|전쟁\s*기계|절단기/g, '단두대'],
       [/호앙\s*반\s*투의\s*보검/g, '응우옌 왕조 황실 보검'],
       [/호앙\s*반\s*투의\s*궁전/g, '황궁 유물'],
       [/일본의\s*이중\s*용(?:\s*왕조)?\s*양식/g, '쌍룡조일(두 마리 용이 태양을 향하는) 문양'],
@@ -89,6 +119,10 @@ const GLOSSARY_BY_LANG = {
       [/Hỏa Lò/gi, '호아로'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, '응우옌 타이 혹'],
       [/Hoàng\s+Văn\s+Th[uụ]/gi, '호앙 반 투'],
+      [/Trường\s+Chinh/gi, '쯔엉 찐'],
+      [/Trần\s+Tử\s+Bình/gi, '쩐 뜨 빈'],
+      [/Nguyễn\s+Đức\s+Cảnh/gi, '응우옌 득 까인'],
+      [/Phụ\s+Khánh/gi, '푸카인'],
       [/Yên\s+Bái/gi, '옌바이'],
       [/Đông Sơn/gi, '동선'],
       [/Đạt Hồng/gi, '닷홍'],
@@ -97,13 +131,19 @@ const GLOSSARY_BY_LANG = {
     ]
   },
   zh: {
-    promptHint: '标准译名: 火炉监狱 (Hoa Lo), 中央监狱 (Maison Centrale), 安沛 (Yen Bai), 阮太学 (Nguyen Thai Hoc), 黄文树 (Hoang Van Thu), 卡绍暗牢 (Cachot), 断头台, 古榄仁树, 东山铜鼓, 达鸿大洪钟, 阮朝皇室宝剑, 双龙朝日纹饰, 神圣之夜.',
+    promptHint: '标准译名: 火炉监狱 (Hoa Lo), 中央监狱 (Maison Centrale), 富庆村, 安沛 (Yen Bai), 阮太学, 黄文树, 长征, 陈子平, 阮德景, 卡绍暗牢 (Cachot), 断头台, 古榄仁树, 河内希尔顿, 东山铜鼓, 达鸿大洪钟, 阮朝皇室宝剑, 双龙朝日纹饰, 神圣之夜.',
     replacements: [
       [/延边/g, '安沛'],
+      [/炉子监狱|烤炉监狱/g, '火炉监狱'],
+      [/切割机/g, '断头台'],
       [/Nhà tù Hỏa Lò/gi, '火炉监狱'],
       [/Hỏa Lò/gi, '火炉'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, '阮太学'],
       [/Hoàng\s+Văn\s+Th[uụ]/gi, '黄文树'],
+      [/Trường\s+Chinh/gi, '长征'],
+      [/Trần\s+Tử\s+Bình/gi, '陈子平'],
+      [/Nguyễn\s+Đức\s+Cảnh/gi, '阮德景'],
+      [/Phụ\s+Khánh/gi, '富庆'],
       [/Yên\s+Bái/gi, '安沛'],
       [/Đông Sơn/gi, '东山'],
       [/Đạt Hồng/gi, '达鸿'],
@@ -150,7 +190,7 @@ function postPolishForeignTerms(text, lang) {
 
   // 3. Làm gọn khoảng trắng thừa quanh dấu câu
   out = out
-    .replace(/\s+([,.;!?。！？])/g, '$1')
+    .replace(/\s+([,.;!?。！？、，])/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim();
 

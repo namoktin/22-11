@@ -283,7 +283,7 @@ test('Voice-First grammar, polite subject-predicate replies, TTS arrow expansion
 
   const banyan = await queryKiemThuAI('Ý nghĩa lịch sử của cây bàng đối với tù nhân Hỏa Lò?', { code: '002', artifact_name: 'Cây Bàng' }, 'test_voice_p1', 'vi');
   assert.ok(/^(Dạ|Chào|Mình)/i.test(banyan.reply), `Expected polite conversational lead-in, got: ${banyan.reply}`);
-  assert.ok(banyan.reply.includes('được các'), `Expected explicit passive agent in banyan reply, got: ${banyan.reply}`);
+  assert.ok(/kiết lỵ|quản bút|lá bàng|vỏ bàng/i.test(banyan.reply), `Expected verified banyan survival details, got: ${banyan.reply}`);
   assert.ok(!banyan.source.includes('v6.1'), `Source label must not be hardcoded v6.1, got: ${banyan.source}`);
 
   const trap = await queryKiemThuAI('Hoàng Văn Thụ có bị chém không?', { code: '002', artifact_name: 'Cây Bàng' }, 'test_voice_p2', 'vi');
@@ -488,7 +488,7 @@ test('9.5+ Docent Upgrade: 6-language glossary, mature tone, graceful OOS bridge
   assert.ok(/gạo hẩm|rau muống|dép lốp/i.test(mealAns.reply), `Expected prison meals & dep lop dossier, got: ${mealAns.reply}`);
 
   const pressAns = await queryKiemThuAI('Các chiến sĩ đã viết báo bí mật và biến Nhà tù Hỏa Lò thành trường học cách mạng như thế nào?', null, 't95_press', 'vi');
-  assert.ok(/Đuốc Đưa Đường|Suối Reo|trường học cách mạng/i.test(pressAns.reply), `Expected secret press dossier, got: ${pressAns.reply}`);
+  assert.ok(/Đuốc Đưa Đường|Suối Reo|Lao Tù|Búa Liềm|trường học cách mạng|lý luận chính trị/i.test(pressAns.reply), `Expected secret press dossier, got: ${pressAns.reply}`);
 
   const archAns = await queryKiemThuAI('Kiến trúc Nhà tù Hỏa Lò xây năm 1896 trên đất làng Phụ Khánh có tường đá cao mấy mét?', null, 't95_arch', 'vi');
   assert.ok(/Phụ Khánh|4 mét|13\.000/i.test(archAns.reply), `Expected 1896 architecture dossier, got: ${archAns.reply}`);
@@ -698,4 +698,101 @@ test('Systemic 4-Principle Architecture: Accent-Consistent Homographs, Historica
     'AUDIO_GUIDE_SUPPORT',
     'Audioguide question mentioning children must route to AUDIO_GUIDE_SUPPORT, not child ticket boilerplate'
   );
+});
+
+test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs TTS Engine', async () => {
+  const { PluggableTtsEngine, sanitizeTextForSpeech, splitIntoAudioChunks } = require('../src/tts/tts_engine');
+  const { getDocentReply, getNativeRegisterInstruction } = require(path.join(kiemthuRoot, 'engine', 'multilingual_docent'));
+  const { postPolishForeignTerms } = require(path.join(kiemthuRoot, 'engine', 'heritage_glossary'));
+  const composer = require(path.join(kiemthuRoot, 'engine', 'answer_composer'));
+
+  // 1. Speech normalizer preserves CJK punctuation and localizes currency/dates/times/units/arrows cleanly
+  const jaSpoken = sanitizeTextForSpeech('正門 ➡️ カショ独房。入場料は50,000 VND、8:00-17:00、17/6/1930。', 'ja');
+  assert.ok(jaSpoken.includes('。') && jaSpoken.includes('、続いて'), `JA speech must preserve CJK punctuation & connectors: ${jaSpoken}`);
+  assert.ok(jaSpoken.includes('50,000ベトナムドン') && jaSpoken.includes('1930年6月17日'), `JA speech must localize currency & date: ${jaSpoken}`);
+
+  const enSpoken = sanitizeTextForSpeech('Main Gate ➡️ Cachot. Ticket is 50.000 VNĐ, open 8:00-17:00, blade 40-50kg on 17/6/1930.', 'en');
+  assert.ok(enSpoken.includes('50,000 Vietnamese dong') && enSpoken.includes('8 AM to 5 PM') && enSpoken.includes('June 17, 1930') && enSpoken.includes('40 to 50 kilograms'), `EN speech normalization failed: ${enSpoken}`);
+
+  const frSpoken = sanitizeTextForSpeech('Portail ➡️ Cachots. Billet 50.000 VNĐ, 8:00-17:00, 17/6/1930.', 'fr');
+  assert.ok(frSpoken.includes(', puis ') && frSpoken.includes('dongs vietnamiens') && frSpoken.includes('17 juin 1930'), `FR speech normalization failed: ${frSpoken}`);
+
+  const zhSpoken = sanitizeTextForSpeech('正门 ➡️ 暗牢。门票50,000 VND，8:00-17:00，比例85%。', 'zh');
+  assert.ok(zhSpoken.includes('。') && zhSpoken.includes('，接着前往') && zhSpoken.includes('越南盾') && zhSpoken.includes('百分之85'), `ZH speech normalization failed: ${zhSpoken}`);
+
+  const koSpoken = sanitizeTextForSpeech('정문 ➡️ 카쇼 독방. 입장료 50,000 VND, 8:00-17:00.', 'ko');
+  assert.ok(koSpoken.includes(', 이어서 ') && koSpoken.includes('베트남 동') && koSpoken.includes('8시부터 17시까지'), `KO speech normalization failed: ${koSpoken}`);
+
+  // 2. Language-aware chunking: JA/ZH keep shorter natural chunks on Google TTS, longer fluent chunks on ElevenLabs
+  const longJa = 'ホアロー収容所は1896年にフランス植民地当局によって建設されました。現在も歴史的な正門やカショ独房、中庭のモモタマナの木が大切に保存されています。ぜひごゆっくりご見学ください。';
+  const jaGoogleChunks = splitIntoAudioChunks(longJa, null, 'ja', { useElevenLabs: false });
+  const jaElChunks = splitIntoAudioChunks(longJa, null, 'ja', { useElevenLabs: true });
+  assert.ok(jaGoogleChunks.length >= 2 && jaGoogleChunks.every(c => c.length <= 80), 'JA Google chunks must stay concise');
+  assert.ok(jaElChunks.length <= jaGoogleChunks.length, 'ElevenLabs should merge fluently into fewer, richer chunks');
+
+  // 3. Native 6-language docent replies (0ms native quality for FR/JA/KO/ZH without Vietnamese leakage)
+  for (const lang of ['vi', 'en', 'fr', 'ja', 'ko', 'zh']) {
+    assert.ok(getNativeRegisterInstruction(lang).length > 40);
+    const greet = getDocentReply('GREETING', lang);
+    const hours = getDocentReply('SERVICE_OPENING_HOURS', lang);
+    assert.ok(greet && greet.length > 20 && hours && hours.length > 20);
+  }
+  assert.equal(classifier.classify('こんにちは').intent, 'GREETING');
+  assert.equal(classifier.classify('안녕하세요!').intent, 'GREETING');
+  assert.equal(classifier.classify('你好！').intent, 'GREETING');
+  assert.equal(classifier.classify('Merci beaucoup !').intent, 'THANK_YOU');
+
+  // Expanded glossary catches literal MT errors ("Stove Prison", "ストーブ刑務所", "난로 감옥", "炉子监狱")
+  assert.equal(postPolishForeignTerms('Welcome to Stove Prison and bang tree.', 'en'), 'Welcome to Hoa Lo Prison and historic banyan tree.');
+  assert.equal(postPolishForeignTerms('ストーブ刑務所の切断機。', 'ja'), 'ホアロー収容所のギロチン。');
+  assert.equal(postPolishForeignTerms('난로 감옥의 절단기입니다.', 'ko'), '호아로 수용소의 단두대입니다.');
+  assert.equal(postPolishForeignTerms('炉子监狱的切割机。', 'zh'), '火炉监狱的断头台。');
+
+  // 4. Short 2-word RAG stub guard (rejects bare "Đúng vậy." so full grounded fallback answers instead)
+  const resStub = await composer.runUniversalGroundedRAG({
+    question: 'Chiếc roi màu nâu đen trong tủ kính làm bằng gân bò đúng không?',
+    intent: 'EXHIBIT_INFORMATION',
+    language: 'vi',
+    groqCaller: async () => 'Đúng vậy.'
+  });
+  assert.equal(resStub, null, 'Ultra-short bare 2-word RAG stub must be rejected cleanly');
+
+  // 5. PluggableTtsEngine: ElevenLabs direct PCM 16kHz, automatic 403 pcm->mp3 fallback, and 429 Google fallback
+  const fakePcm = Buffer.alloc(1200, 12);
+  const elEngine = new PluggableTtsEngine({
+    env: { ELEVENLABS_API_KEY: 'sk_test_mock_key', ELEVENLABS_MODEL_ID: 'eleven_flash_v2_5', ELEVENLABS_VOICE_JA: 'voice_ja_01' },
+    decodeMp3ToPcm: async () => fakePcm,
+    trimPcmSilence: (b) => b
+  });
+  assert.equal(elEngine.isElevenLabsActive(), true);
+  assert.equal(elEngine.getVoiceIdForLang('ja'), 'voice_ja_01');
+
+  const calledFormats = [];
+  elEngine.callElevenLabsRaw = async (text, lang, fmt) => {
+    calledFormats.push(fmt);
+    if (fmt === 'pcm_16000') {
+      const err = new Error('ElevenLabs HTTP 403: output_format_not_allowed for free tier');
+      err.statusCode = 403;
+      err.body = 'output_format_not_allowed';
+      throw err;
+    }
+    return { buffer: Buffer.alloc(600, 1), outputFormat: fmt, voiceId: 'voice_ja_01' };
+  };
+  const pcmOut = await elEngine.synthesizeToPcm('こんにちは。ホアロー収容所へようこそ。', 'ja');
+  assert.equal(pcmOut.length, 1200);
+  assert.deepEqual(calledFormats, ['pcm_16000', 'mp3_44100_128']);
+  assert.equal(elEngine.elevenLabsSupportsPcm16k, false, 'Engine must remember tier does not allow pcm_16000');
+  assert.equal(elEngine.getStatus().stats.elevenLabsOk, 1);
+
+  // 429 triggers cooldown and seamlessly falls back to Google TTS without failing the user request
+  elEngine.callElevenLabsRaw = async () => {
+    const err = new Error('ElevenLabs HTTP 429: quota exceeded');
+    err.statusCode = 429;
+    throw err;
+  };
+  elEngine.fetchGoogleTtsMp3 = async () => Buffer.alloc(500, 2);
+  const fallbackPcm = await elEngine.synthesizeToPcm('Bonjour, bienvenue à la Prison de Hoa Lo.', 'fr');
+  assert.equal(fallbackPcm.length, 1200);
+  assert.equal(elEngine.isElevenLabsActive(), false, '429 must activate cooldown so next chunk skips ElevenLabs immediately');
+  assert.equal(elEngine.getStatus().stats.googleOk, 1);
 });

@@ -209,15 +209,17 @@ class IntentClassifier {
     }
 
     // 0.05. Kiểm tra nhiễu cực đoan / ký tự lạ / toàn số / emoji / câu đệm vô nghĩa / lặp từ
+    // Bảo vệ chữ viết CJK/Hangul/Kana: không bao giờ coi câu tiếng Nhật/Hàn/Trung là chuỗi rỗng chỉ vì normalize bỏ non-ASCII!
+    const hasNonLatinScript = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF]/.test(raw);
     const trimmedNorm = norm.trim();
     const normTokens = trimmedNorm ? trimmedNorm.split(' ') : [];
     const uniqueTokens = new Set(normTokens);
     const isPureNoiseOrFiller =
-      !trimmedNorm ||
-      /^[0-9\s]+$/.test(trimmedNorm) ||
-      (normTokens.length === 1 && /^(a|aa|alo|test|testing|ok|oke|u|vang|ha|hihi|hehe|haha|o|um|uh|eh|hi|hey)$/.test(normTokens[0]) && !/^(hi|hey)$/.test(normTokens[0])) ||
-      /^(alo alo|alo alo 1234|testing 123|gi co|hihi|hehe|haha)$/.test(trimmedNorm) ||
-      (normTokens.length >= 4 && uniqueTokens.size <= 2 && /^(hoa lo|nha tu|test|alo|ok|a)$/.test([...uniqueTokens].join(' ')));
+      (!trimmedNorm && !hasNonLatinScript) ||
+      (!hasNonLatinScript && /^[0-9\s]+$/.test(trimmedNorm)) ||
+      (!hasNonLatinScript && normTokens.length === 1 && /^(a|aa|alo|test|testing|ok|oke|u|vang|ha|hihi|hehe|haha|o|um|uh|eh|hi|hey)$/.test(normTokens[0]) && !/^(hi|hey)$/.test(normTokens[0])) ||
+      (!hasNonLatinScript && /^(alo alo|alo alo 1234|testing 123|gi co|hihi|hehe|haha)$/.test(trimmedNorm)) ||
+      (!hasNonLatinScript && normTokens.length >= 4 && uniqueTokens.size <= 2 && /^(hoa lo|nha tu|test|alo|ok|a)$/.test([...uniqueTokens].join(' ')));
 
     if (isPureNoiseOrFiller) {
       return {
@@ -230,9 +232,16 @@ class IntentClassifier {
       };
     }
 
-    // 0.06. Kiểm tra chào hỏi / cảm ơn / tạm biệt / hỏi danh tính trợ lý (cả VI & EN)
-    const isGreetingOnly = /^(xin chao|chao ban|chao|hello|hi|hey|good morning|good afternoon|good evening)/.test(trimmedNorm) &&
-      normTokens.length <= 8 && !hasPhrase(norm, 'gia ve') && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'cay bang');
+    // 0.06. Kiểm tra chào hỏi / cảm ơn / tạm biệt / hỏi danh tính trợ lý (6 ngôn ngữ: VI / EN / FR / JA / KO / ZH)
+    const rawTrimmed = raw.trim();
+    const isForeignGreeting = /^(?:bonjour|bonsoir|salut|こんにちは|こんばんは|おはようございます|안녕하세요|안녕하십니까|你好|您好)[!！.,。\s]*$/i.test(rawTrimmed);
+    const isForeignThanks = /^(?:merci(?:\s+beaucoup)?|ありがとうございます|ありがとう|감사합니다|고맙습니다|谢谢|非常感谢)[!！.,。\s]*$/i.test(rawTrimmed);
+    const isForeignGoodbye = /^(?:au\s+revoir|à\s+bientôt|さようなら|またね|안녕히\s*계세요|안녕히\s*가세요|再见|拜拜)[!！.,。\s]*$/i.test(rawTrimmed);
+
+    const isGreetingOnly = isForeignGreeting || (
+      /^(xin chao|chao ban|chao|hello|hi|hey|good morning|good afternoon|good evening|bonjour|bonsoir|salut)\b/.test(trimmedNorm) &&
+      normTokens.length <= 8 && !hasPhrase(norm, 'gia ve') && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'cay bang') && !hasPhrase(norm, 'billet') && !hasPhrase(norm, 'horaires')
+    );
     if (isGreetingOnly) {
       return {
         intent: INTENTS.GREETING,
@@ -243,7 +252,7 @@ class IntentClassifier {
         reason: 'Lời chào mở đầu từ du khách'
       };
     }
-    if (/^(cam on|thank you|thanks|tks|many thanks)\b/.test(trimmedNorm) && normTokens.length <= 10) {
+    if (isForeignThanks || (/^(cam on|thank you|thanks|tks|many thanks|merci)\b/.test(trimmedNorm) && normTokens.length <= 10)) {
       return {
         intent: INTENTS.THANK_YOU,
         subIntent: 'THANK_YOU',
@@ -253,7 +262,7 @@ class IntentClassifier {
         reason: 'Lời cảm ơn từ du khách'
       };
     }
-    if (/^(tam biet|bye|goodbye|see you|hen gap lai)\b/.test(trimmedNorm) && normTokens.length <= 10) {
+    if (isForeignGoodbye || (/^(tam biet|bye|goodbye|see you|hen gap lai|au revoir)\b/.test(trimmedNorm) && normTokens.length <= 10)) {
       return {
         intent: INTENTS.GOODBYE,
         subIntent: 'GOODBYE',

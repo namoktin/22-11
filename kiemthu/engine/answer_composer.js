@@ -13,6 +13,7 @@ const customerCareScenarios = require('./customer_care_scenarios');
 const relevanceGate = require('./relevance_gate');
 const { knowledgeBase, HISTORICAL_EXHIBITS } = require('./knowledge_base');
 const { getGlossaryPromptHint, postPolishForeignTerms } = require('./heritage_glossary');
+const { getNativeRegisterInstruction, getDocentReply } = require('./multilingual_docent');
 const { analyzeDiscourseMode, hasVietnameseDiacritics, hasRawPhrase } = require('./semantic_router');
 
 class IntelligentAnswerComposer {
@@ -52,9 +53,7 @@ class IntelligentAnswerComposer {
 
     // 0.1. Kháng Prompt Injection (PROMPT_INJECTION)
     if (intent === 'PROMPT_INJECTION') {
-      const reply = language === 'en'
-        ? 'I serve as the official virtual docent of Hoa Lo Prison Historical Relic, dedicated to sharing verified history and assisting your visit. I must stay faithful to that role, and I would be glad to guide you through any exhibit or story here at Hoa Lo.'
-        : 'Dạ mình là hướng dẫn viên ảo chính thức tại Di tích Lịch sử Nhà tù Hỏa Lò, luôn giữ nguyên vai trò chia sẻ tư liệu lịch sử xác thực và đồng hành hỗ trợ du khách tham quan. Rất hân hạnh được giải đáp cùng bạn về các hiện vật và câu chuyện nơi đây.';
+      const reply = getDocentReply('PROMPT_INJECTION', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -69,9 +68,7 @@ class IntelligentAnswerComposer {
 
     // 0.2. Cảnh báo Chính sách Hết Hạn (EXPIRED_POLICY)
     if (intent === 'EXPIRED_POLICY') {
-      const reply = language === 'en'
-        ? 'Please note that the 30,000 VND ticket price was an older policy prior to 2016 and is currently EXPIRED. Under the current regulation (Decision No. 21/2021/QD-UBND), the standard daytime ticket to Hoa Lo Prison is 50,000 VND/adult (with a 50% discount to 25,000 VND for students and seniors).'
-        : 'Dạ bạn lưu ý giúp mình nhé: mức giá vé 30.000 VNĐ là chính sách cũ trước năm 2016 và hiện nay ĐÃ HẾT HIỆU LỰC. Theo quy định hiện hành (Quyết định số 21/2021/QĐ-UBND), giá vé tham quan ban ngày tại Di tích Hỏa Lò là 50.000 VNĐ/người lớn (ưu đãi 50% còn 25.000 VNĐ cho học sinh, sinh viên và người cao tuổi).';
+      const reply = getDocentReply('EXPIRED_POLICY', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -129,9 +126,7 @@ class IntelligentAnswerComposer {
 
     // 0.38. Xử lý nhiễu cực đoan / ký tự lạ / thử mic / câu đệm ngắn
     if (intent === 'CLARIFICATION' && subIntent === 'EXTREME_NOISE_OR_FILLER') {
-      const reply = language === 'en'
-        ? 'Hello! I did not catch a specific question. You can ask me about Hoa Lo Prison history, exhibits (Guillotine, Banyan tree, Cachot, US pilots), ticket prices, or opening hours!'
-        : 'Chào bạn! Mình chưa nhận rõ câu hỏi của bạn. Bạn có thể hỏi về lịch sử Nhà tù Hỏa Lò, các hiện vật (Cỗ máy chém, Cây bàng, Ngục tối Cachot, Cống ngầm 1951), giá vé, giờ mở cửa hoặc hỏi "Đây là đâu?" nhé!';
+      const reply = getDocentReply('EXTREME_NOISE', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -194,7 +189,7 @@ class IntelligentAnswerComposer {
           quickTopK?.hasMatchedExhibit ||
           quickTopK?.hasCustomDropInMatch ||
           quickTopK?.hasDynamicArchiveMatch ||
-          /\b(hoa lo|nha tu|di tich|hien vat|tham quan|buong giam|tu nhan|tu chinh tri|may chem|cay bang|cong ngam|cachot|xa lim|phi cong|trong dong|chuong|bao kiem|prison|museum|exhibit|artifact|tour|ticket)\b/.test(normQ)
+          /\b(hoa lo|nha tu|di tich|hien vat|tham quan|buong giam|tu nhan|tu chinh tri|may chem|cay bang|cong ngam|cachot|xa lim|phi cong|trong dong|chuong|bao kiem|tu kinh|trung bay|long cong|luoi cua|song sat|prison|museum|exhibit|artifact|tour|ticket)\b/.test(normQ)
         );
 
         if (groqCaller && hasGenuineSiteSignal) {
@@ -306,11 +301,9 @@ class IntelligentAnswerComposer {
       });
     }
 
-    // 0.5. Chào hỏi xã giao & giao tiếp đời thường (Phong thái Hướng dẫn viên chững chạc, tinh tế)
+    // 0.5. Chào hỏi xã giao & giao tiếp đời thường (Phong thái Hướng dẫn viên chuẩn bản ngữ 6 ngôn ngữ)
     if (intent === 'GREETING') {
-      const reply = language === 'en'
-        ? 'Warm welcome to Hoa Lo Prison Historical Relic. I am your virtual docent, honored to accompany you through the exhibits, historical narratives, and practical guidance for your visit today. Where would you like to begin?'
-        : 'Dạ xin chào mừng bạn đến với Di tích Lịch sử Nhà tù Hỏa Lò. Mình là hướng dẫn viên ảo tại di tích, rất hân hạnh được đồng hành cùng bạn tìm hiểu các hiện vật, câu chuyện lịch sử và thông tin tham quan hôm nay. Bạn muốn bắt đầu từ chủ đề nào trước?';
+      const reply = getDocentReply('GREETING', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -324,9 +317,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'THANK_YOU') {
-      const reply = language === 'en'
-        ? 'It is truly my pleasure to accompany you. Wishing you a deeply reflective, meaningful, and memorable journey through Hoa Lo Prison Historical Relic.'
-        : 'Dạ rất hân hạnh được đồng hành cùng bạn. Chúc bạn có một hành trình tham quan Di tích Lịch sử Nhà tù Hỏa Lò thật lắng đọng, sâu sắc và nhiều ý nghĩa.';
+      const reply = getDocentReply('THANK_YOU', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -340,9 +331,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'GOODBYE') {
-      const reply = language === 'en'
-        ? 'Thank you for visiting Hoa Lo Prison Historical Relic today. Wishing you safe travels and many memorable moments exploring the heritage of Hanoi.'
-        : 'Dạ xin cảm ơn bạn đã ghé thăm Di tích Lịch sử Nhà tù Hỏa Lò hôm nay. Chúc bạn thượng lộ bình an và có thật nhiều trải nghiệm đáng nhớ tại thủ đô Hà Nội.';
+      const reply = getDocentReply('GOODBYE', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -356,20 +345,8 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'CHITCHAT_BOT') {
-      let reply = '';
-      if (subIntent === 'USER_IDENTITY') {
-        reply = language === 'en'
-          ? 'You are our honored guest visiting Hoa Lo Prison Historical Relic today. You have not shared your name with me yet, so please let me know how you prefer to be addressed, and which exhibit you would like to explore.'
-          : 'Dạ bạn là vị khách quý đang đồng hành tham quan tại Di tích Nhà tù Hỏa Lò hôm nay. Mình chưa được biết quý danh của bạn, rất hân hạnh nếu bạn chia sẻ để mình tiện xưng hô và giới thiệu các câu chuyện lịch sử phù hợp.';
-      } else if (subIntent === 'BOT_LOCATION') {
-        reply = language === 'en'
-          ? 'I am right here alongside you through your guide device, accompanying every step of your tour across the galleries. Please ask whenever an exhibit or historical detail sparks your interest.'
-          : 'Dạ mình luôn hiện diện ngay bên cạnh trên thiết bị hướng dẫn để đồng hành cùng bạn qua từng phòng trưng bày. Bạn đang quan tâm đến hiện vật hay dấu tích nào trước mắt, mình sẵn sàng thuyết minh ngay.';
-      } else {
-        reply = language === 'en'
-          ? 'I am the virtual docent of Hoa Lo Prison Historical Relic in Hanoi. While I do not have a physical age, I bring together verified historical archives, exhibit stories, and visiting guidance to accompany you with clarity and care throughout your visit.'
-          : 'Dạ xin chào bạn, mình là hướng dẫn viên ảo của Di tích Lịch sử Nhà tù Hỏa Lò. Mình luôn sẵn sàng đồng hành cùng bạn bằng nguồn tư liệu lịch sử xác thực để lắng nghe và chia sẻ những câu chuyện giàu chiều sâu về con người và hiện vật nơi đây. Bạn muốn mình dẫn chuyện về chủ đề nào trước?';
-      }
+      const key = subIntent === 'USER_IDENTITY' ? 'BOT_USER_IDENTITY' : (subIntent === 'BOT_LOCATION' ? 'BOT_LOCATION' : 'BOT_IDENTITY');
+      const reply = getDocentReply(key, language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -383,9 +360,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'JOKE_REQUEST') {
-      const reply = language === 'en'
-        ? 'Hoa Lo Prison is a solemn place of remembrance honoring extraordinary courage and sacrifice, so telling jokes would not be fitting here. Instead, I would be glad to share remarkable true stories of wit, resilience, and quiet camaraderie among the prisoners.'
-        : 'Dạ Nhà tù Hỏa Lò là không gian di tích lịch sử trang nghiêm, nơi tưởng niệm sự hy sinh cao cả và ý chí bất khuất của các chiến sĩ yêu nước, nên mình xin phép không kể chuyện hài hước tại đây. Thay vào đó, mình rất sẵn lòng kể bạn nghe những câu chuyện có thật đầy trí tuệ, lạc quan và tình đồng chí cảm động của người tù năm xưa.';
+      const reply = getDocentReply('JOKE_REQUEST', language);
       return this.formatResponse({
         reply,
         style: 'EMPATHETIC_SUPPORT',
@@ -399,9 +374,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'HIGHLIGHTS_REQUEST') {
-      const reply = language === 'en'
-        ? 'The top must-see highlights at Hoa Lo Prison include: the formidable Maison Centrale Main Gate (1896), the pitch-dark Cachot cells ("hell within hell"), the original French Guillotine, the historic Banyan Tree in the prison yard, the 1951 escape sewer exit, the American pilots exhibition ("Hanoi Hilton"), and the solemn Memorial Monument.'
-        : 'Mình xin gợi ý cho bạn những điểm nhấn ấn tượng và giàu ý nghĩa lịch sử nhất tại Di tích Hỏa Lò mà bạn không nên bỏ lỡ: Cổng chính Maison Centrale kiên cố từ năm 1896, Ngục tối Cachot ("địa ngục của địa ngục"), Cỗ máy chém thời Pháp, Cây bàng cổ thụ tại sân trại, Cửa cống ngầm vượt ngục huyền thoại năm 1951, Khu trưng bày phi công Mỹ ("Hanoi Hilton"), và Đài tưởng niệm tri ân các anh hùng liệt sĩ.';
+      const reply = getDocentReply('HIGHLIGHTS_REQUEST', language);
       return this.formatResponse({
         reply,
         style: 'SMART_RECOMMENDATION',
@@ -415,9 +388,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'PARKING_SUPPORT') {
-      const reply = language === 'en'
-        ? 'Parking guidelines for Hoa Lo Prison: Motorbikes can be parked on the designated sidewalk directly outside the main gate under the guidance of our security guards. For cars, as the relic does not have an on-site automobile lot, please park at the adjacent Hanoi Towers building (No. 49 Hai Ba Trung) or at public parking lots along Da Tuong and Ly Thuong Kiet streets.'
-        : 'Về chỗ gửi xe khi tham quan Di tích Hỏa Lò: Xe máy bạn có thể gửi tại khu vực trước cổng di tích theo hướng dẫn trực tiếp của nhân viên bảo vệ trên phố Hỏa Lò. Đối với ô tô, do khuôn viên di tích không có bãi đỗ xe riêng, bạn vui lòng gửi xe tại tòa nhà Tháp Hà Nội (Hanoi Towers) ngay kế bên số 49 Hai Bà Trưng, hoặc các bãi gửi xe công cộng trên phố Dã Tượng và Lý Thường Kiệt nhé.';
+      const reply = getDocentReply('PARKING_SUPPORT', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -431,9 +402,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'PHOTOGRAPHY_POLICY') {
-      const reply = language === 'en'
-        ? 'Visitors are welcome to take souvenir photos with phones and personal cameras throughout the site. Please note: TURN OFF CAMERA FLASH inside the cellblocks to preserve artifacts and maintain solemnity. Commercial photography, videography, or staged shoots require prior permission from the Relic Management Board.'
-        : 'Dạ chào bạn, tại Di tích Nhà tù Hỏa Lò, du khách hoàn toàn được mang điện thoại và máy ảnh cá nhân vào chụp ảnh lưu niệm thông thường. Bạn lưu ý giúp mình là TẮT ĐÈN FLASH tại các buồng giam để bảo quản hiện vật và giữ sự trang nghiêm; còn việc quay phim, chụp ảnh thương mại hoặc dàn dựng cần đăng ký trước với Ban Quản lý Di tích nhé.';
+      const reply = getDocentReply('PHOTOGRAPHY_POLICY', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -447,9 +416,7 @@ class IntelligentAnswerComposer {
     }
 
     if (intent === 'DINING_VICINITY') {
-      const reply = language === 'en'
-        ? 'Hoa Lo Prison does not provide food services inside the historical grounds (bottled water is available at the souvenir shop). However, right outside on Hoa Lo Street and neighboring streets such as Da Tuong, Quan Su, and Ly Thuong Kiet, you can easily find authentic Hanoi traditional beef pho, bun cha, and charming cafes to enjoy after your tour!'
-        : 'Di tích Nhà tù Hỏa Lò không phục vụ ăn uống bên trong khuôn viên (chỉ có nước uống đóng chai tại quầy lưu niệm). Tuy nhiên, ngay trên phố Hỏa Lò và các con phố lân cận như Dã Tượng, Quán Sứ, Lý Thường Kiệt có rất nhiều quán phở bò gia truyền, bún chả và quán cà phê Hà Nội ngon, bạn có thể ghé thưởng thức ngay sau chuyến tham quan nhé!';
+      const reply = getDocentReply('DINING_VICINITY', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -464,9 +431,7 @@ class IntelligentAnswerComposer {
 
     // 0.55. Khoảng cách đi bộ ra Hồ Gươm (VICINITY_DISTANCE)
     if (intent === 'VICINITY_DISTANCE' || (normQ.includes('ho guom') && (normQ.includes('di bo') || normQ.includes('bao lau') || normQ.includes('may phut') || normQ.includes('bao xa')))) {
-      const reply = language === 'en'
-        ? 'From Hoa Lo Prison (No. 1 Hoa Lo Street) to Hoan Kiem Lake is approximately 800m to 1km, taking about 10 to 15 minutes of relaxed walking via Ly Thuong Kiet or Tho Nhuom Street toward Dinh Tien Hoang / Hang Khay.'
-        : 'Từ Di tích Nhà tù Hỏa Lò (số 1 phố Hỏa Lò) đi bộ ra Hồ Gươm (khu vực ngã tư Tràng Tiền - Đinh Tiên Hoàng hoặc Hàng Khay) mất khoảng 10 đến 15 phút, với quãng đường chừng 800m đến 1km. Bạn có thể đi theo đường Hỏa Lò rồi rẽ sang Lý Thường Kiệt hoặc Thợ Nhuộm để đi bộ thẳng ra hồ rất thuận tiện ạ.';
+      const reply = getDocentReply('VICINITY_DISTANCE', language);
       return this.formatResponse({
         reply,
         style: 'QUICK_ANSWER',
@@ -481,9 +446,7 @@ class IntelligentAnswerComposer {
 
     // 0.56. Tóm tắt lịch sử trong đúng 3 câu ngắn (SUMMARY_REQUEST)
     if (intent === 'SUMMARY_REQUEST' || ((normQ.includes('3 cau') || normQ.includes('ba cau')) && (normQ.includes('tom tat') || normQ.includes('ngan gon') || normQ.includes('dung 3 cau')))) {
-      const reply = language === 'en'
-        ? '1. Hoa Lo Prison was built by French colonialists in 1896 on Phu Khanh village land to suppress Vietnamese patriots and revolutionaries.\n2. Once known as a notorious "hell on earth", it was turned into a revolutionary school fostering unwavering courage and daring escapes.\n3. Today, it stands as a sacred national relic honoring heroic sacrifices and educating future generations in patriotic traditions.'
-        : 'Mình xin tóm tắt lịch sử Nhà tù Hỏa Lò qua 3 câu ngắn gọn cho bạn dễ nhớ nhé. Thứ nhất, Nhà tù Hỏa Lò do thực dân Pháp xây dựng năm 1896 trên đất làng Phụ Khánh để giam giữ những người Việt Nam yêu nước. Thứ hai, nơi đây từng là "địa ngục trần gian" khét tiếng nhưng các chiến sĩ kiên trung đã biến nơi này thành trường học cách mạng. Thứ ba, ngày nay di tích là điểm đến lịch sử thiêng liêng nhằm tri ân sự hy sinh anh dũng và giáo dục truyền thống yêu nước.';
+      const reply = getDocentReply('SUMMARY_3_SENTENCES', language);
       return this.formatResponse({
         reply,
         style: 'QUICK_ANSWER',
@@ -498,9 +461,7 @@ class IntelligentAnswerComposer {
 
     // 0.57. Tư vấn thời gian vào xem lúc 4h15 chiều (TIME_FEASIBILITY)
     if (intent === 'TIME_FEASIBILITY' || ((normQ.includes('4 gio 15') || normQ.includes('4h15') || normQ.includes('16h15')) && (normQ.includes('kip khong') || normQ.includes('co kip')))) {
-      const reply = language === 'en'
-        ? 'Hoa Lo Prison welcomes visitors until 5:00 PM daily. At 4:15 PM, you still have about 45 minutes, which is enough time to explore the core highlights: Main Gate ➡️ Cachot dark cells ➡️ Guillotine ➡️ Banyan tree courtyard ➡️ Escape sewer ➡️ Memorial Monument. Please proceed to the ticket counter right away to maximize your visit!'
-        : 'Di tích Hỏa Lò mở cửa đón khách đến 17:00 chiều hàng ngày. Bây giờ là 4 giờ 15 thì bạn vẫn còn khoảng 45 phút, hoàn toàn KỊP xem các điểm cốt lõi nhất nếu bạn đi theo lộ trình rút gọn: Cổng chính Maison Centrale ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cây bàng sân trại ➡️ Cửa cống ngầm ➡️ Đài tưởng niệm. Bạn hãy vào mua vé ngay để kịp thời gian nhé!';
+      const reply = getDocentReply('TIME_FEASIBILITY', language);
       return this.formatResponse({
         reply,
         style: 'SMART_RECOMMENDATION',
@@ -515,9 +476,7 @@ class IntelligentAnswerComposer {
 
     // 0.58. Tư vấn thời tiết trời mưa tham quan Hỏa Lò (WEATHER_ADVISORY)
     if (intent === 'WEATHER_ADVISORY' || ((normQ.includes('mua to') || normQ.includes('dang mua') || normQ.includes('troi mua')) && (normQ.includes('bi uot') || normQ.includes('uot khong')))) {
-      const reply = language === 'en'
-        ? 'Visiting Hoa Lo Prison during heavy rain is very comfortable! Around 85–90% of the tour areas—including collective cells, death row cells, Cachot, guillotine room, and thematic exhibitions—are fully indoors with sheltered corridors. Only the courtyard and ancient banyan tree are outdoors, so you can easily carry an umbrella or pass through quickly without worrying about getting wet.'
-        : 'Trời mưa bạn vẫn tham quan Hỏa Lò rất thuận tiện nhé! Khoảng 85-90% không gian tham quan (gồm các dãy phòng giam tập thể, xà lim tử hình, ngục tối Cachot, khu máy chém và phòng trưng bày chuyên đề) đều nằm hoàn toàn trong nhà và có hành lang mái che kiên cố. Chỉ có khu vực sân trại giam và cây bàng lịch sử là ngoài trời, bạn có thể mang theo ô hoặc di chuyển nhanh qua khu vực này là không lo bị ướt ạ.';
+      const reply = getDocentReply('WEATHER_ADVISORY', language);
       return this.formatResponse({
         reply,
         style: 'CUSTOMER_CARE',
@@ -532,9 +491,7 @@ class IntelligentAnswerComposer {
 
     // 0.59. Tư vấn bắt đầu xem từ đâu (TOUR_START_GUIDANCE)
     if (subIntent === 'SUGGESTED_START_ROUTE' || normQ.includes('khong biet bat dau') || normQ.includes('bat dau xem tu dau') || normQ.includes('chi giup minh di')) {
-      const reply = language === 'en'
-        ? 'Here is our recommended standard route for a meaningful visit: Start at the Main Gate Maison Centrale ➡️ View the scale model and male collective cells ➡️ Dark cells Cachot ➡️ Prison yard & historic Banyan Tree ➡️ Guillotine & Death Row cells ➡️ Escape Sewer exit ➡️ American pilots exhibition ➡️ Conclude with solemn incense offering at the Memorial Monument.'
-        : 'Mình gợi ý cho bạn lộ trình tham quan chuẩn và giàu cảm xúc nhất tại Hỏa Lò nhé: Bắt đầu từ Cổng chính Maison Centrale ➡️ Xem sa bàn và các dãy buồng giam tập thể (Trại giam Nam) ➡️ Ngục tối Cachot ➡️ Sân trại giam và Cây bàng cổ thụ ➡️ Phòng trưng bày Cỗ máy chém và Xà lim tử hình ➡️ Dấu tích Cửa cống ngầm vượt ngục ➡️ Khu trưng bày phi công Mỹ ("Hanoi Hilton") ➡️ và điểm dừng cuối cùng là Đài tưởng niệm trang nghiêm để dâng hương tri ân.';
+      const reply = getDocentReply('TOUR_START_GUIDANCE', language);
       return this.formatResponse({
         reply,
         style: 'SMART_RECOMMENDATION',
@@ -609,45 +566,9 @@ class IntelligentAnswerComposer {
       }, intent, retrievedData);
     }
 
-    // 0.7. Quy định vận hành & Tiện ích thực địa chuyên sâu (SITE_OPERATIONS V7.0)
+    // 0.7. Quy định vận hành & Tiện ích thực địa chuyên sâu (SITE_OPERATIONS V7.0 - bản ngữ 6 ngôn ngữ)
     if (intent === 'SITE_OPERATIONS') {
-      const isEn = language === 'en';
-      const opsMap = {
-        OPS_FOOD_DRINK_PROHIBITED: isEn
-          ? 'To preserve the historical relic and maintain hygiene, visitors are strictly prohibited from bringing outside food, snacks, chewing gum, alcohol, or colored sugary drinks into the exhibition halls and prison cells. You may carry personal plain bottled water. Free luggage and food lockers are available at Gate No. 1.'
-          : 'Để bảo tồn di tích lịch sử và giữ gìn vệ sinh chung, Di tích Nhà tù Hỏa Lò nghiêm cấm mang đồ ăn, thực phẩm có mùi, kẹo cao su, rượu bia hoặc các loại nước ngọt có màu vào các phòng trưng bày và buồng giam. Du khách chỉ được mang theo chai nước lọc cá nhân. Bạn có thể gửi đồ ăn và hành lý hoàn toàn miễn phí tại tủ gửi đồ Cổng chính số 1 trước khi vào tham quan.',
-        OPS_SMOKING_VIOLATION: isEn
-          ? 'Smoking is strictly prohibited throughout Hoa Lo Prison Relic for fire safety and heritage preservation. Please immediately inform the nearest security guard or staff member so they can promptly remind the visitor.'
-          : 'Di tích Nhà tù Hỏa Lò nghiêm cấm tuyệt đối việc hút thuốc lá trong toàn bộ khuôn viên để phòng chống cháy nổ và giữ gìn không gian trang nghiêm. Bạn vui lòng báo ngay cho nhân viên bảo vệ gần nhất để các anh chị kịp thời nhắc nhở và xử lý nhé!',
-        OPS_PETS_PROHIBITED: isEn
-          ? 'Pets and animals are not permitted inside the exhibition areas of Hoa Lo Prison Relic (even inside carrier bags) to ensure hygiene, visitor safety, and relic preservation. Please make arrangements for your pet before entering.'
-          : 'Để đảm bảo vệ sinh chung, an toàn cho du khách và bảo tồn di tích trang nghiêm, Di tích Nhà tù Hỏa Lò không cho phép mang thú cưng/vật nuôi vào khu vực trưng bày (kể cả khi bỏ trong túi xách). Bạn vui lòng gửi hoặc sắp xếp cho bé thú cưng ở bên ngoài trước khi vào tham quan nhé.',
-        OPS_DRONE_PROHIBITED: isEn
-          ? 'Flying drones (flycams) inside or over Hoa Lo Prison Relic is strictly prohibited without special prior authorization from the Relic Management Board and relevant aviation/security authorities.'
-          : 'Việc sử dụng flycam/drone bay quay trong khuôn viên Di tích Nhà tù Hỏa Lò bị nghiêm cấm để bảo đảm an toàn di tích và an ninh hàng không khu vực trung tâm Hà Nội, trừ trường hợp có giấy phép chính thức của cơ quan chức năng và Ban Quản lý Di tích.',
-        OPS_COMMERCIAL_INAPPROPRIATE: isEn
-          ? 'Commercial livestreaming, selling, wedding photography, or private corporate galas/events are not permitted in the solemn exhibition spaces of Hoa Lo Prison Relic. Any media or special filming requests must be formally approved in advance by the Relic Management Board (024.39342253).'
-          : 'Nhà tù Hỏa Lò là di tích lịch sử quốc gia trang nghiêm, vì vậy các hoạt động livestream bán hàng, chụp ảnh cưới trước hiện vật hành hình hay thuê mặt bằng tổ chức tiệc gala thương mại đều KHÔNG phù hợp và không được phép thực hiện tại đây. Mọi nhu cầu ghi hình báo chí/chuyên đề cần đăng ký và được Ban Quản lý Di tích chấp thuận trước qua số 024.39342253.',
-        OPS_PHONE_CHARGING: isEn
-          ? 'Hoa Lo Prison Relic does not provide public phone-charging kiosks or loaner power banks inside the exhibition rooms. You may ask the reception desk at Gate No. 1 in urgent cases, though we recommend bringing a personal power bank.'
-          : 'Trong các phòng trưng bày của Di tích Hỏa Lò hiện không bố trí ổ cắm sạc công cộng hay dịch vụ cho mượn sạc dự phòng. Trong trường hợp thực sự khẩn cấp cần liên lạc, bạn có thể ghé quầy đón tiếp tại Cổng chính số 1 để hỏi xem nhân viên có thể hỗ trợ tạm thời không nhé.',
-        OPS_WIFI_ACCESS: isEn
-          ? 'Our system does not hold a public Wi-Fi password for Hoa Lo Prison Relic. Visitors usually use personal 4G/5G mobile data during their visit, or you can ask staff at the Gate No. 1 reception counter if guest Wi-Fi is currently available.'
-          : 'Hiện trong hệ thống thông tin của mình không có mật khẩu Wi-Fi công cộng của di tích. Du khách tham quan thường sử dụng mạng di động 4G/5G cá nhân; nếu cần kết nối mạng, bạn vui lòng hỏi trực tiếp nhân viên tại quầy đón tiếp Cổng chính số 1 nhé.',
-        OPS_PAYMENT_METHODS: isEn
-          ? 'Official admission tickets at Hoa Lo Prison (50,000 VND/adult) are transacted in Vietnamese Dong (VND). Cash in VND and popular domestic cashless payments (QR/bank transfer) are commonly supported at the Gate No. 1 ticket counter; foreign currency (USD) is generally not accepted directly—please confirm international card acceptance directly with the ticket cashier.'
-          : 'Vé tham quan tại quầy vé Cổng số 1 Hỏa Lò (50.000 VNĐ/người lớn) được niêm yết và thu bằng tiền Việt Nam Đồng (VNĐ). Quầy vé hỗ trợ thanh toán tiền mặt VNĐ và thanh toán không tiền mặt (chuyển khoản/QR); ngoại tệ (USD) thường không thu trực tiếp. Bạn vui lòng xác nhận hình thức quẹt thẻ quốc tế trực tiếp với thu ngân tại quầy vé nhé.',
-        OPS_DAMAGED_TICKET: isEn
-          ? 'If your newly purchased paper ticket was accidentally torn, please keep all pieces and bring it directly to the ticket counter or Gate No. 1 staff immediately for verification and assistance.'
-          : 'Bạn đừng quá lo lắng nhé! Hãy giữ lại đầy đủ các mảnh vé giấy bị rách (nhất là phần có mã vạch/số sê-ri) và mang ngay tới quầy vé hoặc nhân viên soát vé tại Cổng chính số 1 để được kiểm tra đối chiếu và hỗ trợ kịp thời ạ.',
-        OPS_GROUP_BOOKING: isEn
-          ? 'Children under 15 years old (including elementary school students) receive FREE admission to Hoa Lo Prison Relic! For large school or tour groups, we strongly recommend contacting the Exhibition & Education Department in advance via 024.39342253 or email banquanlyditichhoalo@gmail.com to arrange smooth entry and optional guided support.'
-          : 'Trẻ em dưới 15 tuổi (bao gồm học sinh tiểu học) được MIỄN PHÍ vé tham quan tại Di tích Nhà tù Hỏa Lò bạn nhé! Với các đoàn đông học sinh hoặc đoàn tham quan theo nhóm lớn, nhà trường nên liên hệ đăng ký trước với Phòng Trưng bày - Tuyên truyền qua số 024.39342253 hoặc email banquanlyditichhoalo@gmail.com để Ban Quản lý hỗ trợ đón tiếp chu đáo, phân luồng an toàn và bố trí thuyết minh đoàn phù hợp.'
-      };
-
-      const reply = opsMap[subIntent] || (isEn
-        ? 'For specific on-site regulations or operational requests, please check directly with our staff at the Main Gate (No. 1 Hoa Lo Street) or call 024.39342253.'
-        : 'Về quy định vận hành và hỗ trợ thực địa cụ thể tại di tích, bạn vui lòng trao đổi trực tiếp với nhân viên đón tiếp tại Cổng chính số 1 Hỏa Lò hoặc gọi 024.39342253 để được hướng dẫn chính xác nhất nhé.');
+      const reply = getDocentReply(subIntent, language) || getDocentReply('OPS_GENERAL', language);
 
       return this.formatResponse({
         reply,
@@ -712,9 +633,7 @@ class IntelligentAnswerComposer {
       ['TOUR_RECOMMENDATION', 'VISIT_GUIDANCE', 'ACCESSIBILITY_SUPPORT'].includes(intent);
     // Trường hợp 1: Khách chỉ có ít thời gian (15-20 phút)
     if (isPlanningOrAccessIntent && ((activeUserProfile.timeConstraint != null && activeUserProfile.timeConstraint <= 20) || normQ.includes('20 phut') || normQ.includes('15 phut') || normQ.includes('chi co 20'))) {
-      const reply = language === 'en'
-        ? 'For a quick 20-minute visit, here is the recommended express highlights route: Main Gate Maison Centrale ➡️ Ancient Banyan Tree courtyard ➡️ Dark Cell Cachot ➡️ The Guillotine ➡️ Escape Sewer exit ➡️ Memorial Monument. This concise path allows you to experience the core heritage without feeling rushed.'
-        : 'Với thời gian 20 phút, mình gợi ý lộ trình tham quan nhanh các điểm di tích quan trọng nhất: Cổng chính Maison Centrale ➡️ Cây bàng cổ thụ tại sân trại ➡️ Ngục tối Cachot ➡️ Cỗ máy chém ➡️ Cửa cống ngầm vượt ngục ➡️ Đài tưởng niệm để dâng hương tri ân. Lộ trình này giúp bạn cảm nhận được trọn vẹn tinh thần bất khuất của các chiến sĩ cách mạng mà vẫn đảm bảo kịp thời gian.';
+      const reply = getDocentReply('EXPRESS_20_MINUTES', language);
       return this.formatResponse({
         reply,
         style: 'SMART_RECOMMENDATION',
@@ -729,9 +648,7 @@ class IntelligentAnswerComposer {
 
     // Trường hợp 2: Khách đi cùng người cao tuổi / xe lăn
     if (isPlanningOrAccessIntent && !retrievedData?.groundTruthMatch && (activeUserProfile.hasElderly || activeUserProfile.hasWheelchair || normQ.includes(' me lon tuoi ') || normQ.includes(' nguoi cao tuoi ') || normQ.includes(' ong ba ') || normQ.includes(' ong ngoai ')) && (normQ.includes(' di cung ') || normQ.includes(' dan theo ') || normQ.includes(' ho tro xe lan ') || normQ.includes(' xe lan '))) {
-      const reply = language === 'en'
-        ? 'For visitors accompanied by elderly family members or wheelchair users, Hoa Lo provides gentle ramps across major paths and shaded resting benches under the ancient banyan tree. We recommend prioritizing flat areas (Main Gate ➡️ Banyan Courtyard ➡️ Memorial Monument) and avoiding steep steps. Relic security staff are always ready to assist with walking or pushing wheelchairs.'
-        : 'Đối với chuyến tham quan cùng người cao tuổi hoặc người dùng xe lăn, Di tích Hỏa Lò có bố trí dốc thoải ở các khu vực chính và ghế nghỉ chân dưới bóng mát cây bàng cổ thụ. Để bảo đảm sức khỏe cho bác, bạn nên ưu tiên lộ trình bằng phẳng: Cổng chính ➡️ Sân cây bàng ➡️ Đài tưởng niệm; hạn chế di chuyển vào các bậc tam cấp cao. Đội ngũ nhân viên bảo vệ luôn sẵn sàng hỗ trợ đẩy xe lăn hoặc dìu bác khi bạn cần giúp đỡ nhé.';
+      const reply = getDocentReply('ELDERLY_WHEELCHAIR_ROUTE', language);
       return this.formatResponse({
         reply,
         style: 'EMPATHETIC_SUPPORT',
@@ -1134,9 +1051,7 @@ class IntelligentAnswerComposer {
       }, intent, retrievedData);
     }
 
-    const fallback = language === 'en'
-      ? 'This specific detail is not documented in the verified historical archives currently provided for Hoa Lo Prison Relic. I prefer not to guess so that every historical fact I share remains accurate.'
-      : 'Thông tin chi tiết này hiện chưa được ghi nhận trong kho tư liệu xác thực của Di tích Nhà tù Hỏa Lò mà mình được cung cấp, nên mình xin phép không suy đoán để đảm bảo độ chính xác lịch sử.';
+    const fallback = getDocentReply('ARCHIVE_KNOWLEDGE_GAP', language);
 
     return this.formatResponse({
       reply: fallback,
@@ -1199,9 +1114,7 @@ class IntelligentAnswerComposer {
         ? ` Write proper names naturally in ${targetLangName}; do NOT add Vietnamese diacritic translations in parentheses.`
         : '';
 
-      const viToneRuleOos = language === 'vi'
-        ? ' In Vietnamese use composed, courteous "Dạ..." / "mình"-"bạn" with complete subject-predicate sentences; NEVER use teen slang ("nè", "đấy!", "nha").'
-        : ` Write 100% pure, idiomatic ${targetLangName} with ZERO Vietnamese words.`;
+      const viToneRuleOos = ' ' + getNativeRegisterInstruction(language);
 
       const docentOosPrompt = `You are a seasoned, poised, warm senior cultural tour guide at Hoa Lo Prison Historical Relic in Hanoi.
 The visitor just asked an off-topic / side question outside Hoa Lo's direct exhibit archives. Handle it brilliantly like an educated, gracious human tour guide:
@@ -1258,9 +1171,25 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
       'That is an intriguing topic outside the immediate historical archives of Hoa Lo Prison Relic, so I prefer not to speculate beyond verified facts. Back here at Hoa Lo, however, which gallery, historical chapter, or visitor guideline would you like to explore next?',
       'While that subject falls outside my specialized archives here at Hoa Lo Prison Historical Relic, I am always glad to share verified stories, exhibits, or visiting tips from the site. What part of Hoa Lo interests you most today?'
     ];
-    let reply = isEn
-      ? defaultEnFallbacks[fallbackSeed % defaultEnFallbacks.length]
-      : defaultViFallbacks[fallbackSeed % defaultViFallbacks.length];
+    let reply = ['fr', 'ja', 'ko', 'zh'].includes(language)
+      ? getDocentReply('OOS_DEFAULT', language)
+      : (isEn
+        ? defaultEnFallbacks[fallbackSeed % defaultEnFallbacks.length]
+        : defaultViFallbacks[fallbackSeed % defaultViFallbacks.length]);
+
+    if (['fr', 'ja', 'ko', 'zh'].includes(language)) {
+      return this.formatResponse({
+        reply,
+        style: 'CONVERSATIONAL_DOCENT',
+        confidence: 'MEDIUM',
+        confidenceScore: 0.78,
+        sources: ['SCOPE_BOUNDARY_HOA_LO'],
+        claims: ['Ứng xử ngoài lề chuẩn bản ngữ 6 ngôn ngữ và dẫn nối về Di tích Hỏa Lò'],
+        responseType: 'OUT_OF_SCOPE_HANDLED',
+        resolvedIntent: 'OUT_OF_SCOPE',
+        requiresHuman: false
+      }, 'OUT_OF_SCOPE', retrievedData);
+    }
 
     if (/\b(con dao|phu quoc|alcatraz|bastille)\b/.test(normQ)) {
       reply = isEn
@@ -1390,9 +1319,7 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
     const foreignCleanRule = language !== 'vi'
       ? ` Translate all facts from the Vietnamese CONTEXT into 100% pure, idiomatic ${targetLangName} with ZERO Vietnamese words (never write "Dạ" or Vietnamese prose); NEVER add Vietnamese diacritic translations in parentheses.${glossaryHint ? ' ' + glossaryHint : ''}`
       : '';
-    const viToneRuleRag = language === 'vi'
-      ? ' In Vietnamese, use mature, respectful phrasing ("mình"-"bạn" with poised lead-in such as "Dạ...", "Mình xin chia sẻ...", complete subject-predicate sentences; NEVER use teen slang like "nè", "đấy!", "nha").'
-      : '';
+    const viToneRuleRag = ' ' + getNativeRegisterInstruction(language);
 
     const zoneToneLine = topK.matchedToneLevel
       ? `\n- Emotional register for this gallery/zone: ${topK.matchedToneLevel}.`
@@ -1401,7 +1328,7 @@ The visitor just asked an off-topic / side question outside Hoa Lo's direct exhi
     const promptSystem = `Senior Cultural Docent at Hoa Lo Prison Relic (Hanoi) & galleries 001-004.
 - Reply STRICTLY in ${targetLangName}.${foreignCleanRule}
 - Ground ALL dates, names, specs, and policies strictly in CONTEXT; never fabricate figures or merge separate figures (Nguyen Thai Hoc 1930 Yen Bai ≠ Hoang Van Thu 1944 Tuong Mai). If absent from archives, state transparently with poise.${refusalRule}
-- Only open with "Đúng vậy"/"Yes" for true Yes/No questions; answer open questions directly; clarify misconceptions gently.
+- Only open with "Đúng vậy"/"Yes" for true Yes/No questions, and ALWAYS follow with 2-3 informative sentences explaining why; NEVER give a bare one-word or two-word reply.
 - Style: ${pickedStyle}. ${isStorytelling ? '3-4' : '2-3'} natural plain spoken sentences (no markdown/bullets/jargon like BLE/beacon/database).${viToneRuleRag}${zoneToneLine}${audienceInstruction}${recentOpens}
 
 CONTEXT:
@@ -1418,7 +1345,7 @@ ${compactContext}`;
       temperature: previousPhrasings.length > 0 ? 0.8 : 0.68,
       presence_penalty: previousPhrasings.length > 0 ? 0.45 : 0.3,
       frequency_penalty: previousPhrasings.length > 0 ? 0.35 : 0.2,
-      max_tokens: 265
+      max_tokens: 280
     });
     if (!generated || generated.length < 8) return null;
 
@@ -1430,6 +1357,17 @@ ${compactContext}`;
       .replace(/\s+/g, ' ')
       .trim();
     cleanReply = postPolishForeignTerms(cleanReply, language);
+    // Hậu xử lý câu mở đầu tiếng Việt: nếu câu hỏi mở (không phải Có/Không) mà model nhỏ lỡ mở đầu bằng "Đúng vậy," -> đổi mượt sang "Dạ, "
+    if (language === 'vi' && /^Đúng\s+vậy[,.!\s]+/i.test(cleanReply)) {
+      const isYesNoVi = /(có phải|đúng không|phải không|có thật|có đúng|được không|có không|hay không|có bị|có được)\b/i.test(question);
+      if (!isYesNoVi) {
+        const rest = cleanReply.replace(/^Đúng\s+vậy[,.!\s]+/i, '').trim();
+        cleanReply = rest ? `Dạ, ${rest.charAt(0).toLowerCase()}${rest.slice(1)}` : cleanReply;
+      }
+    }
+    // Chặn câu trả lời RAG quá cộc lốc 1-2 từ (VD: chỉ "Đúng vậy." không giải thích) -> để rơi về fallback giải thích đầy đủ!
+    const isCjkReply = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]/.test(cleanReply);
+    if (!isTaggedOos && cleanReply.length < (isCjkReply ? 12 : 28)) return null;
 
     if (isTaggedOos) {
       if (language === 'vi' && !/hỏa lò|hoa lo/i.test(cleanReply)) {
@@ -1548,12 +1486,10 @@ ${compactContext}`;
    * Kiểm tra và xử lý toàn diện các bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (Core Factual Traps V6.2)
    */
   checkFactualTraps(normQ, language = 'vi', session = null, rawQuestion = '') {
-    // 0. Câu hỏi tâm linh / có ma không tại di tích (VI + EN)
+    // 0. Câu hỏi tâm linh / có ma không tại di tích (bản ngữ 6 ngôn ngữ)
     if (/\b(co ma khong|nhieu ma khong|bi am khong|ma am|hon ma|haunted|ghosts|ghost)\b/i.test(normQ)) {
       return {
-        reply: language === 'en'
-          ? 'There are no ghosts here. Hoa Lo Prison is a sacred historical relic dedicated to honoring the bravery and sacrifice of patriotic Vietnamese revolutionaries. The exhibition space is solemn and well-lit to preserve historical memory, not supernatural stories.'
-          : 'Dạ không có chuyện ma quái đâu bạn nhé. Di tích Lịch sử Nhà tù Hỏa Lò là không gian lịch sử trang nghiêm, tôn vinh ý chí kiên cường và sự hy sinh anh dũng của các chiến sĩ yêu nước. Các khu trưng bày được bảo tồn và chiếu sáng khoa học để giúp du khách hiểu đúng giá trị lịch sử, hoàn toàn không mang yếu tố tâm linh kỳ bí ạ.',
+        reply: getDocentReply('GHOST_MYTH_FACT_CHECK', language),
         confidence: 'HIGH',
         confidenceScore: 0.98,
         sources: ['HOA_LO_AUTHENTICITY_GUIDANCE'],

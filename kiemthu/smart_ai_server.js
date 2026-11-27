@@ -35,6 +35,7 @@ const PORT = process.env.PORT || 4001;
 const API_KEY = process.env.API_KEY || ''; // Nếu set thì kích hoạt API Key protection
 const { groqPool, GROQ_MODELS_REASONING } = require('./engine/groq_pool');
 const { getGlossaryPromptHint, postPolishForeignTerms } = require('./engine/heritage_glossary');
+const { getNativeRegisterInstruction } = require('./engine/multilingual_docent');
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL_POOL = GROQ_MODELS_REASONING;
@@ -223,8 +224,9 @@ class ProductionSmartTourGuideServer {
     const avoidLine = lastOpens ? `Do NOT start like: ${lastOpens}.` : '';
     const glossaryHint = getGlossaryPromptHint(language);
     const glossaryLine = glossaryHint ? ` ${glossaryHint}` : '';
+    const registerLine = getNativeRegisterInstruction(language);
 
-    const sysPrompt = `Rewrite the verified museum answer below in the voice of a ${style}, STRICTLY in ${targetLangName} ONLY.${glossaryLine} Keep EVERY date, number, price, name, and fact 100% accurate. Use complete subject-predicate sentences, mature dignified tone (no teen slang like "nè", "đấy!"), and polite Vietnamese phrasing ("mình"-"bạn", lead-in like "Dạ..." or "Mình xin chia sẻ...") when speaking Vietnamese; 2-3 plain spoken sentences, no markdown, no parenthetical Vietnamese translations in foreign languages. ${avoidLine}`;
+    const sysPrompt = `Rewrite the verified museum answer below in the voice of a ${style}, STRICTLY in ${targetLangName} ONLY.${glossaryLine} ${registerLine} Keep EVERY date, number, price, name, and fact 100% accurate. Use 2-3 plain natural spoken sentences, no markdown, no bullets. ${avoidLine}`;
 
     const varied = await this.callGroq(
       `Q: ${question}\nFACT: ${baseReply}`,
