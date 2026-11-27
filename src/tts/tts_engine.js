@@ -24,8 +24,8 @@ const DEFAULT_ELEVENLABS_MODEL = 'eleven_flash_v2_5';
 const DEFAULT_VOICE_ID = 'ArosID24mP18TEiQpNhs';
 // Giọng premade dự phòng khi tài khoản ElevenLabs đang ở gói Free (gói Free chặn Library Voice -> HTTP 402 paid_plan_required)
 const DEFAULT_FALLBACK_PREMADE_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah — trầm ấm, hỗ trợ cả gói Free & 32 ngôn ngữ
-const DEFAULT_ELEVENLABS_SPEED = 1.2; // Tốc độ nói tối đa chính thức của ElevenLabs API (dải hợp lệ: 0.7 - 1.2)
-const DEFAULT_ELEVENLABS_LATENCY_OPT = 4; // Tối ưu độ trễ streaming mức tối đa (0 - 4)
+const DEFAULT_ELEVENLABS_SPEED = 1.12; // Tốc độ nhanh gọn (~+12%) nhưng giữ trọn 6 thanh điệu tiếng Việt (tránh nuốt dấu ở 1.2)
+const DEFAULT_ELEVENLABS_LATENCY_OPT = 2; // Mức 2 cân bằng siêu nhanh (~250ms) mà vẫn BẬT bộ chuẩn hóa văn bản (mức 4 tắt normalizer gây đọc sai số!)
 
 const MONTH_NAMES = {
   en: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -206,8 +206,19 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     s = s.replace(/%/g, conn.percent);
   }
 
-  // 9. Khoảng năm (1964–1973, 1896–1954) -> từ nối bản ngữ để không đọc cụt
+  // 9. Khoảng năm (1964–1973, 1896–1954) & khoảng số (85-90, 10-15) -> từ nối bản ngữ để không đọc cụt/nhầm dấu trừ
   s = s.replace(/\b(18\d{2}|19\d{2}|20\d{2})\s*[–—-]\s*(18\d{2}|19\d{2}|20\d{2})\b/g, `$1${conn.to}$2`);
+  s = s.replace(/\b(\d{1,3})\s*[–—-]\s*(\d{1,3})\b/g, `$1${conn.to}$2`);
+
+  // 9.5. Chuẩn hóa từ ngoại lai / ký hiệu dễ bị TTS tiếng Việt đọc sai chính tả
+  if (code === 'vi') {
+    s = s.replace(/\bWC\b/gi, 'nhà vệ sinh');
+    s = s.replace(/\bCachot\b/gi, 'Ca-sô');
+    s = s.replace(/\bHSSV\b/g, 'học sinh sinh viên');
+    s = s.replace(/\bCCCD\b/g, 'căn cước công dân');
+    s = s.replace(/\bBQL\b/g, 'Ban quản lý');
+    s = s.replace(/\b4G\/5G\b/gi, '4G hoặc 5G');
+  }
 
   // 10. Bỏ ngoặc kép thừa nhưng GIỮ NGUYÊN dấu câu chuẩn cả Latin và CJK (。、，！？；：・)
   s = s.replace(/[“”«»"'`「」『』]/g, ' ');
@@ -363,9 +374,9 @@ class PluggableTtsEngine {
     this.elevenLabsApiKey = String(env.ELEVENLABS_API_KEY || '').trim();
     this.elevenLabsModel = String(env.ELEVENLABS_MODEL_ID || DEFAULT_ELEVENLABS_MODEL).trim();
     this.elevenLabsTimeoutMs = Number(env.ELEVENLABS_TIMEOUT_MS) || 6500;
-    this.elevenLabsStability = env.ELEVENLABS_STABILITY !== undefined ? Number(env.ELEVENLABS_STABILITY) : 0.52;
-    this.elevenLabsSimilarity = env.ELEVENLABS_SIMILARITY !== undefined ? Number(env.ELEVENLABS_SIMILARITY) : 0.78;
-    this.elevenLabsStyle = env.ELEVENLABS_STYLE !== undefined ? Number(env.ELEVENLABS_STYLE) : 0.15;
+    this.elevenLabsStability = env.ELEVENLABS_STABILITY !== undefined && env.ELEVENLABS_STABILITY !== '' ? Number(env.ELEVENLABS_STABILITY) : 0.70;
+    this.elevenLabsSimilarity = env.ELEVENLABS_SIMILARITY !== undefined && env.ELEVENLABS_SIMILARITY !== '' ? Number(env.ELEVENLABS_SIMILARITY) : 0.80;
+    this.elevenLabsStyle = env.ELEVENLABS_STYLE !== undefined && env.ELEVENLABS_STYLE !== '' ? Number(env.ELEVENLABS_STYLE) : 0.0;
     const rawSpeed = env.ELEVENLABS_SPEED !== undefined && env.ELEVENLABS_SPEED !== '' ? Number(env.ELEVENLABS_SPEED) : DEFAULT_ELEVENLABS_SPEED;
     this.elevenLabsSpeed = Number.isFinite(rawSpeed) ? Math.min(1.2, Math.max(0.7, rawSpeed)) : DEFAULT_ELEVENLABS_SPEED;
     const rawLat = env.ELEVENLABS_LATENCY_OPT !== undefined && env.ELEVENLABS_LATENCY_OPT !== '' ? parseInt(env.ELEVENLABS_LATENCY_OPT, 10) : DEFAULT_ELEVENLABS_LATENCY_OPT;
