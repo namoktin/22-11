@@ -24,8 +24,8 @@ const DEFAULT_ELEVENLABS_MODEL = 'eleven_flash_v2_5';
 const DEFAULT_VOICE_ID = 'ArosID24mP18TEiQpNhs';
 // Giọng premade dự phòng khi tài khoản ElevenLabs đang ở gói Free (gói Free chặn Library Voice -> HTTP 402 paid_plan_required)
 const DEFAULT_FALLBACK_PREMADE_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL'; // Sarah — trầm ấm, hỗ trợ cả gói Free & 32 ngôn ngữ
-const DEFAULT_ELEVENLABS_SPEED = 1.12; // Tốc độ nhanh gọn (~+12%) nhưng giữ trọn 6 thanh điệu tiếng Việt (tránh nuốt dấu ở 1.2)
-const DEFAULT_ELEVENLABS_LATENCY_OPT = 2; // Mức 2 cân bằng siêu nhanh (~250ms) mà vẫn BẬT bộ chuẩn hóa văn bản (mức 4 tắt normalizer gây đọc sai số!)
+const DEFAULT_ELEVENLABS_SPEED = 1.05; // Tốc độ trên trung bình một chút (+5%): gọn gàng, tự nhiên, giữ tròn vành rõ chữ cả 6 thanh điệu tiếng Việt
+const DEFAULT_ELEVENLABS_LATENCY_OPT = 0; // Mức 0 chuẩn phòng thu ElevenLabs (giữ nguyên 100% bộ chuẩn hóa văn bản, không méo âm, vẫn xuất thẳng pcm_16000!)
 
 const MONTH_NAMES = {
   en: ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -236,9 +236,9 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     s = s.replace(/\bCCCD\b/g, 'căn cước công dân');
     s = s.replace(/\bBQL\b/g, 'Ban quản lý');
     s = s.replace(/\b4G\/5G\b/gi, '4G hoặc 5G');
-    // Chuyển các từ tiếng Việt VIẾT HOA TOÀN BỘ (KHÔNG, MIỄN PHÍ, TẮT ĐÈN...) về chữ thường để giữ đúng 6 thanh điệu
+    // Chuyển các từ tiếng Việt VIẾT HOA TOÀN BỘ (KHÔNG, MIỄN PHÍ, TẮT ĐÈN...) về chữ thường để giữ đúng 6 thanh điệu (dùng biên Unicode, KHÔNG dùng \b!)
     const KEEP_ACRONYMS = new Set(['AI', 'QR', 'USD', 'VND', 'VNĐ', 'BLE', 'VIP', 'SMS', 'GPS', 'PIN', 'PDF', 'TP', 'HCM']);
-    s = s.replace(/\b([\p{Lu}]{2,})\b/gu, (match) => {
+    s = s.replace(/(?<![\p{L}\p{N}])([\p{Lu}]{2,})(?![\p{L}\p{N}])/gu, (match) => {
       if (KEEP_ACRONYMS.has(match) || /^[A-Z0-9]{1,3}$/.test(match)) return match;
       return match.toLowerCase();
     });
@@ -263,7 +263,7 @@ function getChunkProfile(lang = 'vi', useElevenLabs = false) {
   if (useElevenLabs) {
     if (code === 'ja' || code === 'zh') return { firstMax: 70, maxChunk: 240 };
     if (code === 'ko') return { firstMax: 95, maxChunk: 280 };
-    return { firstMax: 135, maxChunk: 380 };
+    return { firstMax: 185, maxChunk: 380 };
   }
   if (code === 'ja' || code === 'zh') return { firstMax: 34, maxChunk: 76 };
   if (code === 'ko') return { firstMax: 48, maxChunk: 108 };
@@ -442,8 +442,14 @@ class PluggableTtsEngine {
       provider_preference: this.providerPref,
       elevenlabs_configured: configured,
       elevenlabs_model: this.elevenLabsModel,
+      elevenlabs_vietnamese_supported: /flash_v2_5|turbo_v2_5|eleven_v3/i.test(this.elevenLabsModel),
       elevenlabs_speed: this.elevenLabsSpeed,
       elevenlabs_latency_opt: this.elevenLabsLatencyOpt,
+      elevenlabs_voice_settings: {
+        stability: this.elevenLabsStability,
+        similarity_boost: this.elevenLabsSimilarity,
+        style: this.elevenLabsStyle
+      },
       elevenlabs_pcm16k_direct: this.elevenLabsSupportsPcm16k,
       elevenlabs_active_voice: configured ? this.getVoiceIdForLang('vi') : null,
       elevenlabs_library_voice_blocked_free_tier: this.paidLibraryVoiceBlocked,
