@@ -35,7 +35,7 @@ const {
   safeErrorResponse
 } = require('./src/security/security_middleware');
 const { BleAndDeviceManager } = require('./src/iot/ble_manager');
-const { getGlossaryPromptHint, postPolishForeignTerms } = require('./kiemthu/engine/heritage_glossary');
+const { getGlossaryPromptHint, postPolishForeignTerms, extractForeignExhibitAnchors } = require('./kiemthu/engine/heritage_glossary');
 const { getNativeRegisterInstruction } = require('./kiemthu/engine/multilingual_docent');
 const { PluggableTtsEngine, sanitizeTextForSpeech, splitIntoAudioChunks } = require('./src/tts/tts_engine');
 
@@ -1391,30 +1391,49 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
     const glossaryLine = glossaryHint ? ` ${glossaryHint}` : '';
     const registerLine = mode === 'answer' ? ` ${getNativeRegisterInstruction(targetLang)}` : '';
     const groqSysPrompt = mode === 'query'
-      ? `Translate the visitor's museum question into natural Vietnamese for database lookup. Output ONLY the Vietnamese translation, no explanations.`
+      ? `Translate the visitor's museum question at Hoa Lo Prison Relic (Hanoi) into natural Vietnamese for archive lookup. Map exhibit terms accurately (guillotine/ギロチン/단두대/断头台 -> máy chém Hỏa Lò; Cachot/カショ/카쇼/黑牢 -> ngục tối Cachot; Banyan/モモタマナ/반얀나무/榄仁树 -> cây bàng Hỏa Lò). Output ONLY the Vietnamese translation, no explanations.`
       : `You are a refined senior museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY with a poised, natural spoken docent tone. Keep all historical dates, numbers, and proper names accurate.${glossaryLine}${registerLine} Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no parenthetical Vietnamese translations, no markdown, no notes.`;
 
     if (mode === 'query') {
-      // Chiến lược tiết kiệm Groq tối đa: dịch câu hỏi đầu vào bằng MyMemory / GTX TRƯỚC (0 token Groq!)
+      const exhibitAnchors = extractForeignExhibitAnchors(text);
+      // Nếu câu ngoại ngữ nhắc tới hiện vật chuyên ngành Hỏa Lò & Groq còn headroom -> ưu tiên Groq dịch chính xác thuật ngữ (tránh MyMemory dịch 단두대 -> "quần"!)
+      const pool = getSharedGroqPool();
+      if (exhibitAnchors && GROQ_API_KEY && (!pool || !pool.areAllCoolingDown(GROQ_SUPPORTED_MODELS))) {
+        const groqQuery = await callLightGroqMessages([
+          { role: 'system', content: groqSysPrompt },
+          { role: 'user', content: text }
+        ], 0.05, 160, 2600);
+        if (groqQuery) {
+          const finalVi = groqQuery.toLowerCase().includes('hỏa lò') || groqQuery.toLowerCase().includes('mã 00')
+            ? groqQuery
+            : `${groqQuery} (${exhibitAnchors})`;
+          setTranslationCache(cacheKey, finalVi);
+          return finalVi;
+        }
+      }
+
+      // Dự phòng 0-token: MyMemory / GTX + gắn neo hiện vật di tích nếu bị dịch máy làm mất thuật ngữ!
       const mmQuery = await translateViaMyMemory(text, targetLang);
       if (mmQuery && mmQuery.toLowerCase() !== text.trim().toLowerCase()) {
-        setTranslationCache(cacheKey, mmQuery);
-        return mmQuery;
+        const safeMm = exhibitAnchors ? `${mmQuery} (${exhibitAnchors})` : mmQuery;
+        setTranslationCache(cacheKey, safeMm);
+        return safeMm;
       }
       const gtxQuery = await translateViaGoogleGTX(text, targetLang);
       if (gtxQuery && gtxQuery.toLowerCase() !== text.trim().toLowerCase()) {
-        setTranslationCache(cacheKey, gtxQuery);
-        return gtxQuery;
+        const safeGtx = exhibitAnchors ? `${gtxQuery} (${exhibitAnchors})` : gtxQuery;
+        setTranslationCache(cacheKey, safeGtx);
+        return safeGtx;
       }
-      const groqQuery = await callLightGroqMessages([
+      const groqQueryFallback = await callLightGroqMessages([
         { role: 'system', content: groqSysPrompt },
         { role: 'user', content: text }
       ], 0.1, 220, 3200);
-      if (groqQuery) {
-        setTranslationCache(cacheKey, groqQuery);
-        return groqQuery;
+      if (groqQueryFallback) {
+        setTranslationCache(cacheKey, groqQueryFallback);
+        return groqQueryFallback;
       }
-      return text;
+      return exhibitAnchors ? `${text} (${exhibitAnchors})` : text;
     }
 
     // Mode 'answer': Groq pool nhẹ trước (nếu còn headroom), rơi ngay xuống MyMemory -> GTX

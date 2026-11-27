@@ -134,6 +134,8 @@ const GLOSSARY_BY_LANG = {
     promptHint: '标准译名: 火炉监狱 (Hoa Lo), 中央监狱 (Maison Centrale), 富庆村, 安沛 (Yen Bai), 阮太学, 黄文树, 长征, 陈子平, 阮德景, 卡绍暗牢 (Cachot), 断头台, 古榄仁树, 河内希尔顿, 东山铜鼓, 达鸿大洪钟, 阮朝皇室宝剑, 双龙朝日纹饰, 神圣之夜.',
     replacements: [
       [/延边/g, '安沛'],
+      [/阮泰霍|阮太霍|阮泰学/g, '阮太学'],
+      [/黄文图|黄文舒/g, '黄文树'],
       [/炉子监狱|烤炉监狱/g, '火炉监狱'],
       [/切割机/g, '断头台'],
       [/Nhà tù Hỏa Lò/gi, '火炉监狱'],
@@ -156,6 +158,38 @@ const GLOSSARY_BY_LANG = {
 // Dấu thanh & chữ cái đặc thù tiếng Việt để phát hiện chú thích tiếng Việt thừa trong ngoặc đơn ở văn bản ngoại ngữ
 const VI_PARENTHETICAL_RE = /\s*[（(][^()（）]{2,48}[ăâđêôơưàáạảãằắặẳẵầấậẩẫèéẹẻẽềếệểễìíịỉĩòóọỏõồốộổỗờớợởỡùúụủũừứựửữỳýỵỷỹ][^()（）]{0,48}[)）]/gi;
 
+// Rò rỉ từ mở đầu tiếng Việt ở đầu câu ngoại ngữ (VD: "Đúng vậy. La guillotine...")
+const VI_LEADING_LEAK_RE = /^(?:Dạ(?:\s+chào\s+bạn|\s+vâng)?|Đúng\s+vậy|Chào\s+bạn|Vâng)[,.!:\s]+/i;
+
+// Bảng thuật ngữ di tích đa ngôn ngữ -> tiếng Việt chuẩn để ngăn dịch máy (MyMemory/GTX) dịch sai hiện vật (VD: 단두대 -> "quần"!)
+const FOREIGN_QUERY_TERM_HINTS = [
+  [/ホアロー(?:収容所)?|호아로(?:\s*수용소)?|火炉(?:监狱)?/g, ' Nhà tù Hỏa Lò '],
+  [/ギロチン|단두대|断头台|\bguillotine\b/gi, ' máy chém Hỏa Lò '],
+  [/カショ(?:独房)?|카쇼(?:\s*독방)?|卡绍(?:暗牢)?|黑牢|\bcachots?\b/gi, ' ngục tối Cachot Hỏa Lò '],
+  [/モモタマナ(?:の木)?|バニヤン(?:の木)?|반얀나무|방나무|榄仁树|\bbadamier\b|\bbanyan\s+tree\b/gi, ' cây bàng Hỏa Lò '],
+  [/下水道(?:脱獄)?|하수구(?:\s*탈옥)?|下水道(?:越狱)?|\bégouts?\b|\begouts?\b/gi, ' cống ngầm vượt ngục Hỏa Lò '],
+  [/ハノイ[・\s]?ヒルトン|하노이\s*힐튼|河内希尔顿|米軍パイロット|미군\s*조종사|美国飞行员|\bpilotes?\s+américains?\b/gi, ' phi công Mỹ Hanoi Hilton Hỏa Lò '],
+  [/聖なる夜|ナイトツアー|야간\s*투어|성스러운\s*밤|神圣之夜|夜游|\bnuit\s+sacrée\b|\bvisite\s+nocturne\b/gi, ' tour đêm Đêm thiêng liêng Hỏa Lò '],
+  [/ドンソン銅鼓|동선\s*청동북|东山铜鼓|\btambour\s+de\s+bronze\b/gi, ' Trống đồng Đông Sơn Mã 001 '],
+  [/ダットホン|大洪鐘|닷홍|대홍종|达鸿|大洪钟|\bcloche\s+de\s+bronze\b/gi, ' Đạt Hồng Đại Hồng Chung Mã 003 '],
+  [/王室の宝剣|황실\s*보검|皇室宝剑|\bépée\s+royale\b/gi, ' Bảo kiếm Hoàng gia Mã 004 ']
+];
+
+/**
+ * Chuẩn hóa trước các danh từ di tích cốt lõi trong câu hỏi ngoại ngữ để đảm bảo tra cứu đúng 100%
+ * kể cả khi dịch máy MyMemory/GTX gặp thuật ngữ lịch sử hiếm.
+ */
+function extractForeignExhibitAnchors(rawQuery) {
+  if (!rawQuery || typeof rawQuery !== 'string') return '';
+  const anchors = [];
+  for (const [re, viAnchor] of FOREIGN_QUERY_TERM_HINTS) {
+    if (re.test(rawQuery)) {
+      anchors.push(viAnchor.trim());
+    }
+  }
+  return [...new Set(anchors)].join(', ');
+}
+
 /**
  * Lấy dòng gợi ý thuật ngữ chuẩn gọn nhẹ (~45-60 tokens) để nhúng vào System Prompt RAG / Translation
  */
@@ -167,7 +201,7 @@ function getGlossaryPromptHint(lang) {
 
 /**
  * Hậu xử lý nhẹ làm sạch danh từ lịch sử cho đầu ra 6 ngôn ngữ (VI/EN/FR/JA/KO/ZH).
- * - Với ngoại ngữ: gỡ chú thích tiếng Việt thừa trong ngoặc đơn và sửa lỗi dịch máy danh từ riêng.
+ * - Với ngoại ngữ: gỡ chú thích tiếng Việt thừa trong ngoặc đơn, gỡ từ mở đầu tiếng Việt rò rỉ, và sửa lỗi dịch máy danh từ riêng.
  * - Với tiếng Việt: khôi phục dấu chuẩn cho danh từ riêng nếu LLM vô tình viết không dấu ("Hoa Lo" -> "Hỏa Lò").
  */
 function postPolishForeignTerms(text, lang) {
@@ -178,9 +212,10 @@ function postPolishForeignTerms(text, lang) {
 
   let out = text;
 
-  // 1. Gỡ chú thích tiếng Việt có dấu bị chèn thừa trong ngoặc đơn (chỉ áp dụng cho ngoại ngữ!)
+  // 1. Gỡ chú thích tiếng Việt có dấu trong ngoặc đơn & từ mở đầu tiếng Việt rò rỉ (chỉ áp dụng cho ngoại ngữ!)
   if (code !== 'vi') {
     out = out.replace(VI_PARENTHETICAL_RE, '');
+    out = out.replace(VI_LEADING_LEAK_RE, '').trim();
   }
 
   // 2. Thay thế các lỗi dịch máy / danh từ riêng chưa chuẩn hóa
@@ -200,5 +235,6 @@ function postPolishForeignTerms(text, lang) {
 module.exports = {
   GLOSSARY_BY_LANG,
   getGlossaryPromptHint,
-  postPolishForeignTerms
+  postPolishForeignTerms,
+  extractForeignExhibitAnchors
 };

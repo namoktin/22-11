@@ -742,11 +742,15 @@ test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs 
   assert.equal(classifier.classify('你好！').intent, 'GREETING');
   assert.equal(classifier.classify('Merci beaucoup !').intent, 'THANK_YOU');
 
-  // Expanded glossary catches literal MT errors ("Stove Prison", "ストーブ刑務所", "난로 감옥", "炉子监狱")
+  // Expanded glossary catches literal MT errors ("Stove Prison", "ストーブ刑務所", "난로 감옥", "炉子监狱"), leading VI leaks & foreign exhibit anchors
+  const { extractForeignExhibitAnchors } = require(path.join(kiemthuRoot, 'engine', 'heritage_glossary'));
   assert.equal(postPolishForeignTerms('Welcome to Stove Prison and bang tree.', 'en'), 'Welcome to Hoa Lo Prison and historic banyan tree.');
   assert.equal(postPolishForeignTerms('ストーブ刑務所の切断機。', 'ja'), 'ホアロー収容所のギロチン。');
   assert.equal(postPolishForeignTerms('난로 감옥의 절단기입니다.', 'ko'), '호아로 수용소의 단두대입니다.');
-  assert.equal(postPolishForeignTerms('炉子监狱的切割机。', 'zh'), '火炉监狱的断头台。');
+  assert.equal(postPolishForeignTerms('炉子监狱的切割机与阮泰霍。', 'zh'), '火炉监狱的断头台与阮太学。');
+  assert.equal(postPolishForeignTerms('Đúng vậy. La guillotine exposée à Hoa Lo.', 'fr'), 'La guillotine exposée à Hoa Lo.');
+  const koAnchors = extractForeignExhibitAnchors('단두대와 카쇼 독방에 대해 설명해 주세요.');
+  assert.ok(koAnchors.includes('máy chém Hỏa Lò') && koAnchors.includes('ngục tối Cachot Hỏa Lò'), `KO exhibit anchors missing: ${koAnchors}`);
 
   // 4. Short 2-word RAG stub guard (rejects bare "Đúng vậy." so full grounded fallback answers instead)
   const resStub = await composer.runUniversalGroundedRAG({
