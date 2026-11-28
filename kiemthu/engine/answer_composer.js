@@ -14,7 +14,7 @@ const relevanceGate = require('./relevance_gate');
 const { knowledgeBase, HISTORICAL_EXHIBITS } = require('./knowledge_base');
 const { getGlossaryPromptHint, postPolishForeignTerms } = require('./heritage_glossary');
 const { getNativeRegisterInstruction, getDocentReply } = require('./multilingual_docent');
-const { analyzeDiscourseMode, hasVietnameseDiacritics, hasRawPhrase } = require('./semantic_router');
+const { analyzeDiscourseMode, hasVietnameseDiacritics, hasRawPhrase, matchAccentConsistentPhrase } = require('./semantic_router');
 
 class IntelligentAnswerComposer {
   constructor() {
@@ -1864,7 +1864,8 @@ ${compactContext}`;
     }
 
     const isGuillotineWcOrExecPlace = /\b(ve sinh|toilet|wc|nguyen thai hoc|hoang van thu|nguyen duc canh|nguyen hoang ton|yen bai|hai phong|truoc cong|hanh quyet|xu chem|xu tu|dua len dau|che tao|san xuat|xuat xu|nguon goc|mang tu dau|dua tu dau|tu dau sang|tu dau toi|lam o dau)\b/.test(normQ);
-    const hasExplicitGuillotineLocPhrase = /\b(vi tri|o dau|o cho nao|cho nao|nam o|nam cho|dat o|de o|trung bay o|bay o|gian nao|khu nao|phong nao|tang nao|tang may|goc nao|loi nao|huong nao|chi duong|duong di|where is|where can i|where are|located|which room|location)\b/.test(normQ);
+    const hasAccentSafeODau = matchAccentConsistentPhrase(rawQuestion || '', 'ở đâu');
+    const hasExplicitGuillotineLocPhrase = hasAccentSafeODau || /\b(vi tri|o cho nao|cho nao|nam o|nam cho|dat o|de o|trung bay o|bay o|gian nao|khu nao|phong nao|tang nao|tang may|goc nao|loi nao|huong nao|chi duong|duong di|where is|where can i|where are|located|which room|location)\b/.test(normQ);
     const hasAccentedWhereWord = /(?:^|\s)đâu(?=\s|$|[?!.,])/i.test(rawQuestion || '');
     // Lưu ý: standardizeTypos có thể đổi "may chem dau" -> "máy chém dau" (chữ "máy chém" có dấu nhưng chữ "dau" vẫn không dấu!).
     // Do đó kiểm tra trực tiếp token ASCII nguyên bản "dau" trong rawQuestion (KHÔNG khớp "đầu", "đau", "dầu")!

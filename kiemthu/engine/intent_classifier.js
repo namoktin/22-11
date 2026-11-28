@@ -120,7 +120,7 @@ class IntentClassifier {
     return null;
   }
 
-  extractAspect(norm) {
+  extractAspect(norm, raw = '') {
     if (norm.includes('nang bao nhieu') || norm.includes('cao bao nhieu') || norm.includes('kich thuoc') || norm.includes('trong luong') || norm.includes('chat lieu') || norm.includes('cau tao') || norm.includes('lam bang gi')) {
       return 'SPECIFICATION';
     }
@@ -142,7 +142,8 @@ class IntentClassifier {
     if (norm.includes('gia bao nhieu') || norm.includes('bao nhieu tien') || norm.includes('may gio') || norm.includes('quy dinh')) {
       return 'POLICY_DETAIL';
     }
-    if (norm.includes('vi tri') || norm.includes('o dau') || norm.includes('o cho nao') || norm.includes('cho nao') ||
+    const hasAccentSafeWhere = raw ? matchAccentSafe(raw, norm, ['ở đâu'], ['o dau']) : norm.includes('o dau');
+    if (hasAccentSafeWhere || norm.includes('vi tri') || norm.includes('o cho nao') || norm.includes('cho nao') ||
         norm.includes('nam o') || norm.includes('dat o') || norm.includes('trung bay o') ||
         norm.includes('gian nao') || norm.includes('khu nao') || norm.includes('phong nao') ||
         norm.includes('may chem dau') || norm.includes('where is') || norm.includes('located')) {
@@ -211,7 +212,7 @@ class IntentClassifier {
     const lower = raw.toLowerCase();
 
     const subject = this.extractSubject(norm) || context?.lastTopic || null;
-    const aspect = this.extractAspect(norm);
+    const aspect = this.extractAspect(norm, raw);
     const earlyDiscourse = analyzeDiscourseMode(raw, norm);
 
     // 0. Kiểm tra Prompt Injection / Phá rào bảo mật
