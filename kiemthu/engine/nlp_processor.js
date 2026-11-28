@@ -355,6 +355,25 @@ class NlpProcessor {
     return cleaned.trim();
   }
 
+  isDirectContinuationPhrase(rawText, normText = null) {
+    const raw = String(rawText || '').trim();
+    const norm = normText ? (' ' + String(normText).trim() + ' ') : (' ' + this.normalize(raw) + ' ');
+    if (/もっと詳しく|続きを教えて|続けてください|계속\s*(?:이야기|말|설명)|더\s*자세히|请继续|继续讲|接着讲/.test(raw)) {
+      return true;
+    }
+    const continuationPatterns = [
+      'ke tiep', 'noi tiep', 'ke them', 'noi them', 'tiep di', 'tiep tuc',
+      'them chi tiet', 'chi tiet hon', 'xin cho toi biet chi tiet hon', 'biet chi tiet hon',
+      'ke ro hon', 'noi ky hon', 'giai thich them',
+      'con gi nua', 'con nua khong', 'roi sao nua', 'sau do thi sao', 'sau do sao',
+      'the roi sao', 'roi the nao', 'tiep theo thi sao', 'tiep theo ra sao',
+      'ket qua sao', 'ket qua the nao', 'ket cuc ra sao', 'sao nua', 'con sau do',
+      'tell me more', 'tell more', 'continue', 'go on', 'keep going', 'more details', 'what else',
+      'what happened next', 'then what', 'and then', 'continuez', 'racontez la suite', 'et ensuite'
+    ];
+    return continuationPatterns.some(p => norm.includes(' ' + p + ' '));
+  }
+
   /**
    * Phát hiện câu hỏi tiếp nối (Follow-up) & giải quyết tham chiếu đại từ V7.0
    * Hỗ trợ bộ nhớ 5-8 lượt hội thoại, giải mã chính xác nhân vật, hiện vật, địa điểm
@@ -418,17 +437,8 @@ class NlpProcessor {
       };
     }
 
-    // 2. Nhận diện câu hỏi nối tiếp trực tiếp ("Kể tiếp đi", "Rồi sao nữa?", "Nói tiếp đi", "Thêm chi tiết đi", "Còn gì nữa không?")
-    const continuationPatterns = [
-      'ke tiep', 'noi tiep', 'ke them', 'noi them', 'tiep di', 'tiep tuc',
-      'them chi tiet', 'chi tiet hon', 'ke ro hon', 'noi ky hon', 'giai thich them',
-      'con gi nua', 'con nua khong', 'roi sao nua', 'sau do thi sao', 'sau do sao',
-      'the roi sao', 'roi the nao', 'tiep theo thi sao', 'tiep theo ra sao',
-      'ket qua sao', 'ket qua the nao', 'ket cuc ra sao', 'sao nua', 'con sau do',
-      'tell me more', 'continue', 'go on', 'more details', 'what else',
-      'what happened next', 'then what', 'and then'
-    ];
-    const isContinuation = continuationPatterns.some(p => norm.includes(' ' + p + ' '));
+    // 2. Nhận diện câu hỏi nối tiếp trực tiếp ("Kể tiếp đi", "Rồi sao nữa?", "Tell me more", "Continuez...", "もっと詳しく...")
+    const isContinuation = this.isDirectContinuationPhrase(spokenClean || raw, norm);
 
     // 2.5. Nhận diện câu hỏi mở rộng / so sánh
     const isComparisonExpansion = [
@@ -439,6 +449,7 @@ class NlpProcessor {
     // 3. Nhận diện đại từ thay thế & các trạng thái câu tỉnh lược (elliptical questions)
     const followUpPronouns = [
       ' no ', ' vat nay ', ' cai nay ', ' o do ', ' cho nay ', ' khu nay ', ' khu do ', ' noi do ', ' gian do ',
+      ' was it ', ' is it ', ' were they ', ' are they ', ' it written ',
       ' ong ay ', ' ong do ', ' ba ay ', ' nguoi nay ', ' nhan vat nay ', ' bac ay ', ' dong chi ay ', ' ho ', ' o day ', ' the con ', ' the con ve ',
       ' cuoc vuot nguc do ', ' cuoc vuot nguc ay ', ' vuot nguc do ', ' vuot nguc ay ', ' hom ay ', ' hom do ', ' ngay ay ', ' ngay do ',
       ' nang bao nhieu ', ' cao bao nhieu ', ' lam bang gi ', ' dung de lam gi ',
@@ -540,8 +551,11 @@ class NlpProcessor {
       const hasSewerInContext = prevContextIsEscape || (activeArtifact && activeArtifact.toLowerCase().includes('cống'));
       if (hasSewerInContext && (norm.includes(' cua cong do ') || norm.includes(' cua cong ay ') || norm.includes(' con duong do '))) {
         resolved = resolved.replace(/(?:^|\s)(cửa cống đó|cửa cống ấy|con đường đó)(?=\s|[.,!?]|$)/gi, ' cửa cống ngầm vượt ngục tại Hỏa Lò').trim();
-      } else if (activeArtifact && (norm.includes(' no ') || norm.includes(' vat nay ') || norm.includes(' cai nay ') || norm.includes(' co may do ') || norm.includes(' hien vat nay '))) {
-        resolved = resolved.replace(/(?:^|\s)(nó|vật này|cái này|cỗ máy đó|hiện vật này)(?=\s|[.,!?]|$)/gi, ' ' + activeArtifact).trim();
+      } else if (activeArtifact && (norm.includes(' no ') || norm.includes(' vat nay ') || norm.includes(' cai nay ') || norm.includes(' co may do ') || norm.includes(' hien vat nay ') || norm.includes(' was it ') || norm.includes(' is it ') || norm.includes(' were they ') || norm.includes(' are they '))) {
+        resolved = resolved
+          .replace(/(?:^|\s)(nó|vật này|cái này|cỗ máy đó|hiện vật này)(?=\s|[.,!?]|$)/gi, ' ' + activeArtifact)
+          .replace(/\b(was|is|were|are)\s+(it|they)\b/gi, `$1 ${activeArtifact}`)
+          .trim();
       }
 
       // Giải mã đại từ sự kiện vượt ngục: CHỈ kích hoạt khi ngữ cảnh trước đó thực sự là Trần Tử Bình / vượt ngục 1945!

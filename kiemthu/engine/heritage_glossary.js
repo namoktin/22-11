@@ -33,6 +33,8 @@ const GLOSSARY_BY_LANG = {
       [/\b(?:stove|oven|furnace)\s+prison\b/gi, 'Hoa Lo Prison'],
       [/\bcutting\s+machine\b/gi, 'guillotine'],
       [/\bbang\s+tree\b/gi, 'historic banyan tree'],
+      [/\bXà\s*lim\b/gi, 'death row cell'],
+      [/\bKhu\s*D\b/g, 'Zone D'],
       [/Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison'],
       [/Di tích (?:Lịch sử )?Nhà tù Hỏa Lò/gi, 'Hoa Lo Prison Historical Relic'],
       [/Hỏa Lò/gi, 'Hoa Lo'],
@@ -63,7 +65,11 @@ const GLOSSARY_BY_LANG = {
     promptHint: 'Termes officiels : Prison de Hoa Lo, Maison Centrale, village de Phu Khanh, Yen Bai, Nguyen Thai Hoc, Hoang Van Thu, Truong Chinh, Tran Tu Binh, Cachots, Guillotine, Badamier historique, Hanoi Hilton, Tambour de bronze de Dong Son, Grande Cloche de bronze Dat Hong, Épée royale de la dynastie Nguyen, Deux Dragons face au Soleil, Nuit Sacrée.',
     replacements: [
       [/\bmachines?\s+à\s+couper(?:\s+(?:les?\s+)?têtes?)?\b/gi, 'guillotine'],
-      [/\bmachine\s+à\s+décapiter\b/gi, 'guillotine'],
+      [/\bmachines?\s+(?:à|de)\s+décapitation\b/gi, 'guillotine'],
+      [/\b(?:les?\s+|des?\s+)?machines?\s+(?:à|de)\s+décapiter\b/gi, 'guillotine'],
+      [/\bappareils?\s+de\s+décapitation\b/gi, 'guillotine'],
+      [/\bXà\s*lim\b/gi, 'cellule des condamnés'],
+      [/\bKhu\s*D\b/g, 'secteur D'],
       [/\bprison\s+du\s+fourneau\b/gi, 'Prison de Hoa Lo'],
       [/\bprison\s+du\s+poêle\b/gi, 'Prison de Hoa Lo'],
       [/Nhà tù Hỏa Lò/gi, 'Prison de Hoa Lo'],
@@ -87,7 +93,10 @@ const GLOSSARY_BY_LANG = {
     promptHint: '公式用語: ホアロー収容所 (Hoa Lo), メゾン・サントラル (Maison Centrale), フーカイン村, イエンバイ (Yen Bai), グエン・タイ・ホック, ホアン・ヴァン・トゥー, チュオン・チン, チャン・トゥー・ビン, カショ独房 (Cachot), ギロチン, 歴史的なモモタマナの木, ハノイ・ヒルトン, ドンソン銅鼓, ダットホン大洪鐘, グエン朝王室の宝剣, 双龍朝日文様, 聖なる夜.',
     replacements: [
       [/ストーブ刑務所|かまど刑務所|炉刑務所/g, 'ホアロー収容所'],
-      [/切断機/g, 'ギロチン'],
+      [/原型の刃物機械/g, '原型のギロチン'],
+      [/切断機|刃物機械|処刑機械/g, 'ギロチン'],
+      [/刃物展示エリア|機械展示エリア/g, 'ギロチン展示エリア'],
+      [/Xà\s*lim/gi, '死刑囚独房'],
       [/ノイ[・\s]?タイ[・\s]?ホク/g, 'グエン・タイ・ホック'],
       [/トゥンマイ射撃場/g, 'トゥオンマイ射撃場'],
       [/Nhà tù Hỏa Lò/gi, 'ホアロー収容所'],
@@ -110,7 +119,11 @@ const GLOSSARY_BY_LANG = {
     promptHint: '공식 용어: 호아로 수용소 (Hoa Lo), 메종 상트랄 (Maison Centrale), 푸카인 마을, 옌바이 (Yen Bai), 응우옌 타이 혹, 호앙 반 투, 쯔엉 찐, 쩐 뜨 빈, 카쇼 독방 (Cachot), 단두대 (Guillotine), 역사적인 반얀나무(방나무), 하노이 힐튼, 동선 청동북, 닷홍 대홍종, 응우옌 왕조 황실 보검 (NEVER Hoang Van Thu), 쌍룡조일 문양, 성스러운 밤.',
     replacements: [
       [/난로\s*(?:감옥|수용소)|화덕\s*(?:감옥|수용소)|화롯불\s*(?:감옥|수용소)/g, '호아로 수용소'],
-      [/전투\s*기계|전쟁\s*기계|절단기/g, '단두대'],
+      [/전투\s*기계|전쟁\s*기계|절단기|기계식\s*도살기|원형\s*도살기|칼날\s*기계/g, '단두대'],
+      [/기계\s*전시\s*구역/g, '단두대 전시 구역'],
+      [/Xà\s*lim(?:\s*사형\s*구역)?\s*K구역/gi, '사형수 독방 D구역'],
+      [/Xà\s*lim/gi, '사형수 독방'],
+      [/\bK구역/g, 'D구역'],
       [/호앙\s*반\s*투의\s*보검/g, '응우옌 왕조 황실 보검'],
       [/호앙\s*반\s*투의\s*궁전/g, '황궁 유물'],
       [/일본의\s*이중\s*용(?:\s*왕조)?\s*양식/g, '쌍룡조일(두 마리 용이 태양을 향하는) 문양'],
@@ -138,6 +151,7 @@ const GLOSSARY_BY_LANG = {
       [/黄文图|黄文舒/g, '黄文树'],
       [/炉子监狱|烤炉监狱/g, '火炉监狱'],
       [/切割机/g, '断头台'],
+      [/Xà\s*lim/gi, '死囚牢房'],
       [/Nhà tù Hỏa Lò/gi, '火炉监狱'],
       [/Hỏa Lò/gi, '火炉'],
       [/Nguyễn\s+Thái\s+H[oọ]c/gi, '阮太学'],
@@ -178,7 +192,14 @@ const FOREIGN_QUERY_TERM_HINTS = [
   [/\bhoraires?\b|\bheures?\s+d['’]?ouverture\b|開館時間|営業時間|관람\s*시간|운영\s*시간|开放时间|几点开门/gi, ' giờ mở cửa Hỏa Lò '],
   [/\bbillets?\b|\btarifs?\b|\bprix\s+d['’]?entrée\b|入場料|チケット|입장료|티켓|门票|票价/gi, ' giá vé vào cửa Hỏa Lò '],
   [/\bconsignes?\b|\bcasiers?\b|ロッカー|물품\s*보관함|보관함|寄存柜|寄存/gi, ' tủ gửi đồ Hỏa Lò '],
-  [/\baudioguides?\b|\baudio\s+guides?\b|音声ガイド|오디오\s*가이드|语音导览/gi, ' thuê máy thuyết minh Audioguide Hỏa Lò ']
+  [/\baudioguides?\b|\baudio\s+guides?\b|音声ガイド|오디오\s*가이드|语音导览/gi, ' thuê máy thuyết minh Audioguide Hỏa Lò '],
+  [/脱獄|脱走|탈옥|탈출|越狱|逃脱|\bévasion\b|\bevader\b/gi, ' vượt ngục Hỏa Lò '],
+  [/クリスマスイブ|크리스마스\s*이브|平安夜|réveillon\s+de\s+noël/gi, ' đêm Noel '],
+  [/見どころ|名所|볼거리|하이라이트|看点|亮点|\bincontournables\b|\bpoints?\s+forts?\b/gi, ' điểm nổi bật đáng xem nhất Hỏa Lò '],
+  [/클룩|クルック|客路/gi, ' Klook '],
+  [/트래블로카|トラベロカ/gi, ' Traveloka '],
+  [/血で書|血書|피로\s*쓴|피로\s*적|用血写|血写|avec\s+du\s+sang|en\s+sang/gi, ' viết báo bằng máu Hỏa Lò '],
+  [/誕生日パーティー|生誕祭|생일\s*파티|생일\s*음식|生日派对|生日宴|fête\s+d['’]?anniversaire|menu\s+d['’]?anniversaire/gi, ' tiệc sinh nhật ']
 ];
 
 /**

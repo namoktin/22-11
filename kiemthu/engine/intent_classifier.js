@@ -83,6 +83,7 @@ class IntentClassifier {
       'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
       'dai hong chung', 'chuong dai hong', 'dathong', 'chuong lon', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
       'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang', 'lao tu tap chi', 'con duong chinh', 'bua liem', 'truong hoc cach mang', 'giay quyen', 'muc vo hinh',
+      'vuot nguc', 'cuoc tron thoat', 'dem giang sinh', 'christmas eve', 'prison escape', 'christmas 1951',
       'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers', 'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers', 'handwritten newspaper', 'handwritten newspapers', 'secret press',
       'the tu', 'vn 2017', '2056', 'luoc xuong', 'gao dua', 'khan tay', 'kim khau', 'censure', 'khu tay',
       'nha bep', 'benh xa', 'khe cua', 'o quan sat', 'mang ton', 'ca sat', 'mai ngoi', 'tuong gach', 'xuan phuong',
@@ -98,7 +99,8 @@ class IntentClassifier {
     if (norm.includes('may chem') || norm.includes('guillotine') || norm.includes('luoi dao') || norm.includes('cot go')) return 'may_chem';
     if (norm.includes('cay bang') || norm.includes('la bang') || norm.includes('hat bang') || norm.includes('canh bang') || norm.includes('tra bang') || norm.includes('thach bang')) return 'cay_bang';
     if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong') ||
-        (norm.includes('noel') && (norm.includes('1951') || norm.includes('tu tu') || norm.includes('24 12')))) {
+        (norm.includes('1951') && (norm.includes('tron thoat') || norm.includes('dao thoat') || norm.includes('thoat') || norm.includes('tu tu'))) ||
+        ((norm.includes('noel') || norm.includes('giang sinh')) && (norm.includes('1951') || norm.includes('tu tu') || norm.includes('24 12') || norm.includes('vuot nguc') || norm.includes('tron thoat')))) {
       if (norm.includes('1945') || norm.includes('tran tu binh') || norm.includes('nhat dao chinh') || norm.includes('hon 100') || norm.includes('100 can bo')) return 'vuot_nguc_1945';
       return 'cong_ngam';
     }
@@ -359,8 +361,10 @@ class IntentClassifier {
 
     // 0.069. CỔNG TỪ CHỐI XÁC ĐỊNH HẸP CHO THỰC ĐƠN / TIỆC CÁ NHÂN NGOÀI PHẠM VI (thôi nôi, sinh nhật, tiệc cưới, mâm cỗ)
     // Giữ cổng HẸP để KHÔNG chặn nhầm phở/ẩm thực quanh di tích, chuyện cười hay thời tiết!
-    const isOffTopicPartyMenu = /\b(thoi noi|tiec thoi noi|tiec day thang|day thang|tiec sinh nhat|to chuc sinh nhat|thuc don sinh nhat|thuc don tiec|mon an tiec|dai tiec|tiec cuoi|tiec tat nien|mam co|co thoi noi|first birthday party|birthday party menu)\b/.test(norm) &&
-      !hasPhrase(norm, 'tiec gala');
+    const isOffTopicPartyMenu = (
+      /\b(thoi noi|tiec thoi noi|tiec day thang|day thang|tiec sinh nhat|to chuc sinh nhat|thuc don sinh nhat|thuc don tiec|mon an tiec|dai tiec|tiec cuoi|tiec tat nien|mam co|co thoi noi|first birthday party|birthday party menu|birthday party|menu d anniversaire)\b/.test(norm) ||
+      (/\b(sinh nhat|birthday|anniversaire)\b/.test(norm) && /\b(mon an|thuc don|goi y mon|tiec|dishes|dish|menu|food|catering|dishes for)\b/.test(norm))
+    ) && !hasPhrase(norm, 'tiec gala');
     if (isOffTopicPartyMenu) {
       return {
         intent: INTENTS.OUT_OF_SCOPE,
@@ -736,7 +740,12 @@ class IntentClassifier {
       };
     }
 
-    if (!isHist && (norm.includes('dang xem nhat') || norm.includes('nen xem gi') || norm.includes('xem gi nhat') || norm.includes('noi bat nhat') || norm.includes('co gi hay nhat') || norm.includes('dac sac nhat')) && !norm.includes('vi sao')) {
+    const hasHighlightsCue = norm.includes('dang xem nhat') || norm.includes('nen xem gi') || norm.includes('xem gi nhat') ||
+      norm.includes('noi bat nhat') || norm.includes('co gi hay nhat') || norm.includes('dac sac nhat') ||
+      norm.includes('diem noi bat') || norm.includes('diem nhan') ||
+      hasPhrase(norm, 'what are the highlights') || hasPhrase(norm, 'highlights of') || hasPhrase(norm, 'main highlights') ||
+      hasPhrase(norm, 'must see') || hasPhrase(norm, 'worth seeing') || hasPhrase(norm, 'incontournables');
+    if (!isHist && hasHighlightsCue && !norm.includes('vi sao') && !norm.includes('why')) {
       return {
         intent: INTENTS.HIGHLIGHTS_REQUEST,
         subIntent: 'MUST_SEE_HIGHLIGHTS',

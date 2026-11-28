@@ -101,7 +101,7 @@ class IntelligentAnswerComposer {
       }, intent, retrievedData);
     }
 
-    // 0.25. Xử lý câu nối tiếp hợp lệ ("Kể tiếp đi", "Rồi sao nữa?", "Nói thêm đi", "Tell me more") — bám chặt mạch chuyện đang kể dở!
+    // 0.25. Xử lý câu nối tiếp hợp lệ ("Kể tiếp đi", "Rồi sao nữa?", "Tell me more", "Continuez...", "もっと詳しく...")
     if (isContinuation && session?.lastContext?.lastTopicName) {
       const contTopicName = session.lastContext.lastTopicName;
       const allPrevAssistantText = (session.history || [])
@@ -115,9 +115,9 @@ class IntelligentAnswerComposer {
         knowledgeBase.findHistoricalExhibit(contTopicName)?.exhibit || null;
       if (!activeEx) {
         const recentTextNorm = nlp.normalize(`${contTopicName} ${allPrevAssistantText.slice(-500)}`);
-        if ((recentTextNorm.includes('1951') || recentTextNorm.includes('noel') || recentTextNorm.includes('cong ngam')) && !recentTextNorm.includes('1945')) {
+        if ((recentTextNorm.includes('1951') || recentTextNorm.includes('noel') || recentTextNorm.includes('giang sinh') || recentTextNorm.includes('christmas') || recentTextNorm.includes('cong ngam')) && !recentTextNorm.includes('1945')) {
           activeEx = HISTORICAL_EXHIBITS.cong_ngam;
-        } else if (recentTextNorm.includes('1945') && recentTextNorm.includes('vuot nguc')) {
+        } else if (recentTextNorm.includes('1945') && (recentTextNorm.includes('vuot nguc') || recentTextNorm.includes('escape'))) {
           activeEx = HISTORICAL_EXHIBITS.vuot_nguc_1945;
         }
       }
@@ -126,7 +126,7 @@ class IntelligentAnswerComposer {
         ? activeEx.continuationBeats
         : (activeEx && Array.isArray(activeEx.facts) ? activeEx.facts : []);
 
-      if (activeEx && beatList.length > 0 && language === 'vi') {
+      if (activeEx && beatList.length > 0) {
         if (session.state) {
           if (!session.state.continuationShown) session.state.continuationShown = {};
           if (!Array.isArray(session.state.continuationShown[activeEx.id])) {
@@ -172,7 +172,24 @@ class IntelligentAnswerComposer {
           }
         }
         const chosen = chosenItems.map(x => x.fact);
-        const contReply = `Dạ mình xin kể tiếp về ${activeEx.name} bạn nhé: ${chosen.join(' ')}`;
+        let contReply = `Dạ mình xin kể tiếp về ${activeEx.name} bạn nhé: ${chosen.join(' ')}`;
+        if (language !== 'vi' && groqCaller) {
+          const langNames = {
+            en: 'English', fr: 'French', ja: 'Japanese', ko: 'Korean', zh: 'Simplified Chinese'
+          };
+          const targetLangName = langNames[language] || 'English';
+          const glossaryHint = getGlossaryPromptHint(language);
+          const registerLine = getNativeRegisterInstruction(language);
+          const translated = await groqCaller(
+            contReply,
+            `Translate this verified museum continuation accurately into ${targetLangName} ONLY, preserving every historical date, name, and number 100%. ${glossaryHint} ${registerLine} Output ONLY ${targetLangName} text.`,
+            [],
+            { temperature: 0.15, max_tokens: 280 }
+          );
+          if (translated && translated.length >= 16) {
+            contReply = postPolishForeignTerms(translated.replace(/\*\*/g, '').replace(/\s+/g, ' ').trim(), language);
+          }
+        }
         return this.formatResponse({
           reply: contReply,
           style: 'STORYTELLING',
@@ -185,6 +202,21 @@ class IntelligentAnswerComposer {
           requiresHuman: false
         }, 'HISTORICAL_FACT', retrievedData);
       }
+    }
+
+    // 0.26. Nếu khách nói "Kể tiếp đi" / "Tell me more" ngay đầu phiên (chưa có chủ đề nào trong session) -> hỏi lại nhẹ nhàng, KHÔNG đẩy sang LLM bịa phòng khác!
+    if (!isContinuation && !session?.lastContext?.lastTopicName && nlp.isDirectContinuationPhrase(question, normQ)) {
+      return this.formatResponse({
+        reply: getDocentReply('EMPTY_CONTINUATION_PROMPT', language),
+        style: 'CLARIFICATION',
+        confidence: 'HIGH',
+        confidenceScore: 0.96,
+        sources: ['EMPTY_CONTINUATION_GUARD'],
+        claims: ['Nhắc du khách chọn chủ đề trước khi kể tiếp'],
+        responseType: 'CLARIFICATION_PROMPT',
+        resolvedIntent: 'CLARIFICATION',
+        requiresHuman: false
+      }, 'CLARIFICATION', retrievedData);
     }
 
     // 0.3. Xử lý câu hỏi bẫy dữ kiện sai lệch & câu hỏi cốt lõi di tích (FACT_CORRECTIONS & CORE_TRAPS)
@@ -1267,13 +1299,12 @@ class IntelligentAnswerComposer {
     const targetLangName = langNames[language] || 'Vietnamese';
 
     // 0. Cổng từ chối xác định HẸP cho yêu cầu thực đơn / món ăn tiệc cá nhân (thôi nôi, sinh nhật, tiệc cưới...)
-    // TUYỆT ĐỐI không đẩy sang Groq LLM hay fallback ẩm thực Hà Nội — từ chối lịch sự 3/3!
+    // TUYỆT ĐỐI không đẩy sang Groq LLM hay fallback ẩm thực Hà Nội — từ chối lịch sự 3/3 trên cả 6 ngôn ngữ!
     const isStrictPartyRefusal = subIntent === 'STRICT_REFUSAL_OFF_TOPIC_EVENT' ||
-      /\b(thoi noi|tiec thoi noi|tiec day thang|day thang|tiec sinh nhat|to chuc sinh nhat|thuc don sinh nhat|thuc don tiec|mon an tiec|dai tiec|tiec cuoi|tiec tat nien|mam co|co thoi noi|first birthday party|birthday party menu)\b/.test(normQ);
+      /\b(thoi noi|tiec thoi noi|tiec day thang|day thang|tiec sinh nhat|to chuc sinh nhat|thuc don sinh nhat|thuc don tiec|mon an tiec|dai tiec|tiec cuoi|tiec tat nien|mam co|co thoi noi|first birthday party|birthday party menu|birthday party|menu d anniversaire)\b/.test(normQ) ||
+      (/\b(sinh nhat|birthday|anniversaire)\b/.test(normQ) && /\b(mon an|thuc don|goi y mon|tiec|dishes|dish|menu|food|catering|dishes for)\b/.test(normQ));
     if (isStrictPartyRefusal) {
-      const refusalReply = isEn
-        ? 'I politely apologize, but suggesting menus or dishes for personal celebrations such as a baby’s first birthday or birthday party falls outside my scope as a virtual docent at Hoa Lo Prison Historical Relic, so I cannot assist with that request. I would be glad to help with any questions about Hoa Lo Prison’s history, exhibits, or visiting information.'
-        : 'Dạ mình xin lỗi bạn nhé, việc gợi ý món ăn hay thực đơn cho tiệc thôi nôi, sinh nhật hoặc tiệc cá nhân nằm ngoài phạm vi nhiệm vụ của hướng dẫn viên tại Di tích Lịch sử Nhà tù Hỏa Lò nên mình xin phép từ chối hỗ trợ nội dung này. Khi bạn cần tìm hiểu về lịch sử, hiện vật hay thông tin tham quan tại Di tích Hỏa Lò, mình luôn sẵn lòng đồng hành ạ.';
+      const refusalReply = getDocentReply('STRICT_PARTY_REFUSAL', language);
       return this.formatResponse({
         reply: refusalReply,
         style: 'CUSTOMER_CARE',
@@ -1577,12 +1608,19 @@ ${compactContext}`;
       .replace(/\s+/g, ' ')
       .trim();
     cleanReply = postPolishForeignTerms(cleanReply, language);
-    // Hậu xử lý câu mở đầu tiếng Việt: nếu câu hỏi mở (không phải Có/Không) mà model nhỏ lỡ mở đầu bằng "Đúng vậy," -> đổi mượt sang "Dạ, "
+    // Hậu xử lý câu mở đầu: nếu câu hỏi mở (không phải Có/Không) mà LLM lỡ mở bằng "Đúng vậy," hoặc "Yes," -> bỏ/đổi mượt!
     if (language === 'vi' && /^Đúng\s+vậy[,.!\s]+/i.test(cleanReply)) {
       const isYesNoVi = /(có phải|đúng không|phải không|có thật|có đúng|được không|có không|hay không|có bị|có được)\b/i.test(question);
       if (!isYesNoVi) {
         const rest = cleanReply.replace(/^Đúng\s+vậy[,.!\s]+/i, '').trim();
         cleanReply = rest ? `Dạ, ${rest.charAt(0).toLowerCase()}${rest.slice(1)}` : cleanReply;
+      }
+    } else if (language === 'en' && /^Yes[,.!\s]+/i.test(cleanReply)) {
+      const isYesNoEn = /^(is|are|was|were|do|does|did|can|could|will|would|have|has|should|may)\b/i.test(question.trim()) ||
+        /(is that true|is it true|right\??|correct\??|có phải|đúng không|phải không)/i.test(question);
+      if (!isYesNoEn) {
+        const rest = cleanReply.replace(/^Yes[,.!\s]+/i, '').trim();
+        if (rest) cleanReply = rest.charAt(0).toUpperCase() + rest.slice(1);
       }
     }
     // Chặn câu trả lời RAG quá cộc lốc 1-2 từ (VD: chỉ "Đúng vậy." không giải thích) -> để rơi về fallback giải thích đầy đủ!
@@ -1916,43 +1954,50 @@ ${compactContext}`;
         ],
         requiresHuman: false,
         responseType: 'FACTUAL_TRAP_CORRECTED',
+        resolvedIntent: 'HISTORICAL_FACT',
         style: 'QUICK_ANSWER'
       };
     }
 
     // 0d. Kể chuyện / Tra cứu trực diện về Vượt ngục đêm Noel 24/12/1951 & Vượt ngục chung tại Nhà tù Hỏa Lò
-    // Chặn tuyệt đối hiện tượng LLM trộn số liệu 1945 (29/100 người) hoặc bịa tên nhà tù khác, đồng thời mở mạch chuẩn để "Kể tiếp đi" -> "Rồi sao nữa?" nối mạch 1951!
-    const is1951TrapAllEscaped = (normQ.includes('1951') || normQ.includes('noel')) &&
-      /\b(toan bo|tat ca|thoat het|deu tron thoat|deu thanh cong)\b/.test(normQ);
-    const isDirectNoel1951Query = language === 'vi' && !is1951TrapAllEscaped &&
+    // Chặn tuyệt đối hiện tượng LLM trộn số liệu 1945 (29/100 người) hoặc bịa tên nhà tù khác, đồng thời mở mạch chuẩn để "Kể tiếp đi" / "Tell me more" nối mạch 1951 trên MỌI ngôn ngữ!
+    const is1951TrapAllEscaped = (normQ.includes('1951') || normQ.includes('noel') || normQ.includes('giang sinh') || normQ.includes('christmas')) &&
+      /\b(toan bo|tat ca|thoat het|deu tron thoat|deu thanh cong|everyone escaped|all escaped)\b/.test(normQ);
+    const isDirectNoel1951Query = !is1951TrapAllEscaped &&
       !normQ.includes('1945') && !normQ.includes('tran tu binh') && !normQ.includes('1932') &&
       !normQ.includes('chui thu') && !normQ.includes('chui xuong') && !normQ.includes('duoc chui') &&
-      (normQ.includes('noel') || normQ.includes('1951')) &&
-      (normQ.includes('vuot nguc') || normQ.includes('cong ngam') || normQ.includes('tu tu'));
+      (normQ.includes('noel') || normQ.includes('giang sinh') || normQ.includes('christmas') || normQ.includes('1951')) &&
+      (normQ.includes('vuot nguc') || normQ.includes('cong ngam') || normQ.includes('tu tu') || normQ.includes('tron thoat') || normQ.includes('escape') || normQ.includes('prison break'));
     if (isDirectNoel1951Query) {
-      const asksCountOrOutcome = /\b(bao nhieu|may nguoi|thoat duoc|thoat ra|ket qua|ket cuc)\b/.test(normQ);
-      const asksStoryOpening = /\b(ke chuyen|ke ve|ke cho|nghe chuyen|dien ra|the nao)\b/.test(normQ) && !asksCountOrOutcome;
+      const asksCountOrOutcome = /\b(bao nhieu|may nguoi|thoat duoc|thoat ra|ket qua|ket cuc|how many|outcome)\b/.test(normQ);
+      const asksStoryOpening = /\b(ke chuyen|ke lai|cau chuyen|ke ve|ke cho|nghe chuyen|dien ra|the nao|cho toi biet|tell me|story|racontez)\b/.test(normQ) && !asksCountOrOutcome;
       if (asksCountOrOutcome) {
         return {
-          reply: 'Dạ trong cuộc vượt ngục qua đường cống ngầm đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò, có 16 tử tù chính trị Khu D (cùng 1 thường phạm, tổng 17 người) tham gia đào thoát qua miệng cống góc sân nam ra khu vực phố Quán Sứ – lân cận phố Thợ Nhuộm. Do bị lộ và địch bao vây truy lùng gắt gao, nhờ nhân dân Hà Nội che chở đã có 5 đồng chí thoát thành công về vùng tự do kháng chiến (Vũ Đức Chính, Nguyễn Gia Thiết, Vũ Đình Quang, Vũ Đình Khôi và Nguyễn Văn Hùng), còn 12 người không may bị địch bắt lại.',
+          reply: language === 'en'
+            ? 'In the legendary Christmas Eve underground sewer escape on December 24, 1951 at Hoa Lo Prison, 16 political death-row prisoners from Zone D (plus 1 common-law inmate, 17 in total) broke out through the south courtyard sewer exit toward Quan Su and nearby Tho Nhuom Street. Amid heavy French pursuit, 5 comrades successfully escaped to liberated resistance zones (Vu Duc Chinh, Nguyen Gia Thiet, Vu Dinh Quang, Vu Dinh Khoi, and Nguyen Van Hung), while 12 others were recaptured.'
+            : 'Dạ trong cuộc vượt ngục qua đường cống ngầm đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò, có 16 tử tù chính trị Khu D (cùng 1 thường phạm, tổng 17 người) tham gia đào thoát qua miệng cống góc sân nam ra khu vực phố Quán Sứ – lân cận phố Thợ Nhuộm. Do bị lộ và địch bao vây truy lùng gắt gao, nhờ nhân dân Hà Nội che chở đã có 5 đồng chí thoát thành công về vùng tự do kháng chiến (Vũ Đức Chính, Nguyễn Gia Thiết, Vũ Đình Quang, Vũ Đình Khôi và Nguyễn Văn Hùng), còn 12 người không may bị địch bắt lại.',
           confidence: 'HIGH',
           confidenceScore: 0.99,
           sources: ['DOSSIER_VUOT_NGUC_NOEL_1951_Z07'],
           claims: ['16 tử tù chính trị Khu D (tổng 17 người) vượt ngục đêm Noel 24/12/1951', '5 đồng chí thoát thành công về vùng tự do, 12 người bị bắt lại'],
           requiresHuman: false,
           responseType: 'HISTORICAL_EXPLANATION',
+          resolvedIntent: 'HISTORICAL_FACT',
           style: 'QUICK_ANSWER'
         };
       }
       if (asksStoryOpening) {
         return {
-          reply: 'Dạ mình xin kể bạn nghe về cuộc vượt ngục huyền thoại đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò nhé. Trong nhiều tuần trước đêm Giáng sinh, 16 tử tù chính trị Khu D (cùng 1 thường phạm, tổng 17 người) đã bí mật chuẩn bị kế hoạch đào thoát vô cùng mưu trí: đồng chí Vũ Đức Chính khéo léo in dấu chìa khóa của lính gác Busan để đánh chìa giả mở cửa buồng giam, còn cả nhóm dùng mảnh lưỡi cưa đồng hồ tuồn từ bên ngoài vào cưa dần chốt cùm và song sắt miệng cống ngầm, mỗi đêm xong lại nhai cơm nguội trộn tro miết che vết cắt qua mắt lính kiểm tra.',
+          reply: language === 'en'
+            ? 'Let me tell you about the legendary 1951 Christmas Eve escape at Hoa Lo Prison. Over several weeks beforehand, 16 political death-row prisoners in Zone D (along with 1 common-law inmate, 17 in total) secretly orchestrated a daring plan: comrade Vu Duc Chinh pressed the impression of guard Busan’s keys to forge duplicate iron keys for the cell doors, while the group smuggled tiny watch-spring saws to cut through shackle pins and sewer iron bars night by night, masking the saw cuts with chewed cold rice mixed with ash.'
+            : 'Dạ mình xin kể bạn nghe về cuộc vượt ngục huyền thoại đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò nhé. Trong nhiều tuần trước đêm Giáng sinh, 16 tử tù chính trị Khu D (cùng 1 thường phạm, tổng 17 người) đã bí mật chuẩn bị kế hoạch đào thoát vô cùng mưu trí: đồng chí Vũ Đức Chính khéo léo in dấu chìa khóa của lính gác Busan để đánh chìa giả mở cửa buồng giam, còn cả nhóm dùng mảnh lưỡi cưa đồng hồ tuồn từ bên ngoài vào cưa dần chốt cùm và song sắt miệng cống ngầm, mỗi đêm xong lại nhai cơm nguội trộn tro miết che vết cắt qua mắt lính kiểm tra.',
           confidence: 'HIGH',
           confidenceScore: 0.99,
           sources: ['DOSSIER_VUOT_NGUC_NOEL_1951_Z07'],
           claims: ['Đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò', '16 tử tù Khu D đánh chìa khóa giả, cưa song sắt miệng cống ngầm và dùng cơm nguội trộn tro che vết cắt'],
           requiresHuman: false,
           responseType: 'VERIFIED_ARCHIVE_STORY',
+          resolvedIntent: 'HISTORICAL_FACT',
           style: 'STORYTELLING'
         };
       }
@@ -1972,6 +2017,7 @@ ${compactContext}`;
         claims: ['Cuộc vượt ngục tháng 3/1945 giải thoát hơn 100 tù chính trị', 'Cuộc vượt ngục đêm Noel 24/12/1951 của 16 tử tù qua cống ngầm với 5 đồng chí thoát thành công'],
         requiresHuman: false,
         responseType: 'VERIFIED_ARCHIVE_STORY',
+        resolvedIntent: 'HISTORICAL_FACT',
         style: 'STORYTELLING'
       };
     }
@@ -2381,9 +2427,24 @@ ${compactContext}`;
    */
   formatResponse(result, intent, retrievedData = {}) {
     const validated = validator.validateAndRefine(result.reply, intent, retrievedData);
-    
-    const finalConfidence = result.confidence === 'MEDIUM' ? 'MEDIUM' : (validated.confidence || result.confidence || 'HIGH');
-    const finalConfidenceScore = result.confidence === 'MEDIUM' ? (result.confidenceScore || 0.85) : (validated.confidenceScore || result.confidenceScore || 0.95);
+    // Không hạ điểm tin cậy xuống LOW chỉ vì khác biệt ngôn ngữ (VD: bài chuẩn tiếng Anh đối chiếu với bằng chứng tiếng Việt)
+    const isCuratedVerifiedSource = new Set([
+      'VERIFIED_EXPANDED_FACT',
+      'VERIFIED_EXPANDED_KNOWLEDGE',
+      'VERIFIED_ARCHIVE_STORY',
+      'FACTUAL_TRAP_CORRECTED',
+      'FACT_CORRECTION',
+      'FACT_CONFIRMATION',
+      'PREMIUM_FACT_V6_2',
+      'CONTINUATION_STORY',
+      'THIRD_PARTY_QR_POLICY_GATE',
+      'LOCAL_SEMANTIC_VECTOR_HIT',
+      'EXHIBIT_DOSSIER_ANSWER',
+      'GROUNDED_ADAPTED_ANSWER'
+    ]).has(result.responseType);
+    const preserveSourceScore = result.confidence === 'MEDIUM' || (isCuratedVerifiedSource && !validated.wasCorrected);
+    const finalConfidence = preserveSourceScore ? (result.confidence || 'HIGH') : (validated.confidence || result.confidence || 'HIGH');
+    const finalConfidenceScore = preserveSourceScore ? (result.confidenceScore || 0.95) : (validated.confidenceScore || result.confidenceScore || 0.95);
 
     return {
       reply: validated.reply,

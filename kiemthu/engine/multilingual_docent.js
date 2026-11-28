@@ -376,6 +376,24 @@ const DOCENT_MESSAGES = {
     zh: '这是一个很有趣的话题，但超出了河内火炉监狱历史遗迹的专业史料范围，为保证严谨准确我不做猜测。回到您今天的火炉监狱参观之旅，您希望我接下来为您介绍哪个展区或历史时期？'
   },
 
+  STRICT_PARTY_REFUSAL: {
+    vi: 'Dạ mình xin lỗi bạn nhé, việc gợi ý món ăn hay thực đơn cho tiệc thôi nôi, sinh nhật hoặc tiệc cá nhân nằm ngoài phạm vi nhiệm vụ của hướng dẫn viên tại Di tích Lịch sử Nhà tù Hỏa Lò nên mình xin phép từ chối hỗ trợ nội dung này. Khi bạn cần tìm hiểu về lịch sử, hiện vật hay thông tin tham quan tại Di tích Hỏa Lò, mình luôn sẵn lòng đồng hành ạ.',
+    en: 'I politely apologize, but suggesting menus or dishes for personal celebrations such as a baby’s first birthday or birthday party falls outside my scope as a virtual docent at Hoa Lo Prison Historical Relic, so I cannot assist with that request. I would be glad to help with any questions about Hoa Lo Prison’s history, exhibits, or visiting information.',
+    fr: 'Je vous prie de m’excuser, mais suggérer des menus ou des plats pour un anniversaire ou une fête privée sort du cadre de ma mission de guide au site historique de la Prison de Hoa Lo. Je serais en revanche ravi de vous renseigner sur l’histoire, les expositions ou les informations pratiques du site.',
+    ja: '誠に恐れ入りますが、お誕生日会や個人的なお祝いの料理・メニューのご提案は、ホアロー収容所歴史遺跡のガイドとしての業務範囲外となりますため、お受けいたしかねます。当遺跡の歴史や展示物、ご見学案内についてぜひご質問ください。',
+    ko: '죄송하지만 돌잔치나 생일 파티 등 개인 행사 메뉴 추천은 호아로 수용소 역사 유적 도슨트의 안내 범위를 벗어나므로 지원해 드릴 수 없습니다. 호아로 수용소의 역사, 전시물 또는 관람 정보에 대해 궁금하신 점이 있으시면 언제든 안내해 드리겠습니다.',
+    zh: '非常抱歉，为您推荐周岁宴、生日派对或私人宴会菜品超出河内火炉监狱历史遗迹讲解员的职责范围，我无法为您提供此类协助。若您想了解火炉监狱的历史、展品或参观信息，我非常乐意为您效劳。'
+  },
+
+  EMPTY_CONTINUATION_PROMPT: {
+    vi: 'Dạ hiện tại chúng ta chưa bắt đầu câu chuyện cụ thể nào ạ. Bạn đang muốn mình kể tiếp về hiện vật hay sự kiện nào tại Di tích Nhà tù Hỏa Lò (ví dụ: cuộc vượt ngục đêm Noel 1951, ngục tối Cachot, Cỗ máy chém hay Cây bàng cổ thụ)?',
+    en: 'We have not started a specific historical story yet in this session. Which exhibit or episode at Hoa Lo Prison Relic would you like me to tell you about—such as the 1951 Christmas Eve escape, the Cachot dark cells, the Guillotine, or the Banyan Tree?',
+    fr: 'Nous n’avons pas encore commencé de récit particulier dans cette session. Quel thème ou objet de la Prison de Hoa Lo souhaitez-vous découvrir maintenant : l’évasion de Noël 1951, les cachots, la guillotine ou le badamier historique ?',
+    ja: 'まだ具体的な歴史物語が始まっておりません。1951年クリスマスイブの脱獄、カショ独房、ギロチン、モモタマナの木など、ホアロー収容所のどのテーマからお話しいたしましょうか。',
+    ko: '아직 이어갈 특정 역사 이야기가 시작되지 않았습니다. 1951년 크리스마스 이브 탈옥, 카쇼 독방, 단두대, 반얀나무 중 어떤 주제부터 들려드릴까요?',
+    zh: '当前会话尚未开始讲述具体故事。您希望我为您介绍河内火炉监狱的哪段历史或哪件文物，例如1951年平安夜越狱、卡绍暗牢、断头台或古榄仁树？'
+  },
+
   ARCHIVE_KNOWLEDGE_GAP: {
     vi: 'Thông tin chi tiết này hiện chưa được ghi nhận trong kho tư liệu xác thực của Di tích Nhà tù Hỏa Lò mà mình được cung cấp, nên mình xin phép không suy đoán để đảm bảo độ chính xác lịch sử.',
     en: 'This specific detail is not documented in the verified historical archives currently provided for Hoa Lo Prison Relic. I prefer not to guess so that every historical fact I share remains accurate.',

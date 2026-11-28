@@ -190,8 +190,24 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
   });
   s = s.replace(/(?<!\d)(\d{1,3}(?:[.,]\d{3})+)\s*(?:VNĐ|VND)(?=[\s.,?!;:)/。、，！？；：]|$)/gi, (_, n) => formatSpokenCurrency(n, code));
 
-  // 7. Đơn vị đo phổ biến trong thuyết minh di tích (kg, m², m, km)
-  s = s.replace(/(\d+(?:[.,]\d+)?)\s*[-–—]\s*(\d+(?:[.,]\d+)?)\s*kg(?=[\s.,?!;:)/。、，！？；：]|$)/gi, (_, a, b) => {
+  // 7. Đơn vị đo phổ biến trong thuyết minh di tích (km, kg, m², m) — hỗ trợ cả dấu ngã Nhật 〜 & hậu tố CJK/Hàn (です/입니다)
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*[-–—〜~]\s*(\d+(?:[.,]\d+)?)\s*km(?=[^a-zA-Z]|$)/gi, (_, a, b) => {
+    if (code === 'vi') return `${a} đến ${b} ki-lô-mét`;
+    if (code === 'en') return `${a} to ${b} kilometers`;
+    if (code === 'fr') return `${a} à ${b} kilomètres`;
+    if (code === 'ja') return `${a}から${b}キロメートル`;
+    if (code === 'ko') return `${a}에서 ${b}킬로미터`;
+    return `${a}至${b}公里`;
+  });
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*km(?=[^a-zA-Z]|$)/gi, (_, a) => {
+    if (code === 'vi') return `${a} ki-lô-mét`;
+    if (code === 'en') return `${a} kilometers`;
+    if (code === 'fr') return `${a} kilomètres`;
+    if (code === 'ja') return `${a}キロメートル`;
+    if (code === 'ko') return `${a}킬로미터`;
+    return `${a}公里`;
+  });
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*[-–—〜~]\s*(\d+(?:[.,]\d+)?)\s*kg(?=[^a-zA-Z]|$)/gi, (_, a, b) => {
     if (code === 'vi') return `${a} đến ${b} ki-lô-gam`;
     if (code === 'en') return `${a} to ${b} kilograms`;
     if (code === 'fr') return `${a} à ${b} kilogrammes`;
@@ -199,7 +215,7 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     if (code === 'ko') return `${a}에서 ${b}킬로그램`;
     return `${a}至${b}公斤`;
   });
-  s = s.replace(/(\d+(?:[.,]\d+)?)\s*kg(?=[\s.,?!;:)/。、，！？；：]|$)/gi, (_, a) => {
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*kg(?=[^a-zA-Z]|$)/gi, (_, a) => {
     if (code === 'vi') return `${a} ki-lô-gam`;
     if (code === 'en') return `${a} kilograms`;
     if (code === 'fr') return `${a} kilogrammes`;
@@ -207,7 +223,7 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     if (code === 'ko') return `${a}킬로그램`;
     return `${a}公斤`;
   });
-  s = s.replace(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²)(?=[\s.,?!;:)/。、，！？；：]|$)/gi, (_, a) => {
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²)(?=[^a-zA-Z]|$)/gi, (_, a) => {
     if (code === 'vi') return `${a} mét vuông`;
     if (code === 'en') return `${a} square meters`;
     if (code === 'fr') return `${a} mètres carrés`;
@@ -215,7 +231,7 @@ function sanitizeTextForSpeech(text, lang = 'vi') {
     if (code === 'ko') return `${a}제곱미터`;
     return `${a}平方米`;
   });
-  s = s.replace(/(\d+(?:[.,]\d+)?)\s*m(?=[\s.,?!;:)/。、，！？；：]|$)/g, (_, a) => {
+  s = s.replace(/(\d+(?:[.,]\d+)?)\s*m(?=[^a-zA-Z]|$)/g, (_, a) => {
     if (code === 'vi') return `${a} mét`;
     if (code === 'en') return `${a} meters`;
     if (code === 'fr') return `${a} mètres`;

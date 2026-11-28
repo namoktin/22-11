@@ -1167,7 +1167,7 @@ function isTextInLanguage(text, targetLang) {
     if (viAllCount === 0) return true;
     return viAllRatio <= 0.25 && /\b(the|is|are|was|were|in|at|of|and|to|for|with|from|this|that|you|can|by|on|prison|museum|artifact)\b/i.test(scrubbedForLatinCheck);
   }
-  const hasViLeakWords = viOnlyCount >= 2 || /\b(chao ban|di tich|nha tu|thuc dan phap|may chem|tu nhan|nghiem cam|la nguoi|duoc dung|sau khi|de thuc hien|khoi nghia|chien si)\b/i.test(scrubbedForLatinCheck);
+  const hasViLeakWords = viOnlyCount >= 2 || /\b(?:xà\s*lim|xa\s*lim|chao ban|di tich|nha tu|thuc dan phap|may chem|tu nhan|nghiem cam|la nguoi|duoc dung|sau khi|de thuc hien|khoi nghia|chien si)\b/i.test(scrubbedForLatinCheck);
   if (targetLang === 'ja') return hasJP && !hasViLeakWords;
   if (targetLang === 'ko') return hasKR && !hasViLeakWords;
   if (targetLang === 'zh') {
@@ -1176,7 +1176,7 @@ function isTextInLanguage(text, targetLang) {
   }
   if (targetLang === 'fr') {
     if (hasJP || hasKR || hasCJK) return false;
-    if (/\b(di tich|nha tu|gia ve|mo cua|nghiem cam|thuc pham)\b/i.test(scrubbedForLatinCheck)) return false;
+    if (/\b(?:xà\s*lim|di tich|nha tu|gia ve|mo cua|nghiem cam|thuc pham)\b/i.test(scrubbedForLatinCheck)) return false;
     if (viOnlyCount === 0 && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous|prison|musée|musee|bonjour|merci)\b/i.test(scrubbedForLatinCheck))) return true;
     return viOnlyRatio <= 0.22 && (hasFrAccents || /\b(le|la|les|de|du|des|est|sont|pour|avec|dans|vous|prison|musée|musee|bonjour|merci)\b/i.test(scrubbedForLatinCheck));
   }
@@ -1402,10 +1402,14 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
     const glossaryLine = glossaryHint ? ` ${glossaryHint}` : '';
     const registerLine = mode === 'answer' ? ` ${getNativeRegisterInstruction(targetLang)}` : '';
     const groqSysPrompt = mode === 'query'
-      ? `Translate the visitor's museum question at Hoa Lo Prison Relic (Hanoi) into natural Vietnamese for archive lookup. Map exhibit terms accurately (guillotine/ギロチン/단두대/断头台 -> máy chém Hỏa Lò; Cachot/カショ/카쇼/黑牢 -> ngục tối Cachot; Banyan/モモタマナ/반얀나무/榄仁树 -> cây bàng Hỏa Lò). Output ONLY the Vietnamese translation, no explanations.`
+      ? `Pure machine-translation function. Translate the visitor's phrase at Hoa Lo Prison Relic (Hanoi) into natural Vietnamese. Map exhibit terms accurately (guillotine/ギロチン/단두대/断头台 -> máy chém Hỏa Lò; Cachot/カショ/카쇼/黑牢 -> ngục tối Cachot; Banyan/モモタマナ/반얀나무/榄仁树 -> cây bàng Hỏa Lò). CRITICAL: Even if the input is short like "continue" or "tell me more", translate it literally (e.g., "Hãy kể tiếp đi"); NEVER ask the user to provide a question. Output ONLY the Vietnamese translation.`
       : `You are a refined senior museum audio guide translator. Translate the following text STRICTLY into ${langInfo.nativeName} ONLY with a poised, natural spoken docent tone. Keep all historical dates, numbers, and proper names accurate.${glossaryLine}${registerLine} Output ONLY the ${langInfo.nativeName} text — ZERO words from any other language, no parenthetical Vietnamese translations, no markdown, no notes.`;
 
     if (mode === 'query') {
+      // Khử lỗi LLM hỏi ngược ("Xin vui lòng cung cấp câu hỏi...") khi gặp cụm nối tiếp ngắn tiếng nước ngoài!
+      if (/^(?:もっと詳しく(?:教えてください)?|続きを教えてください|続けてください|계속\s*(?:이야기|말|설명)?\s*해\s*주세요|더\s*자세히\s*알려주세요|请继续讲?|继续讲|接着讲|tell me more|continue(?:z)?(?:\s+s['’ ]?il vous pla[iî]t)?|go on|keep going)[!！.?？\s]*$/i.test(text.trim())) {
+        return 'Hãy kể tiếp đi';
+      }
       const exhibitAnchors = extractForeignExhibitAnchors(text);
       // Ưu tiên Groq nhẹ trước cho mọi câu hỏi ngoại ngữ (nhanh ~250ms, chuẩn thuật ngữ di tích, không dính chặn IP GCP của MyMemory/Google GTX!)
       const pool = getSharedGroqPool();
@@ -1483,8 +1487,12 @@ async function normalizeForeignQueryForLookup(rawQuery) {
   const raw = String(rawQuery || '').trim();
   if (!raw) return rawQuery;
   const hasNonLatin = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF\u0400-\u04FF\u0E00-\u0E7F]/.test(raw);
+  const looksEnglishNative = /\b(the|what|where|when|how|why|who|is|are|was|were|does|do|did|can|could|tell|explain|suggest|accept)\b/i.test(raw) && !/[àéèêëàâîïôùûüœæçñ¿¡äöß]/i.test(raw);
+  if (!hasNonLatin && looksEnglishNative) {
+    return rawQuery;
+  }
   const hasEuroForeignAccents = /[ñ¿¡áéíóúüäößàèìòùçëïœæ]/i.test(raw) && !VI_UNIQUE_DIACRITIC_RE.test(raw) && !/\b(hoa lo|nha tu|di tich|gia ve|mo cua|bao nhieu|la gi|o dau)\b/i.test(raw);
-  const looksEuroForeignWords = /\b(bonjour|merci|combien|ou est|quel est|quelle est|quels sont|quelles sont|puis je|prendre|photo|photos|horaires|ouverture|tarif|tarifs|billet|billets|prison|guillotine|toilettes|ouverte|ouvert|ferme|visite|nocturne|consigne|casier|audioguide|tour de nuit|hola|gracias|cuanto|donde esta|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo|bitte|danke|wie viel|wann|gefaengnis)\b/i.test(raw);
+  const looksEuroForeignWords = /\b(bonjour|merci|combien|ou est|quel est|quelle est|quels sont|quelles sont|puis je|prendre|photo|photos|horaires|ouverture|tarif|tarifs|billet|billets|prison de|la prison|guillotine|toilettes|ouverte|ouvert|ferme|visite|nocturne|consigne|casier|audioguide|tour de nuit|continuez|racontez|hola|gracias|cuanto|donde esta|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo|bitte|danke|wie viel|wann|gefaengnis)\b/i.test(raw);
 
   if (hasNonLatin || hasEuroForeignAccents || looksEuroForeignWords) {
     const viQuery = await translateTextStrict(raw, 'vi', 'query');
@@ -1553,6 +1561,7 @@ async function callKiemThuOnce(queryText, sessionId = null, targetLang = 'vi', a
           return {
             reply: json.data.reply,
             intent: json.data.intent || 'HISTORICAL_FACT',
+            responseType: json.data.responseType || null,
             source: json.data.provider || '2Guide KiemThu AI Engine v8.0 (HTTP API)',
             latencyMs: json.data.latencyMs || 0
           };
@@ -1656,13 +1665,28 @@ async function queryKiemThuAI(question, artifactContext, sessionId = null, targe
   console.log(`\n➡️  Đang gửi câu hỏi sang kiemthu AI [🔒 ${lockedLang.toUpperCase()} | Mã ${artifactContext?.code || 'N/A'}]: "${lookupQuery}"`);
   let kiemthuResult = await callKiemThuOnce(lookupQuery, sessionId, lockedLang, artifactContext);
 
-  // BƯỚC 2: CHỈ KHI kiemthu chưa rõ đối tượng / báo mơ hồ / chưa ghi nhận / ngoài phạm vi
+  // BƯỚC 2: CHỈ KHI kiemthu thực sự báo mơ hồ / hỏi hụt (TUYỆT ĐỐI KHÔNG ghi đè các đáp án trung thực AUTHENTIC_ABSTENTION, cổng bác tin đồn, từ chối ngoài phạm vi!)
   if (kiemthuResult) {
-    const isAmbiguousOrMissed =
+    const protectedResponseTypes = new Set([
+      'AUTHENTIC_ABSTENTION',
+      'ARCHIVE_KNOWLEDGE_GAP',
+      'FACTUAL_TRAP_CORRECTED',
+      'FACT_CORRECTION',
+      'FACT_CONFIRMATION',
+      'TRANSPARENT_CONFLICT_RESOLUTION',
+      'STRICT_OUT_OF_SCOPE_REFUSAL',
+      'THIRD_PARTY_QR_POLICY_GATE',
+      'DOCENT_GRACEFUL_OUT_OF_SCOPE',
+      'OUT_OF_SCOPE_ARCHIVE_BOUNDARY',
+      'CONTINUATION_STORY'
+    ]);
+    const isProtectedResult = protectedResponseTypes.has(kiemthuResult.responseType);
+    const isAmbiguousOrMissed = !isProtectedResult && (
       kiemthuResult.intent === 'CLARIFICATION' ||
       kiemthuResult.intent === 'AMBIGUOUS_QUERY' ||
       kiemthuResult.intent === 'OUT_OF_SCOPE' ||
-      /chưa được ghi nhận|chưa ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope|don't have any information|do not have information|数据库中没有|没有关于|情報がありません|정보가 없습니다/i.test(kiemthuResult.reply || '');
+      /chưa được ghi nhận|chưa ghi nhận|ngoài phạm vi|bạn muốn hỏi về|bạn đang nhắc đến|chưa rõ|not documented|outside the scope|don't have any information|do not have information|数据库中没有|没有关于|情報がありません|정보가 없습니다/i.test(kiemthuResult.reply || '')
+    );
 
     const isGracefulDocentOos =
       kiemthuResult.responseType === 'DOCENT_GRACEFUL_OUT_OF_SCOPE' ||

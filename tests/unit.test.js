@@ -1011,4 +1011,49 @@ test('500 Out-Of-Scope & Edge-Case Audit Regressions: security/OOS precedence, M
   const enBanyan = await queryKiemThuAI('Tell me about the banyan tree', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_en_banyan', 'en');
   assert.notEqual(enBanyan.intent, 'OUT_OF_SCOPE');
   assert.ok(/banyan|prisoners|courtyard/i.test(enBanyan.reply), `EN banyan tree query must stay IN-DOMAIN, got: ${enBanyan.reply}`);
+
+  // 10. Multilingual & Abstention Audit Fixes (km TTS, Xà lim leak guard, party menu OOS, highlights, empty continuation, Beacon fallback guard on Trống đồng/Bảo kiếm, multi-turn EN)
+  const { sanitizeTextForSpeech } = require('../src/tts/tts_engine');
+  assert.ok(sanitizeTextForSpeech('Khoảng cách 28–30 km từ di tích.', 'vi').includes('28 đến 30 ki-lô-mét'));
+  assert.ok(sanitizeTextForSpeech('Distance is 28-30 km.', 'en').includes('28 to 30 kilometers'));
+  assert.ok(sanitizeTextForSpeech('距離は約28〜30 kmです。', 'ja').includes('キロメートル'));
+  assert.ok(sanitizeTextForSpeech('거리는 28–30 km입니다.', 'ko').includes('킬로미터'));
+
+  const { isTextInLanguage, translateTextStrict } = require('../server');
+  const { postPolishForeignTerms } = require(path.join(kiemthuRoot, 'engine', 'heritage_glossary'));
+  assert.equal(isTextInLanguage('이 구역은 Xà lim 사형 구역입니다.', 'ko'), false, 'Xà lim in KO output must be caught as VI leak');
+  assert.equal(postPolishForeignTerms('호아로의 기계식 도살기는 Xà lim 옆 K구역에 있습니다.', 'ko'), '호아로의 단두대는 사형수 독방 옆 D구역에 있습니다.');
+  assert.equal(postPolishForeignTerms('La machine de décapitation se trouve près de Xà lim.', 'fr'), 'La guillotine se trouve près de cellule des condamnés.');
+
+  const enParty = await queryKiemThuAI('Can you suggest dishes for a birthday party?', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_audit_party_en', 'en');
+  assert.equal(enParty.intent, 'OUT_OF_SCOPE');
+  assert.ok(/cannot assist|outside my scope/i.test(enParty.reply), `EN birthday party dishes must be refused: ${enParty.reply}`);
+  assert.ok(!/spring rolls|pho/i.test(enParty.reply), `EN birthday party must NOT recommend food: ${enParty.reply}`);
+
+  assert.equal(classifier.classify('Những điểm nổi bật của bảo tàng này là gì?').intent, 'HIGHLIGHTS_REQUEST');
+  assert.equal(await translateTextStrict('계속 이야기해 주세요', 'vi', 'query'), 'Hãy kể tiếp đi');
+  assert.equal(await translateTextStrict('请继续讲', 'vi', 'query'), 'Hãy kể tiếp đi');
+
+  // Empty-session continuation must politely ask which story instead of inventing a fake room
+  const emptyCont = await queryKiemThuAI('Kể tiếp đi', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_audit_empty_cont_' + Date.now(), 'vi');
+  assert.equal(emptyCont.intent, 'CLARIFICATION');
+  assert.ok(/chưa bắt đầu|kể tiếp về hiện vật|câu chuyện/i.test(emptyCont.reply), `Empty continuation must clarify, got: ${emptyCont.reply}`);
+
+  // Beacon Data Fallback MUST NEVER overwrite honest "chưa ghi nhận" abstention on Trống đồng material & Bảo kiếm weight
+  const drumMat = await queryKiemThuAI('Trống đồng làm bằng chất liệu gì?', { code: '001', artifact_name: 'Trống Đồng Đông Sơn' }, 'ml_audit_drum_' + Date.now(), 'vi');
+  assert.ok(/chưa ghi nhận/i.test(drumMat.reply), `Drum material via server.js must keep honest abstention: ${drumMat.reply}`);
+  const swordWt = await queryKiemThuAI('Bảo kiếm nặng bao nhiêu kg?', { code: '004', artifact_name: 'Bảo Kiếm Hoàng Gia' }, 'ml_audit_sword_' + Date.now(), 'vi');
+  assert.ok(/chưa ghi nhận/i.test(swordWt.reply), `Sword weight via server.js must keep honest abstention: ${swordWt.reply}`);
+
+  // English multi-turn: 1951 escape -> "Tell me more", and secret newspaper -> "Was it written in blood?"
+  const enSid = 'ml_audit_en_turn_' + Date.now();
+  const enEsc1 = await queryKiemThuAI('Tell me about the 1951 Christmas Eve prison escape', { code: '002', artifact_name: 'Cây Bàng' }, enSid, 'en');
+  assert.ok(/1951|16/i.test(enEsc1.reply), `EN 1951 escape T1 failed: ${enEsc1.reply}`);
+  const enEsc2 = await queryKiemThuAI('Tell me more', { code: '002', artifact_name: 'Cây Bàng' }, enSid, 'en');
+  assert.ok(/1951|Thợ Nhuộm|Tho Nhuom|Quán Sứ|Quan Su|5 |Bu|cống|sewer|watch|key/i.test(enEsc2.reply), `EN 1951 continuation T2 lost 1951 context: ${enEsc2.reply}`);
+
+  const enNewsSid = 'ml_audit_en_blood_' + Date.now();
+  await queryKiemThuAI('Tell me about the secret newspaper in prison', { code: '002', artifact_name: 'Cây Bàng' }, enNewsSid, 'en');
+  const enBlood2 = await queryKiemThuAI('Was it written in blood?', { code: '002', artifact_name: 'Cây Bàng' }, enNewsSid, 'en');
+  assert.ok(/not true|no such thing|banyan twig|reed tube|soot/i.test(enBlood2.reply), `EN T2 "Was it written in blood?" must trigger myth refutation: ${enBlood2.reply}`);
 });

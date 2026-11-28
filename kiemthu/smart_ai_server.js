@@ -842,14 +842,20 @@ class ProductionSmartTourGuideServer {
       ['may_chem', 'Máy chém', 'may chem'],
       ['cachot', 'Ngục tối Cachot', 'cachot'],
       ['cong_ngam', 'Đường cống ngầm & Vượt ngục đêm Noel 1951', 'cong ngam'],
-      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'bao bi mat']
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'bao bi mat'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'secret newspaper'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'underground press'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'clandestine newspaper'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'duoc dua duong'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'suoi reo'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'lao tu tap chi']
     ];
     for (const [eId, eName, eKey] of trackableEntities) {
-      if (combinedNorm.includes(' ' + eKey + ' ')) {
+      if (combinedNorm.includes(' ' + eKey + ' ') && !mentionedEntities.some(e => e.id === eId && e.name === eName)) {
         mentionedEntities.push({ id: eId, name: eName });
       }
     }
-    if (combinedNorm.includes(' vuot nguc ')) {
+    if (combinedNorm.includes(' vuot nguc ') || ((combinedNorm.includes(' 1951 ') || combinedNorm.includes(' noel ') || combinedNorm.includes(' christmas ')) && combinedNorm.includes(' escape '))) {
       if (is1945EscapeContext) {
         mentionedEntities.push({ id: 'vuot_nguc_1945', name: 'Cuộc vượt ngục tháng 3/1945' });
       } else if (!mentionedEntities.some(e => e.id === 'cong_ngam')) {
