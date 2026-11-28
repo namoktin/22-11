@@ -165,7 +165,7 @@ class ProductionSmartTourGuideServer {
       max_tokens: options.max_tokens || 320,
       presence_penalty: typeof options.presence_penalty === 'number' ? options.presence_penalty : 0.2,
       frequency_penalty: typeof options.frequency_penalty === 'number' ? options.frequency_penalty : 0.15,
-      timeoutMs: Number(process.env.GROQ_TIMEOUT_MS) || 3500,
+      timeoutMs: Number(process.env.GROQ_TIMEOUT_MS) || 2600,
       onAttempt: () => {
         this.stats.groqCalls++;
       },

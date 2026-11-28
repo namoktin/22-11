@@ -11,6 +11,9 @@
  * =========================================================================================
  */
 
+const fs = require('fs');
+const path = require('path');
+const v8 = require('v8');
 const nlp = require('./nlp_processor');
 
 const SEMANTIC_STOPWORDS = new Set([
@@ -278,6 +281,67 @@ class LocalSemanticIndex {
 
     results.sort((a, b) => b.score - a.score);
     return results.slice(0, topK);
+  }
+
+  /**
+   * Xuất snapshot nhị phân V8 của toàn bộ chỉ mục vector + IDF + bảng tần suất
+   */
+  exportSnapshot(signature = '') {
+    return {
+      magic: 'LSI_V8_1',
+      v8: process.versions.v8,
+      signature: String(signature || ''),
+      avgDocLen: this.avgDocLen,
+      docFreq: this.docFreq,
+      idfMap: this.idfMap,
+      docs: this.docs
+    };
+  }
+
+  /**
+   * Nạp lại chỉ mục từ snapshot đã kiểm chứng chữ ký dữ liệu; trả về false nếu không khớp/hỏng
+   */
+  loadSnapshot(snapshot, expectedSignature = '') {
+    if (!snapshot || snapshot.magic !== 'LSI_V8_1') return false;
+    if (snapshot.v8 !== process.versions.v8) return false;
+    if (expectedSignature && snapshot.signature !== String(expectedSignature)) return false;
+    if (!Array.isArray(snapshot.docs) || snapshot.docs.length === 0) return false;
+    if (!(snapshot.idfMap instanceof Map) || !(snapshot.docFreq instanceof Map)) return false;
+
+    this.docs = snapshot.docs;
+    this.docFreq = snapshot.docFreq;
+    this.idfMap = snapshot.idfMap;
+    this.avgDocLen = Number.isFinite(snapshot.avgDocLen) ? snapshot.avgDocLen : 12;
+    return true;
+  }
+
+  saveSnapshotToFile(filePath, signature = '') {
+    if (!filePath) return false;
+    const tmpPath = `${filePath}.tmp.${process.pid}.${Date.now()}`;
+    try {
+      const dir = path.dirname(filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const payload = v8.serialize(this.exportSnapshot(signature));
+      fs.writeFileSync(tmpPath, payload);
+      fs.renameSync(tmpPath, filePath);
+      return true;
+    } catch {
+      try { if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath); } catch {}
+      return false;
+    }
+  }
+
+  loadSnapshotFromFile(filePath, expectedSignature = '') {
+    if (!filePath) return false;
+    try {
+      if (!fs.existsSync(filePath)) return false;
+      const buf = fs.readFileSync(filePath);
+      if (!buf || buf.length < 32) return false;
+      const snap = v8.deserialize(buf);
+      return this.loadSnapshot(snap, expectedSignature);
+    } catch {
+      return false;
+    }
   }
 }
 

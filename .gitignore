@@ -19,4 +19,5 @@ data/ble_calibration.json
 data/visitor_feedback.json
 kiemthu/data/backups/
 kiemthu/data/visitor_feedback.json
+kiemthu/data/.semantic_index_cache*
 esp32_firmware/secrets.h

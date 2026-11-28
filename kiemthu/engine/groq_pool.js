@@ -161,7 +161,7 @@ class GroqModelPool {
   }) {
     if (!apiKey) return null;
     const baseOrder = preferredModels || (mode === 'light' ? GROQ_MODELS_LIGHT : GROQ_MODELS_REASONING);
-    const candidates = this.pickAvailableModels(baseOrder, minHeadroomTokens);
+    const candidates = this.pickAvailableModels(baseOrder, minHeadroomTokens).slice(0, 3);
     if (candidates.length === 0) {
       return null;
     }
@@ -217,6 +217,8 @@ class GroqModelPool {
         }
       } catch (e) {
         if (timer) clearTimeout(timer);
+        // Hạ ưu tiên tạm thời 8s đối với model vừa timeout/lỗi mạng để các câu tiếp theo không đâm đầu chờ lại!
+        this.getState(model).softBusyUntil = Date.now() + 8000;
         if (e.name === 'AbortError') {
           console.warn(`⚡ [Groq Engine:${model}] Timeout sau ${timeoutMs}ms, chuyển model kế tiếp...`);
         } else {

@@ -259,3 +259,65 @@ test('Integration 6: Long-passage multi-chunk ElevenLabs streaming WAV never exc
     ttsEngine.clearCache();
   }
 });
+
+test('Integration 7: Progressive Chunk-1 streaming returns /api/hub/ask before Chunk-1 EOF and streams seamless full WAV', async () => {
+  const { ttsEngine } = require('../server');
+  const origPref = ttsEngine.providerPref;
+  const origKey = ttsEngine.elevenLabsApiKey;
+  const origCall = ttsEngine.callElevenLabsRaw.bind(ttsEngine);
+
+  try {
+    ttsEngine.clearCache();
+    ttsEngine.providerPref = 'auto';
+    ttsEngine.elevenLabsApiKey = 'sk_mock_stream_integration';
+    ttsEngine.elevenLabsCooldownUntil = 0;
+    ttsEngine.elevenLabsSupportsPcm16k = true;
+
+    let callSeq = 0;
+    let chunk1FinishedAt = 0;
+    ttsEngine.callElevenLabsRaw = async (text, lang, fmt, opts) => {
+      callSeq++;
+      if (opts && typeof opts.onAudioChunk === 'function') {
+        await new Promise(r => setTimeout(r, 15));
+        opts.onAudioChunk(Buffer.alloc(1200, 21));
+        await new Promise(r => setTimeout(r, 320));
+        opts.onAudioChunk(Buffer.alloc(2800, 22));
+        chunk1FinishedAt = Date.now();
+        return { buffer: Buffer.alloc(4000, 21), outputFormat: fmt, voiceId: 'mock_stream_v3', streamed: true };
+      }
+      await new Promise(r => setTimeout(r, 25));
+      return { buffer: Buffer.alloc(4000, 44), outputFormat: fmt, voiceId: 'mock_stream_v3' };
+    };
+
+    const r = await request('POST', '/api/hub/ask', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        device_id: 'HUB_INT_STREAM_EL',
+        code: '002',
+        language: 'vi',
+        voice_text: 'Hãy kể chi tiết cuộc vượt ngục lịch sử đêm Giáng sinh năm 1951 ở Nhà tù Hỏa Lò'
+      })
+    });
+    const askReturnedAt = Date.now();
+
+    assert.equal(r.status, 200);
+    assert.equal(r.json.tts_provider, 'elevenlabs');
+    assert.ok(r.json.total_chunks >= 2, `Expected multi-chunk response, got ${r.json.total_chunks}`);
+    const firstChunkTtsMs = r.json.latency_measurement?.breakdown?.first_chunk_wav_ms ?? 9999;
+    assert.ok(firstChunkTtsMs < 180, `Expected Chunk-1 TTFB < 180ms before 320ms tail, got ${firstChunkTtsMs}ms`);
+    assert.ok(chunk1FinishedAt === 0 || askReturnedAt < chunk1FinishedAt, `Expected /api/hub/ask (${askReturnedAt}) to return BEFORE Chunk-1 EOF (${chunk1FinishedAt})`);
+    assert.ok(callSeq >= 2);
+
+    const wavPath = new URL(r.json.audio_wav_url).pathname;
+    const wav = await request('GET', wavPath);
+    assert.equal(wav.status, 200);
+    assert.equal(wav.buf.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(wav.buf.toString('ascii', 8, 12), 'WAVE');
+    assert.ok(wav.buf.length >= 44 + r.json.total_chunks * 4000, `Streamed WAV truncated: got ${wav.buf.length}B for ${r.json.total_chunks} chunks`);
+  } finally {
+    ttsEngine.callElevenLabsRaw = origCall;
+    ttsEngine.providerPref = origPref;
+    ttsEngine.elevenLabsApiKey = origKey;
+    ttsEngine.clearCache();
+  }
+});

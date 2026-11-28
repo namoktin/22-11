@@ -1025,15 +1025,20 @@ async function synthesizeCachedBeaconWav(beacon, translatedText, lang) {
  * Đẩy tiếp các Chunks sau (ĐÃ TỔNG HỢP SONG SONG TRONG RAM) vào ĐÚNG 1 LUỒNG STREAMING .WAV DUY NHẤT!
  * Đồng thời ghi ra 1 file .WAV gộp hoàn chỉnh (reply_<id>.wav) để nghe lại / tua đầy đủ!
  */
-async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lang = 'vi', preStartedPromises = null) {
+async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lang = 'vi', preStartedPromises = null, chunk1DonePromise = null) {
   const streamObj = activeAudioStreams.get(baseName);
   const mergedFilename = `${baseName}.wav`;
   const mergedPath = path.join(AUDIO_DIR, mergedFilename);
 
   // Tổng hợp SONG SONG toàn bộ các đoạn 2..N ngay lập tức (nhanh gấp 3-4 lần so với tuần tự!)
-  const promises = preStartedPromises || chunks.slice(1).map(c => fastTextToPcm(c, lang));
+  const promises = preStartedPromises || (chunks.length > 1 ? chunks.slice(1).map(c => fastTextToPcm(c, lang)) : []);
 
   try {
+    // Chờ Chunk 1 HTTP stream hoàn tất 100% TRƯỚC khi nối tiếp Đoạn 2..N để bảo toàn thứ tự byte!
+    if (chunk1DonePromise) {
+      try { await chunk1DonePromise; } catch (e) {}
+    }
+
     for (let i = 1; i < chunks.length; i++) {
       const chunkText = chunks[i];
       try {
@@ -1329,7 +1334,7 @@ async function translateViaGoogleGTX(text, targetLang) {
   return null;
 }
 
-async function callLightGroqMessages(messages, temperature = 0.1, maxTokens = 320, timeoutMs = 3500) {
+async function callLightGroqMessages(messages, temperature = 0.1, maxTokens = 320, timeoutMs = 2200) {
   if (!GROQ_API_KEY) return null;
   const pool = getSharedGroqPool();
   if (pool) {
@@ -1417,7 +1422,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
         const groqQuery = await callLightGroqMessages([
           { role: 'system', content: groqSysPrompt },
           { role: 'user', content: text }
-        ], 0.05, 160, 2600);
+        ], 0.05, 160, 2000);
         if (groqQuery) {
           const finalVi = (!exhibitAnchors || groqQuery.toLowerCase().includes('hỏa lò') || groqQuery.toLowerCase().includes('mã 00'))
             ? groqQuery
@@ -1449,7 +1454,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
       const groqAns = await callLightGroqMessages([
         { role: 'system', content: groqSysPrompt },
         { role: 'user', content: text }
-      ], 0.1, 340, 3500);
+      ], 0.1, 340, 2600);
       if (groqAns && (targetLang === 'vi' || isTextInLanguage(groqAns, targetLang))) {
         const polished = postPolishForeignTerms(groqAns, targetLang);
         setTranslationCache(cacheKey, polished);
@@ -2214,32 +2219,60 @@ const server = http.createServer(async (req, res) => {
       const chunks = splitIntoAudioChunks(fullReply, null, lockedLang, { useElevenLabs: ttsEngine.isElevenLabsActive(), modelId: ttsEngine.elevenLabsModel });
       const baseName = `reply_${Date.now()}`;
 
-      // BƯỚC 2: TỔNG HỢP SIÊU TỐC 100% TRONG RAM (KHÔNG GHI ĐĨA TẠM) + BẮN SONG SONG CÁC ĐOẠN SAU NGAY LẬP TỨC!
+      // BƯỚC 2: STREAMING SIÊU TỐC TỪ BYTE ÂM THANH ĐẦU TIÊN TRONG RAM + BẮN SONG SONG CÁC ĐOẠN SAU!
       const tChunk1Start = Date.now();
-      const pcm1Promise = fastTextToPcm(chunks[0], lockedLang);
+      let streamObj = null;
+      const earlyChunk1Parts = [];
+      let chunk1Superseded = false;
+      const chunk1StreamPromise = ttsEngine.startStreamingFirstChunk(
+        chunks[0],
+        lockedLang,
+        SUPPORTED_LANGUAGES,
+        (pcmSlice) => {
+          if (chunk1Superseded || !pcmSlice || pcmSlice.length === 0) return;
+          if (!streamObj) {
+            earlyChunk1Parts.push(pcmSlice);
+            return;
+          }
+          streamObj.pcmParts.push(pcmSlice);
+          for (const clientRes of streamObj.listeners) {
+            try {
+              if (!clientRes.writableEnded && !clientRes.destroyed) {
+                clientRes.write(pcmSlice);
+              }
+            } catch {
+              streamObj.listeners.delete(clientRes);
+            }
+          }
+        }
+      );
       const remainingPcmPromises = chunks.length > 1
         ? chunks.slice(1).map(c => fastTextToPcm(c, lockedLang))
-        : null;
-      const rawPcm1 = await pcm1Promise;
+        : [];
+      const streamSession = await chunk1StreamPromise;
+      const rawPcm1 = streamSession.initialPcm;
       const pcm1 = (rawPcm1 && rawPcm1.length > 0) ? rawPcm1 : Buffer.alloc(3200);
       const tFirstAudioSoundReady = Date.now();
 
       const mergedFilename = `${baseName}.wav`;
       const mergedPath = path.join(AUDIO_DIR, mergedFilename);
+      const initialParts = earlyChunk1Parts.length > 0 ? [pcm1, ...earlyChunk1Parts] : [pcm1];
 
-      if (chunks.length === 1) {
-        // Chỉ có 1 đoạn -> ghi thẳng file chuẩn luôn
-        const singleWav = Buffer.concat([buildWavHeader(pcm1.length), pcm1]);
+      if (chunks.length === 1 && streamSession.isComplete) {
+        // Chỉ có 1 đoạn & đã hoàn tất (cache hit hoặc non-stream) -> ghi thẳng file chuẩn luôn
+        const singlePcm = Buffer.concat(initialParts);
+        const singleWav = Buffer.concat([buildWavHeader(singlePcm.length), singlePcm]);
         fs.writeFileSync(mergedPath, singleWav);
       } else {
-        // Có nhiều đoạn -> tạo live progressive stream trong RAM để phát liền mạch thành 1 file .WAV duy nhất!
-        activeAudioStreams.set(baseName, {
-          pcmParts: [pcm1],
+        // Đang stream Chunk 1 dở hoặc có nhiều đoạn -> tạo live progressive stream trong RAM để phát liền mạch thành 1 file .WAV duy nhất!
+        streamObj = {
+          pcmParts: initialParts,
           done: false,
           mergedPath,
           listeners: new Set(),
           createdAt: Date.now()
-        });
+        };
+        activeAudioStreams.set(baseName, streamObj);
       }
 
       // ĐO ĐỘ TRỄ CHÍNH XÁC: TỪ HẾT NÓI ĐẾN TIẾNG ĐẦU TIÊN VỀ TAI NGHE
@@ -2272,7 +2305,7 @@ const server = http.createServer(async (req, res) => {
         ai_source: kiemthuResult.source,
         locked_language: lockedLang,
         language_label: SUPPORTED_LANGUAGES[lockedLang]?.label || lockedLang,
-        tts_provider: ttsEngine.isElevenLabsActive() ? 'elevenlabs' : 'google_tts_fallback',
+        tts_provider: streamSession.provider || (ttsEngine.isElevenLabsActive() ? 'elevenlabs' : 'google_tts_fallback'),
         audio_mode: 'SINGLE_STREAMING_WAV',
         audio_wav_url: unifiedStreamUrl,
         current_chunk: 1,
@@ -2314,12 +2347,13 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(JSON.stringify(voiceResponse, null, 2));
 
-      // BƯỚC 3: ĐẨY DẦN CÁC ĐOẠN TIẾP THEO (ĐÃ BẮN SONG SONG SẴN) LÊN CHÍNH LUỒNG .WAV DUY NHẤT!
-      if (chunks.length > 1) {
+      // BƯỚC 3: ĐẨY NỐT ĐUÔI CHUNK 1 (NẾU ĐANG STREAM) + CÁC ĐOẠN TIẾP THEO LÊN CHÍNH LUỒNG .WAV DUY NHẤT!
+      if (streamObj) {
         if (!isSuperseded) {
-          processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lockedLang, remainingPcmPromises);
+          processRemainingChunksBackground(chunks, baseName, hostBaseUrl, lockedLang, remainingPcmPromises, streamSession.donePromise);
         } else {
           // Nếu câu này đã bị câu mới hơn vượt mặt (superseded), lập tức dọn dẹp RAM để chống memory leak!
+          chunk1Superseded = true;
           activeAudioStreams.delete(baseName);
         }
       }
@@ -2755,7 +2789,9 @@ if (require.main === module) {
     } catch (e) {
       console.warn('⚠ Pre-warm kiemthu notice:', e.message);
     }
-    fastTextToPcm('Xin chào', 'vi').catch(() => {});
+    if (!ttsEngine.isElevenLabsActive()) {
+      fastTextToPcm('Xin chào', 'vi').catch(() => {});
+    }
     console.log('\n================================================================');
     console.log('🏛️  ESP32 BLE TOUR GUIDE SERVER (V3.0 - PRODUCTION HARDENED)');
     console.log('================================================================');

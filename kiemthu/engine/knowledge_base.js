@@ -529,9 +529,64 @@ class KnowledgeBase {
     return hits.length > 0 ? hits[0] : null;
   }
 
-  buildLocalSemanticIndex() {
+  computeSemanticIndexSignature(dataDir) {
+    const { createHash } = require('crypto');
+    const hash = createHash('sha1');
+    hash.update('lsi_schema_v2:' + process.versions.v8);
+
+    // Gắn dấu vân tay code engine để nâng cấp thuật toán là tự build lại ngay
+    for (const codeFile of ['local_semantic_index.js', 'knowledge_base.js']) {
+      try {
+        const st = fs.statSync(path.join(__dirname, codeFile));
+        hash.update(`|code:${codeFile}:${st.size}:${Math.trunc(st.mtimeMs)}`);
+      } catch {}
+    }
+
+    // Quét đệ quy thư mục data/ (trừ file cache, backup, feedback runtime)
+    const fileEntries = [];
+    const walkDir = (dir, relBase = '') => {
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const ent of entries) {
+          if (ent.name.startsWith('.semantic_index_cache') || ent.name === 'backups' || ent.name === 'visitor_feedback.json') {
+            continue;
+          }
+          const full = path.join(dir, ent.name);
+          const rel = relBase ? `${relBase}/${ent.name}` : ent.name;
+          if (ent.isDirectory()) {
+            walkDir(full, rel);
+          } else if (ent.isFile()) {
+            try {
+              const st = fs.statSync(full);
+              fileEntries.push(`${rel}:${st.size}:${Math.trunc(st.mtimeMs)}`);
+            } catch {}
+          }
+        }
+      } catch {}
+    };
+    walkDir(dataDir);
+    fileEntries.sort();
+    hash.update('|files:' + fileEntries.join(';'));
+
+    // Gắn thêm tổng số bản ghi trong RAM để test/mutator bộ nhớ luôn vô hiệu hóa cache đúng lúc
+    const firstCustom = this.customDocs[0]?.id || '';
+    const lastCustom = this.customDocs[this.customDocs.length - 1]?.id || '';
+    hash.update(`|counts:${this.facts100.length}:${this.groundTruth500.length}:${this.dataset1000.length}:${this.customDocs.length}:${Object.keys(HISTORICAL_EXHIBITS).length}:${firstCustom}:${lastCustom}`);
+    return hash.digest('hex');
+  }
+
+  buildLocalSemanticIndex(options = {}) {
     const t0 = Date.now();
     this.localSemanticIndex = new LocalSemanticIndex();
+    const dataDir = path.join(__dirname, '..', 'data');
+    const cacheFile = options.snapshotPath || process.env.LSI_CACHE_FILE || path.join(dataDir, '.semantic_index_cache.v8');
+    const useCache = !options.disableSnapshotCache && process.env.DISABLE_LSI_CACHE !== '1';
+    const expectedSig = useCache ? this.computeSemanticIndexSignature(dataDir) : '';
+
+    if (useCache && this.localSemanticIndex.loadSnapshotFromFile(cacheFile, expectedSig)) {
+      console.log(`[LocalSemanticIndex] ⚡ Nạp nhanh chỉ mục vector từ snapshot đĩa cho ${this.localSemanticIndex.docs.length} tri thức cục bộ (${Date.now() - t0}ms).`);
+      return;
+    }
 
     for (const item of this.facts100) {
       const ans = item.premium_answer || item.expected_answer;
@@ -612,6 +667,9 @@ class KnowledgeBase {
     }
 
     this.localSemanticIndex.rebuildIdf();
+    if (useCache) {
+      this.localSemanticIndex.saveSnapshotToFile(cacheFile, expectedSig);
+    }
     console.log(`[LocalSemanticIndex] Đã dựng chỉ mục vector ngữ nghĩa cho ${this.localSemanticIndex.docs.length} tri thức cục bộ (${Date.now() - t0}ms).`);
   }
 

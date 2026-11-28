@@ -1057,3 +1057,109 @@ test('500 Out-Of-Scope & Edge-Case Audit Regressions: security/OOS precedence, M
   const enBlood2 = await queryKiemThuAI('Was it written in blood?', { code: '002', artifact_name: 'Cây Bàng' }, enNewsSid, 'en');
   assert.ok(/not true|no such thing|banyan twig|reed tube|soot/i.test(enBlood2.reply), `EN T2 "Was it written in blood?" must trigger myth refutation: ${enBlood2.reply}`);
 });
+
+test('LocalSemanticIndex snapshot cache: saves, loads matching signature, invalidates stale/corrupt snapshots', () => {
+  const os = require('os');
+  const snapFile = path.join(os.tmpdir(), `lsi_unit_${process.pid}_${Date.now()}.v8`);
+  try {
+    const idx1 = new LocalSemanticIndex();
+    idx1.addDocument({ id: 'S1', question: 'Máy chém Hỏa Lò đặt ở đâu', answer: 'Máy chém trưng bày gần buồng Xà lim.', lang: 'vi' });
+    idx1.addDocument({ id: 'S2', question: 'Cây bàng cổ thụ', answer: 'Cây bàng là nhân chứng lịch sử.', lang: 'vi' });
+    idx1.addDocument({ id: 'S3', question: 'Vượt ngục năm 1951', answer: '16 chiến sĩ thoát qua đường cống ngầm.', lang: 'vi' });
+    idx1.rebuildIdf();
+
+    assert.equal(idx1.saveSnapshotToFile(snapFile, 'sig_abc123'), true);
+    assert.equal(fs.existsSync(snapFile), true);
+
+    const idxLoaded = new LocalSemanticIndex();
+    assert.equal(idxLoaded.loadSnapshotFromFile(snapFile, 'sig_abc123'), true);
+    assert.equal(idxLoaded.docs.length, 3);
+    const hits = idxLoaded.search('Cống ngầm vượt ngục 1951', { lang: 'vi', topK: 1, minScore: 0.25 });
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0].doc.id, 'S3');
+
+    const idxWrongSig = new LocalSemanticIndex();
+    assert.equal(idxWrongSig.loadSnapshotFromFile(snapFile, 'sig_changed'), false);
+
+    fs.writeFileSync(snapFile, Buffer.from('corrupted_binary_junk_12345'));
+    const idxCorrupt = new LocalSemanticIndex();
+    assert.equal(idxCorrupt.loadSnapshotFromFile(snapFile, 'sig_abc123'), false);
+  } finally {
+    try { if (fs.existsSync(snapFile)) fs.unlinkSync(snapFile); } catch {}
+  }
+});
+
+test('PluggableTtsEngine first-byte streaming: resolves before EOF, keeps Int16 alignment, caches full buffer, and falls back safely', async () => {
+  const { PluggableTtsEngine, getChunkProfile } = require('../src/tts/tts_engine');
+  assert.equal(getChunkProfile('vi', true, 'eleven_v3').firstMax, 80);
+  assert.equal(getChunkProfile('vi', true, 'eleven_v3').maxChunk, 440);
+  assert.equal(getChunkProfile('ja', true, 'eleven_v3').firstMax, 42);
+  assert.equal(getChunkProfile('ko', true, 'eleven_v3').firstMax, 55);
+
+  const streamEngine = new PluggableTtsEngine({
+    env: {
+      ELEVENLABS_API_KEY: 'sk_test_stream_key',
+      ELEVENLABS_MODEL_ID: 'eleven_v3',
+      ELEVENLABS_CONCURRENT_RETRY_MS: '10'
+    },
+    decodeMp3ToPcm: async () => Buffer.alloc(600, 3),
+    trimPcmSilence: (b) => b
+  });
+
+  const streamReq = streamEngine.buildElevenLabsRequest('Xin chào', 'vi', 'pcm_16000', true);
+  assert.ok(streamReq.reqPath.includes('/stream?output_format=pcm_16000'), `Expected /stream endpoint, got ${streamReq.reqPath}`);
+
+  // Giả lập TLS chia nhỏ làm lẻ byte (1201B -> 401B -> 400B = 2002B chẵn Int16)
+  streamEngine.callElevenLabsRaw = async (text, lang, fmt, opts) => {
+    const p1 = Buffer.alloc(1201, 11);
+    const p2 = Buffer.alloc(401, 22);
+    const p3 = Buffer.alloc(400, 33);
+    await new Promise(r => setTimeout(r, 10));
+    opts.onAudioChunk(Buffer.alloc(1200, 11)); // giả lập callElevenLabsRaw đã căn 2 byte (1200B trước, 1+401=402B sau!)
+    await new Promise(r => setTimeout(r, 90));
+    opts.onAudioChunk(Buffer.alloc(402, 22));
+    await new Promise(r => setTimeout(r, 50));
+    opts.onAudioChunk(p3);
+    return { buffer: Buffer.concat([p1, p2, p3]), outputFormat: fmt, voiceId: 'mock_stream', streamed: true };
+  };
+
+  const streamedTail = [];
+  const tStart = Date.now();
+  const session = await streamEngine.startStreamingFirstChunk('Di tích Nhà tù Hỏa Lò là nơi lưu giữ ký ức.', 'vi', null, (part) => {
+    assert.equal(part.length % 2, 0, 'Every streamed PCM chunk must be even-aligned for 16-bit samples');
+    streamedTail.push(part);
+  });
+  const firstMs = Date.now() - tStart;
+
+  assert.equal(session.provider, 'elevenlabs');
+  assert.equal(session.initialPcm.length, 1200);
+  assert.equal(session.isComplete, false, 'Should return BEFORE tail slices arrive');
+  assert.ok(firstMs < 110, `First-byte resolution took ${firstMs}ms (expected BEFORE 140ms tail completion)`);
+
+  const fullPcm = await session.donePromise;
+  assert.equal(fullPcm.length, 2002);
+  assert.equal(Buffer.concat(streamedTail).length, 802);
+
+  // Lần gọi thứ 2 phải trúng cache 0ms hoàn chỉnh!
+  const cachedSession = await streamEngine.startStreamingFirstChunk('Di tích Nhà tù Hỏa Lò là nơi lưu giữ ký ức.', 'vi');
+  assert.equal(cachedSession.isComplete, true);
+  assert.equal(cachedSession.initialPcm.length, 2002);
+  assert.equal(streamEngine.stats.cacheHits, 1);
+
+  // Kiểm thử lỗi trước byte đầu (HTTP 429 hết quota) -> fallback Google TTS sạch sẽ (mock)
+  const fallbackEngine = new PluggableTtsEngine({
+    env: { ELEVENLABS_API_KEY: 'sk_test_fail_key', ELEVENLABS_MODEL_ID: 'eleven_v3' },
+    decodeMp3ToPcm: async () => Buffer.alloc(1600, 5),
+    trimPcmSilence: (b) => b
+  });
+  fallbackEngine.callElevenLabsRaw = async () => {
+    const err = new Error('ElevenLabs HTTP 429: quota_exceeded');
+    err.statusCode = 429;
+    err.body = 'quota_exceeded';
+    throw err;
+  };
+  fallbackEngine.fetchGoogleTtsMp3 = async () => Buffer.from('FAKE_MP3_STREAM_OK');
+  const fbSession = await fallbackEngine.startStreamingFirstChunk('Xin chào quý khách.', 'vi');
+  assert.equal(fbSession.provider, 'google_tts_fallback');
+  assert.equal(fbSession.initialPcm.length, 1600);
+});
