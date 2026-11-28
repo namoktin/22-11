@@ -276,14 +276,16 @@ function getChunkProfile(lang = 'vi', useElevenLabs = false, modelId = DEFAULT_E
   const code = normalizeLang(lang);
   if (useElevenLabs) {
     if (isElevenV3Model(modelId)) {
-      // eleven_v3 đọc giàu cảm xúc và chuẩn 6 thanh điệu, chia câu đầu vừa gọn (~1 câu) để phát tiếng nhanh (~2s) trong khi các đoạn sau chạy song song!
-      if (code === 'ja' || code === 'zh') return { firstMax: 55, maxChunk: 190 };
-      if (code === 'ko') return { firstMax: 75, maxChunk: 220 };
-      return { firstMax: 120, maxChunk: 280 };
+      // eleven_v3 đọc giàu cảm xúc & chuẩn 6 thanh điệu:
+      // - Đoạn đầu gọn (~135 ký tự) để phát tiếng đầu nhanh (~2s).
+      // - Các đoạn sau gộp dài hơn (~440 ký tự) để câu trả lời dài 900-1200 ký tự chỉ còn 2-3 đoạn -> tránh đụng trần concurrency & liền mạch hơn!
+      if (code === 'ja' || code === 'zh') return { firstMax: 60, maxChunk: 240 };
+      if (code === 'ko') return { firstMax: 85, maxChunk: 300 };
+      return { firstMax: 135, maxChunk: 440 };
     }
-    if (code === 'ja' || code === 'zh') return { firstMax: 70, maxChunk: 240 };
-    if (code === 'ko') return { firstMax: 95, maxChunk: 280 };
-    return { firstMax: 185, maxChunk: 380 };
+    if (code === 'ja' || code === 'zh') return { firstMax: 70, maxChunk: 260 };
+    if (code === 'ko') return { firstMax: 95, maxChunk: 320 };
+    return { firstMax: 185, maxChunk: 450 };
   }
   if (code === 'ja' || code === 'zh') return { firstMax: 34, maxChunk: 76 };
   if (code === 'ko') return { firstMax: 48, maxChunk: 108 };
@@ -404,11 +406,15 @@ class PluggableTtsEngine {
     this.elevenLabsCooldownUntil = 0;
     this.elevenLabsSupportsPcm16k = true;
     this.paidLibraryVoiceBlocked = false;
+    // Semaphore giới hạn số request ElevenLabs chạy song song (gói hiện tại trần 3 -> giữ mặc định 2 để KHÔNG BAO GIỜ ăn 429 concurrent_limit_exceeded!)
+    this.elevenLabsActiveJobs = 0;
+    this.elevenLabsWaitQueue = [];
     this.lastError = null;
     this.stats = {
       cacheHits: 0,
       elevenLabsOk: 0,
       elevenLabsErrors: 0,
+      elevenLabsRetries: 0,
       googleOk: 0,
       googleErrors: 0
     };
@@ -421,7 +427,15 @@ class PluggableTtsEngine {
     this.elevenLabsApiKey = String(env.ELEVENLABS_API_KEY || '').trim();
     this.elevenLabsModel = String(env.ELEVENLABS_MODEL_ID || DEFAULT_ELEVENLABS_MODEL).trim();
     const isV3 = isElevenV3Model(this.elevenLabsModel);
-    this.elevenLabsTimeoutMs = Number(env.ELEVENLABS_TIMEOUT_MS) || (isV3 ? 16000 : 6500);
+    this.elevenLabsTimeoutMs = Number(env.ELEVENLABS_TIMEOUT_MS) || (isV3 ? 25000 : 8000);
+    const rawMaxConc = env.ELEVENLABS_MAX_CONCURRENT !== undefined && env.ELEVENLABS_MAX_CONCURRENT !== ''
+      ? parseInt(env.ELEVENLABS_MAX_CONCURRENT, 10)
+      : 2;
+    this.elevenLabsMaxConcurrent = Number.isFinite(rawMaxConc) ? Math.min(5, Math.max(1, rawMaxConc)) : 2;
+    const rawRetryDelay = env.ELEVENLABS_CONCURRENT_RETRY_MS !== undefined && env.ELEVENLABS_CONCURRENT_RETRY_MS !== ''
+      ? parseInt(env.ELEVENLABS_CONCURRENT_RETRY_MS, 10)
+      : 900;
+    this.elevenLabsConcurrentRetryMs = Number.isFinite(rawRetryDelay) ? Math.max(10, rawRetryDelay) : 900;
     const defaultStability = isV3 ? 0.5 : 0.70;
     const rawStability = env.ELEVENLABS_STABILITY !== undefined && env.ELEVENLABS_STABILITY !== '' ? Number(env.ELEVENLABS_STABILITY) : defaultStability;
     this.elevenLabsStability = isV3 ? snapV3Stability(rawStability) : (Number.isFinite(rawStability) ? rawStability : defaultStability);
@@ -469,6 +483,9 @@ class PluggableTtsEngine {
       elevenlabs_speed: this.elevenLabsSpeed,
       elevenlabs_latency_opt: isElevenV3Model(this.elevenLabsModel) ? null : this.elevenLabsLatencyOpt,
       elevenlabs_timeout_ms: this.elevenLabsTimeoutMs,
+      elevenlabs_max_concurrent: this.elevenLabsMaxConcurrent,
+      elevenlabs_active_jobs: this.elevenLabsActiveJobs,
+      elevenlabs_queued_jobs: this.elevenLabsWaitQueue.length,
       elevenlabs_voice_settings: {
         stability: this.elevenLabsStability,
         similarity_boost: this.elevenLabsSimilarity,
@@ -573,47 +590,120 @@ class PluggableTtsEngine {
     });
   }
 
-  async synthesizeElevenLabsPcm(cleanText, lang = 'vi') {
-    const firstFormat = this.elevenLabsSupportsPcm16k ? 'pcm_16000' : 'mp3_44100_128';
-    try {
-      const res = await this.callElevenLabsRaw(cleanText, lang, firstFormat);
-      if (res.outputFormat === 'pcm_16000') {
-        return this.trimPcmSilence(res.buffer);
+  runWithElevenLabsSlot(fn) {
+    return new Promise((resolve, reject) => {
+      const startJob = () => {
+        this.elevenLabsActiveJobs++;
+        Promise.resolve()
+          .then(fn)
+          .then(resolve, reject)
+          .finally(() => {
+            this.elevenLabsActiveJobs--;
+            const next = this.elevenLabsWaitQueue.shift();
+            if (next) next();
+          });
+      };
+      if (this.elevenLabsActiveJobs < this.elevenLabsMaxConcurrent) {
+        startJob();
+      } else {
+        this.elevenLabsWaitQueue.push(startJob);
       }
-      if (!this.decodeMp3ToPcm) {
-        throw new Error('decodeMp3ToPcm callback not configured');
-      }
-      return await this.decodeMp3ToPcm(res.buffer);
-    } catch (err) {
-      // Nếu gói ElevenLabs Free chặn Library Voice (HTTP 402 paid_plan_required) -> tự động chuyển sang giọng premade (Sarah) vẫn chạy ElevenLabs 100%!
-      if (!this.paidLibraryVoiceBlocked && err.statusCode === 402 && /paid_plan_required|library voice/i.test(err.body || err.message) && this.fallbackPremadeVoiceId && this.getVoiceIdForLang(lang) !== this.fallbackPremadeVoiceId) {
-        this.paidLibraryVoiceBlocked = true;
-        this.logEvent('WARN', 'ElevenLabsTTS', 'Library Voice yêu cầu gói trả phí -> tự động chuyển sang giọng premade ElevenLabs', { fallbackVoice: this.fallbackPremadeVoiceId });
-        const retryRes = await this.callElevenLabsRaw(cleanText, lang, firstFormat);
-        if (retryRes.outputFormat === 'pcm_16000') {
-          return this.trimPcmSilence(retryRes.buffer);
-        }
-        if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
-        return await this.decodeMp3ToPcm(retryRes.buffer);
-      }
-      // Nếu gói ElevenLabs Free/Starter không hỗ trợ pcm_16000 (403 output_format_not_allowed) -> tự động hạ sang mp3_44100_128 ngay!
-      if (firstFormat === 'pcm_16000' && (err.statusCode === 403 || err.statusCode === 400) && /output_format|pcm|tier|subscription/i.test(err.body || err.message)) {
-        this.elevenLabsSupportsPcm16k = false;
-        const retryRes = await this.callElevenLabsRaw(cleanText, lang, 'mp3_44100_128');
-        if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
-        return await this.decodeMp3ToPcm(retryRes.buffer);
-      }
-      // Lỗi quota / rate limit / key hết hạn / dùng nhầm Key ID -> tạm nghỉ ElevenLabs để không làm chậm trải nghiệm khách, rơi êm sang Google TTS
-      const isAuthErr = err.statusCode === 401 || err.statusCode === 402 || (err.statusCode === 400 && /invalid_api_key|api_key_id/i.test(err.body || err.message));
-      if (isAuthErr || err.statusCode === 429) {
-        const cooldownMs = err.statusCode === 429 ? 45 * 1000 : 10 * 60 * 1000;
-        this.elevenLabsCooldownUntil = Date.now() + cooldownMs;
-      }
-      throw err;
-    }
+    });
   }
 
-  fetchGoogleTtsMp3(cleanText, ttsCode, timeoutMs = 3500) {
+  async synthesizeElevenLabsSegment(segmentText, lang = 'vi') {
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await this.runWithElevenLabsSlot(async () => {
+          // Kiểm tra lại cooldown ngay khi nhận slot (phòng luồng trước vừa dính hết quota/lỗi auth)
+          if (!this.isElevenLabsActive()) {
+            const cdErr = new Error('ElevenLabs in cooldown');
+            cdErr.statusCode = 429;
+            cdErr.skipCooldownUpdate = true;
+            throw cdErr;
+          }
+          const firstFormat = this.elevenLabsSupportsPcm16k ? 'pcm_16000' : 'mp3_44100_128';
+          try {
+            const res = await this.callElevenLabsRaw(segmentText, lang, firstFormat);
+            if (res.outputFormat === 'pcm_16000') {
+              return this.trimPcmSilence(res.buffer);
+            }
+            if (!this.decodeMp3ToPcm) {
+              throw new Error('decodeMp3ToPcm callback not configured');
+            }
+            return await this.decodeMp3ToPcm(res.buffer);
+          } catch (err) {
+            // Nếu gói ElevenLabs Free chặn Library Voice (HTTP 402 paid_plan_required) -> tự động chuyển sang giọng premade (Sarah) vẫn chạy ElevenLabs 100%!
+            if (!this.paidLibraryVoiceBlocked && err.statusCode === 402 && /paid_plan_required|library voice/i.test(err.body || err.message) && this.fallbackPremadeVoiceId && this.getVoiceIdForLang(lang) !== this.fallbackPremadeVoiceId) {
+              this.paidLibraryVoiceBlocked = true;
+              this.logEvent('WARN', 'ElevenLabsTTS', 'Library Voice yêu cầu gói trả phí -> tự động chuyển sang giọng premade ElevenLabs', { fallbackVoice: this.fallbackPremadeVoiceId });
+              const retryRes = await this.callElevenLabsRaw(segmentText, lang, firstFormat);
+              if (retryRes.outputFormat === 'pcm_16000') {
+                return this.trimPcmSilence(retryRes.buffer);
+              }
+              if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
+              return await this.decodeMp3ToPcm(retryRes.buffer);
+            }
+            // Nếu gói ElevenLabs Free/Starter không hỗ trợ pcm_16000 (403 output_format_not_allowed) -> tự động hạ sang mp3_44100_128 ngay!
+            if (firstFormat === 'pcm_16000' && (err.statusCode === 403 || err.statusCode === 400) && /output_format|pcm|tier|subscription/i.test(err.body || err.message)) {
+              this.elevenLabsSupportsPcm16k = false;
+              const retryRes = await this.callElevenLabsRaw(segmentText, lang, 'mp3_44100_128');
+              if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
+              return await this.decodeMp3ToPcm(retryRes.buffer);
+            }
+            throw err;
+          }
+        });
+      } catch (err) {
+        const errDetail = `${err.body || ''} ${err.message || ''}`;
+        const isConcLimit = err.statusCode === 429 && /concurrent_limit_exceeded|too many concurrent/i.test(errDetail);
+        const isTransient = !err.skipCooldownUpdate && (
+          isConcLimit ||
+          (err.statusCode >= 500 && err.statusCode <= 504) ||
+          /timeout|ECONNRESET|ETIMEDOUT|socket hang up/i.test(err.message || '')
+        );
+
+        if (isTransient && attempt < maxAttempts) {
+          this.stats.elevenLabsRetries++;
+          const backoffMs = this.elevenLabsConcurrentRetryMs * attempt;
+          this.logEvent('WARN', 'ElevenLabsTTS', `Lỗi tạm thời ElevenLabs (lần ${attempt}/${maxAttempts}), chờ ${backoffMs}ms rồi thử lại`, { error: err.message, lang });
+          await new Promise(r => setTimeout(r, backoffMs));
+          continue;
+        }
+
+        // Chỉ kích hoạt cooldown toàn cục khi lỗi AUTH hoặc HẾT QUOTA thật sự — TUYỆT ĐỐI KHÔNG khóa 45s khi chỉ bị concurrent_limit_exceeded!
+        if (!err.skipCooldownUpdate) {
+          const isAuthErr = err.statusCode === 401 || err.statusCode === 402 || (err.statusCode === 400 && /invalid_api_key|api_key_id/i.test(errDetail));
+          if (isAuthErr || (err.statusCode === 429 && !isConcLimit)) {
+            const cooldownMs = err.statusCode === 429 ? 45 * 1000 : 10 * 60 * 1000;
+            this.elevenLabsCooldownUntil = Date.now() + cooldownMs;
+          }
+        }
+        throw err;
+      }
+    }
+    return Buffer.alloc(0);
+  }
+
+  async synthesizeElevenLabsPcm(cleanText, lang = 'vi') {
+    const segments = cleanText.length > 900 ? splitLongSegmentSafely(cleanText, 850) : [cleanText];
+    if (segments.length === 1) {
+      return this.synthesizeElevenLabsSegment(segments[0], lang);
+    }
+    const subBreathPcm = Buffer.alloc(1920); // 60ms @ 16kHz 16-bit mono
+    const pcmParts = [];
+    for (const seg of segments) {
+      const segPcm = await this.synthesizeElevenLabsSegment(seg, lang);
+      if (segPcm && segPcm.length > 100) {
+        if (pcmParts.length > 0) pcmParts.push(subBreathPcm);
+        pcmParts.push(segPcm);
+      }
+    }
+    return pcmParts.length > 0 ? Buffer.concat(pcmParts) : Buffer.alloc(0);
+  }
+
+  fetchGoogleTtsMp3(cleanText, ttsCode, timeoutMs = 5000) {
     return new Promise((resolve, reject) => {
       const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${encodeURIComponent(ttsCode)}&client=tw-ob`;
       const req = https.get(ttsUrl, {
@@ -638,17 +728,61 @@ class PluggableTtsEngine {
     });
   }
 
+  /**
+   * Dự phòng Google TTS đầy đủ 100% văn bản: tách tiểu đoạn <= 180 ký tự và nối liền PCM,
+   * TUYỆT ĐỐI không cắt cụt ở ký tự 185 khi một đoạn ElevenLabs dài (280-450 ký tự) rơi sang Google!
+   */
+  async synthesizeGooglePcmFull(sanitizedText, ttsCode) {
+    const subChunks = sanitizedText.length > 180 ? splitLongSegmentSafely(sanitizedText, 180) : [sanitizedText];
+    const subBreathPcm = Buffer.alloc(1920); // 60ms @ 16kHz 16-bit mono
+    const pcmParts = [];
+    let succeeded = 0;
+
+    for (const subText of subChunks) {
+      let subPcm = null;
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const mp3Buffer = await this.fetchGoogleTtsMp3(subText, ttsCode, 5000);
+          if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
+          const cleanPcm = await this.decodeMp3ToPcm(mp3Buffer);
+          if (cleanPcm && cleanPcm.length > 100) {
+            subPcm = cleanPcm;
+            break;
+          }
+        } catch (err) {
+          if (attempt === 2) {
+            this.stats.googleErrors++;
+            this.lastError = err.message;
+            this.logEvent('WARN', 'FastTTS', 'TTS synthesis failed after retry', { error: err.message, lang: ttsCode });
+          }
+        }
+      }
+      if (subPcm) {
+        if (pcmParts.length > 0) pcmParts.push(subBreathPcm);
+        pcmParts.push(subPcm);
+        succeeded++;
+      }
+    }
+
+    if (pcmParts.length > 0) {
+      this.stats.googleOk++;
+      return {
+        pcm: Buffer.concat(pcmParts),
+        complete: succeeded === subChunks.length
+      };
+    }
+    return { pcm: Buffer.alloc(0), complete: false };
+  }
+
   async synthesizeToPcm(text, lang = 'vi', supportedLangs = null) {
     const code = normalizeLang(lang);
     const ttsCode = supportedLangs?.[code]?.ttsCode || (code === 'zh' ? 'zh-CN' : code);
     const useEL = this.isElevenLabsActive();
     const sanitized = sanitizeTextForSpeech(text, code);
-    const maxSlice = useEL ? 500 : 185;
-    const cleanText = sanitized.slice(0, maxSlice).trim();
-    if (!cleanText) return Buffer.alloc(0);
+    if (!sanitized) return Buffer.alloc(0);
 
     const providerTag = useEL ? `el:${this.elevenLabsModel}:${this.getVoiceIdForLang(code)}` : `gg:${ttsCode}`;
-    const cacheKey = crypto.createHash('md5').update(`${providerTag}:${cleanText.toLowerCase()}`).digest('hex');
+    const cacheKey = crypto.createHash('md5').update(`${providerTag}:${sanitized.toLowerCase()}`).digest('hex');
 
     if (this.pcmCache.has(cacheKey)) {
       const hit = this.pcmCache.get(cacheKey);
@@ -666,10 +800,10 @@ class PluggableTtsEngine {
       this.pcmCache.set(cacheKey, buf);
     };
 
-    // 1. Ưu tiên ElevenLabs khi đã cấu hình API Key & không trong cooldown
+    // 1. Ưu tiên ElevenLabs khi đã cấu hình API Key & không trong cooldown (tự giới hạn concurrency + retry lỗi quá luồng!)
     if (useEL) {
       try {
-        const elPcm = await this.synthesizeElevenLabsPcm(cleanText, code);
+        const elPcm = await this.synthesizeElevenLabsPcm(sanitized, code);
         if (elPcm && elPcm.length > 100) {
           this.stats.elevenLabsOk++;
           this.lastError = null;
@@ -683,25 +817,13 @@ class PluggableTtsEngine {
       }
     }
 
-    // 2. Dự phòng Google TTS Keep-Alive (0 đồng, tự động cắt an toàn <= 185 ký tự)
-    const ggText = sanitized.slice(0, 185).trim();
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        const mp3Buffer = await this.fetchGoogleTtsMp3(ggText, ttsCode, 3500);
-        if (!this.decodeMp3ToPcm) throw new Error('decodeMp3ToPcm callback not configured');
-        const cleanPcm = await this.decodeMp3ToPcm(mp3Buffer);
-        if (cleanPcm && cleanPcm.length > 100) {
-          this.stats.googleOk++;
-          storeCache(cleanPcm);
-          return cleanPcm;
-        }
-      } catch (err) {
-        if (attempt === 2) {
-          this.stats.googleErrors++;
-          this.lastError = err.message;
-          this.logEvent('WARN', 'FastTTS', 'TTS synthesis failed after retry', { error: err.message, lang: ttsCode });
-        }
+    // 2. Dự phòng Google TTS Keep-Alive (0 đồng, tự chia tiểu đoạn <= 180 ký tự và nối đủ 100%, KHÔNG cắt mất đuôi!)
+    const ggResult = await this.synthesizeGooglePcmFull(sanitized, ttsCode);
+    if (ggResult.pcm.length > 100) {
+      if (ggResult.complete) {
+        storeCache(ggResult.pcm);
       }
+      return ggResult.pcm;
     }
     return Buffer.alloc(0);
   }

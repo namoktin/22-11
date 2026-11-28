@@ -4,6 +4,9 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+process.env.TTS_PROVIDER = 'google'; // Bảo vệ credit ElevenLabs khi chạy test tự động (các test ElevenLabs dùng mock!)
+delete process.env.ELEVENLABS_API_KEY;
+
 const { SafeJsonStore, sanitizeForLog } = require('../src/storage/safe_store');
 const { BleAndDeviceManager } = require('../src/iot/ble_manager');
 const { validateAudioBufferMagic, validateBeaconPayload, timingSafeEqualStr } = require('../src/security/security_middleware');
@@ -777,7 +780,8 @@ test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs 
   assert.equal(v3Req.payload.language_code, 'vi');
   assert.equal(v3Req.payload.voice_settings.stability, 0.5, 'eleven_v3 stability must snap to valid discrete value (0.5)');
   assert.equal(v3Req.payload.voice_settings.speed, 1.05);
-  assert.equal(v3Engine.elevenLabsTimeoutMs, 16000);
+  assert.equal(v3Engine.elevenLabsTimeoutMs, 25000);
+  assert.equal(v3Engine.elevenLabsMaxConcurrent, 2);
 
   // 5. PluggableTtsEngine: ElevenLabs direct PCM 16kHz, automatic 403 pcm->mp3 fallback, and 429 Google fallback
   const fakePcm = Buffer.alloc(1200, 12);
@@ -815,8 +819,87 @@ test('6-Language Native Docent, Spoken Speech Normalizer & Pluggable ElevenLabs 
   elEngine.fetchGoogleTtsMp3 = async () => Buffer.alloc(500, 2);
   const fallbackPcm = await elEngine.synthesizeToPcm('Bonjour, bienvenue à la Prison de Hoa Lo.', 'fr');
   assert.equal(fallbackPcm.length, 1200);
-  assert.equal(elEngine.isElevenLabsActive(), false, '429 must activate cooldown so next chunk skips ElevenLabs immediately');
+  assert.equal(elEngine.isElevenLabsActive(), false, '429 quota_exceeded must activate cooldown so next chunk skips ElevenLabs immediately');
   assert.equal(elEngine.getStatus().stats.googleOk, 1);
+
+  // 6. Long-passage ElevenLabs guard: concurrency semaphore <= 2, retry on concurrent_limit_exceeded WITHOUT 45s cooldown, and zero Google truncation!
+  const longPassage = [
+    'Dạ chào bạn, Nhà tù Hỏa Lò được thực dân Pháp xây dựng từ năm 1896 ngay tại trung tâm Hà Nội với tường đá kiên cố cao bốn mét và hệ thống dây thép gai điện áp cao.',
+    'Trong suốt giai đoạn đấu tranh cách mạng, nhiều chiến sĩ yêu nước như đồng chí Trường Chinh, Nguyễn Đức Cảnh, Đỗ Mười và Nguyễn Văn Cừ từng bị giam giữ tại đây nhưng vẫn biến nhà tù thành trường học cách mạng.',
+    'Đặc biệt, cuộc vượt ngục lịch sử đêm Giáng sinh tháng 12 năm 1951 qua đường cống ngầm nối ra phố Thợ Nhuộm đã thể hiện ý chí kiên cường và trí tuệ mưu lược của các tù nhân chính trị.',
+    'Ngày nay, Di tích Lịch sử Nhà tù Hỏa Lò mở cửa liên tục từ 8:00 đến 17:00 hằng ngày để đón du khách trong nước và quốc tế đến tìm hiểu lịch sử, tri ân thế hệ cha anh.'
+  ].join(' ');
+  const v3Chunks = splitIntoAudioChunks(longPassage, null, 'vi', { useElevenLabs: true, modelId: 'eleven_v3' });
+  assert.ok(v3Chunks.length >= 2 && v3Chunks.length <= 3, `eleven_v3 long passage (~730 chars) should stay within 2-3 chunks, got ${v3Chunks.length}`);
+
+  const concEngine = new PluggableTtsEngine({
+    env: {
+      ELEVENLABS_API_KEY: 'sk_test_mock_key',
+      ELEVENLABS_MODEL_ID: 'eleven_v3',
+      ELEVENLABS_MAX_CONCURRENT: '2',
+      ELEVENLABS_CONCURRENT_RETRY_MS: '15'
+    },
+    decodeMp3ToPcm: async () => Buffer.alloc(800, 7),
+    trimPcmSilence: (b) => b
+  });
+  let inFlight = 0;
+  let peakInFlight = 0;
+  let firstCallSimulated429 = false;
+  concEngine.callElevenLabsRaw = async (text, lang, fmt) => {
+    inFlight++;
+    if (inFlight > peakInFlight) peakInFlight = inFlight;
+    await new Promise(r => setTimeout(r, 25));
+    try {
+      if (!firstCallSimulated429 && text.includes('Đoạn kiểm thử 3')) {
+        firstCallSimulated429 = true;
+        const err = new Error('ElevenLabs HTTP 429: {"detail":{"type":"rate_limit_error","code":"concurrent_limit_exceeded","message":"Too many concurrent requests. Maximum 3."}}');
+        err.statusCode = 429;
+        err.body = '{"detail":{"type":"rate_limit_error","code":"concurrent_limit_exceeded"}}';
+        throw err;
+      }
+      return { buffer: Buffer.alloc(1000, 9), outputFormat: fmt, voiceId: 'v_mock' };
+    } finally {
+      inFlight--;
+    }
+  };
+  const sixParallelChunks = [
+    'Đoạn kiểm thử 1 về cổng chính Nhà tù Hỏa Lò.',
+    'Đoạn kiểm thử 2 về khu trại giam tập thể nam.',
+    'Đoạn kiểm thử 3 về ngục tối Cachot khắc nghiệt.',
+    'Đoạn kiểm thử 4 về cây bàng cổ thụ sân trong.',
+    'Đoạn kiểm thử 5 về cuộc vượt ngục năm 1951.',
+    'Đoạn kiểm thử 6 về thông tin tham quan mở cửa.'
+  ];
+  const parallelPcms = await Promise.all(sixParallelChunks.map(c => concEngine.synthesizeToPcm(c, 'vi')));
+  assert.ok(peakInFlight <= 2, `ElevenLabs concurrency semaphore MUST cap in-flight <= 2, saw ${peakInFlight}`);
+  assert.ok(parallelPcms.every(b => b.length === 1000), 'All 6 parallel chunks must succeed with full ElevenLabs audio');
+  assert.equal(concEngine.isElevenLabsActive(), true, 'concurrent_limit_exceeded retry must NOT trigger 45s global cooldown');
+  assert.equal(concEngine.getStatus().stats.elevenLabsRetries, 1);
+  assert.equal(concEngine.getStatus().stats.elevenLabsOk, 6);
+
+  // Google TTS fallback on a 420-char chunk must split into <=180-char sub-chunks and synthesize 100% (ZERO tail truncation!)
+  const ggFallbackEngine = new PluggableTtsEngine({
+    env: { ELEVENLABS_API_KEY: 'sk_test_mock_key', ELEVENLABS_MODEL_ID: 'eleven_v3', ELEVENLABS_CONCURRENT_RETRY_MS: '10' },
+    decodeMp3ToPcm: async (buf) => Buffer.alloc(buf.length * 2, 5),
+    trimPcmSilence: (b) => b
+  });
+  ggFallbackEngine.callElevenLabsRaw = async () => {
+    const err = new Error('ElevenLabs HTTP 429: quota_exceeded');
+    err.statusCode = 429;
+    err.body = '{"detail":{"code":"quota_exceeded"}}';
+    throw err;
+  };
+  const ggReceivedParts = [];
+  ggFallbackEngine.fetchGoogleTtsMp3 = async (subText) => {
+    ggReceivedParts.push(subText);
+    return Buffer.alloc(200, 3);
+  };
+  const longChunk420 = 'Cuộc vượt ngục đêm Giáng sinh 1951 qua cống ngầm phố Thợ Nhuộm là kỳ tích phi thường của các tù nhân chính trị. Họ đã tỉ mỉ cưa song sắt trong nhiều tháng, tính toán chuẩn xác thời điểm tuần tra để thoát khỏi vòng vây nghiêm ngặt của thực dân Pháp. Câu chuyện truyền cảm hứng sâu sắc cho mọi thế hệ khách tham quan khi ghé thăm Nhà tù Hỏa Lò hôm nay và lưu giữ ký ức cuối cùng nguyên vẹn.';
+  const ggFullPcm = await ggFallbackEngine.synthesizeToPcm(longChunk420, 'vi');
+  assert.ok(ggReceivedParts.length >= 3, `420-char chunk must be split into >=3 Google TTS sub-chunks, got ${ggReceivedParts.length}`);
+  assert.ok(ggReceivedParts.every(p => p.length <= 180), 'Every Google fallback sub-chunk must be <= 180 chars');
+  assert.ok(ggReceivedParts.join(' ').includes('nguyên vẹn'), 'Google fallback must NEVER truncate the end of a long chunk');
+  assert.ok(ggFullPcm.length > 1000, 'Concatenated Google fallback PCM must include all sub-chunks');
 });
 
 test('500 Out-Of-Scope & Edge-Case Audit Regressions: security/OOS precedence, Mèo Vạc, Phú Quốc weather, nhân viên mang, Beacon 002 & composer', async () => {

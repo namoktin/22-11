@@ -11,8 +11,10 @@ process.env.RATE_LIMIT_VOICE = '500';
 process.env.RATE_LIMIT_BLE = '500';
 process.env.RATE_LIMIT_ADMIN = '500';
 delete process.env.GROQ_API_KEY; // Chạy deterministic offline không phụ thuộc mạng ngoài
+process.env.TTS_PROVIDER = 'google'; // KHÔNG bao giờ đốt credit ElevenLabs khi chạy test tự động!
+delete process.env.ELEVENLABS_API_KEY;
 
-const { server, rateLimiter } = require('../server');
+const { server, rateLimiter, ttsEngine } = require('../server');
 const { autoLearningStore } = require(path.join(__dirname, '..', 'kiemthu', 'engine', 'auto_learning_store'));
 
 let baseUrl = '';
@@ -187,4 +189,73 @@ test('Integration 5: Admin Beacon Create -> Update -> Delete cleanly with atomic
   });
   assert.equal(delRes.status, 200);
   assert.equal(delRes.json.success, true);
+});
+
+test('Integration 6: Long-passage multi-chunk ElevenLabs streaming WAV never exceeds concurrency=2 and delivers complete audio', async () => {
+  const origPref = ttsEngine.providerPref;
+  const origKey = ttsEngine.elevenLabsApiKey;
+  const origCall = ttsEngine.callElevenLabsRaw.bind(ttsEngine);
+  const origRetryMs = ttsEngine.elevenLabsConcurrentRetryMs;
+
+  let activeCalls = 0;
+  let peakCalls = 0;
+  let totalCalls = 0;
+  let simulated429Once = false;
+
+  try {
+    ttsEngine.clearCache();
+    ttsEngine.providerPref = 'auto';
+    ttsEngine.elevenLabsApiKey = 'sk_mock_integration_only';
+    ttsEngine.elevenLabsCooldownUntil = 0;
+    ttsEngine.elevenLabsSupportsPcm16k = true;
+    ttsEngine.elevenLabsConcurrentRetryMs = 15;
+    ttsEngine.callElevenLabsRaw = async (text, lang, fmt) => {
+      activeCalls++;
+      totalCalls++;
+      if (activeCalls > peakCalls) peakCalls = activeCalls;
+      await new Promise(r => setTimeout(r, 30));
+      try {
+        if (!simulated429Once && totalCalls === 2) {
+          simulated429Once = true;
+          const err = new Error('ElevenLabs HTTP 429: {"detail":{"type":"rate_limit_error","code":"concurrent_limit_exceeded"}}');
+          err.statusCode = 429;
+          err.body = '{"detail":{"type":"rate_limit_error","code":"concurrent_limit_exceeded"}}';
+          throw err;
+        }
+        // Trả về PCM 16kHz hợp lệ (4000 bytes = 125ms mỗi đoạn)
+        return { buffer: Buffer.alloc(4000, 33), outputFormat: fmt, voiceId: 'mock_v3' };
+      } finally {
+        activeCalls--;
+      }
+    };
+
+    const r = await request('POST', '/api/hub/ask', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        device_id: 'HUB_INT_LONG_EL',
+        code: '002',
+        language: 'vi',
+        voice_text: 'Hãy kể chi tiết cuộc vượt ngục lịch sử đêm Giáng sinh năm 1951 ở Nhà tù Hỏa Lò'
+      })
+    });
+    assert.equal(r.status, 200);
+    assert.equal(r.json.tts_provider, 'elevenlabs');
+    assert.ok(r.json.total_chunks >= 2, `Expected multi-chunk response for long story, got ${r.json.total_chunks}`);
+
+    const wavPath = new URL(r.json.audio_wav_url).pathname;
+    const wav = await request('GET', wavPath);
+    assert.equal(wav.status, 200);
+    assert.equal(wav.buf.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(wav.buf.toString('ascii', 8, 12), 'WAVE');
+    // Tổng độ dài WAV phải chứa ĐẦY ĐỦ tất cả các đoạn (mỗi đoạn 4000 bytes PCM) -> KHÔNG mất tiếng đoạn nào!
+    assert.ok(wav.buf.length >= 44 + r.json.total_chunks * 4000, `Streamed WAV truncated: got ${wav.buf.length}B for ${r.json.total_chunks} chunks`);
+    assert.ok(peakCalls <= 2, `Peak concurrent ElevenLabs calls must stay <= 2, saw ${peakCalls}`);
+    assert.equal(ttsEngine.isElevenLabsActive(), true, 'Transient concurrent_limit_exceeded must NOT poison global cooldown');
+  } finally {
+    ttsEngine.callElevenLabsRaw = origCall;
+    ttsEngine.providerPref = origPref;
+    ttsEngine.elevenLabsApiKey = origKey;
+    ttsEngine.elevenLabsConcurrentRetryMs = origRetryMs;
+    ttsEngine.clearCache();
+  }
 });

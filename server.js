@@ -933,8 +933,8 @@ function decodeMp3BufferToPcmRam(mp3Buffer) {
 
     const killTimer = setTimeout(() => {
       try { ff.kill('SIGKILL'); } catch (e) {}
-      finish(new Error('FFmpeg RAM decode timeout (>5s)'));
-    }, 5000);
+      finish(new Error('FFmpeg RAM decode timeout (>10s)'));
+    }, 10000);
     if (typeof killTimer.unref === 'function') killTimer.unref();
 
     ff.stdout.on('data', d => out.push(d));
@@ -1037,8 +1037,14 @@ async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, l
     for (let i = 1; i < chunks.length; i++) {
       const chunkText = chunks[i];
       try {
-        const nextPcm = await promises[i - 1];
-        if (nextPcm && nextPcm.length > 0 && streamObj) {
+        let nextPcm = await promises[i - 1];
+        // Lưới an toàn: nếu đoạn dài bị rỗng do lỗi mạng tạm thời, thử tổng hợp lại 1 lần để không mất tiếng giữa chừng!
+        if ((!nextPcm || nextPcm.length === 0) && chunkText && chunkText.trim().length > 0) {
+          console.warn(`⚠ [Single Streaming WAV] Đoạn ${i + 1}/${chunks.length} rỗng, đang thử tổng hợp lại...`);
+          nextPcm = await fastTextToPcm(chunkText, lang);
+        }
+        const chunkOk = Boolean(nextPcm && nextPcm.length > 0);
+        if (chunkOk && streamObj) {
           const joinedPart = Buffer.concat([NATURAL_BREATH_PCM, nextPcm]);
           streamObj.pcmParts.push(joinedPart);
           // Đẩy trực tiếp PCM Đoạn 2..N vào tất cả các luồng HTTP .WAV đang mở (liền mạch 0ms ngắt quãng!)
@@ -1051,16 +1057,19 @@ async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, l
               streamObj.listeners.delete(clientRes);
             }
           }
+          console.log(`✓ [Single Streaming WAV] Đã nối liền mạch Đoạn ${i + 1}/${chunks.length} (${nextPcm.length}B PCM) vào ${mergedFilename}`);
+        } else {
+          console.warn(`⚠ [Single Streaming WAV] Đoạn ${i + 1}/${chunks.length} không sinh được âm thanh cho ${mergedFilename}`);
         }
-        console.log(`✓ [Single Streaming WAV] Đã nối liền mạch Đoạn ${i + 1}/${chunks.length} vào ${mergedFilename}`);
         if (serverState.latestVoice && Array.isArray(serverState.latestVoice.chunks)) {
           const stChunk = serverState.latestVoice.chunks.find(c => c.index === i + 1);
-          if (stChunk) stChunk.status = 'ready';
+          if (stChunk) stChunk.status = chunkOk ? 'ready' : 'failed';
         }
         broadcastSSE('VOICE_CHUNK_READY', {
           reply_id: baseName,
           chunk_index: i + 1,
           total_chunks: chunks.length,
+          status: chunkOk ? 'ready' : 'failed',
           text: chunkText,
           wav_url: `${hostBaseUrl}/audio-stream/${mergedFilename}`,
           merged_ready: i === chunks.length - 1
@@ -1071,11 +1080,13 @@ async function processRemainingChunksBackground(chunks, baseName, hostBaseUrl, l
     }
   } finally {
     if (streamObj) {
-      // Gộp toàn bộ PCM thành 1 file .WAV hoàn chỉnh có header chuẩn xác (để replay & seek mượt mà!)
+      // Gộp toàn bộ PCM thành 1 file .WAV hoàn chỉnh (ghi atomic qua .tmp rồi rename để client đọc không bao giờ gặp file cụt!)
       try {
         const allPcm = Buffer.concat(streamObj.pcmParts);
         const fullWav = Buffer.concat([buildWavHeader(allPcm.length), allPcm]);
-        fs.writeFileSync(mergedPath, fullWav);
+        const tmpPath = `${mergedPath}.tmp`;
+        fs.writeFileSync(tmpPath, fullWav);
+        fs.renameSync(tmpPath, mergedPath);
         streamObj.mergedPath = mergedPath;
         console.log(`✓ [Merged Single WAV] Đã lưu trọn bộ 1 file duy nhất: ${mergedFilename} (${fullWav.length} bytes)`);
       } catch (e) {
@@ -1823,6 +1834,10 @@ const server = http.createServer(async (req, res) => {
       return res.end();
     }
 
+    // Tắt timeout socket cho luồng audio streaming dài để đoạn trả lời dài 30-60s không bao giờ bị ngắt giữa chừng
+    if (typeof req.setTimeout === 'function') req.setTimeout(0);
+    if (typeof res.setTimeout === 'function') res.setTimeout(0);
+
     res.writeHead(200, {
       'Content-Type': 'audio/wav',
       'Accept-Ranges': 'none',
@@ -1830,6 +1845,7 @@ const server = http.createServer(async (req, res) => {
       'Cache-Control': 'no-cache, no-store',
       'X-Accel-Buffering': 'no'
     });
+    if (typeof res.flushHeaders === 'function') res.flushHeaders();
 
     // Ghi 44-byte RIFF/WAVE streaming header + toàn bộ PCM đã có (Đoạn 1)
     res.write(buildWavHeader(0x7FFFFFF0));

@@ -10,6 +10,8 @@ process.env.RATE_LIMIT_ADMIN = '25';
 process.env.RATE_LIMIT_GENERAL = '200';
 delete process.env.ADMIN_API_KEY;
 delete process.env.GROQ_API_KEY;
+process.env.TTS_PROVIDER = 'google'; // Bảo vệ credit ElevenLabs khi chạy test tự động!
+delete process.env.ELEVENLABS_API_KEY;
 
 const { server, rateLimiter, deviceAuth } = require('../server');
 
