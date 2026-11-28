@@ -385,7 +385,7 @@ class IntentClassifier {
     // 0.085. Ngoại lệ tiện ích cốt lõi (Nhà vệ sinh / Restroom / Toilet) luôn thuộc phạm vi di tích (VI + EN)
     // Nguyên lý 2: Không cướp luồng câu hỏi lịch sử về thùng/xô vệ sinh trong buồng giam xưa!
     if (!earlyDiscourse.isHistoricalDiscourse &&
-        (hasPhrase(norm, 'restroom') || hasPhrase(norm, 'restrooms') || hasPhrase(norm, 'washroom') || hasPhrase(norm, 'toilets') || hasPhrase(norm, 'toilet') || hasPhrase(norm, 'nha ve sinh') || hasPhrase(norm, 'di ve sinh'))) {
+        (hasPhrase(norm, 'restroom') || hasPhrase(norm, 'restrooms') || hasPhrase(norm, 'washroom') || hasPhrase(norm, 'toilets') || hasPhrase(norm, 'toilet') || hasPhrase(norm, 'toilettes') || hasPhrase(norm, 'nha ve sinh') || hasPhrase(norm, 'di ve sinh') || hasPhrase(norm, 'cau tieu'))) {
       return {
         intent: INTENTS.FACILITY_INFORMATION,
         subIntent: 'RESTROOM_LOCATION',
@@ -1118,8 +1118,8 @@ class IntentClassifier {
     const isHistoricalOpening = (norm.includes('nam nao') || norm.includes('khi nao') || norm.includes('moc thoi gian')) && (norm.includes('cai tao') || norm.includes('xep hang') || norm.includes('di tich') || norm.includes('bao tang'));
     const isTemporaryExhibitionStatus = norm.includes('bang oi') || (norm.includes('chuyen de') && norm.includes('con mo'));
     const hasViHoursSignal = matchAccentSafe(raw, norm,
-      ['giờ mở cửa', 'mở cửa lúc mấy giờ', 'mở cửa mấy giờ', 'mấy giờ mở cửa', 'đóng cửa', 'mấy giờ đóng cửa', 'có nghỉ trưa không', 'nghỉ trưa', 'ngày lễ có mở không', 'tết có mở không', 'ngày lễ', 'tết nguyên đán', 'quốc khánh', 'thứ hai có mở không', 'giờ tham quan', 'lịch hoạt động', 'mở cửa đón khách'],
-      ['gio mo cua', 'mo cua luc may gio', 'mo cua may gio', 'may gio mo cua', 'dong cua', 'may gio dong cua', 'co nghi trua khong', 'nghi trua', 'ngay le co mo khong', 'tet co mo khong', 'ngay le', 'tet nguyen dan', 'quoc khanh', 'thu hai co mo khong', 'gio tham quan', 'lich hoat dong', 'mo cua don khach']
+      ['giờ mở cửa', 'mở cửa lúc mấy giờ', 'mở cửa mấy giờ', 'mở cửa từ mấy giờ', 'mấy giờ mở cửa', 'từ mấy giờ đến mấy giờ', 'đóng cửa', 'mấy giờ đóng cửa', 'có nghỉ trưa không', 'nghỉ trưa', 'ngày lễ có mở không', 'tết có mở không', 'ngày lễ', 'tết nguyên đán', 'quốc khánh', 'thứ hai có mở không', 'giờ tham quan', 'lịch hoạt động', 'mở cửa đón khách'],
+      ['gio mo cua', 'mo cua luc may gio', 'mo cua may gio', 'mo cua tu may gio', 'may gio mo cua', 'tu may gio den may gio', 'dong cua', 'may gio dong cua', 'co nghi trua khong', 'nghi trua', 'ngay le co mo khong', 'tet co mo khong', 'ngay le', 'tet nguyen dan', 'quoc khanh', 'thu hai co mo khong', 'gio tham quan', 'lich hoat dong', 'mo cua don khach']
     );
     const enHoursSignals = ['opening hours', 'opening time', 'open today', 'when does it open', 'closing time', 'what time does it close', 'schedule'];
     const hasEnHoursSignal = (discourse.isEnglishInput && enHoursSignals.some(s => hasPhrase(norm, s))) ||
@@ -1284,7 +1284,7 @@ class IntentClassifier {
 
     // 17. Thông tin hiện vật cụ thể (EXHIBIT_INFORMATION)
     const exhibitSignals = [
-      'may chem', 'guillotine', 'cay bang', 'cong ngam', 'cachot', 'cum sat', 'cum chan',
+      'may chem', 'guillotine', 'cay bang', 'banyan', 'banyan tree', 'cong ngam', 'sewer escape', 'escape sewer', 'cachot', 'cum sat', 'cum chan',
       'bo quan ao', 'quan ao tu nhan', 'thung ve sinh', 'lap la', 'bat sat', 'que dan',
       'ban chai', 'tau thuoc', 'gang tay', 'but canh bang', 'gach non', 'muoi than',
       'bao chi bi mat', 'to bao lao tu', 'bua liem', 'ao len', 'hien vat', 'vat dung',

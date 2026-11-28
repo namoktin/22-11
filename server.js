@@ -1481,7 +1481,7 @@ async function normalizeForeignQueryForLookup(rawQuery) {
   if (!raw) return rawQuery;
   const hasNonLatin = /[\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF\u1100-\u11FF\u0400-\u04FF\u0E00-\u0E7F]/.test(raw);
   const hasEuroForeignAccents = /[ñ¿¡áéíóúüäößàèìòùçëïœæ]/i.test(raw) && !VI_UNIQUE_DIACRITIC_RE.test(raw) && !/\b(hoa lo|nha tu|di tich|gia ve|mo cua|bao nhieu|la gi|o dau)\b/i.test(raw);
-  const looksEuroForeignWords = /\b(bonjour|merci|combien|ou est|quel est|quelle est|horaires|billet|billets|prison|guillotine|toilettes|ouverte|hola|gracias|cuanto|donde esta|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo|bitte|danke|wie viel|wann|gefaengnis)\b/i.test(raw);
+  const looksEuroForeignWords = /\b(bonjour|merci|combien|ou est|quel est|quelle est|quels sont|quelles sont|puis je|prendre|photo|photos|horaires|ouverture|tarif|tarifs|billet|billets|prison|guillotine|toilettes|ouverte|ouvert|ferme|visite|nocturne|consigne|casier|audioguide|tour de nuit|hola|gracias|cuanto|donde esta|esos|esas|sandalias|neumaticos|cuando|cuesta|prision|guillotina|museo|bitte|danke|wie viel|wann|gefaengnis)\b/i.test(raw);
 
   if (hasNonLatin || hasEuroForeignAccents || looksEuroForeignWords) {
     const viQuery = await translateTextStrict(raw, 'vi', 'query');
@@ -1968,14 +1968,17 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ status: 'error', error: devAuth.reason }));
       }
 
-      const isManualTest = Boolean(payload.force) || deviceId === 'LOCAL_DASHBOARD' || deviceId.startsWith('TEST');
       const rawRssi = payload.rssi !== undefined && payload.rssi !== null ? Number(payload.rssi) : null;
+      const preDevCtx = bleManager.getOrCreateDevice(deviceId);
+      const reqBleLang = normalizeLangCode(payload.language || payload.lang || req.headers['x-language'] || parsedUrl.query.lang);
+      const langChangedOnDevice = Boolean(reqBleLang && preDevCtx.lockedLanguage && reqBleLang !== preDevCtx.lockedLanguage);
+      const isManualTest = Boolean(payload.force) || langChangedOnDevice || deviceId === 'LOCAL_DASHBOARD' || deviceId.startsWith('TEST') || (deviceId.startsWith('WEB_') && rawRssi === null);
       const bleEval = bleManager.evaluateBleScan({
         deviceId,
         beacon: target,
         rawRssi: isNaN(rawRssi) ? null : rawRssi,
         isManual: isManualTest,
-        force: Boolean(payload.force)
+        force: Boolean(payload.force) || langChangedOnDevice
       });
 
       if (bleEval.action !== 'TRIGGER') {

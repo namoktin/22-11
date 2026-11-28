@@ -249,6 +249,13 @@ function handleBeaconTrigger(data) {
   const targetCard = document.getElementById(`card_${code}`);
   if (targetCard) {
     targetCard.classList.add('active');
+    if (data.dialogue?.text) {
+      const dlgBox = targetCard.querySelector('.card-dialogue-box');
+      if (dlgBox) {
+        const langBadge = data.locked_language ? ` [${String(data.locked_language).toUpperCase()}]` : '';
+        dlgBox.innerHTML = `<b style="color: var(--accent-terra);">${data.dialogue.speaker || 'Thuyết Minh'}${langBadge}:</b><br>"${data.dialogue.text}"`;
+      }
+    }
     targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
@@ -270,7 +277,7 @@ async function triggerCode(code) {
         'X-Language': lockedLang,
         'X-Device-Id': browserDeviceId
       },
-      body: JSON.stringify({ code: code, device_id: browserDeviceId, language: lockedLang })
+      body: JSON.stringify({ code: code, device_id: browserDeviceId, language: lockedLang, force: true })
     });
     const data = await res.json();
     handleBeaconTrigger(data);
@@ -279,15 +286,38 @@ async function triggerCode(code) {
   }
 }
 
+const DEFAULT_SAMPLE_BY_LANG = {
+  vi: 'Ý nghĩa lịch sử của cây bàng đối với tù nhân Hỏa Lò?',
+  en: 'What is the historical significance of the banyan tree to prisoners at Hoa Lo?',
+  fr: 'Quelle est la signification historique du badamier pour les prisonniers de Hoa Lo ?',
+  ja: 'ホアロー収容所のモモタマナの木は、政治囚にとってどのような歴史的意味がありましたか？',
+  ko: '호아로 수용소의 반얀나무는 정치범들에게 어떤 역사적 의미가 있었나요?',
+  zh: '火炉监狱里的古榄仁树对昔日的政治犯有着怎样的历史意义？'
+};
+
+function syncSampleInputForLang(lang) {
+  const input = document.getElementById('voiceQuestionInput');
+  if (!input) return;
+  const cur = input.value.trim();
+  const isDefaultSample = !cur || Object.values(DEFAULT_SAMPLE_BY_LANG).includes(cur);
+  if (isDefaultSample && DEFAULT_SAMPLE_BY_LANG[lang]) {
+    input.value = DEFAULT_SAMPLE_BY_LANG[lang];
+  }
+}
+
 // 6. Xử lý Voice Query & Đo Độ Trễ
 function initVoiceForm() {
   const langSelect = document.getElementById('languageLockSelect');
   if (langSelect) {
     fetch('/api/language').then(r => r.json()).then(d => {
-      if (d && d.locked_language) langSelect.value = d.locked_language;
+      if (d && d.locked_language) {
+        langSelect.value = d.locked_language;
+        syncSampleInputForLang(d.locked_language);
+      }
     }).catch(() => {});
 
     langSelect.onchange = async () => {
+      syncSampleInputForLang(langSelect.value);
       try {
         await fetch('/api/language', {
           method: 'POST',
@@ -624,10 +654,7 @@ function handleVoiceResponse(data) {
     chunkStatusTimer = null;
   }
 
-  const langSel = document.getElementById('languageLockSelect');
-  if (langSel && data.locked_language && data.device_id !== browserDeviceId) {
-    langSel.value = data.locked_language;
-  }
+  // Không ghi đè ngôn ngữ mà người dùng đang chọn trên trình duyệt này chỉ vì thiết bị khác vừa hỏi bằng ngôn ngữ khác!
 
   // Ghi nhận timestamp để polling /api/state mỗi 1s KHÔNG gọi đè lại câu trả lời đang phát!
   if (data.timestamp && data.timestamp > lastRenderedVoiceTime) {

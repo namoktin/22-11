@@ -169,10 +169,16 @@ const FOREIGN_QUERY_TERM_HINTS = [
   [/モモタマナ(?:の木)?|バニヤン(?:の木)?|반얀나무|방나무|榄仁树|\bbadamier\b|\bbanyan\s+tree\b/gi, ' cây bàng Hỏa Lò '],
   [/下水道(?:脱獄)?|하수구(?:\s*탈옥)?|下水道(?:越狱)?|\bégouts?\b|\begouts?\b/gi, ' cống ngầm vượt ngục Hỏa Lò '],
   [/ハノイ[・\s]?ヒルトン|하노이\s*힐튼|河内希尔顿|米軍パイロット|미군\s*조종사|美国飞行员|\bpilotes?\s+américains?\b/gi, ' phi công Mỹ Hanoi Hilton Hỏa Lò '],
-  [/聖なる夜|ナイトツアー|야간\s*투어|성스러운\s*밤|神圣之夜|夜游|\bnuit\s+sacrée\b|\bvisite\s+nocturne\b/gi, ' tour đêm Đêm thiêng liêng Hỏa Lò '],
+  [/聖なる夜|ナイトツアー|야간\s*투어|성스러운\s*밤|神圣之夜|夜游|\bnuit\s+sacrée\b|\bvisite\s+nocturne\b|\btour\s+de\s+nuit\b/gi, ' tour đêm Đêm thiêng liêng Hỏa Lò '],
   [/ドンソン銅鼓|동선\s*청동북|东山铜鼓|\btambour\s+de\s+bronze\b/gi, ' Trống đồng Đông Sơn Mã 001 '],
   [/ダットホン|大洪鐘|닷홍|대홍종|达鸿|大洪钟|\bcloche\s+de\s+bronze\b/gi, ' Đạt Hồng Đại Hồng Chung Mã 003 '],
-  [/王室の宝剣|황실\s*보검|皇室宝剑|\bépée\s+royale\b/gi, ' Bảo kiếm Hoàng gia Mã 004 ']
+  [/王室の宝剣|황실\s*보검|皇室宝剑|\bépée\s+royale\b/gi, ' Bảo kiếm Hoàng gia Mã 004 '],
+  [/\btoilettes?\b|トイレ|お手洗い|화장실|洗手间|厕所|卫生间/gi, ' nhà vệ sinh WC Hỏa Lò '],
+  [/\bprendre\s+des\s+photos?\b|\bphotographie\b|写真を撮|撮影して|사진을?\s*찍|촬영해|拍照|照相/gi, ' quy định chụp ảnh quay phim Hỏa Lò '],
+  [/\bhoraires?\b|\bheures?\s+d['’]?ouverture\b|開館時間|営業時間|관람\s*시간|운영\s*시간|开放时间|几点开门/gi, ' giờ mở cửa Hỏa Lò '],
+  [/\bbillets?\b|\btarifs?\b|\bprix\s+d['’]?entrée\b|入場料|チケット|입장료|티켓|门票|票价/gi, ' giá vé vào cửa Hỏa Lò '],
+  [/\bconsignes?\b|\bcasiers?\b|ロッカー|물품\s*보관함|보관함|寄存柜|寄存/gi, ' tủ gửi đồ Hỏa Lò '],
+  [/\baudioguides?\b|\baudio\s+guides?\b|音声ガイド|오디오\s*가이드|语音导览/gi, ' thuê máy thuyết minh Audioguide Hỏa Lò ']
 ];
 
 /**

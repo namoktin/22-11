@@ -907,4 +907,25 @@ test('500 Out-Of-Scope & Edge-Case Audit Regressions: security/OOS precedence, M
   const dressGate = await queryKiemThuAI('Mình vừa chạy bộ quanh Hồ Gươm về đang mặc áo ba lỗ sát nách với dép xỏ ngón định ghé vào thăm nhanh luôn thì có được nhân viên soát vé cho vào không?', { code: '002', artifact_name: 'Cây Bàng' }, 'oos_r2_dress', 'vi');
   assert.equal(dressGate.intent, 'VISIT_GUIDANCE');
   assert.ok(/trang phục|lịch sự|áo khoác/i.test(dressGate.reply), `Dress code question with "soát vé" must route to GUIDANCE_DRESS_CODE: ${dressGate.reply}`);
+
+  // 9. Multilingual routing regressions (FR restrooms/night-tour/photos, KO opening hours, EN banyan tree)
+  const frWc = await queryKiemThuAI('Où sont les toilettes ?', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_fr_wc', 'fr');
+  assert.equal(frWc.intent, 'FACILITY_INFORMATION');
+  assert.ok(/toilettes|cour|boutique/i.test(frWc.reply), `FR restroom query must return restroom guidance, got: ${frWc.reply}`);
+
+  const frNight = await queryKiemThuAI('Combien coûte le tour de nuit ?', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_fr_night', 'fr');
+  assert.equal(frNight.intent, 'TOUR_INFORMATION');
+  assert.ok(/399|499|Nuit Sacrée|19/i.test(frNight.reply), `FR night tour query must return night tour pricing, got: ${frNight.reply}`);
+
+  const frPhoto = await queryKiemThuAI('Puis-je prendre des photos ?', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_fr_photo', 'fr');
+  assert.equal(frPhoto.intent, 'PHOTOGRAPHY_POLICY');
+  assert.ok(/flash|photo/i.test(frPhoto.reply), `FR photography query must return photo rules, got: ${frPhoto.reply}`);
+
+  const koHours = await queryKiemThuAI('관람 시간은 몇 시부터 몇 시까지인가요?', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_ko_hours', 'ko');
+  assert.equal(koHours.intent, 'OPENING_HOURS');
+  assert.ok(/8|17|오전|오후/i.test(koHours.reply), `KO opening hours query must return 8:00-17:00, got: ${koHours.reply}`);
+
+  const enBanyan = await queryKiemThuAI('Tell me about the banyan tree', { code: '002', artifact_name: 'Cây Bàng' }, 'ml_reg_en_banyan', 'en');
+  assert.notEqual(enBanyan.intent, 'OUT_OF_SCOPE');
+  assert.ok(/banyan|prisoners|courtyard/i.test(enBanyan.reply), `EN banyan tree query must stay IN-DOMAIN, got: ${enBanyan.reply}`);
 });

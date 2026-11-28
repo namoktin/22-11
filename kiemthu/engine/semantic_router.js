@@ -485,7 +485,9 @@ class SemanticRouter {
       'tuong tu nhan', 'cuu tu', 'khu giam', 'san di tich', 'tour dem', 'tra la bang', 'trien lam chuyen de',
       'thuyet minh vien', 'chua quan su', 'nga tu ly thuong kiet', 'soat ve', 'the huong dan vien',
       'can cuoc dat coc', 'tra may xong', 'doan hoc sinh', 'dat lich huong dan vien', 'gioi thieu bao tang',
-      'quay clip gioi thieu', 've combo', 'to roi so do'
+      'quay clip gioi thieu', 've combo', 'to roi so do',
+      'banyan', 'banyan tree', 'sewer escape', 'escape sewer', 'death row', 'american pilots',
+      'sacred night', 'night tour', 'bronze drum', 'royal sword', 'great bronze bell'
     ];
     return coreTerms.some(t => hasPhrase(normText, t));
   }
