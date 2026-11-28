@@ -97,7 +97,8 @@ class IntentClassifier {
     if (norm.includes('bao kiem') || norm.includes('kiem hoang gia') || norm.includes('luong long trieu nhat') || norm.includes('co vat hoang cung') || norm.includes('ma 004') || norm.includes('so 004')) return 'bao_kiem';
     if (norm.includes('may chem') || norm.includes('guillotine') || norm.includes('luoi dao') || norm.includes('cot go')) return 'may_chem';
     if (norm.includes('cay bang') || norm.includes('la bang') || norm.includes('hat bang') || norm.includes('canh bang') || norm.includes('tra bang') || norm.includes('thach bang')) return 'cay_bang';
-    if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong')) {
+    if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong') ||
+        (norm.includes('noel') && (norm.includes('1951') || norm.includes('tu tu') || norm.includes('24 12')))) {
       if (norm.includes('1945') || norm.includes('tran tu binh') || norm.includes('nhat dao chinh') || norm.includes('hon 100') || norm.includes('100 can bo')) return 'vuot_nguc_1945';
       return 'cong_ngam';
     }
@@ -141,7 +142,13 @@ class IntentClassifier {
     if (norm.includes('gia bao nhieu') || norm.includes('bao nhieu tien') || norm.includes('may gio') || norm.includes('quy dinh')) {
       return 'POLICY_DETAIL';
     }
-    if (norm.includes('lam the nao') || norm.includes('o dau') || norm.includes('gap ai') || norm.includes('ho tro')) {
+    if (norm.includes('vi tri') || norm.includes('o dau') || norm.includes('o cho nao') || norm.includes('cho nao') ||
+        norm.includes('nam o') || norm.includes('dat o') || norm.includes('trung bay o') ||
+        norm.includes('gian nao') || norm.includes('khu nao') || norm.includes('phong nao') ||
+        norm.includes('may chem dau') || norm.includes('where is') || norm.includes('located')) {
+      return 'LOCATION';
+    }
+    if (norm.includes('lam the nao') || norm.includes('gap ai') || norm.includes('ho tro')) {
       return 'ACTION_REQUEST';
     }
     return 'GENERAL';
@@ -294,6 +301,40 @@ class IntentClassifier {
         aspect: 'SOCIAL',
         confidence: 0.96,
         reason: 'Khách hỏi về danh tính / khen ngợi trợ lý ảo'
+      };
+    }
+
+    // 0.067. CỔNG XÁC ĐỊNH TỪ CHỐI MÃ QR / VÉ TỪ KLOOK, TRAVELOKA & CÁC KÊNH BÁN VÉ BÊN THỨ BA
+    // TUYỆT ĐỐI không đẩy sang Groq LLM ứng biến — trả đáp án chuẩn xác định (0 hallucination)!
+    const isFlightOrHotelOnly = hasPhrase(norm, 'mua ve may bay') || hasPhrase(norm, 've may bay') ||
+      hasPhrase(norm, 'vietnam airlines') || hasPhrase(norm, 'vietjet') ||
+      ((hasPhrase(norm, 'dat phong') || hasPhrase(norm, 'khach san')) && !hasPhrase(norm, 'hoa lo') && !hasPhrase(norm, 'quay ve') && !hasPhrase(norm, 've tham quan'));
+    const hasDedicatedOtaTicketPlatform = !isFlightOrHotelOnly && (
+      hasPhrase(norm, 'klook') || hasPhrase(norm, 'traveloka') || hasPhrase(norm, 'kkday') ||
+      hasPhrase(norm, 'getyourguide') || hasPhrase(norm, 'get your guide') || hasPhrase(norm, 'viator') ||
+      hasPhrase(norm, 'tiqets') || hasPhrase(norm, 'headout') || hasPhrase(norm, 'pelago')
+    );
+    const hasGenericThirdPartyTicketChannel = !isFlightOrHotelOnly && (
+      hasPhrase(norm, 'agoda') || hasPhrase(norm, 'trip com') || hasPhrase(norm, 'booking com') ||
+      hasPhrase(norm, 'tripadvisor') || hasPhrase(norm, 'ivivu') || hasPhrase(norm, 'mytour') ||
+      hasPhrase(norm, 'ben thu ba') || hasPhrase(norm, 'trang trung gian') || hasPhrase(norm, 'kenh trung gian') ||
+      hasPhrase(norm, 'nen tang trung gian') || hasPhrase(norm, 'nen tang ben thu ba') ||
+      hasPhrase(norm, 'dai ly ban ve') || hasPhrase(norm, 'web trung gian') || hasPhrase(norm, 'app trung gian') ||
+      hasPhrase(norm, 'third party') || hasPhrase(norm, 'reseller')
+    ) && (
+      hasPhrase(norm, 'hoa lo') || hasPhrase(norm, 'quay ve') || hasPhrase(norm, 've tham quan') ||
+      hasPhrase(norm, 'ma qr') || hasPhrase(norm, 'qr') || hasPhrase(norm, 'chap nhan') ||
+      hasPhrase(norm, 'soat ve') || hasPhrase(norm, 'vao cong') || hasPhrase(norm, 'mua ve') ||
+      hasPhrase(norm, 'dat ve') || hasPhrase(norm, 'ticket') || hasPhrase(norm, 'voucher')
+    );
+    if (hasDedicatedOtaTicketPlatform || hasGenericThirdPartyTicketChannel) {
+      return {
+        intent: INTENTS.TICKET_INFORMATION,
+        subIntent: 'THIRD_PARTY_QR_NOT_ACCEPTED',
+        subject: 've_tham_quan',
+        aspect: 'POLICY_DETAIL',
+        confidence: 0.99,
+        reason: 'Cổng xác định từ chối mã QR/vé từ Klook, Traveloka và các nền tảng bán vé bên thứ ba'
       };
     }
 

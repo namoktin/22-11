@@ -178,6 +178,15 @@ const DOCENT_MESSAGES = {
     zh: '从河内火炉监狱历史遗迹（火炉街1号）前往内排国际机场的距离约为28–30公里。乘出租车或网约车经日新大桥方向通常需要约40至50分钟，视实时交通情况而定。'
   },
 
+  THIRD_PARTY_QR_NOT_ACCEPTED: {
+    vi: 'Dạ không bạn nhé: quầy vé tại Di tích Lịch sử Nhà tù Hỏa Lò KHÔNG chấp nhận mã QR hay vé điện tử mua qua Klook, Traveloka, KKday, GetYourGuide hay các nền tảng bán vé bên thứ ba tương tự. Để tham quan ban ngày, du khách vui lòng mua vé trực tiếp tại quầy vé Cổng số 1 phố Hỏa Lò theo đúng giá niêm yết (50.000 VNĐ/người lớn; giảm 50% còn 25.000 VNĐ cho học sinh, sinh viên và người từ 60 tuổi trở lên; miễn phí cho trẻ em dưới 15 tuổi). Riêng vé tour đêm "Đêm thiêng liêng" chỉ đặt qua Fanpage chính thức hoặc Hotline của Ban Quản lý Di tích bạn nhé.',
+    en: 'No — the ticket counter at Hoa Lo Prison Historical Relic does NOT accept QR codes or e-vouchers purchased through Klook, Traveloka, KKday, GetYourGuide, or other third-party booking platforms. For daytime visits, please purchase tickets directly at the Gate No. 1 ticket counter at official listed prices (50,000 VND for adults, 25,000 VND for eligible students and seniors aged 60+, and free for children under 15). Sacred Night Tour tickets are booked exclusively via the official Hoa Lo Prison Relic Fanpage or hotline.',
+    fr: 'Non : la billetterie du site historique de la Prison de Hoa Lo n’accepte PAS les codes QR ni les billets achetés via Klook, Traveloka ou d’autres plateformes tierces. Pour la visite de jour, veuillez acheter votre billet directement au guichet du portail n° 1 au tarif officiel (50 000 dongs par adulte, 25 000 dongs pour les étudiants et seniors de 60 ans et plus, gratuit pour les enfants de moins de 15 ans).',
+    ja: 'いいえ、ホアロー収容所歴史遺跡のチケット窓口では、KlookやTravelokaなど第三者予約サイトのQRコードや電子チケットはご利用いただけません。日中のご見学チケットは第1正門の窓口にて公式料金（大人50,000ドン、学生・60歳以上25,000ドン、15歳未満無料）で直接お買い求めください。',
+    ko: '아니요, 호아로 수용소 역사 유적 매표소에서는 Klook, Traveloka 등 외부 제3자 예매 플랫폼의 QR 코드나 전자 바우처를 받지 않습니다. 주간 관람권은 제1정문 매표소에서 공식 요금(성인 50,000동, 학생 및 만 60세 이상 25,000동, 만 15세 미만 무료)으로 직접 구매해 주시기 바랍니다.',
+    zh: '不可以，河内火炉监狱历史遗迹售票处不接受通过Klook、Traveloka等第三方平台购买的二维码或电子票。日间参观请直接在一号正门售票处按官方标价购票（成人50,000越南盾，学生及60岁以上老人25,000越南盾，15岁以下儿童免费）。'
+  },
+
   SUMMARY_3_SENTENCES: {
     vi: 'Mình xin tóm tắt lịch sử Nhà tù Hỏa Lò qua 3 câu ngắn gọn cho bạn dễ nhớ nhé. Thứ nhất, Nhà tù Hỏa Lò do thực dân Pháp xây dựng năm 1896 trên đất làng Phụ Khánh để giam giữ những người Việt Nam yêu nước. Thứ hai, nơi đây từng là "địa ngục trần gian" khét tiếng nhưng các chiến sĩ kiên trung đã biến nơi này thành trường học cách mạng. Thứ ba, ngày nay di tích là điểm đến lịch sử thiêng liêng nhằm tri ân sự hy sinh anh dũng và giáo dục truyền thống yêu nước.',
     en: 'Here is the history of Hoa Lo Prison in three concise sentences. First, Hoa Lo Prison was built by French colonialists in 1896 on Phu Khanh village land to detain Vietnamese patriots and revolutionaries. Second, once feared as a brutal hell on earth, resilient prisoners transformed it into a revolutionary school of courage and daring escapes. Third, today it stands as a sacred national relic honoring heroic sacrifice and preserving Hanoi’s historical memory.',

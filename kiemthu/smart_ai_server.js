@@ -722,7 +722,7 @@ class ProductionSmartTourGuideServer {
     // 6.2. Bổ sung thông tin ý định phụ nếu khách hỏi ĐA Ý ĐỊNH dịch vụ trong 1 câu (VD: "Giá vé và giờ mở cửa?")
     // Không bao giờ ghép chính sách phụ vào câu từ chối ngoài lề, bảo mật nội quy (SITE_OPERATIONS), khẩn cấp, khiếu nại hay đồng cảm!
     const secondaryIntents = intentAnalysis.secondaryIntents || [];
-    const allowSecondaryAppend = [
+    const allowSecondaryAppend = subIntent !== 'THIRD_PARTY_QR_NOT_ACCEPTED' && [
       INTENTS.TICKET_INFORMATION, INTENTS.OPENING_HOURS, INTENTS.FACILITY_INFORMATION,
       INTENTS.PARKING_SUPPORT, INTENTS.PHOTOGRAPHY_POLICY, INTENTS.TOUR_INFORMATION,
       INTENTS.AUDIO_GUIDE_SUPPORT, INTENTS.CONTACT_INFORMATION
@@ -814,19 +814,23 @@ class ProductionSmartTourGuideServer {
       'FALSE_PREMISE_CORRECTION',
       'AUTHENTIC_ABSTENTION'
     ]);
+    const isValidStoryTurn = composerResult.responseType === 'STORYTELLING_NARRATION' &&
+      Boolean(subject && HISTORICAL_EXHIBITS[subject]) &&
+      groundingStatus !== 'UNGROUNDED' &&
+      confidenceScore >= 0.55;
     const shouldSkipContextUpdate = Boolean(
       finalIntentForSession === INTENTS.OUT_OF_SCOPE ||
       finalIntentForSession === INTENTS.PROMPT_INJECTION ||
       finalIntentForSession === INTENTS.CLARIFICATION ||
       finalIntentForSession === INTENTS.AMBIGUOUS_QUERY ||
       groundingStatus === 'UNGROUNDED' ||
-      confidence === 'LOW' ||
-      confidenceScore < 0.65 ||
+      (!isValidStoryTurn && (confidence === 'LOW' || confidenceScore < 0.65)) ||
       nonContextResponseTypes.has(composerResult.responseType)
     );
 
     const mentionedEntities = [];
     const combinedNorm = ' ' + nlp.normalize(`${rawQuestion} ${finalReply || ''}`) + ' ';
+    const is1945EscapeContext = combinedNorm.includes(' 1945 ') || combinedNorm.includes(' tran tu binh ') || combinedNorm.includes(' nhat dao chinh ') || combinedNorm.includes(' hon 100 ');
     const trackableEntities = [
       ['tran_tu_binh', 'Trần Tử Bình', 'tran tu binh'],
       ['hoang_van_thu', 'Hoàng Văn Thụ', 'hoang van thu'],
@@ -837,13 +841,19 @@ class ProductionSmartTourGuideServer {
       ['cay_bang', 'Cây bàng lịch sử', 'cay bang'],
       ['may_chem', 'Máy chém', 'may chem'],
       ['cachot', 'Ngục tối Cachot', 'cachot'],
-      ['cong_ngam', 'Đường cống ngầm vượt ngục', 'cong ngam'],
-      ['vuot_nguc_1945', 'Vượt ngục tháng 3/1945', 'vuot nguc'],
+      ['cong_ngam', 'Đường cống ngầm & Vượt ngục đêm Noel 1951', 'cong ngam'],
       ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'bao bi mat']
     ];
     for (const [eId, eName, eKey] of trackableEntities) {
       if (combinedNorm.includes(' ' + eKey + ' ')) {
         mentionedEntities.push({ id: eId, name: eName });
+      }
+    }
+    if (combinedNorm.includes(' vuot nguc ')) {
+      if (is1945EscapeContext) {
+        mentionedEntities.push({ id: 'vuot_nguc_1945', name: 'Cuộc vượt ngục tháng 3/1945' });
+      } else if (!mentionedEntities.some(e => e.id === 'cong_ngam')) {
+        mentionedEntities.push({ id: 'cong_ngam', name: 'Đường cống ngầm & Vượt ngục đêm Noel 1951' });
       }
     }
 

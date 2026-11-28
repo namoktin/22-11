@@ -400,6 +400,7 @@ class NlpProcessor {
       'tour dem', 'dem thieng lieng', 'trai nu', 'trai giam nu', 'dai tuong niem', 'phu dieu',
       'cum sat', 'cum chan', 'phong giam tap the', 'khu d', 'audioguide', 'tai nghe',
       'chup anh', 'quay phim', 'quay luu niem', 'dia chi', 'xe lan',
+      'klook', 'traveloka', 'kkday', 'getyourguide', 'viator', 'tiqets',
       'thoi noi', 'sinh nhat', 'quan pho', 'chuyen cuoi', 'thoi tiet', 'troi mua'
     ];
     const matchedIndepEntities = independentEntities.filter(e => norm.includes(' ' + e + ' '));
@@ -417,11 +418,15 @@ class NlpProcessor {
       };
     }
 
-    // 2. Nhận diện câu hỏi nối tiếp trực tiếp ("Kể tiếp đi", "Nói tiếp đi", "Thêm chi tiết đi", "Còn gì nữa không?")
+    // 2. Nhận diện câu hỏi nối tiếp trực tiếp ("Kể tiếp đi", "Rồi sao nữa?", "Nói tiếp đi", "Thêm chi tiết đi", "Còn gì nữa không?")
     const continuationPatterns = [
       'ke tiep', 'noi tiep', 'ke them', 'noi them', 'tiep di', 'tiep tuc',
       'them chi tiet', 'chi tiet hon', 'ke ro hon', 'noi ky hon', 'giai thich them',
-      'con gi nua', 'con nua khong', 'tell me more', 'continue', 'go on', 'more details', 'what else'
+      'con gi nua', 'con nua khong', 'roi sao nua', 'sau do thi sao', 'sau do sao',
+      'the roi sao', 'roi the nao', 'tiep theo thi sao', 'tiep theo ra sao',
+      'ket qua sao', 'ket qua the nao', 'ket cuc ra sao', 'sao nua', 'con sau do',
+      'tell me more', 'continue', 'go on', 'more details', 'what else',
+      'what happened next', 'then what', 'and then'
     ];
     const isContinuation = continuationPatterns.some(p => norm.includes(' ' + p + ' '));
 

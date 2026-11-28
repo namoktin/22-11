@@ -61,14 +61,20 @@ const HISTORICAL_EXHIBITS = {
 
   cong_ngam: {
     id: 'cong_ngam',
-    name: 'Đường cống ngầm & Vượt ngục 1951',
+    name: 'Đường cống ngầm & Vượt ngục đêm Noel 1951',
     category: 'Cống ngầm & Vượt ngục lịch sử',
     keywords: ['cong ngam', 'vuot nguc 1951', 'song sat', 'noel', '24 12 1951', '1951', 'tho nhuom', 'quan su', 'cua song', '16 tu tu', '5 dong chi'],
     facts: [
-      'Đêm Noel 24/12/1951: 16 tử tù chính trị đã bí mật cưa song sắt cống ngầm bằng những lưỡi dũa nhỏ giấu kín, chui qua đường cống ngầm bùn lầy chật hẹp thoát ra mặt đường phố Thợ Nhuộm (khu vực Quán Sứ).',
-      'Trong vụ vượt ngục đêm Noel 1951, 5 đồng chí đã thoát thành công ra vùng tự do kháng chiến an toàn, số còn lại không may bị địch truy bắt lại.'
+      'Đêm Noel 24/12/1951 tại Nhà tù Hỏa Lò, 16 tử tù chính trị Khu D (cùng 1 thường phạm, tổng 17 người) đã bí mật đánh chìa khóa giả và cưa song sắt miệng cống ngầm góc sân nam để vượt ngục ra khu vực phố Quán Sứ – lân cận phố Thợ Nhuộm.',
+      'Trong cuộc vượt ngục đêm Noel 1951 tại Hỏa Lò, nhờ nhân dân Hà Nội che chở, 5 đồng chí tử tù (Vũ Đức Chính, Nguyễn Gia Thiết, Vũ Đình Quang, Vũ Đình Khôi và Nguyễn Văn Hùng) đã thoát thành công về vùng tự do kháng chiến; 12 người còn lại bị địch bắt lại.',
+      'Ngay sau vụ vượt ngục đêm Noel 1951, thực dân Pháp hoảng sợ cho hàn chết các lưới sắt dày ngang lòng cống ngầm để bịt kín hoàn toàn lối thoát này.'
     ],
-    directAnswer: 'Hệ thống cống ngầm Hỏa Lò ghi dấu vụ vượt ngục huyền thoại đêm Noel 24/12/1951 của 16 tử tù chính trị sau khi cưa song sắt cống ngầm để thoát ra phố Thợ Nhuộm, trong đó có 5 đồng chí đã trở về vùng căn cứ kháng chiến an toàn.'
+    continuationBeats: [
+      'Khoảng 19 giờ tối đêm Noel 24/12/1951, sau khi mở cửa xà lim và tháo thanh song sắt miệng cống ngầm ở góc sân nam Nhà tù Hỏa Lò, 16 tử tù chính trị Khu D cùng 1 thường phạm đã nối đuôi nhau bò hàng trăm mét trong lòng đường cống ngầm tối đen, chật hẹp, đầy nước thải bùn lầy và khí độc dưới cái rét mùa đông Hà Nội, rồi trồi lên khỏi mặt đất gần khu vực phố Quán Sứ – Nhà Đấu xảo cũ và tuyến phố Thợ Nhuộm lân cận.',
+      'Khi trồi lên khỏi miệng cống ngầm, cuộc đào thoát đêm Noel 1951 bị lộ và địch lập tức hú còi báo động bao vây truy lùng gắt gao. Nhờ sự che chở dũng cảm của nhân dân Hà Nội, 5 đồng chí tử tù (Vũ Đức Chính, Nguyễn Gia Thiết, Vũ Đình Quang, Vũ Đình Khôi và Nguyễn Văn Hùng) đã thoát vòng vây thành công về vùng tự do kháng chiến; 12 người còn lại không may bị địch bắt lại (trong đó đồng chí Phạm Văn Đang và 1 phạm nhân bị hành quyết, 10 người bị đày ra Côn Đảo).',
+      'Ngay sau vụ vượt ngục chấn động đêm Noel 1951 qua đường cống ngầm, thực dân Pháp hoảng sợ cho hàn chết các lưới sắt dày ngang lòng cống để bịt kín hoàn toàn lối thoát này, đồng thời tăng cường lính gác và chó nghiệp vụ. Ngày nay, dấu tích miệng cống ngầm góc sân nam vẫn được bảo tồn nguyên bản tại Di tích Nhà tù Hỏa Lò.'
+    ],
+    directAnswer: 'Hệ thống cống ngầm Hỏa Lò ghi dấu cuộc vượt ngục huyền thoại đêm Noel 24/12/1951 của 16 tử tù chính trị Khu D (tổng 17 người) sau khi bí mật đánh chìa khóa giả, cưa song sắt miệng cống ngầm góc sân nam rồi bò qua lòng cống bùn lầy ra khu vực gần phố Quán Sứ – lân cận phố Thợ Nhuộm, trong đó 5 đồng chí đã thoát thành công về vùng tự do kháng chiến an toàn.'
   },
 
   cachot: {
@@ -1208,7 +1214,7 @@ class KnowledgeBase {
         const item = this.facts100BySeed.get('F050') || this.facts100BySeed.get('F051');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      const asksGuillotineWeightOrLocation = qNormSpaced.includes(' nang ') || qNormSpaced.includes(' can nang ') || qNormSpaced.includes(' trong luong ') || qNormSpaced.includes(' kg ') || qNormSpaced.includes(' vi tri ') || qNormSpaced.includes(' o dau ') || qNormSpaced.includes(' gian nao ') || qNormSpaced.includes(' nam o ') || qNormSpaced.includes(' dat o ');
+      const asksGuillotineWeightOrLocation = qNormSpaced.includes(' nang ') || qNormSpaced.includes(' can nang ') || qNormSpaced.includes(' trong luong ') || qNormSpaced.includes(' kg ') || qNormSpaced.includes(' vi tri ') || qNormSpaced.includes(' o dau ') || qNormSpaced.includes(' cho nao ') || qNormSpaced.includes(' gian nao ') || qNormSpaced.includes(' khu nao ') || qNormSpaced.includes(' phong nao ') || qNormSpaced.includes(' nam o ') || qNormSpaced.includes(' dat o ') || qNormSpaced.includes(' may chem dau ');
       if (qNormSpaced.includes(' may chem ') && !asksGuillotineWeightOrLocation && coreWordCount <= 14 && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
         const item = this.facts100BySeed.get('F033');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
@@ -1648,6 +1654,16 @@ class KnowledgeBase {
 
     const norm = nlp.normalize(question || '');
     const tokens = nlp.tokenize(question || '').filter(t => t.length > 2 && !STOPWORDS.has(t));
+    const isStrict1951NoelQuery = (norm.includes('1951') || norm.includes('noel')) && !norm.includes('1945') && !norm.includes('tran tu binh');
+    const safeAddSnippet = (label, text) => {
+      if (isStrict1951NoelQuery && text) {
+        const tn = nlp.normalize(text);
+        if ((tn.includes('1945') || tn.includes('29 nguoi') || tn.includes('hon 100')) && !tn.includes('1951')) {
+          return; // Chặn trộn dữ kiện vượt ngục tháng 3/1945 vào câu hỏi về đêm Noel 1951!
+        }
+      }
+      addSnippet(label, text);
+    };
 
     // 1. Ngữ cảnh trạm BLE hiện vật du khách đang đứng: CHỈ đưa vào snippet khi câu hỏi hỏi về định vị hoặc hiện vật trước mắt
     const isExplicitLocationQuery = /\b(o day|tai day|cho nay|khu nay|hien vat nay|vat nay|day la dau|toi dang o dau|dung o dau|truoc mat|xung quanh|this|here|around)\b/i.test(norm) ||
@@ -1747,7 +1763,7 @@ class KnowledgeBase {
         if (sc < 1.2) continue;
         const item = this.facts100[idx];
         const ans = item.premium_answer || item.expected_answer;
-        if (ans) addSnippet(`Fact ${item.seed_id || item.question_id || idx}`, ans);
+        if (ans) safeAddSnippet(`Fact ${item.seed_id || item.question_id || idx}`, ans);
       }
     }
 
@@ -1767,7 +1783,7 @@ class KnowledgeBase {
         if (sc < 2.2) continue;
         const item = this.groundTruth500[idx];
         const ans = item.reference_answer || item.verified_answer;
-        if (ans) addSnippet(`Tư liệu ${item.id || idx}`, ans);
+        if (ans) safeAddSnippet(`Tư liệu ${item.id || idx}`, ans);
       }
     }
 
@@ -1786,7 +1802,7 @@ class KnowledgeBase {
       for (const [idx, sc] of ranked) {
         if (sc < 2.5) continue;
         const item = this.dataset1000[idx];
-        if (item && item.answer) addSnippet(`Kho Hỏa Lò ${item.id}`, item.answer);
+        if (item && item.answer) safeAddSnippet(`Kho Hỏa Lò ${item.id}`, item.answer);
       }
     }
 
