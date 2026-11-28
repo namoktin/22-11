@@ -186,6 +186,20 @@
       "authority_boundary": "Tủ gửi đồ phục vụ miễn phí cho khách tham quan."
     },
     {
+      "id": "POLICY_PARKING_FEE",
+      "category": "FACILITY_SERVICE",
+      "title": "Quy định bãi gửi xe và mức phí gửi xe",
+      "content": "Mức phí gửi xe cố định là 50.000đ/lượt. Xe máy gửi tại khu vực trước cổng di tích theo hướng dẫn trực tiếp của nhân viên bảo vệ trên phố Hỏa Lò; ô tô gửi tại tòa nhà Tháp Hà Nội (Hanoi Towers, số 49 Hai Bà Trưng) hoặc các bãi gửi xe công cộng trên phố Dã Tượng và Lý Thường Kiệt.",
+      "official_source": "Thông tin hướng dẫn dịch vụ trông giữ xe Di tích Hỏa Lò",
+      "source_url": "http://hoalo.vn/huong-dan-gui-xe",
+      "verified_date": "2026-11-28",
+      "updated_date": "2026-11-28",
+      "status": "ACTIVE",
+      "confidence_level": "HIGH",
+      "responsible_department": "Đội Bảo Vệ Cổng Số 1",
+      "authority_boundary": "Mức phí gửi xe niêm yết cố định 50.000đ/lượt."
+    },
+    {
       "id": "POLICY_COMPLAINTS_HANDLING",
       "category": "CUSTOMER_CARE",
       "title": "Quy trình tiếp nhận phản ánh, khiếu nại và đóng góp ý kiến",

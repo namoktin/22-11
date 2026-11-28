@@ -88,6 +88,7 @@
     "priority": 95,
     "mustMatchAll": [["ve", "gia ve", "ticket"]],
     "mustMatchAny": ["nguoi lon", "65 tuoi", "60 tuoi", "nguoi cao tuoi", "doi tra", "hoan tien", "khong di nua", "mua roi", "bao nhieu tien"],
+    "mustNotMatchAny": ["gui xe", "bai xe", "do xe", "bai do xe", "parking"],
     "answer_vi": "Dạ chào bạn, giá vé tham quan ban ngày tại Di tích Nhà tù Hỏa Lò là 50.000 VNĐ/người lớn; người cao tuổi (từ 60 tuổi trở lên, mang theo căn cước) và học sinh sinh viên được giảm 50% còn 25.000 VNĐ/lượt; còn trẻ em dưới 15 tuổi và người có công được miễn phí. Bạn lưu ý giúp mình là vé ban ngày mua tại quầy chỉ dùng trong ngày và không áp dụng hoàn trả sau khi đã qua cửa soát vé (nếu thanh toán nhầm hoặc cần hỗ trợ đổi lịch tour đêm, bạn vui lòng liên hệ trực tiếp quầy vé Cổng số 1 nhé).",
     "answer_en": "Daytime admission is 50,000 VND for adults, 25,000 VND (50% off) for seniors 60+ and students with ID, and free for children under 15. Tickets are valid for the day of purchase and non-refundable after entry."
   },
@@ -353,6 +354,7 @@
     "priority": 99,
     "mustMatchAll": [["trong dong", "dong son", "chim lac", "ngoi sao 14 canh", "bronze drum", "dong son drum", "ma 001", "so 001"]],
     "mustMatchAny": ["trong dong", "dong son", "chim lac", "14 canh", "sao", "nien dai", "the ky", "hoa van", "bronze drum", "star", "lac bird", "001"],
+    "mustNotMatchAny": ["chat lieu", "vat lieu", "hop kim", "thanh phan", "lam bang", "duc bang", "material", "alloy", "made of"],
     "answer_vi": "Dạ chào bạn, Trống đồng Đông Sơn tại Gian trưng bày số 1 (Mã 001) là bảo vật quốc gia kiệt xuất, biểu trưng cho nền văn minh sông Hồng rực rỡ từ thế kỷ thứ 7 trước Công nguyên. Trên mặt trống nổi bật hình tượng ngôi sao 14 cánh tỏa sáng tượng trưng cho mặt trời, bao quanh là hoa văn chim Lạc tung cánh và các đoàn người hóa trang múa hát thể hiện đời sống tín ngưỡng của cư dân Lạc Việt cổ.",
     "answer_en": "The Dong Son Bronze Drum at Exhibition Hall No. 1 (Code 001) is an extraordinary Vietnamese National Treasure symbolizing the Red River civilization from the 7th century BCE. Its tympanum features a radiant 14-pointed sun star surrounded by flying Lac birds and costumed festive dancers reflecting ancient Lac Viet beliefs."
   },
@@ -372,6 +374,7 @@
     "priority": 99,
     "mustMatchAll": [["bao kiem", "kiem hoang gia", "luong long trieu nhat", "royal sword", "imperial sword", "ma 004", "so 004"]],
     "mustMatchAny": ["bao kiem", "kiem", "hoang gia", "vang", "ngoc bich", "da quy", "thep", "quyen uy", "sword", "gold", "jade", "004"],
+    "mustNotMatchAny": ["nang bao nhieu", "can nang", "trong luong", "bao nhieu kg", "may kg", "bao nhieu can", "nang may", "weight", "how heavy"],
     "answer_vi": "Dạ chào bạn, Bảo kiếm Hoàng gia triều Nguyễn tại Gian trưng bày số 4 - Cổ Vật Hoàng Cung (Mã 004) là biểu trưng quyền uy tối thượng của đấng quân vương xưa. Vỏ kiếm được chế tác bằng vàng ròng, cẩn ngọc bích và đá quý ngũ sắc theo mô thức Lưỡng Long Triều Nhật, còn lưỡi kiếm làm bằng thép tôi gia truyền sắc bén, minh chứng cho tài hoa kim hoàn bậc thầy của các nghệ nhân cung đình.",
     "answer_en": "The Nguyen Dynasty Royal Sword at Exhibition Hall No. 4 (Code 004) symbolizes the supreme authority of the Vietnamese emperor. Its scabbard is crafted from solid gold inlaid with jade and five-colored gemstones in the Twin Dragons Facing the Sun motif, paired with a razor-sharp traditionally tempered steel blade showcasing master royal goldsmithing."
   },
@@ -397,11 +400,11 @@
   {
     "id": "EXP_HIST_SECRET_PRESS_POETRY",
     "category": "HISTORICAL",
-    "priority": 96,
-    "mustMatchAll": [["bao bi mat", "duoc dua duong", "suoi reo", "lao tu tap chi", "truong hoc cach mang", "lop hoc", "tho ca", "viet bao", "gach non", "muoi than", "secret newspaper", "revolutionary school"]],
-    "mustMatchAny": ["bao bi mat", "duoc dua duong", "suoi reo", "lao tu", "truong hoc", "lop hoc", "tho ca", "viet bao", "gach non", "muoi than", "canh bang", "newspaper", "poetry", "school"],
-    "answer_vi": "Dạ một trong những nét son rực rỡ nhất tại Nhà tù Hỏa Lò là tinh thần 'biến nhà tù thành trường học cách mạng'. Ngay trong những phòng giam ngột ngạt, các chiến sĩ đã bí mật mở lớp xóa mù chữ, giảng dạy lý luận chính trị, sáng tác thơ ca và xuất bản các tờ báo cách mạng lưu hành nội bộ như Đuốc Đưa Đường, Suối Reo, Lao Tù Tạp Chí; bút viết được vót từ cành bàng, còn mực được pha chế từ gạch non mài nhuyễn, nhựa lá cây và muội than.",
-    "answer_en": "One of Hoa Lo Prison’s most inspiring chapters is how Vietnamese patriots turned the colonial jail into a 'revolutionary school.' Even inside stifling cells, prisoners secretly held literacy and political classes, composed patriotic poetry, and produced clandestine newspapers such as Duoc Dua Duong and Suoi Reo—carving pens from banyan twigs and making ink from crushed soft brick, plant sap, and soot."
+    "priority": 97,
+    "mustMatchAll": [["bao bi mat", "bao chi bi mat", "bao viet tay", "bao trong tu", "bao cach mang", "bao mat", "bao tu", "to bao", "lam bao", "viet bao", "ra bao", "xuat ban bao", "in an", "duoc dua duong", "suoi reo", "lao tu tap chi", "con duong chinh", "bua liem", "truong hoc cach mang", "lop hoc", "tho ca", "gach non", "muoi than", "giay quyen", "muc vo hinh", "secret newspaper", "secret newspapers", "underground press", "underground newspaper", "underground newspapers", "clandestine press", "clandestine newspaper", "clandestine newspapers", "prison newspaper", "prison newspapers", "handwritten newspaper", "handwritten newspapers", "secret press", "revolutionary school"]],
+    "mustMatchAny": ["bao bi mat", "bao chi", "bao viet tay", "bao trong tu", "bao cach mang", "bao mat", "to bao", "lam bao", "viet bao", "ra bao", "xuat ban", "in an", "duoc dua duong", "suoi reo", "lao tu", "con duong chinh", "bua liem", "truong hoc", "lop hoc", "tho ca", "gach non", "muoi than", "canh bang", "giay quyen", "muc vo hinh", "newspaper", "newspapers", "underground press", "clandestine press", "secret press", "poetry", "school"],
+    "answer_vi": "Dạ một trong những nét son rực rỡ nhất tại Nhà tù Hỏa Lò là tinh thần 'biến nhà tù thành trường học cách mạng' cùng phong trào báo chí bí mật trong tù. Các chiến sĩ đã bí mật biên soạn và chép tay chữ siêu nhỏ nhiều tờ báo cách mạng lưu hành nội bộ như Đuốc Đưa Đường, Suối Reo, Lao Tù Tạp Chí, Con Đường Chính, Búa Liềm và Chiến Thắng (của trại nữ) trên giấy quyến cuốn thuốc lá, vỏ bao thuốc, giấy vệ sinh hoặc vải vụn. Bút viết được vót từ cành bàng hoặc mẩu bút chì kẹp ống sậy; mực tự chế từ bột gạch non đỏ, muội than, nhựa lá cây, thuốc đỏ hay mực vô hình bằng nước cơm/nước chanh; các bản báo được cất giấu khéo léo trong cán chổi, gấu quần, hộp diêm, lõi đòn gánh rồi chuyền tay nhau đọc bí mật trong các buồng giam.",
+    "answer_en": "One of Hoa Lo Prison’s most remarkable chapters is how Vietnamese political prisoners turned the jail into a 'revolutionary school' and operated a vibrant underground press. Inmates secretly edited and handwrote tiny-script clandestine newspapers—such as Duoc Dua Duong, Suoi Reo, Lao Tu Tap Chi, Con Duong Chinh, Bua Liem, and Chien Thang—on thin cigarette rolling paper, cigarette packets, scrap paper, or cloth. They carved pens from banyan twigs or tiny pencil stubs tucked in reed tubes, made ink from crushed red soft brick, soot, plant sap, Mercurochrome, or invisible rice-water/lemon-juice ink, and hid copies inside broom handles, trouser hems, and matchboxes to pass hand-to-hand across cells."
   },
   {
     "id": "EXP_HIST_ARCHITECTURE_PHU_KHANH",

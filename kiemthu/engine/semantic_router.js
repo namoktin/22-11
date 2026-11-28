@@ -195,8 +195,10 @@ function analyzeDiscourseMode(rawText, normText = null) {
     'be xi mang', 'be nam', 'thanh cum', 'cum sat', 'cum chan', 'cum go', 'xa lim',
     'o cachot', 'cachot', 'nguc toi', 'cong ngam', 'ong cong', 'mieng cong', 'may chem',
     'luoi dao', 'cot go', 'cay bang', 'tan bang', 'la bang', 'canh bang', 'hat bang', 'tra bang', 'thach bang',
-    'dai tuong niem', 'dinh dong', 'lu huong', 'so luu but', 'to bao', 'bao bi mat',
-    'bao viet tay', 'chu but', 'ao tu', 'ao tran thu', 'ao len', 'bat sat', 'ca sat',
+    'dai tuong niem', 'dinh dong', 'lu huong', 'so luu but', 'to bao', 'bao bi mat', 'bao chi bi mat', 'bao trong tu', 'bao mat', 'bao cach mang',
+    'bao viet tay', 'chu but', 'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'bua liem', 'giay quyen', 'muc vo hinh',
+    'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers', 'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers', 'handwritten newspaper', 'handwritten newspapers', 'secret press',
+    'ao tu', 'ao tran thu', 'ao len', 'bat sat', 'ca sat',
     'gao dua', 'thung ve sinh', 'xo ve sinh', 'tau hut thuoc', 'quan but', 'buong phuc dung',
     'phuc dung', 'ban le', 'vom cuon', 'cong tac bao ton', 'trai giam nu', 'phong giam nu', 'trai nu',
     'trai nam', 'trai giam', 'phong giam tap the', 'buong giam', 'khu d', 'khu tay', 'nha de lao',
@@ -472,8 +474,9 @@ class SemanticRouter {
       'trai giam nu', 'tu nhi', 'dai tuong niem', 'phu dieu', 'so luu but', 'dai hong chung',
       'chuong dai hong', 'dat hong', 'dathong', 'chuong lon', 'thap chuong',
       'trong dong', 'dong son', 'chim lac', 'ngoi sao 14 canh', 'bao kiem', 'kiem hoang gia',
-      'luong long trieu nhat', 'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo',
-      'bao bi mat', 'truong hoc cach mang', 'the tu', 'vn 2017', '2056', 'luoc xuong', 'gao dua', 'khan tay',
+      'luong long trieu nhat', 'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'bua liem',
+      'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang', 'lam bao', 'viet bao', 'ra bao', 'xuat ban bao', 'in bao', 'giay quyen', 'muc vo hinh',
+      'truong hoc cach mang', 'the tu', 'vn 2017', '2056', 'luoc xuong', 'gao dua', 'khan tay',
       'kim khau', 'censure', 'khu tay', 'nha bep', 'benh xa', 'thung ve sinh', 'xo ve sinh', 'khe cua', 'o quan sat',
       'mang ton', 'bat sat', 'ca sat', 'mai ngoi', 'tuong gach', 'xuan phuong', '1543', 'hoang quoc viet',
       'nguyen quyen', 'le dai', 'xo viet nghe tinh', 'ma 001', 'ma 002', 'ma 003', 'ma 004',
@@ -487,7 +490,10 @@ class SemanticRouter {
       'can cuoc dat coc', 'tra may xong', 'doan hoc sinh', 'dat lich huong dan vien', 'gioi thieu bao tang',
       'quay clip gioi thieu', 've combo', 'to roi so do',
       'banyan', 'banyan tree', 'sewer escape', 'escape sewer', 'death row', 'american pilots',
-      'sacred night', 'night tour', 'bronze drum', 'royal sword', 'great bronze bell'
+      'sacred night', 'night tour', 'bronze drum', 'royal sword', 'great bronze bell',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers',
+      'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers',
+      'handwritten newspaper', 'handwritten newspapers', 'secret press', 'revolutionary school'
     ];
     return coreTerms.some(t => hasPhrase(normText, t));
   }

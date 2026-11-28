@@ -31,7 +31,7 @@ const VI_SAFE_SYNONYMS = [
   [/được dùng để/g, ['được dùng để', 'từng được tận dụng để', 'được sử dụng nhằm']],
   [/rất /g, ['rất ', 'vô cùng ', 'hết sức ', 'thực sự ']],
   [/nặng hơn hai tấn/g, ['nặng hơn hai tấn', 'có trọng lượng trên hai tấn', 'nặng tới hơn 2 tấn']],
-  [/gần 4 mét/g, ['gần 4 mét', 'cao xấp xỉ 4 mét', 'độ cao gần 4m']],
+  [/gần 4 mét/g, ['gần 4 mét', 'xấp xỉ 4 mét', 'gần 4m']],
   [/miễn phí/g, ['miễn phí', 'hoàn toàn miễn phí', 'không mất tiền vé']],
   [/giảm 50%/g, ['giảm 50%', 'ưu đãi một nửa giá vé', 'giảm nửa giá']],
   [/50\.000 VNĐ/g, ['50.000 VNĐ', '50.000 đồng', '50 nghìn đồng']],
@@ -212,13 +212,18 @@ function composeLocalHumanVariation({
     'FACILITY_INFORMATION',
     'SITE_OPERATIONS',
     'PROMPT_INJECTION',
-    'CUSTOMER_COMPLAINT'
+    'CUSTOMER_COMPLAINT',
+    'DINING_VICINITY',
+    'VICINITY_DISTANCE',
+    'SUMMARY_REQUEST',
+    'TIME_FEASIBILITY',
+    'HIGHLIGHTS_REQUEST'
   ]);
   if (BYPASS_INTENTS.has(intent)) {
     return baseReply;
   }
   // TUYỆT ĐỐI KHÔNG bọc lời dẫn lịch sử ("kể cùng bạn về dấu tích này", "câu chuyện lịch sử này") vào câu khước từ / thiếu tư liệu / dịch vụ thực địa!
-  if (/chưa được ghi nhận|không được ghi nhận|ngoài phạm vi|vượt ra ngoài kho tư liệu|chưa tìm thấy trong hồ sơ|rất tiếc.*không thể|phòng thường trực bảo vệ|quầy vé|vé vào cổng|vé tham quan|máy thuyết minh|xe buýt|điểm ghim|điều hòa|hộp xốp|cửa hàng tiện lợi|xích lô|nhà vệ sinh/i.test(baseReply)) {
+  if (/chưa ghi nhận|chưa được ghi nhận|không được ghi nhận|ngoài phạm vi|vượt ra ngoài kho tư liệu|chưa tìm thấy trong hồ sơ|rất tiếc.*không thể|phòng thường trực bảo vệ|quầy vé|vé vào cổng|vé tham quan|máy thuyết minh|xe buýt|điểm ghim|điều hòa|hộp xốp|cửa hàng tiện lợi|xích lô|nhà vệ sinh/i.test(baseReply)) {
     return baseReply;
   }
 
@@ -300,7 +305,8 @@ function composeLocalHumanVariation({
     const closing = closings[Math.floor(seed / 19) % closings.length];
 
     let assembled = '';
-    if (opener) {
+    const alreadyHasDocentLead = /^(Mình\s+xin\s+|Dạ\s+mình\s+xin\s+|Theo\s+(?:tư\s+liệu|hồ\s+sơ))/i.test(phrased[0]);
+    if (opener && !alreadyHasDocentLead) {
       let firstSent = phrased[0]
         .replace(/^(Dạ\s+chào\s+bạn,\s*|Dạ,\s*|Chào\s+bạn,\s*|Chào\s+anh\s+chị,\s*|Bạn\s+yên\s+tâm\s+nhé[,:]?\s*|Bạn\s+cứ\s+bình\s+tĩnh\s+nhé[,:]?\s*|Hello,\s*)/i, '')
         .replace(/^(mình\s+xin\s+(?:chia\s+sẻ|thông\s+tin|giới\s+thiệu|tóm\s+tắt)[^:]{0,48}:\s*)/i, '');

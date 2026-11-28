@@ -374,23 +374,58 @@ class NlpProcessor {
     }
 
     // 1. Kiểm tra Chuyển hướng chủ đề rõ ràng (Topic Shift)
+    // Câu nào nêu rõ chủ thể/chủ đề mới (bao gồm "vượt ngục", báo bí mật, hiện vật, dịch vụ...) thì KHÔNG được coi là nối tiếp chủ đề cũ!
+    const lastTopicNorm = this.normalize(
+      `${lastTurnContext.lastTopic || ''} ${lastTurnContext.lastTopicName || ''} ${(lastTurnContext.entityHistory || []).map(e => (typeof e === 'string' ? e : (e.name || e.id || ''))).join(' ')}`
+    );
+    const prevContextIsEscape = /\b(vuot nguc|cong ngam|tran tu binh|1945|1951)\b/.test(lastTopicNorm);
+    const hasAnaphoricEscapeRef = (
+      norm.includes(' cuoc vuot nguc do ') || norm.includes(' cuoc vuot nguc ay ') ||
+      norm.includes(' vuot nguc do ') || norm.includes(' vuot nguc ay ')
+    );
+
     const independentEntities = [
       've vao cong', 'gia ve', 'gio mo cua', 'gui do', 'nha ve sinh', 'toilet', 'wc',
-      'cay bang', 'may chem', 'cong ngam', 'phi cong', 'john mccain', 'hoang van thu',
-      'nguyen thai hoc', 'cachot', 'xa lim', 'lang hoa lo', 'phu khanh', 'maison centrale',
-      'tran tu binh', 'nguyen duc canh', 'nguyen hoang ton'
+      'gui xe', 'do xe', 'bai xe', 'bai gui xe', 'parking',
+      'san bay', 'noi bai', 'airport', 'ho guom', 'ho hoan kiem',
+      'cay bang', 'banyan', 'may chem', 'guillotine', 'cong ngam', 'vuot nguc', 'tron tu', 'escape',
+      'phi cong', 'john mccain', 'hanoi hilton', 'hoang van thu',
+      'nguyen thai hoc', 'cachot', 'nguc toi', 'xa lim', 'lang hoa lo', 'phu khanh', 'maison centrale',
+      'tran tu binh', 'nguyen duc canh', 'nguyen hoang ton', 'phan boi chau', 'nguyen thi minh khai',
+      'hoang ngan', 'do nhuan', 'pham thi van', 'truong chinh', 'le duan', 'le lien',
+      'trong dong', 'dong son', 'bao kiem', 'kiem hoang gia', 'dat hong', 'dai hong chung',
+      'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang',
+      'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'bua liem', 'truong hoc cach mang',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'clandestine newspaper',
+      'tour dem', 'dem thieng lieng', 'trai nu', 'trai giam nu', 'dai tuong niem', 'phu dieu',
+      'cum sat', 'cum chan', 'phong giam tap the', 'khu d', 'audioguide', 'tai nghe',
+      'chup anh', 'quay phim', 'quay luu niem', 'dia chi', 'xe lan',
+      'thoi noi', 'sinh nhat', 'quan pho', 'chuyen cuoi', 'thoi tiet', 'troi mua'
     ];
-    const mentionsOtherEntity = independentEntities.some(e => norm.includes(' ' + e + ' '));
-    if (mentionsOtherEntity && !norm.includes('so voi') && !norm.includes('tuong tu') && !norm.includes('va')) {
+    const matchedIndepEntities = independentEntities.filter(e => norm.includes(' ' + e + ' '));
+    const isAnaphoricEscapeFollowUp = hasAnaphoricEscapeRef && prevContextIsEscape &&
+      matchedIndepEntities.every(e => e === 'vuot nguc' || e === 'cong ngam' || e === 'tran tu binh');
+    const mentionsOtherEntity = matchedIndepEntities.length > 0 && !isAnaphoricEscapeFollowUp;
+    const isExplicitComparison = norm.includes(' so voi ') || norm.includes(' tuong tu ') || norm.includes(' khac gi voi ');
+    if (mentionsOtherEntity && !isExplicitComparison) {
       return {
         isFollowUp: false,
+        isContinuation: false,
         resolvedQuery: spokenClean || raw,
         topic: null,
         isComparisonExpansion: false
       };
     }
 
-    // 2. Nhận diện câu hỏi mở rộng / so sánh
+    // 2. Nhận diện câu hỏi nối tiếp trực tiếp ("Kể tiếp đi", "Nói tiếp đi", "Thêm chi tiết đi", "Còn gì nữa không?")
+    const continuationPatterns = [
+      'ke tiep', 'noi tiep', 'ke them', 'noi them', 'tiep di', 'tiep tuc',
+      'them chi tiet', 'chi tiet hon', 'ke ro hon', 'noi ky hon', 'giai thich them',
+      'con gi nua', 'con nua khong', 'tell me more', 'continue', 'go on', 'more details', 'what else'
+    ];
+    const isContinuation = continuationPatterns.some(p => norm.includes(' ' + p + ' '));
+
+    // 2.5. Nhận diện câu hỏi mở rộng / so sánh
     const isComparisonExpansion = [
       'tuong tu', 'khac khong', 'hien vat nao khac', 'co gi giong', 'co thu nao khac',
       'con cai gi khac', 'khu vuc khac', 'khac nua khong'
@@ -399,7 +434,7 @@ class NlpProcessor {
     // 3. Nhận diện đại từ thay thế & các trạng thái câu tỉnh lược (elliptical questions)
     const followUpPronouns = [
       ' no ', ' vat nay ', ' cai nay ', ' o do ', ' cho nay ', ' khu nay ', ' khu do ', ' noi do ', ' gian do ',
-      ' ong ay ', ' ba ay ', ' nguoi nay ', ' nhan vat nay ', ' bac ay ', ' dong chi ay ', ' ho ', ' o day ', ' the con ', ' the con ve ',
+      ' ong ay ', ' ong do ', ' ba ay ', ' nguoi nay ', ' nhan vat nay ', ' bac ay ', ' dong chi ay ', ' ho ', ' o day ', ' the con ', ' the con ve ',
       ' cuoc vuot nguc do ', ' cuoc vuot nguc ay ', ' vuot nguc do ', ' vuot nguc ay ', ' hom ay ', ' hom do ', ' ngay ay ', ' ngay do ',
       ' nang bao nhieu ', ' cao bao nhieu ', ' lam bang gi ', ' dung de lam gi ',
       ' duoc su dung nhu the nao ', ' vi sao vay ', ' tai sao lai the ', ' bang cach nao ',
@@ -411,79 +446,133 @@ class NlpProcessor {
     const hasPronoun = followUpPronouns.some(p => norm.includes(p));
     const cleanedText = (spokenClean || raw).trim();
     const normStripped = this.normalize(cleanedText);
+    const hasEllipticalQuestionMarker = /\b(bao nhieu|may met|may kg|o dau|khi nao|nam nao|tai sao|vi sao|the nao|ra sao|y nghia|cau tao|chat lieu|ai|them|tiep)\b/.test(normStripped);
     const isVeryShort = normStripped.length >= 3 &&
       !/^[0-9\s]+$/.test(normStripped) &&
       cleanedText.split(/\s+/).length <= 5 &&
-      !/(xin chao|chao|hello|hi|hey|tam biet|bye|goodbye|cam on|thank|alo|test|ok|hihi|hehe|haha)/.test(norm);
+      hasEllipticalQuestionMarker &&
+      !/(xin chao|chao|hello|hi|hey|tam biet|bye|goodbye|cam on|thank|alo|test|ok|hihi|hehe|haha|ke chuyen)/.test(norm);
 
-    if (hasPronoun || isVeryShort || isComparisonExpansion) {
-      let rawTopicName = lastTurnContext.lastTopicName || lastTurnContext.lastTopic || '';
+    if (isContinuation || hasPronoun || isVeryShort || isComparisonExpansion) {
+      const rawTopicName = lastTurnContext.lastTopicName || lastTurnContext.lastTopic || '';
       const topicName = rawTopicName.replace(/\s*\([^)]*\)/g, '').trim() || rawTopicName;
+      const normTopicName = this.normalize(topicName);
+      const isGenericOrServiceTopic = !topicName ||
+        normTopicName === 'di tich hoa lo' ||
+        /^(chinh sach|quy dinh|gia ve|gio mo|dich vu|tien ich|bai gui xe|quan an)/.test(normTopicName) ||
+        ['TICKET_INFORMATION', 'OPENING_HOURS', 'PARKING_SUPPORT', 'DINING_VICINITY', 'VICINITY_DISTANCE', 'OUT_OF_SCOPE', 'JOKE_REQUEST'].includes(lastTurnContext.lastIntent);
+
+      // Không cho phép nối tiếp chủ đề dịch vụ (vé/giờ/gửi xe) vào câu yêu cầu kể chuyện/lịch sử!
+      if (isGenericOrServiceTopic && (isContinuation || norm.includes(' ke chuyen ') || norm.includes(' lich su '))) {
+        return {
+          isFollowUp: false,
+          isContinuation: false,
+          resolvedQuery: spokenClean || raw,
+          topic: null,
+          isComparisonExpansion: false
+        };
+      }
+
       let resolved = spokenClean || raw;
 
-      // Tìm kiếm thực thể nhân vật, hiện vật, địa điểm từ entityHistory
+      // Tìm kiếm thực thể nhân vật, hiện vật, địa điểm THẬT từ entityHistory / topicName (KHÔNG dùng mặc định cứng!)
       const history = lastTurnContext.entityHistory || [];
       let lastPerson = null;
       let lastArtifact = null;
       let lastLocation = null;
 
+      const personMatchers = ['trần tử bình', 'nguyễn đức cảnh', 'nguyễn hoàng tôn', 'nguyễn thái học', 'mccain', 'phó đức chính', 'hoàng văn thụ', 'phan bội châu', 'nguyễn thị minh khai', 'hoàng ngân', 'đỗ nhuận', 'phạm thị vân', 'trường chinh', 'lê duẩn'];
+      const artifactMatchers = ['máy chém', 'cây bàng', 'cửa cống', 'cống ngầm', 'cùm chân', 'cùm sắt', 'bát đĩa', 'tẩu thuốc', 'trống đồng', 'đại hồng chung', 'đạt hồng', 'bảo kiếm', 'báo bí mật', 'báo chí'];
+      const locationMatchers = ['cachot', 'ngục tối', 'trại', 'xà lim', 'đài tưởng niệm', 'khu d', 'sân trại', 'phòng giam', 'cổng chính'];
+
       for (let i = history.length - 1; i >= 0; i--) {
         const ent = history[i];
         const entStr = typeof ent === 'string' ? ent : (ent.name || ent.topic || '');
-        const normEnt = entStr.toLowerCase();
-        if (!lastPerson && (normEnt.includes('trần tử bình') || normEnt.includes('nguyễn đức cảnh') || normEnt.includes('nguyễn hoàng tôn') || normEnt.includes('nguyễn thái học') || normEnt.includes('mccain') || normEnt.includes('phó đức chính') || normEnt.includes('hoàng văn thụ'))) {
+        const lowEnt = entStr.toLowerCase();
+        if (!lastPerson && personMatchers.some(m => lowEnt.includes(m))) {
           lastPerson = entStr;
         }
-        if (!lastArtifact && (normEnt.includes('máy chém') || normEnt.includes('cây bàng') || normEnt.includes('cửa cống') || normEnt.includes('cống ngầm') || normEnt.includes('cùm chân') || normEnt.includes('bát đĩa') || normEnt.includes('tẩu thuốc'))) {
+        if (!lastArtifact && artifactMatchers.some(m => lowEnt.includes(m))) {
           lastArtifact = entStr;
         }
-        if (!lastLocation && (normEnt.includes('cachot') || normEnt.includes('ngục tối') || normEnt.includes('trại') || normEnt.includes('xà lim') || normEnt.includes('đài tưởng niệm'))) {
+        if (!lastLocation && locationMatchers.some(m => lowEnt.includes(m))) {
           lastLocation = entStr;
         }
       }
 
-      const activePerson = lastPerson || (topicName.includes('Trần') || topicName.includes('Nguyễn') || topicName.includes('Phó') || topicName.includes('Hoàng') || topicName.includes('McCain') ? topicName : 'đồng chí Trần Tử Bình');
-      const activeArtifact = lastArtifact || (topicName.includes('máy chém') || topicName.includes('cây bàng') || topicName.includes('cống') ? topicName : 'cỗ máy chém');
-      const activeLocation = lastLocation || (topicName.includes('Cachot') || topicName.includes('trại') || topicName.includes('xà lim') ? topicName : 'ngục tối Cachot');
+      const lowTopic = topicName.toLowerCase();
+      const activePerson = lastPerson || (personMatchers.some(m => lowTopic.includes(m)) ? topicName : null);
+      const activeArtifact = lastArtifact || (artifactMatchers.some(m => lowTopic.includes(m)) ? topicName : null);
+      const activeLocation = lastLocation || (locationMatchers.some(m => lowTopic.includes(m)) ? topicName : null);
 
-      // Giải mã đại từ nhân xưng: ông ấy, bác ấy, đồng chí ấy, người này
-      if (norm.includes(' ong ay ') || norm.includes(' bac ay ') || norm.includes(' dong chi ay ') || norm.includes(' nguoi nay ') || norm.includes(' nhan vat nay ') || norm.includes(' ong do ')) {
+      // Xử lý câu nối tiếp "Kể tiếp đi" / "Nói thêm đi" giữ nguyên ngữ cảnh chủ đề hiện tại
+      if (isContinuation && topicName) {
+        const isEnCont = /\b(tell me more|continue|go on|more details|what else)\b/.test(norm);
+        resolved = isEnCont
+          ? `Tell me more details about ${topicName}`
+          : `Kể thêm chi tiết về ${topicName}`;
+        return {
+          isFollowUp: true,
+          isContinuation: true,
+          resolvedQuery: resolved,
+          topic: lastTurnContext.lastTopic,
+          topicName,
+          isComparisonExpansion: false
+        };
+      }
+
+      // Giải mã đại từ nhân xưng: CHỈ thay khi thực sự có nhân vật trong phiên (không bịa mặc định Trần Tử Bình!)
+      if (activePerson && (norm.includes(' ong ay ') || norm.includes(' bac ay ') || norm.includes(' dong chi ay ') || norm.includes(' nguoi nay ') || norm.includes(' nhan vat nay ') || norm.includes(' ong do '))) {
         resolved = resolved.replace(/(?:^|\s)(ông ấy|ông đó|bác ấy|đồng chí ấy|người này|nhân vật này)(?=\s|[.,!?]|$)/gi, ' ' + activePerson).trim();
       }
 
-      // Giải mã đại từ vị trí: ở đó, chỗ này, khu đó, nơi đó
-      if (norm.includes(' o do ') || norm.includes(' cho nay ') || norm.includes(' khu do ') || norm.includes(' khu nay ') || norm.includes(' noi do ') || norm.includes(' gian do ')) {
+      // Giải mã đại từ vị trí: CHỈ thay khi thực sự có địa điểm/khu vực trong phiên (không bịa mặc định Cachot!)
+      if (activeLocation && (norm.includes(' o do ') || norm.includes(' cho nay ') || norm.includes(' khu do ') || norm.includes(' khu nay ') || norm.includes(' noi do ') || norm.includes(' gian do '))) {
         resolved = resolved.replace(/(?:^|\s)(ở đó|chỗ này|khu đó|khu này|nơi đó|gian đó)(?=\s|[.,!?]|$)/gi, ' tại ' + activeLocation).trim();
       }
 
-      // Giải mã đại từ hiện vật: cửa cống đó, cỗ máy đó, vật này, cái này, nó
-      if (norm.includes(' cua cong do ') || norm.includes(' cua cong ay ') || norm.includes(' con duong do ')) {
+      // Giải mã đại từ hiện vật: CHỈ thay khi thực sự có hiện vật trong phiên (không bịa mặc định máy chém!)
+      const hasSewerInContext = prevContextIsEscape || (activeArtifact && activeArtifact.toLowerCase().includes('cống'));
+      if (hasSewerInContext && (norm.includes(' cua cong do ') || norm.includes(' cua cong ay ') || norm.includes(' con duong do '))) {
         resolved = resolved.replace(/(?:^|\s)(cửa cống đó|cửa cống ấy|con đường đó)(?=\s|[.,!?]|$)/gi, ' cửa cống ngầm vượt ngục tại Hỏa Lò').trim();
-      } else if (norm.includes(' no ') || norm.includes(' vat nay ') || norm.includes(' cai nay ') || norm.includes(' co may do ') || norm.includes(' hien vat nay ')) {
+      } else if (activeArtifact && (norm.includes(' no ') || norm.includes(' vat nay ') || norm.includes(' cai nay ') || norm.includes(' co may do ') || norm.includes(' hien vat nay '))) {
         resolved = resolved.replace(/(?:^|\s)(nó|vật này|cái này|cỗ máy đó|hiện vật này)(?=\s|[.,!?]|$)/gi, ' ' + activeArtifact).trim();
       }
 
-      // Giải mã đại từ sự kiện: cuộc vượt ngục đó, cuộc vượt ngục ấy, hôm ấy, hôm đó
-      if (norm.includes(' cuoc vuot nguc do ') || norm.includes(' cuoc vuot nguc ay ') || norm.includes(' vuot nguc do ') || norm.includes(' vuot nguc ay ')) {
+      // Giải mã đại từ sự kiện vượt ngục: CHỈ kích hoạt khi ngữ cảnh trước đó thực sự là Trần Tử Bình / vượt ngục 1945!
+      const prevIs1945Escape = prevContextIsEscape && (lastTopicNorm.includes('tran tu binh') || lastTopicNorm.includes('1945') || lastTopicNorm.includes('trai j') || lastTopicNorm.includes('cong ngam'));
+      if (prevIs1945Escape && (norm.includes(' cuoc vuot nguc do ') || norm.includes(' cuoc vuot nguc ay ') || norm.includes(' vuot nguc do ') || norm.includes(' vuot nguc ay '))) {
         resolved = resolved.replace(/(?:^|\s)(cuộc\s*vượt\s*ngục\s*(?:đó|ấy)|vượt\s*ngục\s*(?:đó|ấy))(?=\s|[.,!?]|$)/gi, ' Cuộc vượt ngục qua cống ngầm tháng 3/1945 của Trần Tử Bình').trim();
       }
-      if (norm.includes(' hom ay ') || norm.includes(' hom do ') || norm.includes(' ngay ay ') || norm.includes(' ngay do ')) {
+      if (prevIs1945Escape && (norm.includes(' hom ay ') || norm.includes(' hom do ') || norm.includes(' ngay ay ') || norm.includes(' ngay do '))) {
         resolved = resolved.replace(/(?:^|\s)(hôm\s*ấy|hôm\s*đó|ngày\s*ấy|ngày\s*đó)(?=\s|[.,!?]|$)/gi, ' Trong cuộc vượt ngục đêm 12/3/1945 của Trần Tử Bình').trim();
       }
 
-      // Xử lý câu hỏi ngắn dạng tỉnh lược
-      if (norm.includes('bang cach nao') && !resolved.toLowerCase().includes(activePerson.toLowerCase())) {
+      // Xử lý câu hỏi ngắn dạng tỉnh lược (không tự ý chèn chủ thể cứng!)
+      if (norm.includes('bang cach nao') && prevContextIsEscape && activePerson && !resolved.toLowerCase().includes(activePerson.toLowerCase())) {
         resolved = `${activePerson} vượt ngục bằng cách nào?`;
-      } else if ((norm.includes('xem duoc khong') || norm.includes('ra xem duoc khong')) && !resolved.toLowerCase().includes('cống') && !resolved.toLowerCase().includes('máy chém')) {
+      } else if ((norm.includes('xem duoc khong') || norm.includes('ra xem duoc khong')) && hasSewerInContext && !resolved.toLowerCase().includes('cống')) {
         resolved = `Dấu tích cửa cống ngầm vượt ngục hiện nay có xem và tham quan được không?`;
-      } else if (isComparisonExpansion) {
+      } else if (isComparisonExpansion && topicName && !isGenericOrServiceTopic) {
         resolved = `${resolved} (liên quan tới ${topicName})`;
-      } else if (isVeryShort && !resolved.toLowerCase().includes(topicName.toLowerCase())) {
+      } else if (isVeryShort && topicName && !isGenericOrServiceTopic && !resolved.toLowerCase().includes(topicName.toLowerCase())) {
         resolved = `${topicName}: ${resolved}`;
+      }
+
+      const actuallyChangedOrMatched = resolved !== (spokenClean || raw) || isComparisonExpansion || (hasPronoun && !isGenericOrServiceTopic);
+      if (!actuallyChangedOrMatched) {
+        return {
+          isFollowUp: false,
+          isContinuation: false,
+          resolvedQuery: spokenClean || raw,
+          topic: null,
+          isComparisonExpansion: false
+        };
       }
 
       return {
         isFollowUp: true,
+        isContinuation: false,
         resolvedQuery: resolved,
         topic: lastTurnContext.lastTopic,
         topicName,
@@ -493,6 +582,7 @@ class NlpProcessor {
 
     return {
       isFollowUp: false,
+      isContinuation: false,
       resolvedQuery: spokenClean || raw,
       topic: null,
       isComparisonExpansion: false

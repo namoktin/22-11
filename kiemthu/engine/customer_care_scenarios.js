@@ -542,6 +542,19 @@ class CustomerCareScenarioEngine {
         };
       }
 
+      if (isRestroom && isStorage) {
+        return {
+          scenarioId: 'FACILITY_WC_AND_STORAGE',
+          response: isEn
+            ? 'Free personal lockers for backpacks and bags are located right beside Gate No. 1 entrance (please keep high-value items with you). Clean restrooms are situated in the prison courtyard and near the souvenir shop close to the exit, clearly marked with signs.'
+            : 'Di tích Nhà tù Hỏa Lò có tủ khóa gửi đồ cá nhân miễn phí đặt ngay cạnh lối vào soát vé Cổng chính số 1 dành cho ba lô và hành lý cỡ vừa (tài sản giá trị cao bạn nên giữ bên mình). Còn khu vệ sinh (WC) sạch sẽ được bố trí tại khu vực sân trại giam và gần quầy lưu niệm ở lối ra, có biển chỉ dẫn rất rõ ràng ạ.',
+          authorityBoundary: 'Tủ gửi đồ miễn phí Cổng số 1 và nhà vệ sinh tại sân trại/lối ra.',
+          actionableGuidance: 'Gửi ba lô tại tủ khóa miễn phí Cổng số 1; nhà vệ sinh ở sân trại và gần lối ra.',
+          requiresHuman: false,
+          style: 'QUICK_ANSWER'
+        };
+      }
+
       if (isRestroom) {
         const isNearGuillotine = /máy chém|may chem/i.test(normQuery);
         const isNearBanyan = /cay bang|cây bàng|san trai|sân trại/i.test(normQuery) || userProfile?.currentSubject === 'cay_bang' || (userProfile?.contextZone && userProfile.contextZone.toLowerCase().includes('bàng'));

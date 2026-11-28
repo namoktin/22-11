@@ -54,7 +54,16 @@ const CONCEPT_CLUSTERS = {
   E_WALL: ['tuong bao', 'tuong nha tu', 'buc tuong', 'tuong da', 'manh thuy tinh', 'prison wall'],
   E_DEATHROW: ['xa lim', 'khu d', 'hoang van thu', 'ao len', 'death row'],
   E_MAISON: ['maison centrale', 'phu khanh', 'cong chinh', 'lang gom', 'kien truc'],
-  E_PRESS: ['bao bi mat', 'duoc dua duong', 'suoi reo', 'truong hoc cach mang', 'truong chinh', 'tho ca', 'viet bao'],
+  E_PRESS: [
+    'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao cach mang', 'bao mat', 'bao tu', 'to bao',
+    'lam bao', 'viet bao', 'ra bao', 'xuat ban bao', 'in bao', 'in an bao', 'chep bao', 'doc bao',
+    'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'lao tu do', 'con duong chinh', 'bua liem', 'chien thang', 'but chien',
+    'truong hoc cach mang', 'truong chinh', 'tho ca', 'giay quyen', 'vo bao thuoc', 'muc vo hinh', 'nuoc com',
+    'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers',
+    'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers',
+    'handwritten newspaper', 'handwritten newspapers', 'secret press', 'secret publications', 'underground publications',
+    'newspaper', 'newspapers'
+  ],
   E_WOMEN: ['trai giam nu', 'trai nu', 'nu tu', 'tu nhi', 'minh khai', 'quang thai', 'pham thi van', 'hoang ngan'],
   E_MEMORIAL: ['dai tuong niem', 'phu dieu', 'le lien', 'dinh dong', 'lu huong', 'so luu but'],
   E_CONSERVATION: ['sa ban', 'tuong sap', 'composite', 'bao ton', 'phuc dung', 'quay luu niem', 'tui tote']

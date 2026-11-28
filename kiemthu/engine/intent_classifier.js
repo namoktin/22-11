@@ -82,7 +82,8 @@ class IntentClassifier {
       'lang hoa lo', 'lang phu khanh', 'khoa co chan', 'cong tay', 'xieng xich',
       'dong kinh nghia thuc', 'trong dong', 'dong son', 'chim lac', 'dat hong',
       'dai hong chung', 'chuong dai hong', 'dathong', 'chuong lon', 'bao kiem', 'kiem hoang gia', 'luong long trieu nhat',
-      'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'bao bi mat', 'truong hoc cach mang',
+      'dep lop', 'rau muong', 'com tu', 'bua an tu', 'duoc dua duong', 'suoi reo', 'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang', 'lao tu tap chi', 'con duong chinh', 'bua liem', 'truong hoc cach mang', 'giay quyen', 'muc vo hinh',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers', 'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers', 'handwritten newspaper', 'handwritten newspapers', 'secret press',
       'the tu', 'vn 2017', '2056', 'luoc xuong', 'gao dua', 'khan tay', 'kim khau', 'censure', 'khu tay',
       'nha bep', 'benh xa', 'khe cua', 'o quan sat', 'mang ton', 'ca sat', 'mai ngoi', 'tuong gach', 'xuan phuong',
       '1543', 'hoang quoc viet', 'nguyen quyen', 'le dai', 'xo viet nghe tinh',
@@ -96,12 +97,19 @@ class IntentClassifier {
     if (norm.includes('bao kiem') || norm.includes('kiem hoang gia') || norm.includes('luong long trieu nhat') || norm.includes('co vat hoang cung') || norm.includes('ma 004') || norm.includes('so 004')) return 'bao_kiem';
     if (norm.includes('may chem') || norm.includes('guillotine') || norm.includes('luoi dao') || norm.includes('cot go')) return 'may_chem';
     if (norm.includes('cay bang') || norm.includes('la bang') || norm.includes('hat bang') || norm.includes('canh bang') || norm.includes('tra bang') || norm.includes('thach bang')) return 'cay_bang';
-    if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong')) return 'cong_ngam';
+    if (norm.includes('cong ngam') || norm.includes('vuot nguc') || norm.includes('nap cong')) {
+      if (norm.includes('1945') || norm.includes('tran tu binh') || norm.includes('nhat dao chinh') || norm.includes('hon 100') || norm.includes('100 can bo')) return 'vuot_nguc_1945';
+      return 'cong_ngam';
+    }
     if (norm.includes('phi cong') || norm.includes('hanoi hilton') || norm.includes('mccain') || norm.includes('peterson')) return 'phi_cong';
     if (norm.includes('cachot') || norm.includes('nguc toi') || norm.includes('ham toi') || norm.includes('biet giam')) return 'cachot';
     if (norm.includes('xa lim') || norm.includes('tu hinh') || norm.includes('hoang van thu') || norm.includes('nguyen thai hoc') || norm.includes('nguyen duc canh')) return 'xa_lim_tu_hinh';
     if (norm.includes('maison centrale') || norm.includes('cong so 1') || norm.includes('cong chinh') || norm.includes('phu khanh') || norm.includes('lang hoa lo') || norm.includes('tuong da')) return 'maison_centrale';
-    if (norm.includes('but') || norm.includes('gach non') || norm.includes('muoi than') || norm.includes('bao chi') || norm.includes('ao len')) return 'hien_vat_sinh_hoat';
+    if (norm.includes('but') || norm.includes('gach non') || norm.includes('muoi than') || norm.includes('bao chi') || norm.includes('ao len') ||
+        norm.includes('bao bi mat') || norm.includes('bao viet tay') || norm.includes('bao trong tu') || norm.includes('bao mat') || norm.includes('bao cach mang') ||
+        norm.includes('duoc dua duong') || norm.includes('suoi reo') || norm.includes('lao tu tap chi') || norm.includes('con duong chinh') || norm.includes('bua liem') ||
+        norm.includes('lam bao') || norm.includes('viet bao') || norm.includes('ra bao') || norm.includes('xuat ban bao') ||
+        norm.includes('secret newspaper') || norm.includes('underground press') || norm.includes('underground newspaper') || norm.includes('clandestine newspaper') || norm.includes('clandestine press') || norm.includes('prison newspaper') || norm.includes('handwritten newspaper') || norm.includes('secret press')) return 'hien_vat_sinh_hoat';
     if (norm.includes('ve sinh') || norm.includes('toilet') || norm.includes('wc')) return 'nha_ve_sinh';
     if (norm.includes('gia ve') || norm.includes('mua ve') || norm.includes('tien ve') || norm.includes('ve vao') || norm.includes('ve tham quan') || norm.includes('tour dem')) return 've_tham_quan';
     if (norm.includes('gio mo') || norm.includes('dong cua') || norm.includes('tet nguyen dan') || norm.includes('ngay le')) return 'gio_mo_cua';
@@ -157,8 +165,11 @@ class IntentClassifier {
     }
 
     const secondary = [];
+    const ticketSecPhrases = (primaryIntent === 'PARKING_SUPPORT' || primaryIntent === 'AUDIO_GUIDE_SUPPORT')
+      ? ['giá vé', 'vé vào', 'ticket price', 'admission']
+      : ['giá vé', 'vé vào', 'bao nhiêu tiền', 'ticket price', 'admission'];
     const checks = [
-      ['TICKET_INFORMATION', ['giá vé', 'vé vào', 'bao nhiêu tiền', 'ticket price', 'admission']],
+      ['TICKET_INFORMATION', ticketSecPhrases],
       ['OPENING_HOURS', ['giờ mở cửa', 'mở cửa mấy giờ', 'mấy giờ mở cửa', 'mấy giờ đóng cửa', 'đóng cửa', 'nghỉ trưa', 'opening hours']],
       ['FACILITY_INFORMATION', ['nhà vệ sinh', 'wc', 'toilet', 'gửi đồ', 'balo', 'locker', 'restroom']],
       ['PARKING_SUPPORT', ['gửi xe', 'đỗ xe', 'bãi xe', 'parking']],
@@ -283,6 +294,39 @@ class IntentClassifier {
         aspect: 'SOCIAL',
         confidence: 0.96,
         reason: 'Khách hỏi về danh tính / khen ngợi trợ lý ảo'
+      };
+    }
+
+    // 0.068. CỔNG XÁC ĐỊNH KHOẢNG CÁCH SÂN BAY NỘI BÀI (28-30 km — TUYỆT ĐỐI không để LLM ứng biến!)
+    // Không cướp câu đặt vé máy bay / hãng bay thương mại (Vietnam Airlines, Vietjet, mua vé máy bay).
+    const isFlightBookingOnly = hasPhrase(norm, 'mua ve may bay') || hasPhrase(norm, 've may bay') || hasPhrase(norm, 'vietnam airlines') || hasPhrase(norm, 'vietjet');
+    const isNoiBaiDistance = !isFlightBookingOnly && (
+      hasPhrase(norm, 'san bay noi bai') ||
+      (hasPhrase(norm, 'noi bai') && /\b(bao xa|bao nhieu km|may km|cach|bao lau|may phut|di tu|di ra|ra san bay|den san bay|ve hoa lo|tu hoa lo|tu day|san bay|how far|distance|km|minutes|airport)\b/.test(norm))
+    );
+    if (isNoiBaiDistance) {
+      return {
+        intent: INTENTS.VICINITY_DISTANCE,
+        subIntent: 'AIRPORT_NOI_BAI',
+        subject: 'san_bay_noi_bai',
+        aspect: 'DISTANCE_TRAVEL',
+        confidence: 0.99,
+        reason: 'Cổng xác định khoảng cách từ Di tích Hỏa Lò ra Sân bay Nội Bài (28–30 km)'
+      };
+    }
+
+    // 0.069. CỔNG TỪ CHỐI XÁC ĐỊNH HẸP CHO THỰC ĐƠN / TIỆC CÁ NHÂN NGOÀI PHẠM VI (thôi nôi, sinh nhật, tiệc cưới, mâm cỗ)
+    // Giữ cổng HẸP để KHÔNG chặn nhầm phở/ẩm thực quanh di tích, chuyện cười hay thời tiết!
+    const isOffTopicPartyMenu = /\b(thoi noi|tiec thoi noi|tiec day thang|day thang|tiec sinh nhat|to chuc sinh nhat|thuc don sinh nhat|thuc don tiec|mon an tiec|dai tiec|tiec cuoi|tiec tat nien|mam co|co thoi noi|first birthday party|birthday party menu)\b/.test(norm) &&
+      !hasPhrase(norm, 'tiec gala');
+    if (isOffTopicPartyMenu) {
+      return {
+        intent: INTENTS.OUT_OF_SCOPE,
+        subIntent: 'STRICT_REFUSAL_OFF_TOPIC_EVENT',
+        subject: null,
+        aspect: 'OUT_OF_BOUNDS',
+        confidence: 0.99,
+        reason: 'Yêu cầu gợi ý thực đơn/món ăn tiệc cá nhân (thôi nôi, sinh nhật) nằm ngoài phạm vi Di tích Hỏa Lò'
       };
     }
 
@@ -1287,7 +1331,8 @@ class IntentClassifier {
       'may chem', 'guillotine', 'cay bang', 'banyan', 'banyan tree', 'cong ngam', 'sewer escape', 'escape sewer', 'cachot', 'cum sat', 'cum chan',
       'bo quan ao', 'quan ao tu nhan', 'thung ve sinh', 'lap la', 'bat sat', 'que dan',
       'ban chai', 'tau thuoc', 'gang tay', 'but canh bang', 'gach non', 'muoi than',
-      'bao chi bi mat', 'to bao lao tu', 'bua liem', 'ao len', 'hien vat', 'vat dung',
+      'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang', 'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'to bao lao tu', 'bua liem', 'ao len', 'hien vat', 'vat dung',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers', 'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers', 'handwritten newspaper', 'handwritten newspapers', 'secret press',
       'nang bao nhieu', 'cao bao nhieu', 'lam bang gi', 'chat lieu', 'cau tao'
     ];
     if (exhibitSignals.some(s => hasPhrase(norm, s))) {

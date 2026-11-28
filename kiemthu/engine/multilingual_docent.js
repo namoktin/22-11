@@ -134,12 +134,12 @@ const DOCENT_MESSAGES = {
   },
 
   PARKING_SUPPORT: {
-    vi: 'Về chỗ gửi xe khi tham quan Di tích Hỏa Lò: Xe máy bạn có thể gửi tại khu vực trước cổng di tích theo hướng dẫn trực tiếp của nhân viên bảo vệ trên phố Hỏa Lò. Đối với ô tô, do khuôn viên di tích không có bãi đỗ xe riêng, bạn vui lòng gửi xe tại tòa nhà Tháp Hà Nội (Hanoi Towers) ngay kế bên số 49 Hai Bà Trưng, hoặc các bãi gửi xe công cộng trên phố Dã Tượng và Lý Thường Kiệt nhé.',
-    en: 'Parking guidelines for Hoa Lo Prison: Motorbikes can be parked on the designated sidewalk directly outside the main gate under the guidance of our security guards. For cars, as the relic does not have an on-site automobile lot, please park at the adjacent Hanoi Towers building (No. 49 Hai Ba Trung) or at public parking lots along Da Tuong and Ly Thuong Kiet streets.',
-    fr: 'Concernant le stationnement près de la Prison de Hoa Lo : les motos peuvent être garées devant l’entrée principale sous la direction des agents de sécurité. Pour les voitures, le site ne disposant pas de parking privé, vous pouvez vous garer au bâtiment voisin Hanoi Towers au 49 rue Hai Ba Trung, ou dans les parkings publics des rues Da Tuong et Ly Thuong Kiet.',
-    ja: '駐車場のご案内です。バイクはホアロー通り沿いの正門前エリアにて警備員の誘導に従って駐車いただけます。お車につきましては敷地内に専用駐車場がないため、隣接するハイバーチュン通り49番のハノイタワーズ、またはザートゥオン通りやリートゥオンキエット通りの公共駐車場をご利用ください。',
-    ko: '호아로 수용소 주차 안내입니다. 오토바이는 호아로 거리 정문 앞 지정 구역에 경비 직원의 안내에 따라 주차하실 수 있습니다. 승용차는 유적 내 전용 주차장이 없으므로 바로 옆 하이바쯩 거리 49번지 하노이 타워 주차장이나 자뜨엉 거리, 리트엉끼엣 거리의 공영 주차장을 이용해 주세요.',
-    zh: '关于火炉监狱的停车指引：摩托车可在火炉街正门外指定区域听从保安指引停放；小汽车因景区内未设专用停车场，建议停放至紧邻的二征夫人街49号河内塔大楼，或野象街与李常杰街沿线的公共停车场。'
+    vi: 'Về chỗ gửi xe và phí gửi xe khi tham quan Di tích Hỏa Lò: mức phí gửi xe cố định là 50.000đ/lượt. Với xe máy, bạn có thể gửi tại khu vực trước cổng di tích theo hướng dẫn trực tiếp của nhân viên bảo vệ trên phố Hỏa Lò. Đối với ô tô, do khuôn viên di tích không có bãi đỗ xe riêng, bạn vui lòng gửi xe tại tòa nhà Tháp Hà Nội (Hanoi Towers) ngay kế bên số 49 Hai Bà Trưng, hoặc các bãi gửi xe công cộng trên phố Dã Tượng và Lý Thường Kiệt nhé.',
+    en: 'Parking near Hoa Lo Prison Relic has a fixed fee of 50,000 VND per visit (50.000đ/lượt). Motorbikes can be parked on the designated sidewalk directly outside the main gate under the guidance of our security guards. For cars, as the relic does not have an on-site automobile lot, please park at the adjacent Hanoi Towers building (No. 49 Hai Ba Trung) or at public parking lots along Da Tuong and Ly Thuong Kiet streets.',
+    fr: 'Concernant le stationnement près de la Prison de Hoa Lo, le tarif fixe de parking est de 50 000 dongs vietnamiens par visite. Les motos peuvent être garées devant l’entrée principale sous la direction des agents de sécurité. Pour les voitures, le site ne disposant pas de parking privé, vous pouvez vous garer au bâtiment voisin Hanoi Towers au 49 rue Hai Ba Trung, ou dans les parkings publics des rues Da Tuong et Ly Thuong Kiet.',
+    ja: '駐車場のご案内です。駐車料金は1回あたり50,000ベトナムドンでございます。バイクはホアロー通り沿いの正門前エリアにて警備員の誘導に従って駐車いただけます。お車につきましては敷地内に専用駐車場がないため、隣接するハイバーチュン通り49番のハノイタワーズ、またはザートゥオン通りやリートゥオンキエット通りの公共駐車場をご利用ください。',
+    ko: '호아로 수용소 주차 안내입니다. 주차 요금은 1회 50,000 베트남 동입니다. 오토바이는 호아로 거리 정문 앞 지정 구역에 경비 직원의 안내에 따라 주차하실 수 있습니다. 승용차는 유적 내 전용 주차장이 없으므로 바로 옆 하이바쯩 거리 49번지 하노이 타워 주차장이나 자뜨엉 거리, 리트엉끼엣 거리의 공영 주차장을 이용해 주세요.',
+    zh: '关于火炉监狱的停车指引：固定停车费为每次50,000越南盾。摩托车可在火炉街正门外指定区域听从保安指引停放；小汽车因景区内未设专用停车场，建议停放至紧邻的二征夫人街49号河内塔大楼，或野象街与李常杰街沿线的公共停车场。'
   },
 
   PHOTOGRAPHY_POLICY: {
@@ -167,6 +167,15 @@ const DOCENT_MESSAGES = {
     ja: 'ホアロー収容所からホアンキエム湖までは約800メートルから1キロメートルで、徒歩およそ10分から15分です。リートゥオンキエット通りまたはトニュオム通りをまっすぐ進まれると分かりやすく便利です。',
     ko: '호아로 수용소에서 호안끼엠 호수까지는 약 800미터에서 1킬로미터 거리로, 도보로 10분에서 15분 정도 걸립니다. 리트엉끼엣 거리나 터뉴옴 거리를 따라 걸어가시면 편리하게 도착하실 수 있습니다.',
     zh: '从火炉监狱步行前往还剑湖约800米至1公里，悠闲步行大约需要10至15分钟。您可以沿火炉街转入李常杰街或染匠街直行，路线十分便利。'
+  },
+
+  VICINITY_AIRPORT_NOI_BAI: {
+    vi: 'Dạ từ Di tích Lịch sử Nhà tù Hỏa Lò (số 1 phố Hỏa Lò, quận Hoàn Kiếm) đến Sân bay Quốc tế Nội Bài có khoảng cách khoảng 28–30 km. Di chuyển bằng taxi hoặc xe công nghệ theo hướng cầu Nhật Tân – đường Võ Nguyên Giáp thường mất khoảng 40–50 phút tùy tình hình giao thông thực tế bạn nhé.',
+    en: 'The distance from Hoa Lo Prison Historical Relic (No. 1 Hoa Lo Street, Hoan Kiem) to Noi Bai International Airport is approximately 28–30 km. By taxi or ride-hailing via Nhat Tan Bridge and Vo Nguyen Giap Avenue, the trip typically takes around 40–50 minutes depending on traffic.',
+    fr: 'La distance entre la Prison de Hoa Lo (1 rue Hoa Lo, Hoan Kiem) et l’aéroport international de Noi Bai est d’environ 28–30 km, soit environ 40 à 50 minutes en taxi via le pont Nhat Tan selon la circulation.',
+    ja: 'ホアロー収容所歴史遺跡（ホアロー通り1番）からノイバイ国際空港までの距離は約28〜30 kmです。ニャッタン橋経由でタクシーをご利用の場合、交通状況によりますが所要時間はおよそ40〜50分です。',
+    ko: '호아로 수용소 역사 유적에서 노이바이 국제공항까지의 거리는 약 28–30 km입니다. 녓떤 대교 방면으로 택시나 차량 호출 서비스를 이용하면 교통 상황에 따라 보통 40~50분 정도 걸립니다.',
+    zh: '从河内火炉监狱历史遗迹（火炉街1号）前往内排国际机场的距离约为28–30公里。乘出租车或网约车经日新大桥方向通常需要约40至50分钟，视实时交通情况而定。'
   },
 
   SUMMARY_3_SENTENCES: {

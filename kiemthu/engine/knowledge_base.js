@@ -178,14 +178,21 @@ const HISTORICAL_EXHIBITS = {
     id: 'hien_vat_sinh_hoat',
     name: 'Hiện vật sinh hoạt & Báo chí bí mật',
     category: 'Trường học cách mạng & Hiện vật',
-    keywords: ['but canh bang', 'gach non', 'muoi than', 'bao chi bi mat', 'lao tu', 'bua liem', 'sinh hoat', 'truong hoc cach mang'],
+    keywords: [
+      'but canh bang', 'gach non', 'muoi than', 'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang',
+      'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'lao tu', 'bua liem', 'chien thang', 'lam bao', 'viet bao', 'ra bao', 'xuat ban bao',
+      'giay quyen', 'muc vo hinh', 'sinh hoat', 'truong hoc cach mang',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'underground newspapers',
+      'clandestine press', 'clandestine newspaper', 'clandestine newspapers', 'prison newspaper', 'prison newspapers',
+      'handwritten newspaper', 'handwritten newspapers', 'secret press'
+    ],
     facts: [
-      'Người tù đã mài cành bàng thành ngòi bút chấm mực.',
-      'Dùng bột gạch non màu đỏ hoặc muội than củi hòa với nước để làm mực viết trên giấy vệ sinh hoặc vải vụn.',
-      'Các tờ báo cách mạng bí mật như báo "Lao Tù", báo "Búa Liềm" được chép tay cẩn thận và chuyền tay nhau đọc bí mật.',
+      'Người tù đã mài cành bàng thành ngòi bút chấm mực hoặc kẹp mẩu bút chì ngắn vào ống sậy để viết.',
+      'Dùng bột gạch non màu đỏ, muội than củi, nhựa cây, thuốc đỏ hoặc mực vô hình (nước cơm, nước chanh) viết chữ siêu nhỏ trên giấy quyến cuốn thuốc lá, vỏ bao thuốc, giấy vệ sinh hoặc vải vụn.',
+      'Các tờ báo cách mạng bí mật tiêu biểu gồm Đuốc Đưa Đường, Suối Reo, Lao Tù Tạp Chí, Con Đường Chính, Búa Liềm, Chiến Thắng được chép tay cẩn thận, giấu vào cán chổi, gấu quần, hộp diêm và chuyền tay nhau đọc bí mật.',
       'Các đồ dùng sinh hoạt được tái chế khéo léo từ vỏ đồ hộp nhôm, thìa mài sắc làm dao gọt, thể hiện tinh thần biến ngục tù thành trường học cách mạng.'
     ],
-    directAnswer: 'Các hiện vật sinh hoạt như ngòi bút cành bàng, mực viết làm từ muội than và bột gạch non, cùng các tờ báo bí mật chép tay là minh chứng phi thường cho ý chí biến ngục tối Hỏa Lò thành trường học cách mạng.'
+    directAnswer: 'Các hiện vật sinh hoạt như ngòi bút cành bàng, mực viết làm từ muội than và bột gạch non, cùng các tờ báo bí mật chép tay như Đuốc Đưa Đường, Suối Reo, Lao Tù Tạp Chí, Búa Liềm viết trên giấy quyến thuốc lá và giấu trong cán chổi, gấu quần là minh chứng phi thường cho ý chí biến ngục tối Hỏa Lò thành trường học cách mạng.'
   },
 
   dai_tuong_niem: {
@@ -1062,6 +1069,8 @@ class KnowledgeBase {
       targetId = 'POLICY_HOURS_DAYTIME';
     } else if (norm.includes('gia ve') || norm.includes('ve vao') || norm.includes('sinh vien') || norm.includes('hoc sinh') || norm.includes('hssv') || norm.includes('bao nhieu tien')) {
       targetId = 'POLICY_TICKET_DAYTIME';
+    } else if (norm.includes('gui xe') || norm.includes('do xe') || norm.includes('bai xe') || norm.includes('cho de xe') || norm.includes('parking')) {
+      targetId = 'POLICY_PARKING_FEE';
     } else if (norm.includes('gui do') || norm.includes('balo') || norm.includes('ve sinh') || norm.includes('toilet') || norm.includes('wc')) {
       targetId = 'POLICY_FACILITY_STORAGE_WC';
     }
@@ -1141,7 +1150,10 @@ class KnowledgeBase {
       'phu dieu', 'dai tuong niem', 'dai hong chung', 'chua ba da',
       '1896', '1899', '1945', '1951', '1954', '1964', '1973',
       'tu tu', 'tu chinh tri', 'song sat', 'so mat tham', 'giam nguc',
-      'thung ve sinh', 'lap la', 'bat sat', 'que dan', 'so dang ky', 'ton do'
+      'thung ve sinh', 'lap la', 'bat sat', 'que dan', 'so dang ky', 'ton do',
+      'bao bi mat', 'bao chi bi mat', 'bao viet tay', 'bao trong tu', 'bao mat', 'bao cach mang',
+      'duoc dua duong', 'suoi reo', 'lao tu tap chi', 'con duong chinh', 'bua liem',
+      'secret newspaper', 'secret newspapers', 'underground press', 'underground newspaper', 'clandestine newspaper', 'prison newspaper', 'handwritten newspaper', 'secret press'
     ];
     return entities.some(e => normSpaced.includes(' ' + e + ' ') || norm.includes(e));
   }
@@ -1196,7 +1208,8 @@ class KnowledgeBase {
         const item = this.facts100BySeed.get('F050') || this.facts100BySeed.get('F051');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
-      if (qNormSpaced.includes(' may chem ') && coreWordCount <= 14 && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
+      const asksGuillotineWeightOrLocation = qNormSpaced.includes(' nang ') || qNormSpaced.includes(' can nang ') || qNormSpaced.includes(' trong luong ') || qNormSpaced.includes(' kg ') || qNormSpaced.includes(' vi tri ') || qNormSpaced.includes(' o dau ') || qNormSpaced.includes(' gian nao ') || qNormSpaced.includes(' nam o ') || qNormSpaced.includes(' dat o ');
+      if (qNormSpaced.includes(' may chem ') && !asksGuillotineWeightOrLocation && coreWordCount <= 14 && (qNormSpaced.includes(' cao bao nhieu ') || qNormSpaced.includes(' cau tao ') || qNormSpaced.includes(' kich thuoc '))) {
         const item = this.facts100BySeed.get('F033');
         if (item) return { item, score: 0.98, type: 'SEMANTIC_FACT', isFact100: true };
       }
@@ -1495,7 +1508,15 @@ class KnowledgeBase {
       if (key === 'phi_cong' && (hasPhrase(norm, 'cum') || hasPhrase(norm, 'gong') || hasPhrase(norm, 'cum sat') || hasPhrase(norm, 'cum chan'))) matchCount -= 50;
       if (key === 'may_chem' && (hasPhrase(norm, 'kien truc') || hasPhrase(norm, 'cong chinh') || hasPhrase(norm, 'phu khanh')) && !hasPhrase(norm, 'may chem') && !hasPhrase(norm, 'guillotine')) matchCount -= 50;
       if (key === 'cay_bang' && hasPhrase(norm, 'cay bang')) matchCount += 10;
-      if (key === 'hien_vat_sinh_hoat' && (hasPhrase(norm, 'muc viet') || hasPhrase(norm, 'but') || hasPhrase(norm, 'bao chi') || hasPhrase(norm, 'gach non') || hasPhrase(norm, 'muoi than'))) matchCount += 15;
+      if (key === 'hien_vat_sinh_hoat' && (
+        hasPhrase(norm, 'muc viet') || hasPhrase(norm, 'but') || hasPhrase(norm, 'bao chi') || hasPhrase(norm, 'gach non') || hasPhrase(norm, 'muoi than') ||
+        hasPhrase(norm, 'bao bi mat') || hasPhrase(norm, 'bao viet tay') || hasPhrase(norm, 'bao trong tu') || hasPhrase(norm, 'bao mat') || hasPhrase(norm, 'bao cach mang') ||
+        hasPhrase(norm, 'duoc dua duong') || hasPhrase(norm, 'suoi reo') || hasPhrase(norm, 'lao tu tap chi') || hasPhrase(norm, 'con duong chinh') || hasPhrase(norm, 'bua liem') ||
+        hasPhrase(norm, 'lam bao') || hasPhrase(norm, 'viet bao') || hasPhrase(norm, 'ra bao') || hasPhrase(norm, 'xuat ban bao') ||
+        hasPhrase(norm, 'secret newspaper') || hasPhrase(norm, 'secret newspapers') || hasPhrase(norm, 'underground press') || hasPhrase(norm, 'underground newspaper') || hasPhrase(norm, 'underground newspapers') ||
+        hasPhrase(norm, 'clandestine press') || hasPhrase(norm, 'clandestine newspaper') || hasPhrase(norm, 'clandestine newspapers') || hasPhrase(norm, 'prison newspaper') || hasPhrase(norm, 'prison newspapers') ||
+        hasPhrase(norm, 'handwritten newspaper') || hasPhrase(norm, 'handwritten newspapers') || hasPhrase(norm, 'secret press')
+      )) matchCount += 15;
       if (key === 'vuot_nguc_1945' && (hasPhrase(norm, '1945') || hasPhrase(norm, 'hon 100') || hasPhrase(norm, '100 can bo') || hasPhrase(norm, 'nhat dao chinh'))) matchCount += 15;
       if (key === 'may_chem' && (hasPhrase(norm, 'may chem') || hasPhrase(norm, 'guillotine'))) matchCount += 10;
       if (key === 'cong_ngam' && (hasPhrase(norm, 'cong ngam') || (hasPhrase(norm, 'vuot nguc') && !hasPhrase(norm, '1945') && !hasPhrase(norm, '100')))) matchCount += 10;

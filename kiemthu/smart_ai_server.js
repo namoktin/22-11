@@ -294,33 +294,40 @@ class ProductionSmartTourGuideServer {
     // Tối ưu Voice-first: làm sạch từ đệm, thán từ nói chuyện đời thường
     const voiceCleaned = nlp.cleanVoiceSpokenInput(coreQuery);
 
-    // Kiểm tra nhanh các nhóm độc lập (Nhiễu, Chào hỏi, Cảm ơn, Tạm biệt, Ngoài lề, Injection, Khẩn cấp)
+    // Kiểm tra nhanh các nhóm độc lập (Nhiễu, Chào hỏi, Cảm ơn, Tạm biệt, Ngoài lề rõ ràng, Injection, Khẩn cấp)
     // TRƯỚC KHI giải mã Follow-up để không bị dính chủ đề cũ vào câu ngoài lề / nhiễu / chào hỏi!
+    // Ngoại lệ: OOD_UNMATCHED_DOMAIN (câu ngắn thiếu thực thể như "Kể tiếp đi", "Còn gì nữa không?") vẫn được phép kiểm tra follow-up nếu phiên đang có ngữ cảnh hợp lệ!
     const preClass = classifier.classify(voiceCleaned, null);
     const bypassFollowUpIntents = new Set([
       INTENTS.PROMPT_INJECTION,
-      INTENTS.OUT_OF_SCOPE,
       INTENTS.EMERGENCY_SUPPORT,
       INTENTS.GREETING,
       INTENTS.THANK_YOU,
       INTENTS.GOODBYE,
       INTENTS.CHITCHAT_BOT
     ]);
+    const isHardOutOfScope = preClass.intent === INTENTS.OUT_OF_SCOPE && preClass.subIntent !== 'OOD_UNMATCHED_DOMAIN';
     const isNoiseClarification = preClass.intent === INTENTS.CLARIFICATION && preClass.subIntent === 'EXTREME_NOISE_OR_FILLER';
 
     // Xử lý câu hỏi tiếp nối & Chuyển hướng chủ đề (Pronoun Resolution & Topic Shift)
-    const followUp = (bypassFollowUpIntents.has(preClass.intent) || isNoiseClarification)
-      ? { isFollowUp: false, resolvedQuery: voiceCleaned, topic: null, isComparisonExpansion: false }
+    const followUp = (bypassFollowUpIntents.has(preClass.intent) || isHardOutOfScope || isNoiseClarification)
+      ? { isFollowUp: false, isContinuation: false, resolvedQuery: voiceCleaned, topic: null, isComparisonExpansion: false }
       : nlp.resolveFollowUp(voiceCleaned, session.lastContext);
     const activeQuery = followUp.resolvedQuery || voiceCleaned;
 
     // TẦNG 2: SEMANTIC INTENT UNDERSTANDING (4-Dimensional Analysis + Neural Prompt Guard)
-    const intentAnalysis = (bypassFollowUpIntents.has(preClass.intent) || isNoiseClarification)
+    // QUAN TRỌNG: Nếu KHÔNG phải follow-up (đã chuyển chủ đề mới), TUYỆT ĐỐI không kế thừa session.lastContext hay session.state.currentSubject!
+    // Đồng thời tái sử dụng preClass khi activeQuery không đổi để loại bỏ classify trùng lặp và giảm độ trễ.
+    const canReusePreClass = bypassFollowUpIntents.has(preClass.intent) || isHardOutOfScope || isNoiseClarification ||
+      (!followUp.isFollowUp && activeQuery === voiceCleaned);
+    const intentAnalysis = canReusePreClass
       ? preClass
-      : classifier.classify(activeQuery, session.lastContext);
+      : classifier.classify(activeQuery, followUp.isFollowUp ? session.lastContext : null);
     let intent = intentAnalysis.intent;
     const subIntent = intentAnalysis.subIntent || null;
-    let subject = intentAnalysis.subject || session.state?.currentSubject || null;
+    let subject = followUp.isFollowUp
+      ? (intentAnalysis.subject || followUp.topic || session.state?.currentSubject || null)
+      : (intentAnalysis.subject || null);
     const aspect = intentAnalysis.aspect || 'GENERAL';
     const urgency = intentAnalysis.urgency || 'NORMAL';
 
@@ -360,13 +367,7 @@ class ProductionSmartTourGuideServer {
     let topicId = null;
     let topicName = null;
 
-    // 1. Kiểm tra Ground Truth & Kho 100 Facts xác thực trước tiên (Chỉ dùng câu hỏi lõi, không dùng chuỗi bọc tiền tố Beacon)
-    let gt = knowledgeBase.findGroundTruthMatch(activeQuery) ||
-             knowledgeBase.findGroundTruthMatch(coreQuery) ||
-             knowledgeBase.findGroundTruthMatch(voiceCleaned);
-
-    // Nếu phát hiện các ý định dịch vụ khẩn cấp / chăm sóc khách hàng / khiếu nại / trợ năng / rơi đồ / định vị:
-    // Tuyệt đối không để SEMANTIC_FACT (khớp mờ từ khóa) đè lên quy trình chăm sóc khách hàng.
+    // 1. Kiểm tra Ground Truth & Kho 100 Facts xác thực trước tiên (Chỉ dùng câu hỏi lõi, bỏ qua khi đã thuộc priorityCareIntents để giảm độ trễ!)
     const priorityCareIntents = [
       INTENTS.EMERGENCY_SUPPORT,
       INTENTS.LOST_AND_FOUND,
@@ -394,8 +395,13 @@ class ProductionSmartTourGuideServer {
       INTENTS.SUMMARY_REQUEST,
       INTENTS.VICINITY_DISTANCE
     ];
-    if (gt && (gt.type !== 'EXACT' || priorityCareIntents.includes(intentAnalysis.intent)) && (priorityCareIntents.includes(intentAnalysis.intent) || followUp.isFollowUp || subIntent === 'LOCATION_ORIENTATION')) {
-      gt = null;
+    let gt = null;
+    if (!priorityCareIntents.includes(intentAnalysis.intent) && !followUp.isFollowUp && subIntent !== 'LOCATION_ORIENTATION') {
+      const gtCandidates = [...new Set([activeQuery, coreQuery, voiceCleaned].filter(Boolean))];
+      for (const cand of gtCandidates) {
+        gt = knowledgeBase.findGroundTruthMatch(cand);
+        if (gt) break;
+      }
     }
 
     if (gt) {
@@ -480,7 +486,11 @@ class ProductionSmartTourGuideServer {
       INTENTS.ACCESSIBILITY_SUPPORT,
       INTENTS.JOKE_REQUEST,
       INTENTS.EMERGENCY_SUPPORT,
-      INTENTS.EXPIRED_POLICY
+      INTENTS.EXPIRED_POLICY,
+      INTENTS.DINING_VICINITY,
+      INTENTS.VICINITY_DISTANCE,
+      INTENTS.SUMMARY_REQUEST,
+      INTENTS.TIME_FEASIBILITY
     ].includes(intent);
 
     const canReuseSavedLocal = (language === 'vi' || language === 'en') || groqPool.areAllCoolingDown(GROQ_MODEL_POOL);
@@ -670,6 +680,8 @@ class ProductionSmartTourGuideServer {
       userProfile: userProfileSignals,
       artifactContext,
       previousPhrasings,
+      isFollowUp: followUp.isFollowUp,
+      isContinuation: Boolean(followUp.isContinuation),
       groqCaller: (q, sysPrompt, hist, opts) => this.callGroq(q, sysPrompt, hist, opts)
     });
 
@@ -681,13 +693,18 @@ class ProductionSmartTourGuideServer {
 
     // TẦNG 6: REAL ANSWER VALIDATOR + AUTO-LEARNING 2.0 (STAGING ONLY!) + LOCAL VARIATION
     let finalReply = composerResult.reply;
-    const relatedExtraFacts = isSensitiveIntent ? [] : [
-      ...(Array.isArray(retrievedData?.facts) ? retrievedData.facts : []),
-      ...((knowledgeBase.retrieveTopKContext(activeQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
-    ];
+    const isLlmOutput = composerResult.responseType === 'LLM_GROUNDED_SYNTHESIS' || composerResult.responseType === 'STORYTELLING_NARRATION';
+    const baseFacts = Array.isArray(retrievedData?.facts) ? retrievedData.facts : [];
+    const relatedExtraFacts = isSensitiveIntent ? [] : (
+      isLlmOutput
+        ? [
+            ...baseFacts,
+            ...((knowledgeBase.retrieveTopKContext(activeQuery, { subject, intent, artifactContext, topK: 4 })?.snippets) || [])
+          ]
+        : baseFacts
+    );
 
     // 6.1. THẨM ĐỊNH THỰC SỰ ĐẦU RA LLM RAG BẰNG REAL ANSWER VALIDATOR (chống bịa đặt mốc năm/số liệu & mâu thuẫn!)
-    const isLlmOutput = composerResult.responseType === 'LLM_GROUNDED_SYNTHESIS' || composerResult.responseType === 'STORYTELLING_NARRATION';
     if (isLlmOutput && finalReply) {
       const groundCheck = validator.verifyGroundingAgainstEvidence(finalReply, relatedExtraFacts, coreQuery);
       groundingStatus = groundCheck.groundingStatus;
@@ -782,15 +799,66 @@ class ProductionSmartTourGuideServer {
     });
 
     // TẦNG 7: STRUCTURED CONVERSATION STATE & SESSION PERSISTENCE
-    const resolvedTopicName = (subject && HISTORICAL_EXHIBITS[subject] ? HISTORICAL_EXHIBITS[subject].name : null) || topicName || 'Di tích Hỏa Lò';
-    const resolvedTopicId = subject || topicId;
+    // Chặn vòng lặp tự nhiễm: đáp án ngoài phạm vi / thiếu căn cứ / độ tin cậy thấp / từ chối / báo thiếu dữ liệu KHÔNG ghi vào bộ nhớ ngữ cảnh!
+    const finalIntentForSession = composerResult.resolvedIntent || intent;
+    const nonContextResponseTypes = new Set([
+      'ARCHIVE_KNOWLEDGE_GAP',
+      'STRICT_OUT_OF_SCOPE_REFUSAL',
+      'OUT_OF_SCOPE_HANDLED',
+      'DOCENT_GRACEFUL_OUT_OF_SCOPE',
+      'SECURITY_BOUNDARY_ENFORCED',
+      'CLARIFICATION_PROMPT',
+      'CLARIFICATION_NEEDED',
+      'NOISE_PUNCTUATION',
+      'NOISE_GIBBERISH',
+      'FALSE_PREMISE_CORRECTION',
+      'AUTHENTIC_ABSTENTION'
+    ]);
+    const shouldSkipContextUpdate = Boolean(
+      finalIntentForSession === INTENTS.OUT_OF_SCOPE ||
+      finalIntentForSession === INTENTS.PROMPT_INJECTION ||
+      finalIntentForSession === INTENTS.CLARIFICATION ||
+      finalIntentForSession === INTENTS.AMBIGUOUS_QUERY ||
+      groundingStatus === 'UNGROUNDED' ||
+      confidence === 'LOW' ||
+      confidenceScore < 0.65 ||
+      nonContextResponseTypes.has(composerResult.responseType)
+    );
+
+    const mentionedEntities = [];
+    const combinedNorm = ' ' + nlp.normalize(`${rawQuestion} ${finalReply || ''}`) + ' ';
+    const trackableEntities = [
+      ['tran_tu_binh', 'Trần Tử Bình', 'tran tu binh'],
+      ['hoang_van_thu', 'Hoàng Văn Thụ', 'hoang van thu'],
+      ['nguyen_thai_hoc', 'Nguyễn Thái Học', 'nguyen thai hoc'],
+      ['nguyen_duc_canh', 'Nguyễn Đức Cảnh', 'nguyen duc canh'],
+      ['nguyen_hoang_ton', 'Nguyễn Hoàng Tôn', 'nguyen hoang ton'],
+      ['john_mccain', 'John McCain', 'mccain'],
+      ['cay_bang', 'Cây bàng lịch sử', 'cay bang'],
+      ['may_chem', 'Máy chém', 'may chem'],
+      ['cachot', 'Ngục tối Cachot', 'cachot'],
+      ['cong_ngam', 'Đường cống ngầm vượt ngục', 'cong ngam'],
+      ['vuot_nguc_1945', 'Vượt ngục tháng 3/1945', 'vuot nguc'],
+      ['hien_vat_sinh_hoat', 'Báo chí bí mật trong tù', 'bao bi mat']
+    ];
+    for (const [eId, eName, eKey] of trackableEntities) {
+      if (combinedNorm.includes(' ' + eKey + ' ')) {
+        mentionedEntities.push({ id: eId, name: eName });
+      }
+    }
+
+    const resolvedTopicName = (subject && HISTORICAL_EXHIBITS[subject] ? HISTORICAL_EXHIBITS[subject].name : null) ||
+      (mentionedEntities[0]?.name) || topicName || 'Di tích Hỏa Lò';
+    const resolvedTopicId = subject || mentionedEntities[0]?.id || topicId;
     sessionManager.updateSession(session.id, rawQuestion, finalReply, {
       topic: resolvedTopicId,
       topicName: resolvedTopicName,
-      intent: intent,
+      intent: finalIntentForSession,
       subIntent: subIntent,
       aspect: aspect,
-      userProfileSignals
+      userProfileSignals,
+      mentionedEntities,
+      skipContextUpdate: shouldSkipContextUpdate
     });
 
     const latencyMs = Date.now() - startTime;

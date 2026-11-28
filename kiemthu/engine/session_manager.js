@@ -119,10 +119,16 @@ class StructuredSessionManager {
 
   /**
    * Cập nhật ngữ cảnh phiên hội thoại có cấu trúc
+   * Chặn vòng lặp tự nhiễm: đáp án sai / ngoài phạm vi / thiếu căn cứ (skipContextUpdate: true) KHÔNG ghi vào bộ nhớ ngữ cảnh!
    */
   updateSession(sessionId, userMessage, assistantReply, metadata = {}) {
     const session = this.getOrCreateSession(sessionId);
     session.turnCount++;
+    session.lastAccess = Date.now();
+
+    if (metadata.skipContextUpdate) {
+      return session;
+    }
 
     // Cập nhật lịch sử trao đổi
     session.history.push({ role: 'user', content: userMessage });
@@ -132,24 +138,31 @@ class StructuredSessionManager {
       session.history = session.history.slice(-this.maxHistoryTurns * 2);
     }
 
-    // Cập nhật Thực thể & Chủ đề
+    // Cập nhật Thực thể & Chủ đề (cập nhật đúng thứ tự gần nhất cho entityHistory)
     if (metadata.topic) {
       session.state.currentSubject = metadata.topic;
     }
     if (metadata.topicName) {
       session.state.subjectName = metadata.topicName;
     }
+    const pushEntity = (id, name) => {
+      if (!name) return;
+      const idx = session.state.entityHistory.findIndex(e => (typeof e === 'string' ? e : e.name) === name);
+      if (idx !== -1) {
+        session.state.entityHistory.splice(idx, 1);
+      }
+      session.state.entityHistory.push({ id: id || name, name });
+      if (session.state.entityHistory.length > 10) {
+        session.state.entityHistory.shift();
+      }
+    };
     const entityLabel = metadata.topicName || metadata.topic;
     if (entityLabel) {
-      const exists = session.state.entityHistory.some(e => (typeof e === 'string' ? e : e.name) === entityLabel);
-      if (!exists) {
-        session.state.entityHistory.push({
-          id: metadata.topic || entityLabel,
-          name: entityLabel
-        });
-        if (session.state.entityHistory.length > 10) {
-          session.state.entityHistory.shift();
-        }
+      pushEntity(metadata.topic || entityLabel, entityLabel);
+    }
+    if (Array.isArray(metadata.mentionedEntities)) {
+      for (const ent of metadata.mentionedEntities) {
+        if (ent && ent.name) pushEntity(ent.id || ent.name, ent.name);
       }
     }
     if (metadata.intent) {
@@ -175,7 +188,6 @@ class StructuredSessionManager {
       if (sig.preferredLanguage) session.state.userProfile.preferredLanguage = sig.preferredLanguage;
     }
 
-    session.lastAccess = Date.now();
     return session;
   }
 
