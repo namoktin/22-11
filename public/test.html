@@ -451,6 +451,7 @@
     async function sendCodeRequest() {
       const code = document.getElementById('inputCode').value.trim();
       const mac = document.getElementById('inputMac').value.trim();
+      const lockedLang = document.getElementById('languageLockSelect')?.value || 'vi';
 
       const btn = event.currentTarget;
       btn.innerText = '⏳ Đang lấy tín hiệu...';
@@ -459,8 +460,11 @@
       try {
         const res = await fetch(`${baseUrl}/api/ble-scan`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: code, beacon_mac: mac, device_id: 'TEST_HTML_CLIENT' })
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Language': lockedLang
+          },
+          body: JSON.stringify({ code: code, beacon_mac: mac, device_id: 'TEST_HTML_CLIENT', language: lockedLang, force: true })
         });
         const data = await res.json();
 

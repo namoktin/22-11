@@ -1396,15 +1396,15 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
 
     if (mode === 'query') {
       const exhibitAnchors = extractForeignExhibitAnchors(text);
-      // Nếu câu ngoại ngữ nhắc tới hiện vật chuyên ngành Hỏa Lò & Groq còn headroom -> ưu tiên Groq dịch chính xác thuật ngữ (tránh MyMemory dịch 단두대 -> "quần"!)
+      // Ưu tiên Groq nhẹ trước cho mọi câu hỏi ngoại ngữ (nhanh ~250ms, chuẩn thuật ngữ di tích, không dính chặn IP GCP của MyMemory/Google GTX!)
       const pool = getSharedGroqPool();
-      if (exhibitAnchors && GROQ_API_KEY && (!pool || !pool.areAllCoolingDown(GROQ_SUPPORTED_MODELS))) {
+      if (GROQ_API_KEY && (!pool || !pool.areAllCoolingDown(GROQ_SUPPORTED_MODELS))) {
         const groqQuery = await callLightGroqMessages([
           { role: 'system', content: groqSysPrompt },
           { role: 'user', content: text }
         ], 0.05, 160, 2600);
         if (groqQuery) {
-          const finalVi = groqQuery.toLowerCase().includes('hỏa lò') || groqQuery.toLowerCase().includes('mã 00')
+          const finalVi = (!exhibitAnchors || groqQuery.toLowerCase().includes('hỏa lò') || groqQuery.toLowerCase().includes('mã 00'))
             ? groqQuery
             : `${groqQuery} (${exhibitAnchors})`;
           setTranslationCache(cacheKey, finalVi);
@@ -1412,7 +1412,7 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
         }
       }
 
-      // Dự phòng 0-token: MyMemory / GTX + gắn neo hiện vật di tích nếu bị dịch máy làm mất thuật ngữ!
+      // Dự phòng 0-token khi Groq đang cooldown: MyMemory / GTX + gắn neo hiện vật di tích!
       const mmQuery = await translateViaMyMemory(text, targetLang);
       if (mmQuery && mmQuery.toLowerCase() !== text.trim().toLowerCase()) {
         const safeMm = exhibitAnchors ? `${mmQuery} (${exhibitAnchors})` : mmQuery;
@@ -1424,14 +1424,6 @@ async function translateTextStrict(text, targetLang, mode = 'answer') {
         const safeGtx = exhibitAnchors ? `${gtxQuery} (${exhibitAnchors})` : gtxQuery;
         setTranslationCache(cacheKey, safeGtx);
         return safeGtx;
-      }
-      const groqQueryFallback = await callLightGroqMessages([
-        { role: 'system', content: groqSysPrompt },
-        { role: 'user', content: text }
-      ], 0.1, 220, 3200);
-      if (groqQueryFallback) {
-        setTranslationCache(cacheKey, groqQueryFallback);
-        return groqQueryFallback;
       }
       return exhibitAnchors ? `${text} (${exhibitAnchors})` : text;
     }
@@ -2010,18 +2002,14 @@ const server = http.createServer(async (req, res) => {
       let mp3Filename = target.audio_mp3 || target.audio_file;
 
       // KHÓA NGÔN NGỮ CHO CẢ THUYẾT MINH TỰ ĐỘNG BLE BEACON:
-      // Nếu ngôn ngữ khóa != tiếng Việt -> dịch lời thoại & sinh/cache file .WAV chuẩn theo đúng ngôn ngữ đó!
+      // Nếu ngôn ngữ khóa != tiếng Việt -> dịch lời thoại (1 lượt gọn nhẹ tiết kiệm Groq RPM) & sinh/cache file .WAV chuẩn theo đúng ngôn ngữ đó!
       if (lockedLang !== 'vi' && dialogueOut.text) {
-        const [trText, trName, trLoc] = await Promise.all([
-          translateTextStrict(dialogueOut.text, lockedLang, 'answer'),
-          translateTextStrict(artifactNameOut, lockedLang, 'answer'),
-          locationOut ? translateTextStrict(locationOut, lockedLang, 'answer') : Promise.resolve(locationOut)
-        ]);
-        dialogueOut.text = trText || dialogueOut.text;
-        artifactNameOut = trName || artifactNameOut;
-        locationOut = trLoc || locationOut;
-        audioFilename = await synthesizeCachedBeaconWav(target, dialogueOut.text, lockedLang);
-        mp3Filename = audioFilename;
+        const trText = await translateTextStrict(dialogueOut.text, lockedLang, 'answer');
+        if (trText) {
+          dialogueOut.text = trText;
+          audioFilename = await synthesizeCachedBeaconWav(target, dialogueOut.text, lockedLang);
+          mp3Filename = audioFilename;
+        }
       }
 
       const wavUrl = `${hostBaseUrl}/audio/${audioFilename}`;
