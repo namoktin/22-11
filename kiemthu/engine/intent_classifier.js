@@ -648,11 +648,12 @@ class IntentClassifier {
     const isBotAgeQuery = isNotOrgQuery && (hasPhrase(norm, 'bao nhieu tuoi') || hasPhrase(norm, 'may tuoi') || hasPhrase(norm, 'sinh nam')) &&
                           (hasPhrase(norm, 'ban') || hasPhrase(norm, 'em') || hasPhrase(norm, 'bot') || hasPhrase(norm, 'huong dan vien')) &&
                           !hasPhrase(norm, 'cay') && !hasPhrase(norm, 'bang') && !hasPhrase(norm, 'nguyen') && !hasPhrase(norm, 'hoang van thu');
-    const isBotIdentityQuery = isNotOrgQuery && (
+    const isBotIdentityQuery = isNotOrgQuery && !isHist && !subject && (
       hasPhrase(norm, 'ban ten gi') || hasPhrase(norm, 'ban ten la gi') || hasPhrase(norm, 'mang ten la gi') ||
-      hasPhrase(norm, 'em ten gi') || hasPhrase(norm, 'em ten la gi') || hasPhrase(norm, 'co ten la gi') ||
-      hasPhrase(norm, 'ten ban la gi') || hasPhrase(norm, 'ten em la gi') || hasPhrase(norm, 'ten co la gi') ||
-      hasPhrase(norm, 'ban la ai') || hasPhrase(norm, 'em la ai') || hasPhrase(norm, 'co la ai') || hasPhrase(norm, 'may la ai') ||
+      hasPhrase(norm, 'em ten gi') || hasPhrase(norm, 'em ten la gi') ||
+      matchAccentSafe(raw, norm, ['cô tên là gì', 'cô là ai', 'tên cô là gì'], ['co ten la gi', 'co la ai', 'ten co la gi']) ||
+      hasPhrase(norm, 'ten ban la gi') || hasPhrase(norm, 'ten em la gi') ||
+      hasPhrase(norm, 'ban la ai') || hasPhrase(norm, 'em la ai') || hasPhrase(norm, 'may la ai') ||
       hasPhrase(norm, 'ban la gi') || hasPhrase(norm, 'la robot') || hasPhrase(norm, 'la nguoi hay') ||
       hasPhrase(norm, 'ai tao ra ban') || hasPhrase(norm, 'ai lam ra ban')
     );

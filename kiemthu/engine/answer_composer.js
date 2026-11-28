@@ -2335,6 +2335,7 @@ ${compactContext}`;
         claims: ['19 giờ 30 ngày 12/3/1945', 'Thời cơ Nhật đảo chính Pháp'],
         requiresHuman: false,
         responseType: 'HISTORICAL_EXPLANATION',
+        resolvedIntent: 'HISTORICAL_FACT',
         style: 'HISTORICAL_EXPLANATION'
       };
     }
@@ -2349,6 +2350,7 @@ ${compactContext}`;
         claims: ['29 người đợt đầu', 'Tổng ước tính hơn 100 người các ngày sau'],
         requiresHuman: false,
         responseType: 'HISTORICAL_EXPLANATION',
+        resolvedIntent: 'HISTORICAL_FACT',
         style: 'HISTORICAL_EXPLANATION'
       };
     }
